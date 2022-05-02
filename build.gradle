@@ -25,10 +25,8 @@ apply plugin: 'com.vanniktech.maven.publish'
 // You may want to change this to 1.8 .
 sourceCompatibility = 1.7
 
-//Obviously, change the next line to match your project name.
-def projectName = 'libgdx-library-template'
+def projectName = 'digital'
 
-//Change this to whatever Maven Central group you might publish to, which is probably not this one if you aren't Tommy Ettinger.
 group 'com.github.tommyettinger'
 
 version "$VERSION_NAME"
@@ -82,8 +80,7 @@ repositories {
 }
 
 dependencies {
-// Change gdxVersion in gradle.properties to update or downgrade.
-    api "com.badlogicgames.gdx:gdx:$gdxVersion"
+    testImplementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     testImplementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
     testImplementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     testImplementation "junit:junit:4.13.2"
