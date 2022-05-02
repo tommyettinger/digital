@@ -21,8 +21,8 @@ buildscript {
 
 apply plugin: 'java-library'
 apply plugin: 'com.vanniktech.maven.publish'
+apply plugin: 'idea'
 
-// You may want to change this to 1.8 .
 sourceCompatibility = 1.7
 
 def projectName = 'digital'
@@ -54,6 +54,8 @@ if(JavaVersion.current().isJava9Compatible()) {
         }
     }
 }
+idea.module.excludeDirs += [file("src/main/java/emu/")]
+[compileJava, compileTestJava, javadoc]*.exclude("emu")
 
 // JavaDocs will be published inside the docs/ folder, which you can easily put on GitHub Pages in your repo settings.
 javadoc.destinationDir = file('docs/apidocs')
