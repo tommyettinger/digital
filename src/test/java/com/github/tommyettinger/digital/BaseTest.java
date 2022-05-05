@@ -10,7 +10,7 @@ import java.util.Random;
 public class BaseTest {
 
 	public static final List<Base> BASES = Arrays.asList(Base.BASE2, Base.BASE8, Base.BASE10, Base.BASE16,
-														Base.BASE36, Base.BASE64, Base.URI_SAFE, Base.BASE86,
+			Base.BASE36, Base.BASE64, Base.URI_SAFE, Base.SIMPLE64, Base.BASE86,
 			Base.scrambledBase(new Random(123L)), Base.scrambledBase(new Random(12345678890L)));
 	@Test
 	public void testUnsignedInt() {

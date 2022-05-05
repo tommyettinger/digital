@@ -61,16 +61,22 @@ public class Base {
 	 */
 	public static final Base BASE36 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	/**
-	 * One of two base-64 schemes available here, this is the more-standard one, using the digits A-Z, then a-z, then
+	 * One of three base-64 schemes available here, this is the more-standard one, using the digits A-Z, then a-z, then
 	 * 0-9, then + and / (case-sensitive). This uses * in place of + to indicate a positive sign, and - for negative.
 	 * Because this can use the / character, it sometimes needs quoting when used with libGDX's "minimal JSON" format.
 	 */
 	public static final Base BASE64 = new Base("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", false, '=', '*', '-');
 	/**
-	 * One of two base-64 schemes available here, this is meant for URI-encoding, using the digits A-Z, then a-z, then
+	 * One of three base-64 schemes available here, this is meant for URI-encoding, using the digits A-Z, then a-z, then
 	 * 0-9, then + and - (case-sensitive). This uses * in place of + to indicate a positive sign, and ! in place of - .
 	 */
 	public static final Base URI_SAFE = new Base("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-", false, '$', '*', '!');
+	/**
+	 * One of three base-64 schemes available here, this is a non-standard one that is more in-line with common
+	 * expectations for how numbers should look. It uses the digits 0-9, then A-Z, then a-z, then ! and ? (all
+	 * case-sensitive). Unlike the other base-64 schemes, this uses + for its positive sign and - for its negative sign.
+	 */
+	public static final Base SIMPLE64 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!?", false, '$', '+', '-');
 	/**
 	 * The largest base here, this uses digits 0-9 first, then A-Z, then a-z, them many punctuation characters:
 	 * <code>`~!@#$%^&amp;*()[]{}&lt;&gt;.?;|_=</code>  . This uses + to indicate a positive sign, and - for negative.
@@ -84,7 +90,7 @@ public class Base {
 	 * All Base instances this knows about from its own constants.
 	 * We use Arrays.asList() here to ensure the returned List is immutable.
 	 */
-	private static final List<Base> BASES = Arrays.asList(BASE2, BASE8, BASE10, BASE16, BASE36, BASE64, URI_SAFE, BASE86);
+	private static final List<Base> BASES = Arrays.asList(BASE2, BASE8, BASE10, BASE16, BASE36, BASE64, URI_SAFE, SIMPLE64, BASE86);
 
 	/**
 	 * Returns an immutable List of the Base instances this knows about from the start. Mostly useful for testing.
@@ -222,12 +228,14 @@ public class Base {
 
 		char plus = options[options.length - 2], minus = options[options.length - 1];
 
+		// The actual chars here don't matter, because they are replaced with the shuffled options.
 		Base base = new Base("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?!@#$%^&*-", false, ' ', plus, minus);
-
 		System.arraycopy(options, 0, base.toEncoded, 0, 72);
+		// Makes any digits that don't represent a number use the placeholder -1 value.
 		Arrays.fill(base.fromEncoded, -1);
 
 		for (int i = 0; i < base.base; i++) {
+			// Makes from and to arrays match.
 			base.fromEncoded[base.toEncoded[i] & 127] = i;
 		}
 
