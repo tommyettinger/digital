@@ -26,6 +26,7 @@ public class TrigTools {
 
     static private final int SIN_BITS = 14; // 16KB. Adjust for accuracy.
     static private final int SIN_COUNT = (1 << SIN_BITS);
+    static private final int QUARTER_ROTATION = SIN_COUNT >>> 2;
     static private final int SIN_MASK = SIN_COUNT - 1;
 
 
@@ -70,6 +71,13 @@ public class TrigTools {
         return sinTable[(int)((radians + HALF_PI) * radToIndex) & SIN_MASK];
     }
 
+    /** Returns the tangent in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
+     * inclusive). */
+    static public float tan (float radians) {
+        final int idx = (int)(radians * radToIndex) & SIN_MASK;
+        return sinTable[idx] / sinTable[idx + QUARTER_ROTATION & SIN_MASK];
+    }
+
     /** Returns the sine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
      * inclusive). */
     static public float sinDeg (float degrees) {
@@ -82,6 +90,13 @@ public class TrigTools {
         return sinTable[(int)((degrees + 90) * degToIndex) & SIN_MASK];
     }
 
+    /** Returns the tangent in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
+     * inclusive). */
+    static public float tanDeg (float degrees) {
+        final int idx = (int)(degrees * degToIndex) & SIN_MASK;
+        return sinTable[idx] / sinTable[idx + QUARTER_ROTATION & SIN_MASK];
+    }
+
     /** Returns the sine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
      * inclusive). */
     static public float sinTurns (float turns) {
@@ -92,6 +107,13 @@ public class TrigTools {
      * inclusive). */
     static public float cosTurns (float turns) {
         return sinTable[(int)((turns + 0.25f) * turnToIndex) & SIN_MASK];
+    }
+
+    /** Returns the tangent in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
+     * inclusive). */
+    static public float tanTurns (float turns) {
+        final int idx = (int)(turns * turnToIndex) & SIN_MASK;
+        return sinTable[idx] / sinTable[idx + QUARTER_ROTATION & SIN_MASK];
     }
 
     // ---
