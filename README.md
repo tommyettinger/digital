@@ -1,12 +1,16 @@
 # digital
 
-Small utilities for handling numbers in Java.
+Small utilities for handling math and numbers in Java.
 
-This includes just two classes currently.
+This includes just a few classes currently.
 
 BitConversion allows converting float and double values to
 int and long versions of their underlying bits (and it does
-this in a way that works on GWT efficiently).
+this in a way that works on GWT efficiently). It also has
+some methods that convert between float and int with reversed
+byte order (using a fast intrinsic on desktop JDKs and a
+special trick on GWT), and others that get only the low or
+high half of a double's bits as an int.
 
 Base is much larger, and allows converting any Java primitive
 number type to a specific base/radix/number-system. Here,
