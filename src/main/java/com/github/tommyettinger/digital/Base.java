@@ -151,7 +151,7 @@ public class Base {
 	/**
 	 * Internal; used for temporary buffer space.
 	 */
-	private final char[] progress;
+	private transient final char[] progress;
 
 	/**
 	 * Constructs a Base with the given digits, ordered from smallest to largest, with any letters in the digits treated
@@ -207,6 +207,28 @@ public class Base {
 	}
 
 	/**
+	 * An unlikely-to-be-used copy constructor. A Base doesn't have any changing state between method calls, so the only
+	 * reason you would need to copy an existing Base is to edit it. Even then, most changes would need to be made to
+	 * the contents of {@link #fromEncoded} and {@link #toEncoded}, since those can be edited, but other fields are
+	 * generally final here.
+	 * @param other another Base; must be non-null
+	 */
+	public Base (Base other) {
+		paddingChar = other.paddingChar;
+		caseInsensitive = other.caseInsensitive;
+		positiveSign = other.positiveSign;
+		negativeSign = other.negativeSign;
+		base = other.base;
+		toEncoded = Arrays.copyOf(other.toEncoded, base);
+		fromEncoded = Arrays.copyOf(other.fromEncoded, 128);
+		length1Byte = other.length1Byte;
+		length2Byte = other.length2Byte;
+		length4Byte = other.length4Byte;
+		length8Byte = other.length8Byte;
+		progress = new char[length8Byte + 1];
+	}
+
+	/**
 	 * Returns a seemingly-gibberish Base that uses a radix of 72 and a randomly-ordered set of characters to represent
 	 * the different digit values. This is randomized by a Random generator, so if the parameter is seeded identically
 	 * (and is the same implementation), then an equivalent Base will be produced. This randomly chooses 72 digits from
@@ -240,6 +262,33 @@ public class Base {
 		}
 
 		return base;
+	}
+
+	/**
+	 * Copies this Base and shuffles the digit values in the copy. Uses the given Random to perform the shuffle. This
+	 * can be useful to lightly obfuscate save files, or better, parts of save files, so that certain fields appear to
+	 * be one number but are actually a different one. If users don't know which entries use which scrambled Base, then
+	 * that could be a nice way to at least slow down unskilled tampering.
+	 * @param random a Random used to shuffle the possible digits
+	 * @return a new Base that uses the same digits, but almost always with different values for those digits
+	 */
+	public Base scramble (Random random) {
+		Base base = new Base(this);
+		Arrays.fill(base.fromEncoded, -1);
+
+		// Apply Fisher-Yates shuffle to the options.
+		for (int i = base.toEncoded.length - 1; i > 0; i--) {
+			int ii = random.nextInt(i + 1);
+			char temp = base.toEncoded[i];
+			base.toEncoded[i] = base.toEncoded[ii];
+			base.toEncoded[ii] = temp;
+		}
+
+		for (int i = 0; i < base.base; i++) {
+			// Makes from and to arrays match.
+			base.fromEncoded[base.toEncoded[i] & 127] = i;
+		}
+		return this;
 	}
 
 	/**
