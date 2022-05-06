@@ -23,7 +23,7 @@ apply plugin: 'java-library'
 apply plugin: 'com.vanniktech.maven.publish'
 apply plugin: 'idea'
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 def projectName = 'digital'
 
@@ -48,9 +48,7 @@ if (JavaVersion.current().isJava8Compatible()) {
 if(JavaVersion.current().isJava9Compatible()) {
     allprojects {
         tasks.withType(JavaCompile) {
-            options.release.set(7) // You can change this from 7 to 8 if you don't support iOS.
-			                       // Using 7 triggers deprecation warnings on newer JDKs, but RoboVM needs it.
-			                       // However, LWJGL3 needs Java 8 starting in 1.10.1-SNAPSHOT, so...
+            options.release.set(8)
         }
     }
 }

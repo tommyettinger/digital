@@ -288,7 +288,7 @@ public class Base {
 			// Makes from and to arrays match.
 			base.fromEncoded[base.toEncoded[i] & 127] = i;
 		}
-		return this;
+		return base;
 	}
 
 	/**

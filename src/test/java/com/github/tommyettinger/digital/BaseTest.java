@@ -11,7 +11,8 @@ public class BaseTest {
 
 	public static final List<Base> BASES = Arrays.asList(Base.BASE2, Base.BASE8, Base.BASE10, Base.BASE16,
 			Base.BASE36, Base.BASE64, Base.URI_SAFE, Base.SIMPLE64, Base.BASE86,
-			Base.scrambledBase(new Random(123L)), Base.scrambledBase(new Random(12345678890L)));
+			Base.scrambledBase(new Random(123L)), Base.scrambledBase(new Random(12345678890L)),
+			Base.BASE10.scramble(new Random(-12345L)), Base.BASE36.scramble(new Random(-1234567L)));
 	@Test
 	public void testUnsignedInt() {
 		int[] inputs = {0x00000000, 0x00000001, 0xFFFFFFFF, 0x7FFFFFFF, 0x80000000, 0x12345678, 0x89ABCDEF};
@@ -124,7 +125,7 @@ public class BaseTest {
 			Assert.assertArrayEquals(b.longSplit2D(b.appendJoined2D(new StringBuilder(), "`", ",", inputs2D).toString(), "`", ","), inputs2D);
 			Assert.assertArrayEquals(b.longSplit2D(" " + b.appendJoined2D(new StringBuilder(), "`", ",", inputs2D), "`", ",", 1, Integer.MAX_VALUE), inputs2D);
 
-			if(b.base > 10 && b.base <= 36)
+			if(b == Base.BASE16 || b == Base.BASE36)
 			{
 				Assert.assertEquals(Long.parseLong("aaa", b.base), b.readLong("aaa"));
 				Assert.assertEquals(Long.parseLong("AAA", b.base), b.readLong("AAA"));
