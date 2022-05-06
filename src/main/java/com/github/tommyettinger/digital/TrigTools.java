@@ -18,6 +18,7 @@ package com.github.tommyettinger.digital;
 public class TrigTools {
     static public final float FLOAT_ROUNDING_ERROR = 0.000001f; // 32 bits
     static public final float PI = (float)Math.PI;
+    static public final float PI_INVERSE = (float)(1.0/Math.PI);
     static public final float PI2 = PI * 2;
     static public final float HALF_PI = PI / 2;
 
@@ -30,9 +31,11 @@ public class TrigTools {
 
     static private final float radFull = PI2;
     static private final float degFull = 360;
+    static private final float turnFull = 1;
 
     static private final float radToIndex = SIN_COUNT / radFull;
     static private final float degToIndex = SIN_COUNT / degFull;
+    static private final float turnToIndex = SIN_COUNT;
 
     /**
      * Multiply by this to convert from radians to degrees.
@@ -77,6 +80,18 @@ public class TrigTools {
      * inclusive). */
     static public float cosDeg (float degrees) {
         return sinTable[(int)((degrees + 90) * degToIndex) & SIN_MASK];
+    }
+
+    /** Returns the sine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
+     * inclusive). */
+    static public float sinTurns (float turns) {
+        return sinTable[(int)(turns * turnToIndex) & SIN_MASK];
+    }
+
+    /** Returns the cosine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
+     * inclusive). */
+    static public float cosTurns (float turns) {
+        return sinTable[(int)((turns + 0.25f) * turnToIndex) & SIN_MASK];
     }
 
     // ---
