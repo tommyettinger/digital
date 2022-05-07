@@ -33,7 +33,7 @@ public class TrigTools {
     /**
      * 2f times {@link #PI}; the same as {@link #TAU}.
      */
-    public static final float PI2 = PI * 2;
+    public static final float PI2 = PI * 2f;
     /**
      * 2f times {@link #PI}; the same as {@link #PI2}.
      */
@@ -41,11 +41,13 @@ public class TrigTools {
     /**
      * {@link #PI} divided by 2f.
      */
-    public static final float HALF_PI = PI / 2f;
+    public static final float HALF_PI = PI * 0.5f;
     /**
      * {@link #PI} divided by 4f.
      */
-    public static final float QUARTER_PI = PI / 2f;
+    public static final float QUARTER_PI = PI * 0.25f;
+
+    private static final double QUARTER_PI_D = Math.PI * 0.25;
 
     /**
      * This is the same as {@link Math#E} cast to a float; that is, it is closest to the base of natural logarithms.
@@ -202,15 +204,41 @@ public class TrigTools {
         double c7 = c5 * c2;
         double c9 = c7 * c2;
         double c11 = c9 * c2;
-        return (float) (Math.signum(i) * ((Math.PI * 0.25)
+        return (float) (Math.signum(i) * (QUARTER_PI_D
                 + (0.99997726 * c - 0.33262347 * c3 + 0.19354346 * c5 - 0.11643287 * c7 + 0.05265332 * c9 - 0.0117212 * c11)));
     }
 
     /**
-     * Close approximation of the frequently-used trigonometric method atan2, with higher precision than libGDX's atan2
-     * approximation. Average error is 1.057E-6 radians; maximum error is 1.922E-6. Takes y and x (in that unusual order) as
+     * A variant on {@link #atanDeg(float)} that does not tolerate infinite inputs for speed reasons. This can be given a double
+     * parameter, but is otherwise the same as atanDeg(float), and returns a float like that method. It uses the same approximation,
+     * from sheet 11 of "Approximations for Digital Computers." This is mostly meant to be used inside
+     * {@link #atan2(float, float)}, but it may be a tiny bit faster than atanDeg(float) in other code.
+     *
+     * @param i any finite double or float, but more commonly a float
+     * @return an output from the inverse tangent function in degrees, from {@code -90} to {@code 90} inclusive
+     */
+    public static float atanUncheckedDeg(double i) {
+        // We use double precision internally, because some constants need double precision.
+        double n = Math.abs(i);
+        // c uses the "equally-good" formulation that permits n to be from 0 to almost infinity.
+        double c = (n - 1.0) / (n + 1.0);
+        // The approximation needs 6 odd powers of c.
+        double c2 = c * c;
+        double c3 = c * c2;
+        double c5 = c3 * c2;
+        double c7 = c5 * c2;
+        double c9 = c7 * c2;
+        double c11 = c9 * c2;
+        return (float) (Math.signum(i) * (45.0
+                + (57.2944766070562 * c - 19.05792099799635 * c3 + 11.089223410359068 * c5 - 6.6711120475953765 * c7 + 3.016813013351768 * c9 - 0.6715752908287405 * c11)));
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using radians. Average error is
+     * 1.057E-6 radians; maximum error is 1.922E-6. Takes y and x (in that unusual order) as
      * floats, and returns the angle from the origin to that point in radians. It is about 4 times faster than
-     * {@link Math#atan2(double, double)} (roughly 15 ns instead of roughly 60 ns for Math, on Java 8 HotSpot). <br>
+     * {@link Math#atan2(double, double)} (roughly 15 ns instead of roughly 60 ns for Math, on Java 8 HotSpot).
+     * <br>
      * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This is sheet
      * 11's algorithm, which is the fourth-fastest and fourth-least precise. The algorithms on sheets 8-10 are faster, but only by
      * a very small degree, and are considerably less precise. That study provides an {@link #atan(float)} method, and that cleanly
@@ -233,6 +261,36 @@ public class TrigTools {
         } else if (y > 0)
             return x + HALF_PI;
         else if (y < 0) return x - HALF_PI;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using positive or negative degrees.
+     * Average error is ??? degrees; maximum error is ???. Takes y and x (in that unusual order) as
+     * floats, and returns the angle from the origin to that point in degrees.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This is sheet
+     * 11's algorithm, which is the fourth-fastest and fourth-least precise. The algorithms on sheets 8-10 are faster, but only by
+     * a very small degree, and are considerably less precise. That study provides an {@link #atan(float)} method, and that cleanly
+     * translates to atan2Deg().
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a float; ranges from {@code -180} to {@code 180}
+     */
+    public static float atan2Deg(final float y, float x) {
+        float n = y / x;
+        if (n != n)
+            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if (x > 0)
+            return atanUncheckedDeg(n);
+        else if (x < 0) {
+            if (y >= 0) return atanUncheckedDeg(n) + 180f;
+            return atanUnchecked(n) - 180f;
+        } else if (y > 0)
+            return x + 90f;
+        else if (y < 0) return x - 90f;
         return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
@@ -297,8 +355,37 @@ public class TrigTools {
         double c7 = c5 * c2;
         double c9 = c7 * c2;
         double c11 = c9 * c2;
-        return (float) (Math.signum(i) * ((Math.PI * 0.25)
+        return (float) (Math.signum(i) * (QUARTER_PI_D
                 + (0.99997726 * c - 0.33262347 * c3 + 0.19354346 * c5 - 0.11643287 * c7 + 0.05265332 * c9 - 0.0117212 * c11)));
+    }
+
+    /**
+     * Arc tangent approximation returning a value measured in positive or negative degrees, using an algorithm from the
+     * 1955 research study "Approximations for Digital Computers," by RAND Corporation (this is sheet 11's algorithm,
+     * which is the fourth-fastest and fourth-least precise).
+     * For finite inputs only, you may get a tiny speedup by using {@link #atanUncheckedDeg(double)}, but this method will be correct
+     * enough for infinite inputs, and atanUnchecked() will not be.
+     *
+     * @param i an input to the inverse tangent function; any float is accepted
+     * @return an output from the inverse tangent function in degrees, from {@code -90} to {@code 90} inclusive
+     * @see #atanUncheckedDeg(double) If you know the input will be finite, you can use atanUncheckedDeg() instead.
+     */
+    public static float atanDeg(float i) {
+        // We use double precision internally, because some constants need double precision.
+        // This clips infinite inputs at Double.MAX_VALUE, which still probably becomes infinite
+        // again when converted back to float.
+        double n = Math.min(Math.abs(i), Double.MAX_VALUE);
+        // c uses the "equally-good" formulation that permits n to be from 0 to almost infinity.
+        double c = (n - 1.0) / (n + 1.0);
+        // The approximation needs 6 odd powers of c.
+        double c2 = c * c;
+        double c3 = c * c2;
+        double c5 = c3 * c2;
+        double c7 = c5 * c2;
+        double c9 = c7 * c2;
+        double c11 = c9 * c2;
+        return (float) (Math.signum(i) * (45.0
+                + (57.2944766070562 * c - 19.05792099799635 * c3 + 11.089223410359068 * c5 - 6.6711120475953765 * c7 + 3.016813013351768 * c9 - 0.6715752908287405 * c11)));
     }
 
 }
