@@ -295,6 +295,38 @@ public class TrigTools {
     }
 
     /**
+     * Close approximation of the frequently-used trigonometric method atan2, using positive degrees only.
+     * Average error is ??? degrees; maximum error is ???. Takes y and x (in that unusual order) as
+     * floats, and returns the angle from the origin to that point in degrees.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This is sheet
+     * 11's algorithm, which is the fourth-fastest and fourth-least precise. The algorithms on sheets 8-10 are faster, but only by
+     * a very small degree, and are considerably less precise. That study provides an {@link #atan(float)} method, and that cleanly
+     * translates to atan2Deg360().
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a float; ranges from {@code 0} to {@code 360}
+     */
+    public static float atan2Deg360(final float y, float x) {
+        float n = y / x;
+        if (n != n)
+            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0)
+                return atanUncheckedDeg(n);
+            else
+                return atanUncheckedDeg(n) + 360f;
+        }
+        else if (x < 0) {
+            return atanUncheckedDeg(n) + 180f;
+        } else if (y > 0) return x + 90f;
+        else if (y < 0) return x + 270f;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
      * Returns acos in radians; less accurate than Math.acos but may be faster. Average error of 0.00002845 radians (0.0016300649
      * degrees), largest error of 0.000067548 radians (0.0038702153 degrees). This implementation does not return NaN if given an
      * out-of-range input (Math.acos does return NaN), unless the input is NaN.
