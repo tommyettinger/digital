@@ -202,8 +202,8 @@ public class TrigTools {
         double c7 = c5 * c2;
         double c9 = c7 * c2;
         double c11 = c9 * c2;
-        return (float)Math.copySign((Math.PI * 0.25)
-                + (0.99997726 * c - 0.33262347 * c3 + 0.19354346 * c5 - 0.11643287 * c7 + 0.05265332 * c9 - 0.0117212 * c11), i);
+        return (float) (Math.signum(i) * ((Math.PI * 0.25)
+                + (0.99997726 * c - 0.33262347 * c3 + 0.19354346 * c5 - 0.11643287 * c7 + 0.05265332 * c9 - 0.0117212 * c11)));
     }
 
     /**
@@ -248,10 +248,10 @@ public class TrigTools {
         float a2 = a * a; // a squared
         float a3 = a * a2; // a cubed
         if (a >= 0f) {
-            return (float)Math.sqrt(1f - a) * (1.5707288f - 0.2121144f * a + 0.0742610f * a2 - 0.0187293f * a3);
+            return (float) Math.sqrt(1f - a) * (1.5707288f - 0.2121144f * a + 0.0742610f * a2 - 0.0187293f * a3);
         }
-        return 3.14159265358979323846f
-                - (float)Math.sqrt(1f + a) * (1.5707288f + 0.2121144f * a + 0.0742610f * a2 + 0.0187293f * a3);
+        return PI
+                - (float) Math.sqrt(1f + a) * (1.5707288f + 0.2121144f * a + 0.0742610f * a2 + 0.0187293f * a3);
     }
 
     /**
@@ -266,10 +266,10 @@ public class TrigTools {
         float a2 = a * a; // a squared
         float a3 = a * a2; // a cubed
         if (a >= 0f) {
-            return 1.5707963267948966f
-                    - (float)Math.sqrt(1f - a) * (1.5707288f - 0.2121144f * a + 0.0742610f * a2 - 0.0187293f * a3);
+            return HALF_PI
+                    - (float) Math.sqrt(1f - a) * (1.5707288f - 0.2121144f * a + 0.0742610f * a2 - 0.0187293f * a3);
         }
-        return -1.5707963267948966f + (float)Math.sqrt(1f + a) * (1.5707288f + 0.2121144f * a + 0.0742610f * a2 + 0.0187293f * a3);
+        return (float) Math.sqrt(1f + a) * (1.5707288f + 0.2121144f * a + 0.0742610f * a2 + 0.0187293f * a3) - HALF_PI;
     }
 
     /**
@@ -297,8 +297,8 @@ public class TrigTools {
         double c7 = c5 * c2;
         double c9 = c7 * c2;
         double c11 = c9 * c2;
-        return (float)Math.copySign((Math.PI * 0.25)
-                + (0.99997726 * c - 0.33262347 * c3 + 0.19354346 * c5 - 0.11643287 * c7 + 0.05265332 * c9 - 0.0117212 * c11), i);
+        return (float) (Math.signum(i) * ((Math.PI * 0.25)
+                + (0.99997726 * c - 0.33262347 * c3 + 0.19354346 * c5 - 0.11643287 * c7 + 0.05265332 * c9 - 0.0117212 * c11)));
     }
 
 }
