@@ -17,10 +17,16 @@ package com.github.tommyettinger.digital;
 
 /**
  * Various trigonometric approximations, using a lookup table for sin(), cos(), and tan(), and Taylor series for their
- * inverses. Yes, I know Taylor series are not optimal over large input ranges. But, asin() and acos() do not have large
- * input ranges permissible. This also has an atan2() approximation defined with output in radians.
+ * inverses. This supplies variants for radians, degrees, and turns. This also has an atan2() approximation defined with
+ * output in radians, degrees, and turns.
  */
-public class TrigTools {
+public final class TrigTools {
+
+    /**
+     * Not meant to be instantiated.
+     */
+    private TrigTools(){}
+
     public static final float FLOAT_ROUNDING_ERROR = 0.000001f; // 32 bits
     /**
      * Everybody's favorite circle-related irrational number, as a float; the same as casting {@link Math#PI} to float.
@@ -190,7 +196,7 @@ public class TrigTools {
      * {@link #atan2(float, float)}, but it may be a tiny bit faster than atan(float) in other code.
      *
      * @param i any finite double or float, but more commonly a float
-     * @return an output from the inverse tangent function, from {@code -HALF_PI} to {@code HALF_PI} inclusive
+     * @return an output from the inverse tangent function in radians, from {@code -HALF_PI} to {@code HALF_PI} inclusive
      */
     public static float atanUnchecked(double i) {
         // We use double precision internally, because some constants need double precision.
@@ -206,6 +212,32 @@ public class TrigTools {
         double c11 = c9 * c2;
         return (float) (Math.signum(i) * (QUARTER_PI_D
                 + (0.99997726 * c - 0.33262347 * c3 + 0.19354346 * c5 - 0.11643287 * c7 + 0.05265332 * c9 - 0.0117212 * c11)));
+    }
+
+    /**
+     * A variant on {@link #atanTurns(float)} that does not tolerate infinite inputs for speed reasons. This can be given a double
+     * parameter, but is otherwise the same as atanTurns(float), but returns a double in case external code needs higher precision.
+     * It uses the same approximation, from sheet 11 of "Approximations for Digital Computers." This is mostly meant to be used inside
+     * {@link #atan2Turns(float, float)}, but it may be a tiny bit faster than atanTurns(float) in other code.
+     *
+     * @param i any finite double or float, but more commonly a float
+     * @return an output from the inverse tangent function in turns, from {@code -0.5} to {@code 0.5} inclusive
+     */
+    public static double atanUncheckedTurns(double i) {
+        // We use double precision internally, because some constants need double precision.
+        double n = Math.abs(i);
+        // c uses the "equally-good" formulation that permits n to be from 0 to almost infinity.
+        double c = (n - 1.0) / (n + 1.0);
+        // The approximation needs 6 odd powers of c.
+        double c2 = c * c;
+        double c3 = c * c2;
+        double c5 = c3 * c2;
+        double c7 = c5 * c2;
+        double c9 = c7 * c2;
+        double c11 = c9 * c2;
+        return (Math.signum(i) * (0.125
+                + (0.15915132390848943 * c - 0.052938669438878753 * c3 + 0.030803398362108523 * c5
+                - 0.01853086679887605 * c7 + 0.008380036148199356 * c9 - 0.0018654869189687236 * c11)));
     }
 
     /**
@@ -295,7 +327,7 @@ public class TrigTools {
     }
 
     /**
-     * Close approximation of the frequently-used trigonometric method atan2, using positive degrees only.
+     * Close approximation of the frequently-used trigonometric method atan2, using non-negative degrees only.
      * Average error is ??? degrees; maximum error is ???. Takes y and x (in that unusual order) as
      * floats, and returns the angle from the origin to that point in degrees.
      * <br>
@@ -323,6 +355,38 @@ public class TrigTools {
             return atanUncheckedDeg(n) + 180f;
         } else if (y > 0) return x + 90f;
         else if (y < 0) return x + 270f;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using non-negative turns only.
+     * Average error is ??? degrees; maximum error is ???. Takes y and x (in that unusual order) as
+     * floats, and returns the angle from the origin to that point in turns.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This is sheet
+     * 11's algorithm, which is the fourth-fastest and fourth-least precise. The algorithms on sheets 8-10 are faster, but only by
+     * a very small degree, and are considerably less precise. That study provides an {@link #atan(float)} method, and that cleanly
+     * translates to atan2Turns().
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in turns as a float; ranges from {@code 0.0f} to {@code 1.0f}
+     */
+    public static float atan2Turns(final float y, float x) {
+        float n = y / x;
+        if (n != n)
+            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0)
+                return (float) atanUncheckedTurns(n);
+            else
+                return (float) (atanUncheckedTurns(n) + 1.0);
+        }
+        else if (x < 0) {
+            return (float) (atanUncheckedTurns(n) + 0.5);
+        } else if (y > 0) return x + 0.25f;
+        else if (y < 0) return x + 0.75f;
         return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
@@ -370,7 +434,7 @@ public class TrigTools {
      * enough for infinite inputs, and atanUnchecked() will not be.
      *
      * @param i an input to the inverse tangent function; any float is accepted
-     * @return an output from the inverse tangent function, from {@code -HALF_PI} to {@code HALF_PI} inclusive
+     * @return an output from the inverse tangent function in radians, from {@code -HALF_PI} to {@code HALF_PI} inclusive
      * @see #atanUnchecked(double) If you know the input will be finite, you can use atanUnchecked() instead.
      */
     public static float atan(float i) {
@@ -418,6 +482,35 @@ public class TrigTools {
         double c11 = c9 * c2;
         return (float) (Math.signum(i) * (45.0
                 + (57.2944766070562 * c - 19.05792099799635 * c3 + 11.089223410359068 * c5 - 6.6711120475953765 * c7 + 3.016813013351768 * c9 - 0.6715752908287405 * c11)));
+    }
+
+    /**
+     * Arc tangent approximation with very low error, using an algorithm from the 1955 research study "Approximations for Digital
+     * Computers," by RAND Corporation (this is sheet 11's algorithm, which is the fourth-fastest and fourth-least precise).
+     * For finite inputs only, you may get a tiny speedup by using {@link #atanUncheckedTurns(double)}, but this method will be correct
+     * enough for infinite inputs, and atanUncheckedTurns() will not be.
+     *
+     * @param i an input to the inverse tangent function; any float is accepted
+     * @return an output from the inverse tangent function in turns, from {@code -HALF_PI} to {@code HALF_PI} inclusive
+     * @see #atanUnchecked(double) If you know the input will be finite, you can use atanUnchecked() instead.
+     */
+    public static float atanTurns(float i) {
+        // We use double precision internally, because some constants need double precision.
+        // This clips infinite inputs at Double.MAX_VALUE, which still probably becomes infinite
+        // again when converted back to float.
+        double n = Math.min(Math.abs(i), Double.MAX_VALUE);
+        // c uses the "equally-good" formulation that permits n to be from 0 to almost infinity.
+        double c = (n - 1.0) / (n + 1.0);
+        // The approximation needs 6 odd powers of c.
+        double c2 = c * c;
+        double c3 = c * c2;
+        double c5 = c3 * c2;
+        double c7 = c5 * c2;
+        double c9 = c7 * c2;
+        double c11 = c9 * c2;
+        return (float) (Math.signum(i) * (0.125
+                + (0.15915132390848943 * c - 0.052938669438878753 * c3 + 0.030803398362108523 * c5
+                - 0.01853086679887605 * c7 + 0.008380036148199356 * c9 - 0.0018654869189687236 * c11)));
     }
 
 }
