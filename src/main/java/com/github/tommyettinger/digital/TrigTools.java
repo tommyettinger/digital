@@ -109,7 +109,7 @@ public final class TrigTools {
         SIN_TABLE[0] = 0f;
         SIN_TABLE[(int) (90 * degToIndex) & TABLE_MASK] = 1f;
         SIN_TABLE[(int) (180 * degToIndex) & TABLE_MASK] = 0f;
-        SIN_TABLE[(int) (270 * degToIndex) & TABLE_MASK] = -1f;
+        SIN_TABLE[(int) (270 * degToIndex) & TABLE_MASK] = -1.0f;
     }
 
     /**
@@ -292,7 +292,7 @@ public final class TrigTools {
     public static float atan2(final float y, float x) {
         float n = y / x;
         if (n != n)
-            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+            n = (y == x ? 1f : -1.0f); // if both y and x are infinite, n would be NaN
         else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
         if (x > 0)
             return atanUnchecked(n);
@@ -322,7 +322,7 @@ public final class TrigTools {
     public static float atan2Deg(final float y, float x) {
         float n = y / x;
         if (n != n)
-            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+            n = (y == x ? 1f : -1.0f); // if both y and x are infinite, n would be NaN
         else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
         if (x > 0)
             return atanUncheckedDeg(n);
@@ -352,7 +352,7 @@ public final class TrigTools {
     public static float atan2Deg360(final float y, float x) {
         float n = y / x;
         if (n != n)
-            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+            n = (y == x ? 1f : -1.0f); // if both y and x are infinite, n would be NaN
         else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
         if (x > 0) {
             if (y >= 0)
@@ -384,7 +384,7 @@ public final class TrigTools {
     public static float atan2Turns(final float y, float x) {
         float n = y / x;
         if (n != n)
-            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+            n = (y == x ? 1f : -1.0f); // if both y and x are infinite, n would be NaN
         else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
         if (x > 0) {
             if (y >= 0)
@@ -435,6 +435,23 @@ public final class TrigTools {
     }
 
     /**
+     * Returns arcsine in turns. This implementation does not return NaN if given an
+     * out-of-range input (Math.asin does return NaN), unless the input is NaN.
+     * Note that unlike {@link #atan2Turns(float, float)}, this can return negative turn values.
+     *
+     * @param a asin is defined only when a is between -1f and 1f, inclusive
+     * @return between {@code -0.25} and {@code 0.25} when a is in the defined range
+     */
+    public static float asinTurns(float a) {
+        float a2 = a * a; // a squared
+        float a3 = a * a2; // a cubed
+        if (a >= 0f) {
+            return (float)(0.25 - Math.sqrt(1.0 - a) * (0.24998925277680104 - 0.033759055260971525 * a + 0.011819005228947238 * a2 - 0.0029808606756510357 * a3));
+        }
+        return (float) (Math.sqrt(1.0 + a) * (0.24998925277680104 + 0.033759055260971525 * a + 0.011819005228947238 * a2 + 0.0029808606756510357 * a3) - 0.25);
+    }
+
+    /**
      * Returns arccosine in radians; less accurate than Math.acos but may be faster. Average error of 0.00002845 radians (0.0016300649
      * degrees), largest error of 0.000067548 radians (0.0038702153 degrees). This implementation does not return NaN if given an
      * out-of-range input (Math.acos does return NaN), unless the input is NaN.
@@ -467,6 +484,22 @@ public final class TrigTools {
         }
         return 180f
                 - (float) Math.sqrt(1f + a) * (89.99613099964837f + 12.153259533621753f * a + 4.254842010910525f * a2 + 1.0731098035209208f * a3);
+    }
+
+    /**
+     * Returns arccosine in turns. This implementation does not return NaN if given an
+     * out-of-range input (Math.acos does return NaN), unless the input is NaN.
+     *
+     * @param a acos is defined only when a is between -1f and 1f, inclusive
+     * @return between {@code 0} and {@code 0.5} when a is in the defined range
+     */
+    public static float acosTurns(float a) {
+        float a2 = a * a; // a squared
+        float a3 = a * a2; // a cubed
+        if (a >= 0f) {
+            return (float) (Math.sqrt(1.0 - a) * (0.24998925277680104 - 0.033759055260971525 * a + 0.011819005228947238 * a2 - 0.0029808606756510357 * a3));
+        }
+        return (float) (0.5 - Math.sqrt(1.0 + a) * (0.24998925277680104 + 0.033759055260971525 * a + 0.011819005228947238 * a2 + 0.0029808606756510357 * a3));
     }
 
     /**
