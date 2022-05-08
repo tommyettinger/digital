@@ -89,7 +89,7 @@ public final class TrigTools {
     /**
      * Multiply by this to convert from degrees to radians.
      */
-    public static final float degreesToRadians = PI / 180;
+    public static final float degreesToRadians = PI / 180f;
     /**
      * A precalculated table of 16384 floats, corresponding to the y-value of points on the unit circle, ordered by
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
@@ -115,6 +115,7 @@ public final class TrigTools {
     /**
      * Returns the sine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
      * inclusive).
+     * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
      */
     public static float sin(float radians) {
         return SIN_TABLE[(int) (radians * radToIndex) & TABLE_MASK];
@@ -123,6 +124,7 @@ public final class TrigTools {
     /**
      * Returns the cosine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
      * inclusive).
+     * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
      */
     public static float cos(float radians) {
         return SIN_TABLE[(int) ((radians + HALF_PI) * radToIndex) & TABLE_MASK];
@@ -131,6 +133,7 @@ public final class TrigTools {
     /**
      * Returns the tangent in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
      * inclusive).
+     * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
      */
     public static float tan(float radians) {
         final int idx = (int) (radians * radToIndex) & TABLE_MASK;
@@ -140,6 +143,7 @@ public final class TrigTools {
     /**
      * Returns the sine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
      * inclusive).
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
      */
     public static float sinDeg(float degrees) {
         return SIN_TABLE[(int) (degrees * degToIndex) & TABLE_MASK];
@@ -148,6 +152,7 @@ public final class TrigTools {
     /**
      * Returns the cosine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
      * inclusive).
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
      */
     public static float cosDeg(float degrees) {
         return SIN_TABLE[(int) ((degrees + 90) * degToIndex) & TABLE_MASK];
@@ -156,6 +161,7 @@ public final class TrigTools {
     /**
      * Returns the tangent in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
      * inclusive).
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
      */
     public static float tanDeg(float degrees) {
         final int idx = (int) (degrees * degToIndex) & TABLE_MASK;
@@ -165,6 +171,7 @@ public final class TrigTools {
     /**
      * Returns the sine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
      * inclusive).
+     * @param turns an angle in turns, where 0 to 1 is one rotation
      */
     public static float sinTurns(float turns) {
         return SIN_TABLE[(int) (turns * turnToIndex) & TABLE_MASK];
@@ -173,6 +180,7 @@ public final class TrigTools {
     /**
      * Returns the cosine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
      * inclusive).
+     * @param turns an angle in turns, where 0 to 1 is one rotation
      */
     public static float cosTurns(float turns) {
         return SIN_TABLE[(int) ((turns + 0.25f) * turnToIndex) & TABLE_MASK];
@@ -181,6 +189,7 @@ public final class TrigTools {
     /**
      * Returns the tangent in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
      * inclusive).
+     * @param turns an angle in turns, where 0 to 1 is one rotation
      */
     public static float tanTurns(float turns) {
         final int idx = (int) (turns * turnToIndex) & TABLE_MASK;
@@ -391,7 +400,42 @@ public final class TrigTools {
     }
 
     /**
-     * Returns acos in radians; less accurate than Math.acos but may be faster. Average error of 0.00002845 radians (0.0016300649
+     * Returns arcsine in radians; less accurate than Math.asin but may be faster. Average error of 0.000028447 radians (0.0016298931
+     * degrees), largest error of 0.000067592 radians (0.0038727364 degrees). This implementation does not return NaN if given an
+     * out-of-range input (Math.asin does return NaN), unless the input is NaN.
+     *
+     * @param a asin is defined only when a is between -1f and 1f, inclusive
+     * @return between {@code -HALF_PI} and {@code HALF_PI} when a is in the defined range
+     */
+    public static float asin(float a) {
+        float a2 = a * a; // a squared
+        float a3 = a * a2; // a cubed
+        if (a >= 0f) {
+            return HALF_PI
+                    - (float) Math.sqrt(1f - a) * (1.5707288f - 0.2121144f * a + 0.0742610f * a2 - 0.0187293f * a3);
+        }
+        return (float) Math.sqrt(1f + a) * (1.5707288f + 0.2121144f * a + 0.0742610f * a2 + 0.0187293f * a3) - HALF_PI;
+    }
+
+    /**
+     * Returns arcsine in degrees. This implementation does not return NaN if given an
+     * out-of-range input (Math.asin does return NaN), unless the input is NaN.
+     *
+     * @param a asin is defined only when a is between -1f and 1f, inclusive
+     * @return between {@code -90} and {@code 90} when a is in the defined range
+     */
+    public static float asinDeg(float a) {
+        float a2 = a * a; // a squared
+        float a3 = a * a2; // a cubed
+        if (a >= 0f) {
+            return 90f
+                    - (float) Math.sqrt(1f - a) * (89.99613099964837f - 12.153259893949748f * a + 4.2548418824210055f * a2 - 1.0731098432343729f * a3);
+        }
+        return (float) Math.sqrt(1f + a) * (89.99613099964837f + 12.153259893949748f * a + 4.2548418824210055f * a2 + 1.0731098432343729f * a3) - 90f;
+    }
+
+    /**
+     * Returns arccosine in radians; less accurate than Math.acos but may be faster. Average error of 0.00002845 radians (0.0016300649
      * degrees), largest error of 0.000067548 radians (0.0038702153 degrees). This implementation does not return NaN if given an
      * out-of-range input (Math.acos does return NaN), unless the input is NaN.
      *
@@ -409,21 +453,20 @@ public final class TrigTools {
     }
 
     /**
-     * Returns asin in radians; less accurate than Math.asin but may be faster. Average error of 0.000028447 radians (0.0016298931
-     * degrees), largest error of 0.000067592 radians (0.0038727364 degrees). This implementation does not return NaN if given an
-     * out-of-range input (Math.asin does return NaN), unless the input is NaN.
+     * Returns arccosine in degrees. This implementation does not return NaN if given an
+     * out-of-range input (Math.acos does return NaN), unless the input is NaN.
      *
-     * @param a asin is defined only when a is between -1f and 1f, inclusive
-     * @return between {@code -HALF_PI} and {@code HALF_PI} when a is in the defined range
+     * @param a acos is defined only when a is between -1f and 1f, inclusive
+     * @return between {@code 0} and {@code 180} when a is in the defined range
      */
-    public static float asin(float a) {
+    public static float acosDeg(float a) {
         float a2 = a * a; // a squared
         float a3 = a * a2; // a cubed
         if (a >= 0f) {
-            return HALF_PI
-                    - (float) Math.sqrt(1f - a) * (1.5707288f - 0.2121144f * a + 0.0742610f * a2 - 0.0187293f * a3);
+            return (float) Math.sqrt(1f - a) * (89.99613099964837f - 12.153259533621753f * a + 4.254842010910525f * a2 - 1.0731098035209208f * a3);
         }
-        return (float) Math.sqrt(1f + a) * (1.5707288f + 0.2121144f * a + 0.0742610f * a2 + 0.0187293f * a3) - HALF_PI;
+        return 180f
+                - (float) Math.sqrt(1f + a) * (89.99613099964837f + 12.153259533621753f * a + 4.254842010910525f * a2 + 1.0731098035209208f * a3);
     }
 
     /**
