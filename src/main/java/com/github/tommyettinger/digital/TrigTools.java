@@ -27,9 +27,10 @@ public final class TrigTools {
      */
     private TrigTools(){}
 
-    public static final float FLOAT_ROUNDING_ERROR = 0.000001f; // 32 bits
     /**
-     * Everybody's favorite circle-related irrational number, as a float; the same as casting {@link Math#PI} to float.
+     * The {@code float} value that is closer than any other to
+     * <i>pi</i>, the ratio of the circumference of a circle to its
+     * diameter.
      */
     public static final float PI = (float) Math.PI;
     /**
@@ -54,11 +55,6 @@ public final class TrigTools {
     public static final float QUARTER_PI = PI * 0.25f;
 
     private static final double QUARTER_PI_D = Math.PI * 0.25;
-
-    /**
-     * This is the same as {@link Math#E} cast to a float; that is, it is closest to the base of natural logarithms.
-     */
-    public static final float E = (float) Math.E;
 
     private static final int SIN_BITS = 14; // 64KB. Adjust for accuracy.
     /**
