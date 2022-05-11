@@ -123,7 +123,7 @@ public class ArrayTools {
 
     /**
      * Stupidly simple convenience method that produces a char array containing only letters that can be reasonably
-     * displayed (with SquidLib's default text display assets, at least). The letters are copied from a single source
+     * displayed with many fonts. The letters are copied from a single source
      * of 256 chars; if you need more chars or you don't need pure letters, you can use {@link #charSpan(char, char)}.
      * This set does not contain "visual duplicate" letters, such as Latin alphabet capital letter 'A' and Greek
      * alphabet capital letter alpha, 'Α'; it does contain many accented Latin letters and the visually-distinct Greek
@@ -140,13 +140,13 @@ public class ArrayTools {
     }
 
     /**
-     * Gets the nth letter from the set that SquidLib is likely to support; from index 0 (returning 'A') to 255
+     * Gets the nth letter from the set of 256 visually distinct glyphs; from index 0 (returning 'A') to 255
      * (returning the Greek lower-case letter gamma, 'γ') and wrapping around if given negative numbers or numbers
      * larger than 255. This set does not contain "visual duplicate" letters, such as Latin alphabet capital letter 'A'
      * and Greek alphabet capital letter alpha, 'Α'; it does contain many accented Latin letters and the
      * visually-distinct Greek letters, up to a point.
      * @param index typically from 0 to 255, but all ints are allowed and will produce letters
-     * @return the letter at the given index in a 256-element portion of the letters SquidLib usually supports
+     * @return the letter at the given index in a 256-element portion of visually distinct letters
      */
     public static char letterAt(int index)
     {
