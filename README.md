@@ -63,3 +63,15 @@ and this in your GdxDefinition.gwt.xml file:
 ```xml
 <inherits name="digital" />
 ```
+
+You can also use JitPack to get a recent commit; in that case,
+follow [its instructions here](https://jitpack.io/#tommyettinger/digital/).
+
+## License
+
+[Apache 2.0](LICENSE). This includes some modified code from
+[libGDX](https://github.com/libgdx/libgdx), 
+[SquidLib](https://github.com/yellowstonegames/SquidLib),
+[SquidSquad](https://github.com/yellowstonegames/SquidSquad),
+[Uncommon Maths](https://maths.uncommons.org/), and
+[wyhash](https://github.com/wangyi-fudan/wyhash).
