@@ -23,7 +23,12 @@ import java.util.Arrays;
  * filling 2D arrays of primitive types (char, int, float, double, and boolean). Has a few methods for creating ranges
  * of ints or chars easily as 1D arrays.
  */
-public class ArrayTools {
+public final class ArrayTools {
+
+    /**
+     * Cannot be instantiated.
+     */
+    private ArrayTools(){}
 
     /**
      * 256 Latin and Greek letters, in upper and lower case, chosen so none should look identical. Useful when randomly

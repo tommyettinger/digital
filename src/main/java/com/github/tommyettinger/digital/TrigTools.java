@@ -205,7 +205,7 @@ public final class TrigTools {
      * @param i any finite double or float, but more commonly a float
      * @return an output from the inverse tangent function in radians, from {@code -HALF_PI} to {@code HALF_PI} inclusive
      */
-    public static float atanUnchecked(double i) {
+    public static double atanUnchecked(double i) {
         // We use double precision internally, because some constants need double precision.
         double n = Math.abs(i);
         // c uses the "equally-good" formulation that permits n to be from 0 to almost infinity.
@@ -217,7 +217,7 @@ public final class TrigTools {
         double c7 = c5 * c2;
         double c9 = c7 * c2;
         double c11 = c9 * c2;
-        return (float) (Math.signum(i) * (QUARTER_PI_D
+        return (Math.signum(i) * (QUARTER_PI_D
                 + (0.99997726 * c - 0.33262347 * c3 + 0.19354346 * c5 - 0.11643287 * c7 + 0.05265332 * c9 - 0.0117212 * c11)));
     }
 
@@ -256,7 +256,7 @@ public final class TrigTools {
      * @param i any finite double or float, but more commonly a float
      * @return an output from the inverse tangent function in degrees, from {@code -90} to {@code 90} inclusive
      */
-    public static float atanUncheckedDeg(double i) {
+    public static double atanUncheckedDeg(double i) {
         // We use double precision internally, because some constants need double precision.
         double n = Math.abs(i);
         // c uses the "equally-good" formulation that permits n to be from 0 to almost infinity.
@@ -268,7 +268,7 @@ public final class TrigTools {
         double c7 = c5 * c2;
         double c9 = c7 * c2;
         double c11 = c9 * c2;
-        return (float) (Math.signum(i) * (45.0
+        return (Math.signum(i) * (45.0
                 + (57.2944766070562 * c - 19.05792099799635 * c3 + 11.089223410359068 * c5 - 6.6711120475953765 * c7 + 3.016813013351768 * c9 - 0.6715752908287405 * c11)));
     }
 
@@ -293,10 +293,10 @@ public final class TrigTools {
             n = (y == x ? 1f : -1.0f); // if both y and x are infinite, n would be NaN
         else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
         if (x > 0)
-            return atanUnchecked(n);
+            return (float) atanUnchecked(n);
         else if (x < 0) {
-            if (y >= 0) return atanUnchecked(n) + PI;
-            return atanUnchecked(n) - PI;
+            if (y >= 0) return (float) (atanUnchecked(n) + Math.PI);
+            return (float) (atanUnchecked(n) - Math.PI);
         } else if (y > 0)
             return x + HALF_PI;
         else if (y < 0) return x - HALF_PI;
@@ -323,10 +323,10 @@ public final class TrigTools {
             n = (y == x ? 1f : -1.0f); // if both y and x are infinite, n would be NaN
         else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
         if (x > 0)
-            return atanUncheckedDeg(n);
+            return (float) atanUncheckedDeg(n);
         else if (x < 0) {
-            if (y >= 0) return atanUncheckedDeg(n) + 180f;
-            return atanUnchecked(n) - 180f;
+            if (y >= 0) return (float) (atanUncheckedDeg(n) + 180.0);
+            return (float) (atanUncheckedDeg(n) - 180.0);
         } else if (y > 0)
             return x + 90f;
         else if (y < 0) return x - 90f;
@@ -354,12 +354,12 @@ public final class TrigTools {
         else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
         if (x > 0) {
             if (y >= 0)
-                return atanUncheckedDeg(n);
+                return (float) atanUncheckedDeg(n);
             else
-                return atanUncheckedDeg(n) + 360f;
+                return (float) (atanUncheckedDeg(n) + 360.0);
         }
         else if (x < 0) {
-            return atanUncheckedDeg(n) + 180f;
+            return (float) (atanUncheckedDeg(n) + 180.0);
         } else if (y > 0) return x + 90f;
         else if (y < 0) return x + 270f;
         return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
