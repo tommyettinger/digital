@@ -462,6 +462,30 @@ public final class MathTools
     public static float lerp (final float fromValue, final float toValue, final float progress) {
         return fromValue + (toValue - fromValue) * progress;
     }
+    /**
+     * Linearly normalizes value from a range. Range must not be empty. This is the inverse of {@link #lerp(float, float, float)}.
+     * @param rangeStart range start normalized to 0
+     * @param rangeEnd range end normalized to 1
+     * @param value value to normalize
+     * @return normalized value; values outside the range are not clamped to 0 and 1
+     */
+    public static float norm (float rangeStart, float rangeEnd, float value) {
+        return (value - rangeStart) / (rangeEnd - rangeStart);
+    }
+
+    /**
+     * Linearly map a value from one range to another. Input range must not be empty. This is the same as chaining
+     * {@link #norm(float, float, float)} from input range and {@link #lerp(float, float, float)} to output range.
+     * @param inRangeStart input range start
+     * @param inRangeEnd input range end
+     * @param outRangeStart output range start
+     * @param outRangeEnd output range end
+     * @param value value to map
+     * @return mapped value; values outside the input range are not clamped to output range
+     */
+    public static float map (float inRangeStart, float inRangeEnd, float outRangeStart, float outRangeEnd, float value) {
+        return outRangeStart + (value - inRangeStart) * (outRangeEnd - outRangeStart) / (inRangeEnd - inRangeStart);
+    }
 
     /** Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
      * the direction with the smallest delta angle.

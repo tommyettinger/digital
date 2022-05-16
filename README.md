@@ -1,6 +1,6 @@
 # digital
 
-Small utilities for handling math and numbers in Java.
+Utilities for handling math and showing numbers in Java.
 
 ## What is it?
 
