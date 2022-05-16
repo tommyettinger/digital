@@ -38,7 +38,10 @@ filling 2D arrays, and creating ranges of 1D arrays.
 
 Hasher is... large. It provides fast, high-quality hashing
 functions for primitive arrays (and arrays of objects, if they
-implement hashCode()), and has 64-bit and 32-bit variants. It
+implement hashCode()), and has 64-bit and 32-bit variants. The
+specific hashing algorithm it uses is a somewhat-hardened
+version of [wyhash](https://github.com/wangyi-fudan/wyhash) that
+doesn't use 128-bit math. It
 also has a few unary hashes that can be used as quick and dirty
 random number generators when applied to numbers in a sequence.
 
@@ -48,14 +51,14 @@ With Gradle, add this to your dependencies (in your core module,
 for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.0.1"
+api "com.github.tommyettinger:digital:0.0.2"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.0.1:sources"
+api "com.github.tommyettinger:digital:0.0.2:sources"
 ```
 
 and this in your GdxDefinition.gwt.xml file:
