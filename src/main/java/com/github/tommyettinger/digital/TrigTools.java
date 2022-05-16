@@ -27,7 +27,8 @@ public final class TrigTools {
     /**
      * Not meant to be instantiated.
      */
-    private TrigTools(){}
+    private TrigTools() {
+    }
 
     /**
      * The {@code float} value that is closer than any other to
@@ -113,6 +114,7 @@ public final class TrigTools {
     /**
      * Returns the sine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
      * inclusive).
+     *
      * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
      */
     public static float sin(float radians) {
@@ -122,6 +124,7 @@ public final class TrigTools {
     /**
      * Returns the cosine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
      * inclusive).
+     *
      * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
      */
     public static float cos(float radians) {
@@ -131,6 +134,7 @@ public final class TrigTools {
     /**
      * Returns the tangent in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
      * inclusive).
+     *
      * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
      */
     public static float tan(float radians) {
@@ -141,6 +145,7 @@ public final class TrigTools {
     /**
      * Returns the sine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
      * inclusive).
+     *
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      */
     public static float sinDeg(float degrees) {
@@ -150,6 +155,7 @@ public final class TrigTools {
     /**
      * Returns the cosine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
      * inclusive).
+     *
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      */
     public static float cosDeg(float degrees) {
@@ -159,6 +165,7 @@ public final class TrigTools {
     /**
      * Returns the tangent in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
      * inclusive).
+     *
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      */
     public static float tanDeg(float degrees) {
@@ -169,6 +176,7 @@ public final class TrigTools {
     /**
      * Returns the sine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
      * inclusive).
+     *
      * @param turns an angle in turns, where 0 to 1 is one rotation
      */
     public static float sinTurns(float turns) {
@@ -178,6 +186,7 @@ public final class TrigTools {
     /**
      * Returns the cosine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
      * inclusive).
+     *
      * @param turns an angle in turns, where 0 to 1 is one rotation
      */
     public static float cosTurns(float turns) {
@@ -187,6 +196,7 @@ public final class TrigTools {
     /**
      * Returns the tangent in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
      * inclusive).
+     *
      * @param turns an angle in turns, where 0 to 1 is one rotation
      */
     public static float tanTurns(float turns) {
@@ -357,8 +367,7 @@ public final class TrigTools {
                 return (float) atanUncheckedDeg(n);
             else
                 return (float) (atanUncheckedDeg(n) + 360.0);
-        }
-        else if (x < 0) {
+        } else if (x < 0) {
             return (float) (atanUncheckedDeg(n) + 180.0);
         } else if (y > 0) return x + 90f;
         else if (y < 0) return x + 270f;
@@ -389,8 +398,7 @@ public final class TrigTools {
                 return (float) atanUncheckedTurns(n);
             else
                 return (float) (atanUncheckedTurns(n) + 1.0);
-        }
-        else if (x < 0) {
+        } else if (x < 0) {
             return (float) (atanUncheckedTurns(n) + 0.5);
         } else if (y > 0) return x + 0.25f;
         else if (y < 0) return x + 0.75f;
@@ -444,7 +452,7 @@ public final class TrigTools {
         float a2 = a * a; // a squared
         float a3 = a * a2; // a cubed
         if (a >= 0f) {
-            return (float)(0.25 - Math.sqrt(1.0 - a) * (0.24998925277680104 - 0.033759055260971525 * a + 0.011819005228947238 * a2 - 0.0029808606756510357 * a3));
+            return (float) (0.25 - Math.sqrt(1.0 - a) * (0.24998925277680104 - 0.033759055260971525 * a + 0.011819005228947238 * a2 - 0.0029808606756510357 * a3));
         }
         return (float) (Math.sqrt(1.0 + a) * (0.24998925277680104 + 0.033759055260971525 * a + 0.011819005228947238 * a2 + 0.0029808606756510357 * a3) - 0.25);
     }

@@ -15,6 +15,9 @@
  */
 package com.github.tommyettinger.digital;
 
+import static com.github.tommyettinger.digital.TrigTools.PI;
+import static com.github.tommyettinger.digital.TrigTools.PI2;
+
 /**
  * Mathematical operations not provided by {@link Math java.lang.Math}.
  * <br>
@@ -23,15 +26,14 @@ package com.github.tommyettinger.digital;
  * Also includes code adapted from libGDX as their MathUtils class. There's also
  * {@link #cbrt(float)} by Marc B. Reynolds, building on the legendary fast inverse square root,
  * and a generalized bias/gain function, {@link #barronSpline(float, float, float)}, popularized by Jon Barron.
+ *
  * @author Daniel Dyer
  * @author Tommy Ettinger
  * @author Marc B. Reynolds
  * @author Jon Barron
  */
-public final class MathTools
-{
-    private MathTools ()
-    {
+public final class MathTools {
+    private MathTools() {
         // Prevent instantiation.
     }
 
@@ -61,19 +63,17 @@ public final class MathTools
     /**
      * Calculate the first argument raised to the power of the second.
      * This method only supports non-negative powers.
+     *
      * @param value The number to be raised.
      * @param power The exponent (must be positive).
      * @return {@code value} raised to {@code power}.
      */
-    public static long raiseToPower(int value, int power)
-    {
-        if (power < 0)
-        {
+    public static long raiseToPower(int value, int power) {
+        if (power < 0) {
             throw new IllegalArgumentException("This method does not support negative powers.");
         }
         long result = 1;
-        for (int i = 0; i < power; i++)
-        {
+        for (int i = 0; i < power; i++) {
             result *= value;
         }
         return result;
@@ -82,12 +82,12 @@ public final class MathTools
 
     /**
      * Calculate logarithms for arbitrary bases.
+     *
      * @param base The base for the logarithm.
-     * @param arg The value to calculate the logarithm for.
+     * @param arg  The value to calculate the logarithm for.
      * @return The log of {@code arg} in the specified {@code base}.
      */
-    public static double log(double base, double arg)
-    {
+    public static double log(double base, double arg) {
         // Use natural logarithms and change the base.
         return Math.log(arg) / Math.log(base);
     }
@@ -97,13 +97,13 @@ public final class MathTools
      * Equivalent to libGDX's isEqual() method in MathUtils; this compares two doubles for equality and allows the given
      * tolerance during comparison. An example is {@code 0.3 - 0.2 == 0.1} vs. {@code isEqual(0.3 - 0.2, 0.1, 0.000001)};
      * the first is incorrectly false, while the second is correctly true.
-     * @param a the first float to compare
-     * @param b the second float to compare
-     * @param tolerance the maximum difference between a and b permitted for this to return true, inclusive   
+     *
+     * @param a         the first float to compare
+     * @param b         the second float to compare
+     * @param tolerance the maximum difference between a and b permitted for this to return true, inclusive
      * @return true if a and b have a difference less than or equal to tolerance, or false otherwise.
      */
-    public static boolean isEqual (double a, double b, double tolerance)
-    {
+    public static boolean isEqual(double a, double b, double tolerance) {
         return Math.abs(a - b) <= tolerance;
     }
 
@@ -111,23 +111,26 @@ public final class MathTools
      * Equivalent to libGDX's isEqual() method in MathUtils; this compares two floats for equality and allows just enough
      * tolerance to ignore a rounding error. An example is {@code 0.3f - 0.2f == 0.1f} vs. {@code isEqual(0.3f - 0.2f, 0.1f)};
      * the first is incorrectly false, while the second is correctly true.
+     *
      * @param a the first float to compare
      * @param b the second float to compare
      * @return true if a and b are equal or extremely close to equal, or false otherwise.
      */
-    public static boolean isEqual (float a, float b) {
+    public static boolean isEqual(float a, float b) {
         return Math.abs(a - b) <= FLOAT_ROUNDING_ERROR;
     }
+
     /**
      * Equivalent to libGDX's isEqual() method in MathUtils; this compares two floats for equality and allows the given
      * tolerance during comparison. An example is {@code 0.3f - 0.2f == 0.1f} vs. {@code isEqual(0.3f - 0.2f, 0.1f, 0.000001f)};
      * the first is incorrectly false, while the second is correctly true.
-     * @param a the first float to compare
-     * @param b the second float to compare
-     * @param tolerance the maximum difference between a and b permitted for this to return true, inclusive   
+     *
+     * @param a         the first float to compare
+     * @param b         the second float to compare
+     * @param tolerance the maximum difference between a and b permitted for this to return true, inclusive
      * @return true if a and b have a difference less than or equal to tolerance, or false otherwise.
      */
-    public static boolean isEqual (float a, float b, float tolerance) {
+    public static boolean isEqual(float a, float b, float tolerance) {
         return Math.abs(a - b) <= tolerance;
     }
 
@@ -137,14 +140,14 @@ public final class MathTools
      * <br>
      * Note that it can often be just as easy to directly call the same code this calls, while being slightly friendlier
      * to inlining in large method: {@code Math.min(Math.max(value, min), max)}.
+     *
      * @param value The value to check.
-     * @param min The minimum permitted value.
-     * @param max The maximum permitted value.
+     * @param min   The minimum permitted value.
+     * @param max   The maximum permitted value.
      * @return {@code value} if it is between the specified limits, {@code min} if the value
      * is too low, or {@code max} if the value is too high.
      */
-    public static int clamp(int value, int min, int max)
-    {
+    public static int clamp(int value, int min, int max) {
         return Math.min(Math.max(value, min), max);
     }
 
@@ -154,14 +157,14 @@ public final class MathTools
      * <br>
      * Note that it can often be just as easy to directly call the same code this calls, while being slightly friendlier
      * to inlining in large method: {@code Math.min(Math.max(value, min), max)}.
+     *
      * @param value The value to check.
-     * @param min The minimum permitted value.
-     * @param max The maximum permitted value.
+     * @param min   The minimum permitted value.
+     * @param max   The maximum permitted value.
      * @return {@code value} if it is between the specified limits, {@code min} if the value
      * is too low, or {@code max} if the value is too high.
      */
-    public static long clamp(long value, long min, long max)
-    {
+    public static long clamp(long value, long min, long max) {
         return Math.min(Math.max(value, min), max);
     }
 
@@ -172,14 +175,14 @@ public final class MathTools
      * <br>
      * Note that it can often be just as easy to directly call the same code this calls, while being slightly friendlier
      * to inlining in large method: {@code Math.min(Math.max(value, min), max)}.
+     *
      * @param value The value to check.
-     * @param min The minimum permitted value.
-     * @param max The maximum permitted value.
+     * @param min   The minimum permitted value.
+     * @param max   The maximum permitted value.
      * @return {@code value} if it is between the specified limits, {@code min} if the value
      * is too low, or {@code max} if the value is too high.
      */
-    public static double clamp(double value, double min, double max)
-    {
+    public static double clamp(double value, double min, double max) {
         return Math.min(Math.max(value, min), max);
     }
 
@@ -189,21 +192,22 @@ public final class MathTools
      * <br>
      * Note that it can often be just as easy to directly call the same code this calls, while being slightly friendlier
      * to inlining in large method: {@code Math.min(Math.max(value, min), max)}.
+     *
      * @param value The value to check.
-     * @param min The minimum permitted value.
-     * @param max The maximum permitted value.
+     * @param min   The minimum permitted value.
+     * @param max   The maximum permitted value.
      * @return {@code value} if it is between the specified limits, {@code min} if the value
      * is too low, or {@code max} if the value is too high.
      */
-    public static float clamp(float value, float min, float max)
-    {
+    public static float clamp(float value, float min, float max) {
         return Math.min(Math.max(value, min), max);
     }
 
     /**
      * Like the modulo operator {@code %}, but the result will always match the sign of {@code d} instead of {@code op}.
+     *
      * @param op the dividend; negative values are permitted and wrap instead of producing negative results
-     * @param d the divisor; if this is negative then the result will be negative, otherwise it will be positive
+     * @param d  the divisor; if this is negative then the result will be negative, otherwise it will be positive
      * @return the remainder of the division of op by d, with a sign matching d
      */
     public static double remainder(final double op, final double d) {
@@ -215,16 +219,15 @@ public final class MathTools
      * using the Euclidean algorithm.  This method only works with natural
      * numbers.  If negative integers are passed in, the absolute values will
      * be used.  The return value is always positive.
+     *
      * @param a The first value.
      * @param b The second value.
      * @return The greatest common divisor.
      */
-    public static long greatestCommonDivisor(long a, long b)
-    {
+    public static long greatestCommonDivisor(long a, long b) {
         a = Math.abs(a);
         b = Math.abs(b);
-        while (b != 0)
-        {
+        while (b != 0) {
             long temp = b;
             b = a % b;
             a = temp;
@@ -238,11 +241,11 @@ public final class MathTools
      * This is incompatible with GWT, but it should usually only find uses in exploratory code or in tests anyway...
      * It is only incompatible because it tends to rely on multiplication overflow to work. The overload that takes a
      * long and gets the inverse modulo (2 to the 64) is GWT-compatible.
+     *
      * @param a any odd int; note that even numbers do not have inverses modulo 2 to the 32
      * @return the multiplicative inverse of {@code a} modulo 4294967296 (or, 2 to the 32)
      */
-    public static int modularMultiplicativeInverse(final int a)
-    {
+    public static int modularMultiplicativeInverse(final int a) {
         int x = 2 ^ a * 3;
         x *= 2 - a * x;
         x *= 2 - a * x;
@@ -252,11 +255,11 @@ public final class MathTools
 
     /**
      * Given any odd long {@code a}, this finds another odd long {@code b} such that {@code a * b == 1L}.
+     *
      * @param a any odd long; note that even numbers do not have inverses modulo 2 to the 64
      * @return the multiplicative inverse of {@code a} modulo 18446744073709551616 (or, 2 to the 64)
      */
-    public static long modularMultiplicativeInverse(final long a)
-    {
+    public static long modularMultiplicativeInverse(final long a) {
         long x = 2 ^ a * 3;
         x *= 2 - a * x;
         x *= 2 - a * x;
@@ -271,13 +274,14 @@ public final class MathTools
      * <br>
      * This is based on <a href="https://github.com/python/cpython/pull/13244">code recently added to Python</a>, but
      * isn't identical. Notably, this doesn't branch except in the for loop, and it handles negative inputs differently.
+     *
      * @param n a {@code long} value that will be treated as if unsigned
      * @return the square root of n, rounded down to the next lower {@code long} if the result isn't already a {@code long}
      */
     public static long isqrt(final long n) {
         final int c = 63 - Long.numberOfLeadingZeros(n) >> 1;
         long a = 1, d = 0, e;
-        for(int s = 31 & 32 - Integer.numberOfLeadingZeros(c); s > 0;) {
+        for (int s = 31 & 32 - Integer.numberOfLeadingZeros(c); s > 0; ) {
             e = d;
             d = c >>> --s;
             a = (a << d - e - 1) + (n >>> c + c - e - d + 1) / a;
@@ -298,6 +302,7 @@ public final class MathTools
      * this code approximates cbrt(x) and not 1/sqrt(x)). This specific code
      * was originally by Marc B. Reynolds, posted in his
      * <a href="https://github.com/Marc-B-Reynolds/Stand-alone-junk/blob/master/src/Posts/ballcube.c#L182-L197">"Stand-alone-junk" repo</a> .
+     *
      * @param x any finite float to find the cube root of
      * @return the cube root of x, approximated
      */
@@ -306,12 +311,12 @@ public final class MathTools
         final int sign = ix & 0x80000000;
         ix &= 0x7FFFFFFF;
         final float x0 = x;
-        ix = (ix>>>2) + (ix>>>4);
-        ix += (ix>>>4);
-        ix = ix + (ix>>>8) + 0x2A5137A0 | sign;
-        x  = BitConversion.intBitsToFloat(ix);
-        x  = 0.33333334f*(2f * x + x0/(x*x));
-        x  = 0.33333334f*(2f * x + x0/(x*x));
+        ix = (ix >>> 2) + (ix >>> 4);
+        ix += (ix >>> 4);
+        ix = ix + (ix >>> 8) + 0x2A5137A0 | sign;
+        x = BitConversion.intBitsToFloat(ix);
+        x = 0.33333334f * (2f * x + x0 / (x * x));
+        x = 0.33333334f * (2f * x + x0 / (x * x));
         return x;
     }
 
@@ -326,8 +331,9 @@ public final class MathTools
      * starting and ending levels), or to be the inverse when less than 1 (where values start like square
      * root does, taking off very quickly, but also end like square does, landing abruptly at the ending
      * level). You should only give x values between 0 and 1, inclusive.
-     * @param x progress through the spline, from 0 to 1, inclusive
-     * @param shape must be greater than or equal to 0; values greater than 1 are "normal interpolations" 
+     *
+     * @param x       progress through the spline, from 0 to 1, inclusive
+     * @param shape   must be greater than or equal to 0; values greater than 1 are "normal interpolations"
      * @param turning a value between 0.0 and 1.0, inclusive, where the shape changes
      * @return a float between 0 and 1, inclusive
      */
@@ -348,8 +354,9 @@ public final class MathTools
      * starting and ending levels), or to be the inverse when less than 1 (where values start like square
      * root does, taking off very quickly, but also end like square does, landing abruptly at the ending
      * level). You should only give x values between 0 and 1, inclusive.
-     * @param x progress through the spline, from 0 to 1, inclusive
-     * @param shape must be greater than or equal to 0; values greater than 1 are "normal interpolations" 
+     *
+     * @param x       progress through the spline, from 0 to 1, inclusive
+     * @param shape   must be greater than or equal to 0; values greater than 1 are "normal interpolations"
      * @param turning a value between 0.0 and 1.0, inclusive, where the shape changes
      * @return a double between 0 and 1, inclusive
      */
@@ -369,6 +376,7 @@ public final class MathTools
     public static long longFloor(double t) {
         return t >= 0.0 ? (long) t : (long) t - 1L;
     }
+
     /**
      * Like {@link Math#floor(double)}, but takes a float and returns a long.
      * Doesn't consider "weird floats" like INFINITY and NaN.
@@ -379,49 +387,58 @@ public final class MathTools
     public static long longFloor(float t) {
         return t >= 0f ? (long) t : (long) t - 1L;
     }
+
     /**
      * Like {@link Math#floor(double)} , but returns an int.
      * Doesn't consider "weird doubles" like INFINITY and NaN.
+     *
      * @param t the float to find the floor for
      * @return the floor of t, as an int
      */
     public static int fastFloor(double t) {
         return t >= 0.0 ? (int) t : (int) t - 1;
     }
+
     /**
      * Like {@link Math#floor(double)}, but takes a float and returns an int.
      * Doesn't consider "weird floats" like INFINITY and NaN. This method will only properly floor
      * floats from {@code -16384} to {@code Float.MAX_VALUE - 16384}.
      * <br>
      * Taken from libGDX MathUtils.
+     *
      * @param t the float to find the floor for
      * @return the floor of t, as an int
      */
     public static int fastFloor(float t) {
-        return ((int)(t + 0x1p14) - 0x4000);
+        return ((int) (t + 0x1p14) - 0x4000);
     }
+
     /**
      * Like {@link Math#ceil(double)}, but returns an int.
      * Doesn't consider "weird doubles" like INFINITY and NaN.
+     *
      * @param t the float to find the ceiling for
      * @return the ceiling of t, as an int
      */
     public static int fastCeil(double t) {
-        return t >= 0.0 ? -(int) -t + 1: -(int)-t;
+        return t >= 0.0 ? -(int) -t + 1 : -(int) -t;
     }
+
     /**
      * Like {@link Math#ceil(double)}, but takes a float and returns an int.
      * Doesn't consider "weird floats" like INFINITY and NaN.
+     *
      * @param t the float to find the ceiling for
      * @return the ceiling of t, as an int
      */
     public static int fastCeil(float t) {
-        return t >= 0f ? -(int) -t + 1: -(int)-t;
+        return t >= 0f ? -(int) -t + 1 : -(int) -t;
     }
 
     /**
      * Returns the next higher power of two relative to {@code n}, or n if it is already a power of two. This returns 2
      * if n is any value less than 2 (including negative numbers, but also 1, which is a power of two).
+     *
      * @param n the lower bound for the result
      * @return the next higher power of two that is greater than or equal to n
      */
@@ -433,10 +450,11 @@ public final class MathTools
      * Forces precision loss on the given float so very small fluctuations away from an integer will be erased.
      * This is meant primarily for cleaning up floats, so they can be presented without needing scientific notation.
      * It leaves about 3 decimal digits after the point intact, and should make any digits after that simply 0.
+     *
      * @param n any float, but typically a fairly small one (between -8 and 8, as a guideline)
      * @return {@code n} with its 13 least significant bits effectively removed
      */
-    public static float truncate(final float n){
+    public static float truncate(final float n) {
         long i = (long) (n * 0x1p13f); // 0x1p13f is 2 raised to the 13 as a float, or 8192.0f
         return i * 0x1p-13f;           // 0x1p-13f is 1 divided by (2 raised to the 13) as a float, or 1.0f/8192.0f
     }
@@ -445,55 +463,91 @@ public final class MathTools
      * Forces precision loss on the given double so very small fluctuations away from an integer will be erased.
      * This is meant primarily for cleaning up doubles, so they can be presented without needing scientific notation.
      * It leaves about 3 decimal digits after the point intact, and should make any digits after that simply 0.
+     *
      * @param n any double, but typically a fairly small one (between -8 and 8, as a guideline)
      * @return {@code n} with its 42 least significant bits effectively removed
      */
-    public static double truncate(final double n){
-        long i = (long)(n * 0x1p42); // 0x1p42 is 2 raised to the 42 as a double
+    public static double truncate(final double n) {
+        long i = (long) (n * 0x1p42); // 0x1p42 is 2 raised to the 42 as a double
         return i * 0x1p-42;          // 0x1p-42 is 1 divided by (2 raised to the 42) as a double
     }
 
     /**
-     *  Linearly interpolates between fromValue to toValue on progress position.
+     * Linearly interpolates between fromValue to toValue on progress position.
+     *
      * @param fromValue starting float value; can be any finite float
-     * @param toValue ending float value; can be any finite float
-     * @param progress how far the interpolation should go, between 0 (equal to fromValue) and 1 (equal to toValue)
+     * @param toValue   ending float value; can be any finite float
+     * @param progress  how far the interpolation should go, between 0 (equal to fromValue) and 1 (equal to toValue)
      */
-    public static float lerp (final float fromValue, final float toValue, final float progress) {
+    public static float lerp(final float fromValue, final float toValue, final float progress) {
         return fromValue + (toValue - fromValue) * progress;
     }
+
     /**
      * Linearly normalizes value from a range. Range must not be empty. This is the inverse of {@link #lerp(float, float, float)}.
+     *
      * @param rangeStart range start normalized to 0
-     * @param rangeEnd range end normalized to 1
-     * @param value value to normalize
+     * @param rangeEnd   range end normalized to 1
+     * @param value      value to normalize
      * @return normalized value; values outside the range are not clamped to 0 and 1
      */
-    public static float norm (float rangeStart, float rangeEnd, float value) {
+    public static float norm(float rangeStart, float rangeEnd, float value) {
         return (value - rangeStart) / (rangeEnd - rangeStart);
     }
 
     /**
      * Linearly map a value from one range to another. Input range must not be empty. This is the same as chaining
      * {@link #norm(float, float, float)} from input range and {@link #lerp(float, float, float)} to output range.
-     * @param inRangeStart input range start
-     * @param inRangeEnd input range end
+     *
+     * @param inRangeStart  input range start
+     * @param inRangeEnd    input range end
      * @param outRangeStart output range start
-     * @param outRangeEnd output range end
-     * @param value value to map
+     * @param outRangeEnd   output range end
+     * @param value         value to map
      * @return mapped value; values outside the input range are not clamped to output range
      */
-    public static float map (float inRangeStart, float inRangeEnd, float outRangeStart, float outRangeEnd, float value) {
+    public static float map(float inRangeStart, float inRangeEnd, float outRangeStart, float outRangeEnd, float value) {
         return outRangeStart + (value - inRangeStart) * (outRangeEnd - outRangeStart) / (inRangeEnd - inRangeStart);
     }
 
-    /** Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
-     * the direction with the smallest delta angle.
+    /**
+     * Linearly interpolates between two angles in radians. Takes into account that angles wrap at {@code PI2} and
+     * always takes the direction with the smallest delta angle.
+     *
+     * @param fromRadians start angle in radians
+     * @param toRadians   target angle in radians
+     * @param progress    interpolation value in the range [0, 1]
+     * @return the interpolated angle in the range [0, PI2)
+     */
+    public static float lerpAngle(float fromRadians, float toRadians, float progress) {
+        float delta = ((toRadians - fromRadians + PI2 + PI) % PI2) - PI;
+        return (fromRadians + delta * progress + PI2) % PI2;
+    }
+
+    /**
+     * Linearly interpolates between two angles in degrees. Takes into account that angles wrap at 360 degrees and
+     * always takes the direction with the smallest delta angle.
+     *
+     * @param fromDegrees start angle in degrees
+     * @param toDegrees   target angle in degrees
+     * @param progress    interpolation value in the range [0, 1]
+     * @return the interpolated angle in the range [0, 360)
+     */
+    public static float lerpAngleDeg(float fromDegrees, float toDegrees, float progress) {
+        float delta = ((toDegrees - fromDegrees + 360f + 180f) % 360f) - 180f;
+        return (fromDegrees + delta * progress + 360f) % 360f;
+    }
+
+    /**
+     * Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
+     * the direction with the smallest delta angle. This version, unlike the versions for radians and degrees, avoids
+     * any modulus operation (instead calling {@link #fastFloor(float)} twice).
      *
      * @param fromTurns start angle in turns
-     * @param toTurns target angle in turns
-     * @param progress interpolation value in the range [0, 1]
-     * @return the interpolated angle in the range [0, 1) */
+     * @param toTurns   target angle in turns
+     * @param progress  interpolation value in the range [0, 1]
+     * @return the interpolated angle in the range [0, 1)
+     */
     public static float lerpAngleTurns(float fromTurns, float toTurns, float progress) {
         float d = toTurns - fromTurns + 0.5f;
         d = fromTurns + progress * (d - fastFloor(d) - 0.5f);
@@ -508,11 +562,11 @@ public final class MathTools
      * number should produce something very close to 1f, and any number halfway between two incremental integers (like
      * 8.5f or -10.5f) should produce 0f or a very small fraction. This method is closely related to
      * {@link #sway(float)}, which will smoothly curve its output to produce more values that are close to -1 or 1.
+     *
      * @param value any float
      * @return a float from -1f (inclusive) to 1f (inclusive)
      */
-    public static float zigzag(float value)
-    {
+    public static float zigzag(float value) {
         int floor = (value >= 0f ? (int) value : (int) value - 1);
         value -= floor;
         floor = (-(floor & 1) | 1);
@@ -529,11 +583,13 @@ public final class MathTools
      * very close to 1f, and any number halfway between two incremental integers (like 8.5f or -10.5f) should produce 0f
      * or a very small fraction. In the (unlikely) event that this is given a float that is too large to represent
      * many or any non-integer values, this will simply return -1f or 1f.
+     * <br>
+     * This version of a sway method uses quintic interpolation; it uses up to the fifth power of value.
+     *
      * @param value any float other than NaN or infinite values; extremely large values can't work properly
      * @return a float from -1f (inclusive) to 1f (inclusive)
      */
-    public static float sway(float value)
-    {
+    public static float sway(float value) {
         int floor = (value >= 0f ? (int) value : (int) value - 1);
         value -= floor;
         floor = (-(floor & 1) | 1);
@@ -543,19 +599,19 @@ public final class MathTools
     /**
      * Very similar to {@link TrigTools#sinTurns(float)} with half frequency, or {@link Math#sin(double)} with {@link Math#PI}
      * frequency, but optimized (and shaped) a little differently. This looks like a squished sine wave when graphed,
-     * and is essentially just interpolating between each pair of odd and even inputs using what FastNoise calls
+     * and is essentially just interpolating between each pair of odd and even inputs using what is sometimes called
      * {@code HERMITE} interpolation. This interpolation is rounder at peaks and valleys than a sine wave is; it is
-     * also called {@code smoothstep} in GLSL, and is called Cubic here because it gets the third power of a value.
+     * also called {@code smoothstep} in GLSL, and is called cubic here because it gets the third power of a value.
      * <br>
      * An input of any even number should produce something very close to -1f, any odd number should produce something
      * very close to 1f, and any number halfway between two incremental integers (like 8.5f or -10.5f) should produce 0f
      * or a very small fraction. In the (unlikely) event that this is given a float that is too large to represent
      * many or any non-integer values, this will simply return -1f or 1f.
+     *
      * @param value any float other than NaN or infinite values; extremely large values can't work properly
      * @return a float from -1f (inclusive) to 1f (inclusive)
      */
-    public static float swayCubic(float value)
-    {
+    public static float swayCubic(float value) {
         int floor = (value >= 0f ? (int) value : (int) value - 1);
         value -= floor;
         floor = (-(floor & 1) | 1);
@@ -574,11 +630,13 @@ public final class MathTools
      * 0.5f. In the (unlikely) event that this is given a float that is too large to represent many or any non-integer
      * values, this will simply return 0f or 1f. This version is called "Tight" because its range is tighter than
      * {@link #sway(float)}.
+     * <br>
+     * This version of a sway method uses quintic interpolation; it uses up to the fifth power of value.
+     *
      * @param value any float other than NaN or infinite values; extremely large values can't work properly
      * @return a float from 0f (inclusive) to 1f (inclusive)
      */
-    public static float swayTight(float value)
-    {
+    public static float swayTight(float value) {
         int floor = (value >= 0f ? (int) value : (int) value - 1);
         value -= floor;
         floor &= 1;
@@ -590,7 +648,8 @@ public final class MathTools
      * exponents of those generalizations. Mostly, these are useful because they are all 64-bit constants that have an
      * irrational-number-like pattern to their bits, which makes them pretty much all useful as increments for large
      * counters (also called Weyl sequences) and also sometimes as multipliers for data that should be somewhat random.
-     * The earlier numbers in the array are closer to the bit patterns of irrational numbers.
+     * The earlier numbers in the array are closer to the bit patterns of irrational numbers. Note that these are not at
+     * all uniformly-distributed, and should not be used for tasks where random negative longs must be uniform.
      */
     public static final long[] GOLDEN_LONGS = {
             0x9E3779B97F4A7C15L,

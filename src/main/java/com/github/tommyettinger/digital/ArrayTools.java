@@ -28,7 +28,8 @@ public final class ArrayTools {
     /**
      * Cannot be instantiated.
      */
-    private ArrayTools(){}
+    private ArrayTools() {
+    }
 
     /**
      * 256 Latin and Greek letters, in upper and lower case, chosen so none should look identical. Useful when randomly
@@ -72,17 +73,19 @@ public final class ArrayTools {
 
     /**
      * Fills the given int array with sequential ints from 0 to {@code buffer.length - 1}.
+     *
      * @param buffer an int array that will be modified in-place; if null this returns null
      * @return buffer, after modifications
      */
     public static int[] range(int[] buffer) {
         int len;
-        if(buffer == null || (len = buffer.length) == 0) return buffer;
+        if (buffer == null || (len = buffer.length) == 0) return buffer;
         for (int i = 0; i < len; i++) {
             buffer[i] = i;
         }
         return buffer;
     }
+
     /**
      * Stupidly simple convenience method that produces a range from start to end, not including end, as an int array.
      *
@@ -133,6 +136,7 @@ public final class ArrayTools {
      * This set does not contain "visual duplicate" letters, such as Latin alphabet capital letter 'A' and Greek
      * alphabet capital letter alpha, 'Α'; it does contain many accented Latin letters and the visually-distinct Greek
      * letters, up to a point.
+     *
      * @param charCount the number of letters to return in an array; the maximum this will produce is 256
      * @return the range of letters as a char array
      */
@@ -150,11 +154,11 @@ public final class ArrayTools {
      * larger than 255. This set does not contain "visual duplicate" letters, such as Latin alphabet capital letter 'A'
      * and Greek alphabet capital letter alpha, 'Α'; it does contain many accented Latin letters and the
      * visually-distinct Greek letters, up to a point.
+     *
      * @param index typically from 0 to 255, but all ints are allowed and will produce letters
      * @return the letter at the given index in a 256-element portion of visually distinct letters
      */
-    public static char letterAt(int index)
-    {
+    public static char letterAt(int index) {
         return letters[index & 255];
     }
 
@@ -367,6 +371,7 @@ public final class ArrayTools {
     /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(char[][], char)} to modify an existing 2D array instead.
+     *
      * @param contents the value to fill the array with
      * @param width    the desired width
      * @param height   the desired height
@@ -383,6 +388,7 @@ public final class ArrayTools {
     /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(float[][], float)} to modify an existing 2D array instead.
+     *
      * @param contents the value to fill the array with
      * @param width    the desired width
      * @param height   the desired height
@@ -399,6 +405,7 @@ public final class ArrayTools {
     /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(double[][], double)} to modify an existing 2D array instead.
+     *
      * @param contents the value to fill the array with
      * @param width    the desired width
      * @param height   the desired height
@@ -415,6 +422,7 @@ public final class ArrayTools {
     /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(int[][], int)} to modify an existing 2D array instead.
+     *
      * @param contents the value to fill the array with
      * @param width    the desired width
      * @param height   the desired height
@@ -431,6 +439,7 @@ public final class ArrayTools {
     /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(long[][], long)} to modify an existing 2D array instead.
+     *
      * @param contents the value to fill the array with
      * @param width    the desired width
      * @param height   the desired height
@@ -447,6 +456,7 @@ public final class ArrayTools {
     /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(byte[][], byte)} to modify an existing 2D array instead.
+     *
      * @param contents the value to fill the array with
      * @param width    the desired width
      * @param height   the desired height
@@ -463,6 +473,7 @@ public final class ArrayTools {
     /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(boolean[][], boolean)} to modify an existing 2D array instead.
+     *
      * @param contents the value to fill the array with
      * @param width    the desired width
      * @param height   the desired height
@@ -477,11 +488,13 @@ public final class ArrayTools {
         }
         return next;
     }
+
     /**
      * Fills {@code array2d} with {@code value}.
      * Not to be confused with {@link #fill(boolean, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
+     * @param value   the value to fill all of array2D with
      */
     public static void fill(boolean[][] array2d, boolean value) {
         final int width = array2d.length;
@@ -493,8 +506,9 @@ public final class ArrayTools {
     /**
      * Fills {@code array2d} with {@code value}.
      * Not to be confused with {@link #fill(char, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
+     * @param value   the value to fill all of array2D with
      */
     public static void fill(char[][] array2d, char value) {
         final int width = array2d.length;
@@ -506,8 +520,9 @@ public final class ArrayTools {
     /**
      * Fills {@code array2d} with {@code value}.
      * Not to be confused with {@link #fill(float, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
+     * @param value   the value to fill all of array2D with
      */
     public static void fill(float[][] array2d, float value) {
         final int width = array2d.length;
@@ -520,8 +535,9 @@ public final class ArrayTools {
     /**
      * Fills {@code array2d} with {@code value}.
      * Not to be confused with {@link #fill(double, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
+     * @param value   the value to fill all of array2D with
      */
     public static void fill(double[][] array2d, double value) {
         final int width = array2d.length;
@@ -534,14 +550,15 @@ public final class ArrayTools {
      * Fills {@code array3d} with {@code value}.
      * Not to be confused with {@link #fill(double[][], double)}, which fills a 2D array instead of a 3D one, or with
      * {@link #fill(double, int, int)}, which makes a new 2D array.
+     *
      * @param array3d a 3D array that will be modified in-place
-     * @param value the value to fill all of array3d with
+     * @param value   the value to fill all of array3d with
      */
     public static void fill(double[][][] array3d, double value) {
         final int depth = array3d.length;
         final int width = depth == 0 ? 0 : array3d[0].length;
         final int height = width == 0 ? 0 : array3d[0][0].length;
-        if(depth > 0 && width > 0) {
+        if (depth > 0 && width > 0) {
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
                     Arrays.fill(array3d[i][j], value);
@@ -553,8 +570,9 @@ public final class ArrayTools {
     /**
      * Fills {@code array2d} with {@code value}.
      * Not to be confused with {@link #fill(int, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
+     * @param value   the value to fill all of array2D with
      */
     public static void fill(int[][] array2d, int value) {
         final int width = array2d.length;
@@ -566,8 +584,9 @@ public final class ArrayTools {
     /**
      * Fills {@code array2d} with {@code value}.
      * Not to be confused with {@link #fill(long, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
+     * @param value   the value to fill all of array2D with
      */
     public static void fill(long[][] array2d, long value) {
         final int width = array2d.length;
@@ -579,8 +598,9 @@ public final class ArrayTools {
     /**
      * Fills {@code array2d} with {@code value}.
      * Not to be confused with {@link #fill(byte, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
+     * @param value   the value to fill all of array2D with
      */
     public static void fill(byte[][] array2d, byte value) {
         final int width = array2d.length;
@@ -593,12 +613,13 @@ public final class ArrayTools {
     /**
      * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(boolean, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
-     * @param startX the first x position to fill (inclusive)
-     * @param startY the first y position to fill (inclusive)
-     * @param endX the last x position to fill (inclusive)
-     * @param endY the last y position to fill (inclusive)
+     * @param value   the value to fill all of array2D with
+     * @param startX  the first x position to fill (inclusive)
+     * @param startY  the first y position to fill (inclusive)
+     * @param endX    the last x position to fill (inclusive)
+     * @param endY    the last y position to fill (inclusive)
      */
     public static void fill(boolean[][] array2d, boolean value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
@@ -613,12 +634,13 @@ public final class ArrayTools {
     /**
      * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(char, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
-     * @param startX the first x position to fill (inclusive)
-     * @param startY the first y position to fill (inclusive)
-     * @param endX the last x position to fill (inclusive)
-     * @param endY the last y position to fill (inclusive)
+     * @param value   the value to fill all of array2D with
+     * @param startX  the first x position to fill (inclusive)
+     * @param startY  the first y position to fill (inclusive)
+     * @param endX    the last x position to fill (inclusive)
+     * @param endY    the last y position to fill (inclusive)
      */
     public static void fill(char[][] array2d, char value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
@@ -633,12 +655,13 @@ public final class ArrayTools {
     /**
      * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(float, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
-     * @param startX the first x position to fill (inclusive)
-     * @param startY the first y position to fill (inclusive)
-     * @param endX the last x position to fill (inclusive)
-     * @param endY the last y position to fill (inclusive)
+     * @param value   the value to fill all of array2D with
+     * @param startX  the first x position to fill (inclusive)
+     * @param startY  the first y position to fill (inclusive)
+     * @param endX    the last x position to fill (inclusive)
+     * @param endY    the last y position to fill (inclusive)
      */
     public static void fill(float[][] array2d, float value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
@@ -653,12 +676,13 @@ public final class ArrayTools {
     /**
      * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(double, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
-     * @param startX the first x position to fill (inclusive)
-     * @param startY the first y position to fill (inclusive)
-     * @param endX the last x position to fill (inclusive)
-     * @param endY the last y position to fill (inclusive)
+     * @param value   the value to fill all of array2D with
+     * @param startX  the first x position to fill (inclusive)
+     * @param startY  the first y position to fill (inclusive)
+     * @param endX    the last x position to fill (inclusive)
+     * @param endY    the last y position to fill (inclusive)
      */
     public static void fill(double[][] array2d, double value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
@@ -673,12 +697,13 @@ public final class ArrayTools {
     /**
      * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(int, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
-     * @param startX the first x position to fill (inclusive)
-     * @param startY the first y position to fill (inclusive)
-     * @param endX the last x position to fill (inclusive)
-     * @param endY the last y position to fill (inclusive)
+     * @param value   the value to fill all of array2D with
+     * @param startX  the first x position to fill (inclusive)
+     * @param startY  the first y position to fill (inclusive)
+     * @param endX    the last x position to fill (inclusive)
+     * @param endY    the last y position to fill (inclusive)
      */
     public static void fill(int[][] array2d, int value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
@@ -693,12 +718,13 @@ public final class ArrayTools {
     /**
      * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(long, int, int)}, which makes a new 2D array.
+     *
      * @param array2d a 2D array that will be modified in-place
-     * @param value the value to fill all of array2D with
-     * @param startX the first x position to fill (inclusive)
-     * @param startY the first y position to fill (inclusive)
-     * @param endX the last x position to fill (inclusive)
-     * @param endY the last y position to fill (inclusive)
+     * @param value   the value to fill all of array2D with
+     * @param startX  the first x position to fill (inclusive)
+     * @param startY  the first y position to fill (inclusive)
+     * @param endX    the last x position to fill (inclusive)
+     * @param endY    the last y position to fill (inclusive)
      */
     public static void fill(long[][] array2d, long value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
@@ -712,13 +738,13 @@ public final class ArrayTools {
 
     /**
      * Reverses the array given as a parameter, in-place, and returns the modified original.
+     *
      * @param data an array that will be reversed in-place
      * @return the array passed in, after reversal
      */
-    public static boolean[] reverse(boolean[] data)
-    {
+    public static boolean[] reverse(boolean[] data) {
         int sz;
-        if(data == null || (sz = data.length) <= 0) return data;
+        if (data == null || (sz = data.length) <= 0) return data;
         boolean t;
         for (int i = 0, j = sz - 1; i < j; i++, j--) {
             t = data[j];
@@ -730,13 +756,13 @@ public final class ArrayTools {
 
     /**
      * Reverses the array given as a parameter, in-place, and returns the modified original.
+     *
      * @param data an array that will be reversed in-place
      * @return the array passed in, after reversal
      */
-    public static char[] reverse(char[] data)
-    {
+    public static char[] reverse(char[] data) {
         int sz;
-        if(data == null || (sz = data.length) <= 0) return data;
+        if (data == null || (sz = data.length) <= 0) return data;
         char t;
         for (int i = 0, j = sz - 1; i < j; i++, j--) {
             t = data[j];
@@ -748,13 +774,13 @@ public final class ArrayTools {
 
     /**
      * Reverses the array given as a parameter, in-place, and returns the modified original.
+     *
      * @param data an array that will be reversed in-place
      * @return the array passed in, after reversal
      */
-    public static float[] reverse(float[] data)
-    {
+    public static float[] reverse(float[] data) {
         int sz;
-        if(data == null || (sz = data.length) <= 0) return data;
+        if (data == null || (sz = data.length) <= 0) return data;
         float t;
         for (int i = 0, j = sz - 1; i < j; i++, j--) {
             t = data[j];
@@ -766,13 +792,13 @@ public final class ArrayTools {
 
     /**
      * Reverses the array given as a parameter, in-place, and returns the modified original.
+     *
      * @param data an array that will be reversed in-place
      * @return the array passed in, after reversal
      */
-    public static double[] reverse(double[] data)
-    {
+    public static double[] reverse(double[] data) {
         int sz;
-        if(data == null || (sz = data.length) <= 0) return data;
+        if (data == null || (sz = data.length) <= 0) return data;
         double t;
         for (int i = 0, j = sz - 1; i < j; i++, j--) {
             t = data[j];
@@ -784,13 +810,13 @@ public final class ArrayTools {
 
     /**
      * Reverses the array given as a parameter, in-place, and returns the modified original.
+     *
      * @param data an array that will be reversed in-place
      * @return the array passed in, after reversal
      */
-    public static int[] reverse(int[] data)
-    {
+    public static int[] reverse(int[] data) {
         int sz;
-        if(data == null || (sz = data.length) <= 0) return data;
+        if (data == null || (sz = data.length) <= 0) return data;
         int t;
         for (int i = 0, j = sz - 1; i < j; i++, j--) {
             t = data[j];
@@ -802,13 +828,13 @@ public final class ArrayTools {
 
     /**
      * Reverses the array given as a parameter, in-place, and returns the modified original.
+     *
      * @param data an array that will be reversed in-place
      * @return the array passed in, after reversal
      */
-    public static byte[] reverse(byte[] data)
-    {
+    public static byte[] reverse(byte[] data) {
         int sz;
-        if(data == null || (sz = data.length) <= 0) return data;
+        if (data == null || (sz = data.length) <= 0) return data;
         byte t;
         for (int i = 0, j = sz - 1; i < j; i++, j--) {
             t = data[j];
@@ -817,15 +843,16 @@ public final class ArrayTools {
         }
         return data;
     }
+
     /**
      * Reverses the array given as a parameter, in-place, and returns the modified original.
+     *
      * @param data an array that will be reversed in-place
      * @return the array passed in, after reversal
      */
-    public static<T> T[] reverse(T[] data)
-    {
+    public static <T> T[] reverse(T[] data) {
         int sz;
-        if(data == null || (sz = data.length) <= 0) return data;
+        if (data == null || (sz = data.length) <= 0) return data;
         T t;
         for (int i = 0, j = sz - 1; i < j; i++, j--) {
             t = data[j];
