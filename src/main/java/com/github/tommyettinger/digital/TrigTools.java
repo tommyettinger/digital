@@ -345,8 +345,8 @@ public final class TrigTools {
 
     /**
      * Close approximation of the frequently-used trigonometric method atan2, using non-negative degrees only.
-     * Average error is ??? degrees; maximum error is ???. Takes y and x (in that unusual order) as
-     * floats, and returns the angle from the origin to that point in degrees.
+     * Average absolute error is 0.00006045 degrees; relative error is 0 degrees; maximum error is 0.00011178 degrees.
+     * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in degrees.
      * <br>
      * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This is sheet
      * 11's algorithm, which is the fourth-fastest and fourth-least precise. The algorithms on sheets 8-10 are faster, but only by
