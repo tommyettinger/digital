@@ -60,6 +60,11 @@ public final class MathTools {
      */
     public static final float GOLDEN_RATIO_INVERSE = 0.6180339887498949f;
 
+    private static final int BIG_ENOUGH_INT = 16 * 1024;
+    private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
+    private static final double CEIL = 0.9999999;
+    private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5f;
+
     /**
      * Calculate the first argument raised to the power of the second.
      * This method only supports non-negative powers.
@@ -92,6 +97,24 @@ public final class MathTools {
         return Math.log(arg) / Math.log(base);
     }
 
+    /**
+     * Calculate logarithms for arbitrary bases.
+     *
+     * @param base  the logarithm base to use
+     * @param value what value to get the logarithm of, using the given base
+     * @return the logarithm of value with the given base
+     */
+    public static float log(float base, float value) {
+        return (float) (Math.log(value) / Math.log(base));
+    }
+
+    /**
+     * @param value what value to get the logarithm of, using base 2
+     * @return the logarithm of value with base 2
+     */
+    public static float log2(float value) {
+        return (float) (Math.log(value) / 0.6931471805599453);
+    }
 
     /**
      * Equivalent to libGDX's isEqual() method in MathUtils; this compares two doubles for equality and allows the given
@@ -167,8 +190,7 @@ public final class MathTools {
     public static long clamp(long value, long min, long max) {
         return Math.min(Math.max(value, min), max);
     }
-
-
+    
     /**
      * If the specified value is not greater than or equal to the specified minimum and
      * less than or equal to the specified maximum, adjust it so that it is.
@@ -272,7 +294,7 @@ public final class MathTools {
      * Integer square root (using floor), maintaining correct results even for very large {@code long} values. This
      * version treats negative inputs as unsigned and returns positive square roots for them (these are usually large).
      * <br>
-     * This is based on <a href="https://github.com/python/cpython/pull/13244">code recently added to Python</a>, but
+     * This is based on <a href="https://github.com/python/cpython/pull/13244">code used by Python</a>, but
      * isn't identical. Notably, this doesn't branch except in the for loop, and it handles negative inputs differently.
      *
      * @param n a {@code long} value that will be treated as if unsigned
@@ -447,6 +469,16 @@ public final class MathTools {
     }
 
     /**
+     * Returns true if {@code value} is a power of two or is equal to {@link Integer#MIN_VALUE}; false otherwise.
+     *
+     * @param value any int
+     * @return true if {@code value} is a power of two (when treated as unsigned)
+     */
+    public static boolean isPowerOfTwo(int value) {
+        return value != 0 && (value & value - 1) == 0;
+    }
+
+    /**
      * Forces precision loss on the given float so very small fluctuations away from an integer will be erased.
      * This is meant primarily for cleaning up floats, so they can be presented without needing scientific notation.
      * It leaves about 3 decimal digits after the point intact, and should make any digits after that simply 0.
@@ -552,6 +584,84 @@ public final class MathTools {
         float d = toTurns - fromTurns + 0.5f;
         d = fromTurns + progress * (d - fastFloor(d) - 0.5f);
         return d - fastFloor(d);
+    }
+
+    /**
+     * Returns the largest integer less than or equal to the specified float. This method will only properly floor floats from
+     * -(2^14) to (Float.MAX_VALUE - 2^14).
+     *
+     * @param value a float from -(2^14) to (Float.MAX_VALUE - 2^14)
+     */
+    public static int floor(float value) {
+        return (int) (value + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
+    }
+
+    /**
+     * Returns the largest integer less than or equal to the specified float. This method will only properly floor floats that are
+     * positive. Note, this method simply casts the float to int.
+     *
+     * @param value any positive float
+     */
+    public static int floorPositive(float value) {
+        return (int) value;
+    }
+
+    /**
+     * Returns the smallest integer greater than or equal to the specified float. This method will only properly ceil floats from
+     * -(2^14) to (Float.MAX_VALUE - 2^14).
+     *
+     * @param value a float from -(2^14) to (Float.MAX_VALUE - 2^14)
+     */
+    public static int ceil(float value) {
+        return BIG_ENOUGH_INT - (int) (BIG_ENOUGH_FLOOR - value);
+    }
+
+    /**
+     * Returns the smallest integer greater than or equal to the specified float. This method will only properly ceil floats that
+     * are positive.
+     *
+     * @param value any positive float
+     */
+    public static int ceilPositive(float value) {
+        return (int) (value + CEIL);
+    }
+
+    /**
+     * Returns the closest integer to the specified float. This method will only properly round floats from -(2^14) to
+     * (Float.MAX_VALUE - 2^14).
+     *
+     * @param value a float from -(2^14) to (Float.MAX_VALUE - 2^14)
+     */
+    public static int round(float value) {
+        return (int) (value + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT;
+    }
+
+    /**
+     * Returns the closest integer to the specified float. This method will only properly round floats that are positive.
+     *
+     * @param value any positive float
+     */
+    public static int roundPositive(float value) {
+        return (int) (value + 0.5f);
+    }
+
+    /**
+     * Returns true if the value is zero (using the default tolerance, {@link #FLOAT_ROUNDING_ERROR}, as upper bound).
+     *
+     * @param value any float
+     */
+    public static boolean isZero(float value) {
+        return Math.abs(value) <= FLOAT_ROUNDING_ERROR;
+    }
+
+    /**
+     * Returns true if the value is zero.
+     *
+     * @param value     any float
+     * @param tolerance represent an upper bound below which the value is considered zero.
+     */
+    public static boolean isZero(float value, float tolerance) {
+        return Math.abs(value) <= tolerance;
     }
 
     /**
