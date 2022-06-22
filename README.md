@@ -52,11 +52,17 @@ functions for primitive arrays (and arrays of objects, if they
 implement hashCode()), and has 64-bit and 32-bit variants. The
 specific hashing algorithm it uses is a somewhat-hardened
 version of [wyhash](https://github.com/wangyi-fudan/wyhash) that
-doesn't use 128-bit math. It
-also has a few unary hashes that can be used as quick and dirty
-random number generators when applied to numbers in a sequence.
-The unary hashes can output longs, bounded ints, floats, and
-doubles, so they may be useful in a lot of cases.
+doesn't use 128-bit math. While it can hash all types of 1D
+primitive array and most types of 2D primitive array, it can't
+do much with 3D or higher sizes at the moment. However, the only
+change that would be needed to add a `hash()` method for, say, a
+`float[][][]` is to copy the `hash(float[][])` method and change
+the parameter to be a `float[][][]`, so if you have the source,
+you can add this yourself with a quick copy and paste.
+Hasher also has a few unary hashes that can be used as quick and
+dirty random number generators when applied to numbers in a
+sequence. The unary hashes can output longs, bounded ints,
+floats, and doubles, so they may be useful in a lot of cases.
 
 ## How do I get it?
 
@@ -64,14 +70,14 @@ With Gradle, add this to your dependencies (in your core module,
 for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.0.2"
+api "com.github.tommyettinger:digital:0.0.3"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.0.2:sources"
+api "com.github.tommyettinger:digital:0.0.3:sources"
 ```
 
 and this in your GdxDefinition.gwt.xml file:
