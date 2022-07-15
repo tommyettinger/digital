@@ -391,70 +391,82 @@ public final class MathTools {
     /**
      * Like {@link Math#floor}, but returns a long.
      * Doesn't consider "weird doubles" like INFINITY and NaN.
+     * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
      *
      * @param t the double to find the floor for
      * @return the floor of t, as a long
      */
-    public static long longFloor(double t) {
-        return t >= 0.0 ? (long) t : (long) t - 1L;
+    public static long longFloor(final double t) {
+        final long z = (long) t;
+        return t < z ? z - 1L : z;
     }
 
     /**
      * Like {@link Math#floor(double)}, but takes a float and returns a long.
      * Doesn't consider "weird floats" like INFINITY and NaN.
+     * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
      *
      * @param t the double to find the floor for
      * @return the floor of t, as a long
      */
-    public static long longFloor(float t) {
-        return t >= 0f ? (long) t : (long) t - 1L;
+    public static long longFloor(final float t) {
+        final long z = (long) t;
+        return t < z ? z - 1L : z;
     }
 
     /**
      * Like {@link Math#floor(double)} , but returns an int.
      * Doesn't consider "weird doubles" like INFINITY and NaN.
+     * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
      *
      * @param t the float to find the floor for
      * @return the floor of t, as an int
      */
-    public static int fastFloor(double t) {
-        return t >= 0.0 ? (int) t : (int) t - 1;
+    public static int fastFloor(final double t) {
+        final int z = (int) t;
+        return t < z ? z - 1 : z;
     }
 
     /**
      * Like {@link Math#floor(double)}, but takes a float and returns an int.
      * Doesn't consider "weird floats" like INFINITY and NaN. This method will only properly floor
-     * floats from {@code -16384} to {@code Float.MAX_VALUE - 16384}.
+     * floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or {@code 2147467263}.
+     * Unlike {@link #fastFloor(double)}, {@link #longFloor(float)}, and {@link #longFloor(double)},
+     * this is significantly faster than {@code (int)Math.floor(t)}.
      * <br>
      * Taken from libGDX MathUtils.
      *
      * @param t the float to find the floor for
      * @return the floor of t, as an int
      */
-    public static int fastFloor(float t) {
+    public static int fastFloor(final float t) {
         return ((int) (t + 0x1p14) - 0x4000);
     }
 
     /**
      * Like {@link Math#ceil(double)}, but returns an int.
      * Doesn't consider "weird doubles" like INFINITY and NaN.
+     * This is only faster than {@code (int)Math.ceil(t)} on Java 8 for supported desktop platforms.
      *
      * @param t the float to find the ceiling for
      * @return the ceiling of t, as an int
      */
-    public static int fastCeil(double t) {
-        return t >= 0.0 ? -(int) -t + 1 : -(int) -t;
+    public static int fastCeil(final double t) {
+        final int z = (int) t;
+        return t > z ? z + 1 : z;
     }
 
     /**
      * Like {@link Math#ceil(double)}, but takes a float and returns an int.
      * Doesn't consider "weird floats" like INFINITY and NaN.
+     * This is only faster than {@code (int)Math.ceil(t)} on Java 8 for supported desktop platforms.
      *
      * @param t the float to find the ceiling for
      * @return the ceiling of t, as an int
      */
-    public static int fastCeil(float t) {
-        return t >= 0f ? -(int) -t + 1 : -(int) -t;
+    public static int fastCeil(final float t) {
+        final int z = (int) t;
+        return t > z ? z + 1 : z;
     }
 
     /**
