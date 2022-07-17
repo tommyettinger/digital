@@ -377,7 +377,7 @@ public final class TrigTools {
      * {@link #atan2Turns(float, float)}, but it may be a tiny bit faster than atanTurns(float) in other code.
      *
      * @param i any finite double or float, but more commonly a float
-     * @return an output from the inverse tangent function in turns, from {@code -0.5} to {@code 0.5} inclusive
+     * @return an output from the inverse tangent function in turns, from {@code -0.25} to {@code 0.25} inclusive
      */
     public static double atanUncheckedTurns(double i) {
         // We use double precision internally, because some constants need double precision.
@@ -543,6 +543,131 @@ public final class TrigTools {
             return (float) (atanUncheckedTurns(n) + 0.5);
         } else if (y > 0) return x + 0.25f;
         else if (y < 0) return x + 0.75f;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using radians. Average error is
+     * 1.057E-6 radians; maximum error is 1.922E-6. Takes y and x (in that unusual order) as
+     * doubles, and returns the angle from the origin to that point in radians. It is about 4 times faster than
+     * {@link Math#atan2(double, double)} (roughly 15 ns instead of roughly 60 ns for Math, on Java 8 HotSpot).
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This is sheet
+     * 11's algorithm, which is the fourth-fastest and fourth-least precise. The algorithms on sheets 8-10 are faster, but only by
+     * a very small degree, and are considerably less precise. That study provides an {@link #atan(double)} method, and that cleanly
+     * translates to atan2().
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in radians as a double; ranges from {@code -PI} to {@code PI}
+     */
+    public static double atan2(final double y, double x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0)
+            return atanUnchecked(n);
+        else if (x < 0) {
+            if (y >= 0) return atanUnchecked(n) + Math.PI;
+            return atanUnchecked(n) - Math.PI;
+        } else if (y > 0)
+            return x + HALF_PI_D;
+        else if (y < 0) return x - HALF_PI_D;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using positive or negative degrees.
+     * Average absolute error is 0.00006037 degrees; relative error is 0 degrees, maximum error is 0.00010396 degrees.
+     * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in degrees.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This is sheet
+     * 11's algorithm, which is the fourth-fastest and fourth-least precise. The algorithms on sheets 8-10 are faster, but only by
+     * a very small degree, and are considerably less precise. That study provides an {@link #atan(double)} method, and that cleanly
+     * translates to atan2Deg().
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a double; ranges from {@code -180} to {@code 180}
+     */
+    public static double atan2Deg(final double y, double x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0)
+            return atanUncheckedDeg(n);
+        else if (x < 0) {
+            if (y >= 0) return atanUncheckedDeg(n) + 180.0;
+            return atanUncheckedDeg(n) - 180.0;
+        } else if (y > 0)
+            return x + 90.0;
+        else if (y < 0) return x - 90.0;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using non-negative degrees only.
+     * Average absolute error is 0.00006045 degrees; relative error is 0 degrees; maximum error is 0.00011178 degrees.
+     * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in degrees.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This is sheet
+     * 11's algorithm, which is the fourth-fastest and fourth-least precise. The algorithms on sheets 8-10 are faster, but only by
+     * a very small degree, and are considerably less precise. That study provides an {@link #atan(double)} method, and that cleanly
+     * translates to atan2Deg360().
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a double; ranges from {@code 0} to {@code 360}
+     */
+    public static double atan2Deg360(final double y, double x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0)
+                return atanUncheckedDeg(n);
+            else
+                return atanUncheckedDeg(n) + 360.0;
+        } else if (x < 0) {
+            return atanUncheckedDeg(n) + 180.0;
+        } else if (y > 0) return x + 90.0;
+        else if (y < 0) return x + 270.0;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using non-negative turns only.
+     * Average absolute error is 0.00000030 turns; relative error is 0 turns; maximum error is 0.00000017 turns.
+     * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in turns.
+     * Because this always returns a double between 0.0 (inclusive) and 1.0 (exclusive), it can be useful for various
+     * kinds of calculations that must store angles as a small fraction, such as packing a hue angle into a byte.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This is sheet
+     * 11's algorithm, which is the fourth-fastest and fourth-least precise. The algorithms on sheets 8-10 are faster, but only by
+     * a very small degree, and are considerably less precise. That study provides an {@link #atan(double)} method, and that cleanly
+     * translates to atan2Turns().
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in turns as a double; ranges from {@code 0.0} to {@code 1.0}
+     */
+    public static double atan2Turns(final double y, double x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0)
+                return atanUncheckedTurns(n);
+            else
+                return atanUncheckedTurns(n) + 1.0;
+        } else if (x < 0) {
+            return atanUncheckedTurns(n) + 0.5;
+        } else if (y > 0) return x + 0.25;
+        else if (y < 0) return x + 0.75;
         return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
@@ -714,7 +839,7 @@ public final class TrigTools {
      * enough for infinite inputs, and atanUncheckedTurns() will not be.
      *
      * @param i an input to the inverse tangent function; any float is accepted
-     * @return an output from the inverse tangent function in turns, from {@code -HALF_PI} to {@code HALF_PI} inclusive
+     * @return an output from the inverse tangent function in turns, from {@code -0.25} to {@code 0.25} inclusive
      * @see #atanUnchecked(double) If you know the input will be finite, you can use atanUnchecked() instead.
      */
     public static float atanTurns(float i) {
@@ -734,6 +859,94 @@ public final class TrigTools {
         return (float) (Math.signum(i) * (0.125
                 + (0.15915132390848943 * c - 0.052938669438878753 * c3 + 0.030803398362108523 * c5
                 - 0.01853086679887605 * c7 + 0.008380036148199356 * c9 - 0.0018654869189687236 * c11)));
+    }
+
+
+    /**
+     * Arc tangent approximation with very low error, using an algorithm from the 1955 research study "Approximations for Digital
+     * Computers," by RAND Corporation (this is sheet 11's algorithm, which is the fourth-fastest and fourth-least precise). This
+     * method is usually about 4x faster than {@link Math#atan(double)}, but is somewhat less precise than Math's implementation.
+     * For finite inputs only, you may get a tiny speedup by using {@link #atanUnchecked(double)}, but this method will be correct
+     * enough for infinite inputs, and atanUnchecked() will not be.
+     *
+     * @param i an input to the inverse tangent function; any double is accepted
+     * @return an output from the inverse tangent function in radians, from {@code -HALF_PI} to {@code HALF_PI} inclusive
+     * @see #atanUnchecked(double) If you know the input will be finite, you can use atanUnchecked() instead.
+     */
+    public static double atan(double i) {
+        // We use double precision internally, because some constants need double precision.
+        // This clips infinite inputs at Double.MAX_VALUE, which still probably becomes infinite
+        // again when converted back to double.
+        double n = Math.min(Math.abs(i), Double.MAX_VALUE);
+        // c uses the "equally-good" formulation that permits n to be from 0 to almost infinity.
+        double c = (n - 1.0) / (n + 1.0);
+        // The approximation needs 6 odd powers of c.
+        double c2 = c * c;
+        double c3 = c * c2;
+        double c5 = c3 * c2;
+        double c7 = c5 * c2;
+        double c9 = c7 * c2;
+        double c11 = c9 * c2;
+        return Math.signum(i) * (QUARTER_PI_D
+                + (0.99997726 * c - 0.33262347 * c3 + 0.19354346 * c5 - 0.11643287 * c7 + 0.05265332 * c9 - 0.0117212 * c11));
+    }
+
+    /**
+     * Arc tangent approximation returning a value measured in positive or negative degrees, using an algorithm from the
+     * 1955 research study "Approximations for Digital Computers," by RAND Corporation (this is sheet 11's algorithm,
+     * which is the fourth-fastest and fourth-least precise).
+     * For finite inputs only, you may get a tiny speedup by using {@link #atanUncheckedDeg(double)}, but this method will be correct
+     * enough for infinite inputs, and atanUnchecked() will not be.
+     *
+     * @param i an input to the inverse tangent function; any double is accepted
+     * @return an output from the inverse tangent function in degrees, from {@code -90} to {@code 90} inclusive
+     * @see #atanUncheckedDeg(double) If you know the input will be finite, you can use atanUncheckedDeg() instead.
+     */
+    public static double atanDeg(double i) {
+        // We use double precision internally, because some constants need double precision.
+        // This clips infinite inputs at Double.MAX_VALUE, which still probably becomes infinite
+        // again when converted back to double.
+        double n = Math.min(Math.abs(i), Double.MAX_VALUE);
+        // c uses the "equally-good" formulation that permits n to be from 0 to almost infinity.
+        double c = (n - 1.0) / (n + 1.0);
+        // The approximation needs 6 odd powers of c.
+        double c2 = c * c;
+        double c3 = c * c2;
+        double c5 = c3 * c2;
+        double c7 = c5 * c2;
+        double c9 = c7 * c2;
+        double c11 = c9 * c2;
+        return Math.signum(i) * (45.0
+                + (57.2944766070562 * c - 19.05792099799635 * c3 + 11.089223410359068 * c5 - 6.6711120475953765 * c7 + 3.016813013351768 * c9 - 0.6715752908287405 * c11));
+    }
+
+    /**
+     * Arc tangent approximation with very low error, using an algorithm from the 1955 research study "Approximations for Digital
+     * Computers," by RAND Corporation (this is sheet 11's algorithm, which is the fourth-fastest and fourth-least precise).
+     * For finite inputs only, you may get a tiny speedup by using {@link #atanUncheckedTurns(double)}, but this method will be correct
+     * enough for infinite inputs, and atanUncheckedTurns() will not be.
+     *
+     * @param i an input to the inverse tangent function; any double is accepted
+     * @return an output from the inverse tangent function in turns, from {@code -0.25} to {@code 0.25} inclusive
+     * @see #atanUnchecked(double) If you know the input will be finite, you can use atanUnchecked() instead.
+     */
+    public static double atanTurns(double i) {
+        // We use double precision internally, because some constants need double precision.
+        // This clips infinite inputs at Double.MAX_VALUE, which still probably becomes infinite
+        // again when converted back to double.
+        double n = Math.min(Math.abs(i), Double.MAX_VALUE);
+        // c uses the "equally-good" formulation that permits n to be from 0 to almost infinity.
+        double c = (n - 1.0) / (n + 1.0);
+        // The approximation needs 6 odd powers of c.
+        double c2 = c * c;
+        double c3 = c * c2;
+        double c5 = c3 * c2;
+        double c7 = c5 * c2;
+        double c9 = c7 * c2;
+        double c11 = c9 * c2;
+        return Math.signum(i) * (0.125
+                + (0.15915132390848943 * c - 0.052938669438878753 * c3 + 0.030803398362108523 * c5
+                - 0.01853086679887605 * c7 + 0.008380036148199356 * c9 - 0.0018654869189687236 * c11));
     }
 
 }
