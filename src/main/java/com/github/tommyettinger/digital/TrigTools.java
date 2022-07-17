@@ -79,13 +79,17 @@ public final class TrigTools {
      * The size of {@link #SIN_TABLE}, available separately from the table's length for convenience.
      */
     public static final int TABLE_SIZE = (1 << SIN_BITS);
+
+    /**
+     * If you add this to an index used in {@link #SIN_TABLE}, you get the result of the cosine instead of the sine.
+     */
+    public static final int SIN_TO_COS = TABLE_SIZE >>> 2;
     /**
      * The bitmask that can be used to confine any int to wrap within {@link #TABLE_SIZE}. Any accesses to
      * {@link #SIN_TABLE} with an index that could be out of bounds should probably be wrapped using this, as with
      * {@code SIN_TABLE[index & TABLE_MASK]}.
      */
     public static final int TABLE_MASK = TABLE_SIZE - 1;
-    private static final int QUARTER_ROTATION = TABLE_SIZE >>> 2;
 
 
     private static final float radFull = PI2;
@@ -95,6 +99,10 @@ public final class TrigTools {
     private static final float radToIndex = TABLE_SIZE / radFull;
     private static final float degToIndex = TABLE_SIZE / degFull;
     private static final float turnToIndex = TABLE_SIZE;
+
+    private static final double radToIndexD = TABLE_SIZE / PI2_D;
+    private static final double degToIndexD = TABLE_SIZE / 360.0;
+    private static final double turnToIndexD = TABLE_SIZE;
 
     /**
      * Multiply by this to convert from radians to degrees.
@@ -111,19 +119,42 @@ public final class TrigTools {
      * <br>
      * A quick way to get a random unit vector is to get a random 14-bit number, as with
      * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get y, then look up
-     * {@code (angle + 4096) & 16383} to get x.
+     * {@code (angle + TrigTools.SIN_TO_COS) & TrigTools.TABLE_MASK} (or {@code (angle + 4096) & 16383}) to get x.
      */
     public static final float[] SIN_TABLE = new float[TABLE_SIZE];
 
+    /**
+     * Multiply by this to convert from radians to degrees.
+     */
+    public static final double radiansToDegreesD = 180.0 / Math.PI;
+    /**
+     * Multiply by this to convert from degrees to radians.
+     */
+    public static final double degreesToRadiansD = Math.PI / 180.0;
+    /**
+     * A precalculated table of 16384 doubles, corresponding to the y-value of points on the unit circle, ordered by
+     * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
+     * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
+     * <br>
+     * A quick way to get a random unit vector is to get a random 14-bit number, as with
+     * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get y, then look up
+     * {@code (angle + TrigTools.SIN_TO_COS) & TrigTools.TABLE_MASK} (or {@code (angle + 4096) & 16383}) to get x.
+     */
+    public static final double[] SIN_TABLE_D = new double[TABLE_SIZE];
+
     static {
         for (int i = 0; i < TABLE_SIZE; i++)
-            SIN_TABLE[i] = (float) Math.sin((i + 0.5f) / TABLE_SIZE * radFull);
+            SIN_TABLE[i] = (float) (SIN_TABLE_D[i] = Math.sin((i + 0.5f) / TABLE_SIZE * radFull));
         // The four right angles get extra-precise values, because they are
         // the most likely to need to be correct.
         SIN_TABLE[0] = 0f;
         SIN_TABLE[(int) (90 * degToIndex) & TABLE_MASK] = 1f;
         SIN_TABLE[(int) (180 * degToIndex) & TABLE_MASK] = 0f;
         SIN_TABLE[(int) (270 * degToIndex) & TABLE_MASK] = -1.0f;
+        SIN_TABLE_D[0] = 0.0;
+        SIN_TABLE_D[(int) (90 * degToIndex) & TABLE_MASK] = 1.0;
+        SIN_TABLE_D[(int) (180 * degToIndex) & TABLE_MASK] = 0.0;
+        SIN_TABLE_D[(int) (270 * degToIndex) & TABLE_MASK] = -1.0;
     }
 
     /**
@@ -154,7 +185,7 @@ public final class TrigTools {
      */
     public static float tan(float radians) {
         final int idx = (int) (radians * radToIndex) & TABLE_MASK;
-        return SIN_TABLE[idx] / SIN_TABLE[idx + QUARTER_ROTATION & TABLE_MASK];
+        return SIN_TABLE[idx] / SIN_TABLE[idx + SIN_TO_COS & TABLE_MASK];
     }
 
     /**
@@ -185,7 +216,7 @@ public final class TrigTools {
      */
     public static float tanDeg(float degrees) {
         final int idx = (int) (degrees * degToIndex) & TABLE_MASK;
-        return SIN_TABLE[idx] / SIN_TABLE[idx + QUARTER_ROTATION & TABLE_MASK];
+        return SIN_TABLE[idx] / SIN_TABLE[idx + SIN_TO_COS & TABLE_MASK];
     }
 
     /**
@@ -216,7 +247,39 @@ public final class TrigTools {
      */
     public static float tanTurns(float turns) {
         final int idx = (int) (turns * turnToIndex) & TABLE_MASK;
-        return SIN_TABLE[idx] / SIN_TABLE[idx + QUARTER_ROTATION & TABLE_MASK];
+        return SIN_TABLE[idx] / SIN_TABLE[idx + SIN_TO_COS & TABLE_MASK];
+    }
+
+    /**
+     * Returns the sine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
+     * inclusive).
+     *
+     * @param radians an angle in radians, where 0 to {@link #PI2_D} is one rotation
+     */
+    public static double sin(double radians) {
+        return SIN_TABLE_D[(int) (radians * radToIndexD) & TABLE_MASK];
+    }
+
+    /**
+     * Returns the cosine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
+     * inclusive).
+     *
+     * @param radians an angle in radians, where 0 to {@link #PI2_D} is one rotation
+     */
+    public static double cos(double radians) {
+        return SIN_TABLE_D[(int) (radians * radToIndexD) + SIN_TO_COS & TABLE_MASK];
+    }
+
+    /**
+     * Returns the tangent in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
+     * inclusive).
+     *
+     * @param radians an angle in radians, where 0 to {@link #PI2_D} is one rotation
+     */
+    public static double tan(double radians) {
+        final int idx = (int) (radians * radToIndexD) & TABLE_MASK;
+        return SIN_TABLE_D[idx] / SIN_TABLE_D[idx + SIN_TO_COS & TABLE_MASK];
+    }
     }
 
     // ---
