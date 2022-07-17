@@ -775,6 +775,109 @@ public final class TrigTools {
     }
 
     /**
+     * Returns arcsine in radians; less accurate than Math.asin but may be faster. Average error of 0.000028447 radians (0.0016298931
+     * degrees), largest error of 0.000067592 radians (0.0038727364 degrees). This implementation does not return NaN if given an
+     * out-of-range input (Math.asin does return NaN), unless the input is NaN.
+     *
+     * @param a asin is defined only when a is between -1.0 and 1.0, inclusive
+     * @return between {@code -HALF_PI} and {@code HALF_PI} when a is in the defined range
+     */
+    public static double asin(double a) {
+        double a2 = a * a; // a squared
+        double a3 = a * a2; // a cubed
+        if (a >= 0.0) {
+            return HALF_PI_D
+                    - Math.sqrt(1.0 - a) * (1.5707288 - 0.2121144 * a + 0.0742610 * a2 - 0.0187293 * a3);
+        }
+        return Math.sqrt(1.0 + a) * (1.5707288 + 0.2121144 * a + 0.0742610 * a2 + 0.0187293 * a3) - HALF_PI_D;
+    }
+
+    /**
+     * Returns arcsine in degrees. This implementation does not return NaN if given an
+     * out-of-range input (Math.asin does return NaN), unless the input is NaN.
+     *
+     * @param a asin is defined only when a is between -1.0 and 1.0, inclusive
+     * @return between {@code -90} and {@code 90} when a is in the defined range
+     */
+    public static double asinDeg(double a) {
+        double a2 = a * a; // a squared
+        double a3 = a * a2; // a cubed
+        if (a >= 0.0) {
+            return 90.0
+                    - Math.sqrt(1.0 - a) * (89.99613099964837 - 12.153259893949748 * a + 4.2548418824210055 * a2 - 1.0731098432343729 * a3);
+        }
+        return Math.sqrt(1.0 + a) * (89.99613099964837 + 12.153259893949748 * a + 4.2548418824210055 * a2 + 1.0731098432343729 * a3) - 90.0;
+    }
+
+    /**
+     * Returns arcsine in turns. This implementation does not return NaN if given an
+     * out-of-range input (Math.asin does return NaN), unless the input is NaN.
+     * Note that unlike {@link #atan2Turns(double, double)}, this can return negative turn values.
+     *
+     * @param a asin is defined only when a is between -1.0 and 1.0, inclusive
+     * @return between {@code -0.25} and {@code 0.25} when a is in the defined range
+     */
+    public static double asinTurns(double a) {
+        double a2 = a * a; // a squared
+        double a3 = a * a2; // a cubed
+        if (a >= 0.0) {
+            return 0.25 - Math.sqrt(1.0 - a) * (0.24998925277680104 - 0.033759055260971525 * a + 0.011819005228947238 * a2 - 0.0029808606756510357 * a3);
+        }
+        return Math.sqrt(1.0 + a) * (0.24998925277680104 + 0.033759055260971525 * a + 0.011819005228947238 * a2 + 0.0029808606756510357 * a3) - 0.25;
+    }
+
+    /**
+     * Returns arccosine in radians; less accurate than Math.acos but may be faster. Average error of 0.00002845 radians (0.0016300649
+     * degrees), largest error of 0.000067548 radians (0.0038702153 degrees). This implementation does not return NaN if given an
+     * out-of-range input (Math.acos does return NaN), unless the input is NaN.
+     *
+     * @param a acos is defined only when a is between -1.0 and 1.0, inclusive
+     * @return between {@code 0} and {@code PI} when a is in the defined range
+     */
+    public static double acos(double a) {
+        double a2 = a * a; // a squared
+        double a3 = a * a2; // a cubed
+        if (a >= 0.0) {
+            return Math.sqrt(1.0 - a) * (1.5707288 - 0.2121144 * a + 0.0742610 * a2 - 0.0187293 * a3);
+        }
+        return Math.PI
+                - Math.sqrt(1.0 + a) * (1.5707288 + 0.2121144 * a + 0.0742610 * a2 + 0.0187293 * a3);
+    }
+
+    /**
+     * Returns arccosine in degrees. This implementation does not return NaN if given an
+     * out-of-range input (Math.acos does return NaN), unless the input is NaN.
+     *
+     * @param a acos is defined only when a is between -1.0 and 1.0, inclusive
+     * @return between {@code 0} and {@code 180} when a is in the defined range
+     */
+    public static double acosDeg(double a) {
+        double a2 = a * a; // a squared
+        double a3 = a * a2; // a cubed
+        if (a >= 0.0) {
+            return Math.sqrt(1.0 - a) * (89.99613099964837 - 12.153259533621753 * a + 4.254842010910525 * a2 - 1.0731098035209208 * a3);
+        }
+        return 180.0
+                - Math.sqrt(1.0 + a) * (89.99613099964837 + 12.153259533621753 * a + 4.254842010910525 * a2 + 1.0731098035209208 * a3);
+    }
+
+    /**
+     * Returns arccosine in turns. This implementation does not return NaN if given an
+     * out-of-range input (Math.acos does return NaN), unless the input is NaN.
+     *
+     * @param a acos is defined only when a is between -1.0 and 1.0, inclusive
+     * @return between {@code 0} and {@code 0.5} when a is in the defined range
+     */
+    public static double acosTurns(double a) {
+        double a2 = a * a; // a squared
+        double a3 = a * a2; // a cubed
+        if (a >= 0.0) {
+            return Math.sqrt(1.0 - a) * (0.24998925277680104 - 0.033759055260971525 * a + 0.011819005228947238 * a2 - 0.0029808606756510357 * a3);
+        }
+        return 0.5 - Math.sqrt(1.0 + a) * (0.24998925277680104 + 0.033759055260971525 * a + 0.011819005228947238 * a2 + 0.0029808606756510357 * a3);
+    }
+
+    /**
      * Arc tangent approximation with very low error, using an algorithm from the 1955 research study "Approximations for Digital
      * Computers," by RAND Corporation (this is sheet 11's algorithm, which is the fourth-fastest and fourth-least precise). This
      * method is usually about 4x faster than {@link Math#atan(double)}, but is somewhat less precise than Math's implementation.
