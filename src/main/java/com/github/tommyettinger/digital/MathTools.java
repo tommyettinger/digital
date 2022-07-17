@@ -15,8 +15,7 @@
  */
 package com.github.tommyettinger.digital;
 
-import static com.github.tommyettinger.digital.TrigTools.PI;
-import static com.github.tommyettinger.digital.TrigTools.PI2;
+import static com.github.tommyettinger.digital.TrigTools.*;
 
 /**
  * Mathematical operations not provided by {@link Math java.lang.Math}.
@@ -39,8 +38,13 @@ public final class MathTools {
 
     /**
      * A float that is meant to be used as the smallest reasonable tolerance for methods like {@link #isEqual(float, float, float)}.
+     * This is sufficient if the rounding error is the result of one addition or subtraction between numbers smaller
+     * than 16 (closer to 0). More math operations or larger numbers can produce larger rounding errors; you can try
+     * multiplying this constant by, for instance, 64, and using that as the tolerance if you need precision with
+     * three-digit numbers (16 * 64 is 1024, so 0 to 999 should be precise there). A larger rounding error can introduce
+     * false-positive equivalence with very small inputs.
      */
-    public static final float FLOAT_ROUNDING_ERROR = 0.000001f;
+    public static final float FLOAT_ROUNDING_ERROR = 0x1p-20f; // was 0.000001f
 
     /**
      * The {@code float} value that is closer than any other to
@@ -55,10 +59,23 @@ public final class MathTools {
     public static final float GOLDEN_RATIO = 1.6180339887498949f;
 
     /**
+     * The famous golden ratio, {@code (1.0 + Math.sqrt(5.0)) * 0.5}, as a double; this is the "most irrational" of
+     * irrational numbers, and has various useful properties.
+     */
+    public static final double GOLDEN_RATIO_D = 1.6180339887498949;
+
+    /**
      * The inverse of the golden ratio, {@code (1.0 - Math.sqrt(5.0)) * -0.5} or {@code GOLDEN_RATIO - 1.0}; this also
      * has various useful properties.
      */
     public static final float GOLDEN_RATIO_INVERSE = 0.6180339887498949f;
+
+    /**
+     * The inverse of the golden ratio, {@code (1.0 - Math.sqrt(5.0)) * -0.5} or {@code GOLDEN_RATIO - 1.0}, as a
+     * double; this also has various useful properties.
+     */
+    public static final double GOLDEN_RATIO_INVERSE_D = 0.6180339887498949;
+
 
     private static final int BIG_ENOUGH_INT = 16 * 1024;
     private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
@@ -133,7 +150,8 @@ public final class MathTools {
     /**
      * Equivalent to libGDX's isEqual() method in MathUtils; this compares two floats for equality and allows just enough
      * tolerance to ignore a rounding error. An example is {@code 0.3f - 0.2f == 0.1f} vs. {@code isEqual(0.3f - 0.2f, 0.1f)};
-     * the first is incorrectly false, while the second is correctly true.
+     * the first is incorrectly false, while the second is correctly true. This uses {@link #FLOAT_ROUNDING_ERROR} as
+     * its tolerance.
      *
      * @param a the first float to compare
      * @param b the second float to compare
@@ -146,7 +164,8 @@ public final class MathTools {
     /**
      * Equivalent to libGDX's isEqual() method in MathUtils; this compares two floats for equality and allows the given
      * tolerance during comparison. An example is {@code 0.3f - 0.2f == 0.1f} vs. {@code isEqual(0.3f - 0.2f, 0.1f, 0.000001f)};
-     * the first is incorrectly false, while the second is correctly true.
+     * the first is incorrectly false, while the second is correctly true. See {@link #FLOAT_ROUNDING_ERROR} for advice
+     * on choosing a value for tolerance.
      *
      * @param a         the first float to compare
      * @param b         the second float to compare
@@ -324,7 +343,8 @@ public final class MathTools {
      * this code approximates cbrt(x) and not 1/sqrt(x)). This specific code
      * was originally by Marc B. Reynolds, posted in his
      * <a href="https://github.com/Marc-B-Reynolds/Stand-alone-junk/blob/master/src/Posts/ballcube.c#L182-L197">"Stand-alone-junk" repo</a> .
-     *
+     * <br>
+     * If you need to work with doubles, or need higher precision, use {@link Math#cbrt(double)}.
      * @param x any finite float to find the cube root of
      * @return the cube root of x, approximated
      */
@@ -391,7 +411,7 @@ public final class MathTools {
     /**
      * Like {@link Math#floor}, but returns a long.
      * Doesn't consider "weird doubles" like INFINITY and NaN.
-     * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
+     * This is only faster than {@code (long)Math.floor(t)} on Java 8 for supported desktop platforms.
      *
      * @param t the double to find the floor for
      * @return the floor of t, as a long
@@ -404,7 +424,7 @@ public final class MathTools {
     /**
      * Like {@link Math#floor(double)}, but takes a float and returns a long.
      * Doesn't consider "weird floats" like INFINITY and NaN.
-     * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
+     * This is only faster than {@code (long)Math.floor(t)} on Java 8 for supported desktop platforms.
      *
      * @param t the double to find the floor for
      * @return the floor of t, as a long
@@ -422,7 +442,7 @@ public final class MathTools {
      * @param t the float to find the floor for
      * @return the floor of t, as an int
      */
-    public static int fastFloor(final double t) {
+    public static int floor(final double t) {
         final int z = (int) t;
         return t < z ? z - 1 : z;
     }
@@ -431,12 +451,12 @@ public final class MathTools {
      * Like {@link Math#floor(double)}, but takes a float and returns an int.
      * Doesn't consider "weird floats" like INFINITY and NaN. This method will only properly floor
      * floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or {@code 2147467263}.
-     * Unlike {@link #fastFloor(double)}, {@link #longFloor(float)}, and {@link #longFloor(double)},
+     * Unlike {@link #floor(double)}, {@link #longFloor(float)}, and {@link #longFloor(double)},
      * this is significantly faster than {@code (int)Math.floor(t)}.
      * <br>
      * Taken from libGDX MathUtils.
      *
-     * @param t the float to find the floor for
+     * @param t a float from -16384 to 2147467263 (both inclusive)
      * @return the floor of t, as an int
      */
     public static int fastFloor(final float t) {
@@ -451,22 +471,88 @@ public final class MathTools {
      * @param t the float to find the ceiling for
      * @return the ceiling of t, as an int
      */
-    public static int fastCeil(final double t) {
+    public static int ceil(final double t) {
         final int z = (int) t;
         return t > z ? z + 1 : z;
     }
 
     /**
      * Like {@link Math#ceil(double)}, but takes a float and returns an int.
-     * Doesn't consider "weird floats" like INFINITY and NaN.
-     * This is only faster than {@code (int)Math.ceil(t)} on Java 8 for supported desktop platforms.
+     * Doesn't consider "weird floats" like INFINITY and NaN. This method will only properly ceil
+     * floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or {@code 2147467263}.
+     * Unlike {@link #ceil(float)}, this is significantly faster than {@code (int)Math.ceil(t)}.
      *
      * @param t the float to find the ceiling for
      * @return the ceiling of t, as an int
      */
     public static int fastCeil(final float t) {
-        final int z = (int) t;
-        return t > z ? z + 1 : z;
+        return 0x4000 - (int) (0x1p14 - t);
+    }
+
+    /**
+     * Returns the largest int less than or equal to the specified float.
+     * Doesn't consider "weird floats" like INFINITY and NaN.
+     * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
+     * <br>
+     * Taken from libGDX MathUtils.
+     *
+     * @param value any float
+     * @return the floor of value, as an int
+     */
+    public static int floor(float value) {
+        final int z = (int) value;
+        return value < z ? z - 1 : z;
+    }
+
+    /**
+     * Returns the largest int less than or equal to the specified float. This method will only properly floor floats that are
+     * positive. Note, this method simply casts the float to int.
+     *
+     * @param value any positive float
+     */
+    public static int floorPositive(float value) {
+        return (int) value;
+    }
+
+    /**
+     * Returns the smallest int greater than or equal to the specified float.
+     * Doesn't consider "weird floats" like INFINITY and NaN.
+     * This is only faster than {@code (int)Math.ceil(t)} on Java 8 for supported desktop platforms.
+     *
+     * @param value a float from -(2^14) to (Float.MAX_VALUE - 2^14)
+     */
+    public static int ceil(float value) {
+        final int z = (int) value;
+        return value > z ? z + 1 : z;
+    }
+
+    /**
+     * Returns the smallest integer greater than or equal to the specified float. This method will only properly ceil floats that
+     * are positive.
+     *
+     * @param value any positive float
+     */
+    public static int ceilPositive(float value) {
+        return (int) (value + CEIL);
+    }
+
+    /**
+     * Returns the closest integer to the specified float. This method will only properly round floats from -(2^14) to
+     * (Float.MAX_VALUE - 2^14).
+     *
+     * @param value a float from -(2^14) to (Float.MAX_VALUE - 2^14)
+     */
+    public static int round(float value) {
+        return (int) (value + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT;
+    }
+
+    /**
+     * Returns the closest integer to the specified float. This method will only properly round floats that are positive.
+     *
+     * @param value any positive float
+     */
+    public static int roundPositive(float value) {
+        return (int) (value + 0.5f);
     }
 
     /**
@@ -555,6 +641,44 @@ public final class MathTools {
     }
 
     /**
+     * Linearly interpolates between fromValue to toValue on progress position.
+     *
+     * @param fromValue starting double value; can be any finite double
+     * @param toValue   ending double value; can be any finite double
+     * @param progress  how far the interpolation should go, between 0 (equal to fromValue) and 1 (equal to toValue)
+     */
+    public static double lerp(final double fromValue, final double toValue, final double progress) {
+        return fromValue + (toValue - fromValue) * progress;
+    }
+
+    /**
+     * Linearly normalizes value from a range. Range must not be empty. This is the inverse of {@link #lerp(double, double, double)}.
+     *
+     * @param rangeStart range start normalized to 0
+     * @param rangeEnd   range end normalized to 1
+     * @param value      value to normalize
+     * @return normalized value; values outside the range are not clamped to 0 and 1
+     */
+    public static double norm(double rangeStart, double rangeEnd, double value) {
+        return (value - rangeStart) / (rangeEnd - rangeStart);
+    }
+
+    /**
+     * Linearly map a value from one range to another. Input range must not be empty. This is the same as chaining
+     * {@link #norm(double, double, double)} from input range and {@link #lerp(double, double, double)} to output range.
+     *
+     * @param inRangeStart  input range start
+     * @param inRangeEnd    input range end
+     * @param outRangeStart output range start
+     * @param outRangeEnd   output range end
+     * @param value         value to map
+     * @return mapped value; values outside the input range are not clamped to output range
+     */
+    public static double map(double inRangeStart, double inRangeEnd, double outRangeStart, double outRangeEnd, double value) {
+        return outRangeStart + (value - inRangeStart) * (outRangeEnd - outRangeStart) / (inRangeEnd - inRangeStart);
+    }
+
+    /**
      * Linearly interpolates between two angles in radians. Takes into account that angles wrap at {@code PI2} and
      * always takes the direction with the smallest delta angle.
      *
@@ -599,62 +723,47 @@ public final class MathTools {
     }
 
     /**
-     * Returns the largest integer less than or equal to the specified float. This method will only properly floor floats from
-     * -(2^14) to (Float.MAX_VALUE - 2^14).
+     * Linearly interpolates between two angles in radians. Takes into account that angles wrap at {@code PI2} and
+     * always takes the direction with the smallest delta angle.
      *
-     * @param value a float from -(2^14) to (Float.MAX_VALUE - 2^14)
+     * @param fromRadians start angle in radians
+     * @param toRadians   target angle in radians
+     * @param progress    interpolation value in the range [0, 1]
+     * @return the interpolated angle in the range [0, PI2)
      */
-    public static int floor(float value) {
-        return (int) (value + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
+    public static double lerpAngle(double fromRadians, double toRadians, double progress) {
+        double delta = ((toRadians - fromRadians + PI2_D + Math.PI) % PI2_D) - Math.PI;
+        return (fromRadians + delta * progress + PI2_D) % PI2_D;
     }
 
     /**
-     * Returns the largest integer less than or equal to the specified float. This method will only properly floor floats that are
-     * positive. Note, this method simply casts the float to int.
+     * Linearly interpolates between two angles in degrees. Takes into account that angles wrap at 360 degrees and
+     * always takes the direction with the smallest delta angle.
      *
-     * @param value any positive float
+     * @param fromDegrees start angle in degrees
+     * @param toDegrees   target angle in degrees
+     * @param progress    interpolation value in the range [0, 1]
+     * @return the interpolated angle in the range [0, 360)
      */
-    public static int floorPositive(float value) {
-        return (int) value;
+    public static double lerpAngleDeg(double fromDegrees, double toDegrees, double progress) {
+        double delta = ((toDegrees - fromDegrees + 360.0 + 180.0) % 360.0) - 180.0;
+        return (fromDegrees + delta * progress + 360.0) % 360.0;
     }
 
     /**
-     * Returns the smallest integer greater than or equal to the specified float. This method will only properly ceil floats from
-     * -(2^14) to (Float.MAX_VALUE - 2^14).
+     * Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
+     * the direction with the smallest delta angle. This version, unlike the versions for radians and degrees, avoids
+     * any modulus operation (instead calling {@link #floor(double)} twice).
      *
-     * @param value a float from -(2^14) to (Float.MAX_VALUE - 2^14)
+     * @param fromTurns start angle in turns
+     * @param toTurns   target angle in turns
+     * @param progress  interpolation value in the range [0, 1]
+     * @return the interpolated angle in the range [0, 1)
      */
-    public static int ceil(float value) {
-        return BIG_ENOUGH_INT - (int) (BIG_ENOUGH_FLOOR - value);
-    }
-
-    /**
-     * Returns the smallest integer greater than or equal to the specified float. This method will only properly ceil floats that
-     * are positive.
-     *
-     * @param value any positive float
-     */
-    public static int ceilPositive(float value) {
-        return (int) (value + CEIL);
-    }
-
-    /**
-     * Returns the closest integer to the specified float. This method will only properly round floats from -(2^14) to
-     * (Float.MAX_VALUE - 2^14).
-     *
-     * @param value a float from -(2^14) to (Float.MAX_VALUE - 2^14)
-     */
-    public static int round(float value) {
-        return (int) (value + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT;
-    }
-
-    /**
-     * Returns the closest integer to the specified float. This method will only properly round floats that are positive.
-     *
-     * @param value any positive float
-     */
-    public static int roundPositive(float value) {
-        return (int) (value + 0.5f);
+    public static double lerpAngleTurns(double fromTurns, double toTurns, double progress) {
+        double d = toTurns - fromTurns + 0.5;
+        d = fromTurns + progress * (d - floor(d) - 0.5);
+        return d - floor(d);
     }
 
     /**
@@ -673,6 +782,17 @@ public final class MathTools {
      * @param tolerance represent an upper bound below which the value is considered zero.
      */
     public static boolean isZero(float value, float tolerance) {
+        return Math.abs(value) <= tolerance;
+    }
+
+
+    /**
+     * Returns true if the value is zero.
+     *
+     * @param value     any double
+     * @param tolerance represent an upper bound below which the value is considered zero.
+     */
+    public static boolean isZero(double value, double tolerance) {
         return Math.abs(value) <= tolerance;
     }
 

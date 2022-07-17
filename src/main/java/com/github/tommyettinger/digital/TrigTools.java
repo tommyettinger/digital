@@ -53,11 +53,26 @@ public final class TrigTools {
      */
     public static final float HALF_PI = PI * 0.5f;
     /**
+     * 2.0 times {@link Math#PI}; the same as {@link #TAU_D}.
+     */
+    public static final double PI2_D = Math.PI * 2.0;
+    /**
+     * 2.0 times {@link Math#PI}; the same as {@link #PI2_D}.
+     */
+    public static final double TAU_D = PI2_D;
+    /**
+     * {@link Math#PI} divided by 2.0.
+     */
+    public static final double HALF_PI_D = Math.PI * 0.5;
+    /**
      * {@link #PI} divided by 4f.
      */
     public static final float QUARTER_PI = PI * 0.25f;
 
-    private static final double QUARTER_PI_D = Math.PI * 0.25;
+    /**
+     * {@link Math#PI} divided by 4.0.
+     */
+    public static final double QUARTER_PI_D = Math.PI * 0.25;
 
     private static final int SIN_BITS = 14; // 64KB. Adjust for accuracy.
     /**
