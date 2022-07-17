@@ -52,6 +52,7 @@ public final class ArrayTools {
     private static final char[][] emptyChars2D = new char[0][0];
     private static final boolean[][] emptyBooleans2D = new boolean[0][0];
     private static final int[][] emptyInts2D = new int[0][0];
+    private static final long[][] emptyLongs2D = new long[0][0];
     private static final float[][] emptyFloats2D = new float[0][0];
     private static final double[][] emptyDoubles2D = new double[0][0];
 
@@ -175,8 +176,9 @@ public final class ArrayTools {
             return emptyChars2D;
         char[][] target = new char[source.length][];
         for (int i = 0; i < source.length; i++) {
-            target[i] = new char[source[i].length];
-            System.arraycopy(source[i], 0, target[i], 0, source[i].length);
+            final int len = source[i].length;
+            target[i] = new char[len];
+            System.arraycopy(source[i], 0, target[i], 0, len);
         }
         return target;
     }
@@ -194,8 +196,9 @@ public final class ArrayTools {
             return emptyDoubles2D;
         double[][] target = new double[source.length][];
         for (int i = 0; i < source.length; i++) {
-            target[i] = new double[source[i].length];
-            System.arraycopy(source[i], 0, target[i], 0, source[i].length);
+            final int len = source[i].length;
+            target[i] = new double[len];
+            System.arraycopy(source[i], 0, target[i], 0, len);
         }
         return target;
     }
@@ -214,8 +217,9 @@ public final class ArrayTools {
             return emptyFloats2D;
         float[][] target = new float[source.length][];
         for (int i = 0; i < source.length; i++) {
-            target[i] = new float[source[i].length];
-            System.arraycopy(source[i], 0, target[i], 0, source[i].length);
+            final int len = source[i].length;
+            target[i] = new float[len];
+            System.arraycopy(source[i], 0, target[i], 0, len);
         }
         return target;
     }
@@ -233,8 +237,29 @@ public final class ArrayTools {
             return emptyInts2D;
         int[][] target = new int[source.length][];
         for (int i = 0; i < source.length; i++) {
-            target[i] = new int[source[i].length];
-            System.arraycopy(source[i], 0, target[i], 0, source[i].length);
+            final int len = source[i].length;
+            target[i] = new int[len];
+            System.arraycopy(source[i], 0, target[i], 0, len);
+        }
+        return target;
+    }
+
+    /**
+     * Gets a copy of the 2D long array, source, that has the same data but shares no references with source.
+     *
+     * @param source a 2D long array
+     * @return a copy of source, or null if source is null
+     */
+    public static long[][] copy(long[][] source) {
+        if (source == null)
+            return null;
+        if (source.length < 1)
+            return emptyLongs2D;
+        long[][] target = new long[source.length][];
+        for (int i = 0; i < source.length; i++) {
+            final int len = source[i].length;
+            target[i] = new long[len];
+            System.arraycopy(source[i], 0, target[i], 0, len);
         }
         return target;
     }
@@ -252,8 +277,9 @@ public final class ArrayTools {
             return emptyBooleans2D;
         boolean[][] target = new boolean[source.length][];
         for (int i = 0; i < source.length; i++) {
-            target[i] = new boolean[source[i].length];
-            System.arraycopy(source[i], 0, target[i], 0, source[i].length);
+            final int len = source[i].length;
+            target[i] = new boolean[len];
+            System.arraycopy(source[i], 0, target[i], 0, len);
         }
         return target;
     }
@@ -336,6 +362,28 @@ public final class ArrayTools {
      * @return target, modified, with source inserted into it at the given position
      */
     public static int[][] insert(int[][] source, int[][] target, int x, int y) {
+        if (source == null || target == null)
+            return target;
+        if (source.length < 1 || source[0].length < 1)
+            return copy(target);
+        for (int i = 0; i < source.length && x + i < target.length; i++) {
+            System.arraycopy(source[i], 0, target[x + i], y, Math.min(source[i].length, target[x + i].length - y));
+        }
+        return target;
+    }
+
+    /**
+     * Inserts as much of source into target at the given x,y position as target can hold or source can supply.
+     * Modifies target in-place and also returns target for chaining.
+     * Used primarily to place a smaller array into a different position in a larger array, often freshly allocated.
+     *
+     * @param source a 2D long array that will be copied and inserted into target
+     * @param target a 2D long array that will be modified by receiving as much of source as it can hold
+     * @param x      the x position in target to receive the items from the first cell in source
+     * @param y      the y position in target to receive the items from the first cell in source
+     * @return target, modified, with source inserted into it at the given position
+     */
+    public static long[][] insert(long[][] source, long[][] target, int x, int y) {
         if (source == null || target == null)
             return target;
         if (source.length < 1 || source[0].length < 1)
@@ -734,6 +782,24 @@ public final class ArrayTools {
                 array2d[x][y] = value;
             }
         }
+    }
+
+    /**
+     * Reverses the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be reversed in-place
+     * @return the array passed in, after reversal
+     */
+    public static long[] reverse(long[] data) {
+        int sz;
+        if (data == null || (sz = data.length) <= 0) return data;
+        long t;
+        for (int i = 0, j = sz - 1; i < j; i++, j--) {
+            t = data[j];
+            data[j] = data[i];
+            data[i] = t;
+        }
+        return data;
     }
 
     /**
