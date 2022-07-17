@@ -886,6 +886,95 @@ public final class MathTools {
     }
 
     /**
+     * Takes any double and produces a double in the -1.0 to 1.0 range, with similar inputs producing
+     * close to a consistent rate of up and down through the range. This is meant for noise, where it may be useful to
+     * limit the amount of change between nearby points' noise values and prevent sudden "jumps" in noise value. An
+     * input of any even number should produce something very close to -1.0, any odd
+     * number should produce something very close to 1.0, and any number halfway between two incremental integers (like
+     * 8.5 or -10.5) should produce 0.0 or a very small fraction. This method is closely related to
+     * {@link #sway(double)}, which will smoothly curve its output to produce more values that are close to -1 or 1.
+     *
+     * @param value any double
+     * @return a double from -1.0 (inclusive) to 1.0 (inclusive)
+     */
+    public static double zigzag(double value) {
+        int floor = (value >= 0.0 ? (int) value : (int) value - 1);
+        value -= floor;
+        floor = (-(floor & 1) | 1);
+        return value * (floor << 1) - floor;
+    }
+
+    /**
+     * Very similar to {@link TrigTools#sinTurns(double)} with half frequency, or {@link Math#sin(double)} with {@link Math#PI}
+     * frequency, but optimized (and shaped) a little differently. This looks like a squished sine wave when graphed,
+     * and is essentially just interpolating between each pair of odd and even inputs using what FastNoise calls
+     * {@code QUINTIC} interpolation. This interpolation is slightly flatter at peaks and valleys than a sine wave is.
+     * <br>
+     * An input of any even number should produce something very close to -1.0, any odd number should produce something
+     * very close to 1.0, and any number halfway between two incremental integers (like 8.5 or -10.5) should produce 0.0
+     * or a very small fraction. In the (unlikely) event that this is given a double that is too large to represent
+     * many or any non-integer values, this will simply return -1.0 or 1.0.
+     * <br>
+     * This version of a sway method uses quintic interpolation; it uses up to the fifth power of value.
+     *
+     * @param value any double other than NaN or infinite values; extremely large values can't work properly
+     * @return a double from -1.0 (inclusive) to 1.0 (inclusive)
+     */
+    public static double sway(double value) {
+        int floor = (value >= 0.0 ? (int) value : (int) value - 1);
+        value -= floor;
+        floor = (-(floor & 1) | 1);
+        return value * value * value * (value * (value * 6.0 - 15.0) + 10.0) * (floor << 1) - floor;
+    }
+
+    /**
+     * Very similar to {@link TrigTools#sinTurns(double)} with half frequency, or {@link Math#sin(double)} with {@link Math#PI}
+     * frequency, but optimized (and shaped) a little differently. This looks like a squished sine wave when graphed,
+     * and is essentially just interpolating between each pair of odd and even inputs using what is sometimes called
+     * {@code HERMITE} interpolation. This interpolation is rounder at peaks and valleys than a sine wave is; it is
+     * also called {@code smoothstep} in GLSL, and is called cubic here because it gets the third power of a value.
+     * <br>
+     * An input of any even number should produce something very close to -1.0, any odd number should produce something
+     * very close to 1.0, and any number halfway between two incremental integers (like 8.5 or -10.5) should produce 0.0
+     * or a very small fraction. In the (unlikely) event that this is given a double that is too large to represent
+     * many or any non-integer values, this will simply return -1.0 or 1.0.
+     *
+     * @param value any double other than NaN or infinite values; extremely large values can't work properly
+     * @return a double from -1.0 (inclusive) to 1.0 (inclusive)
+     */
+    public static double swayCubic(double value) {
+        int floor = (value >= 0.0 ? (int) value : (int) value - 1);
+        value -= floor;
+        floor = (-(floor & 1) | 1);
+        return value * value * (3.0 - value * 2.0) * (floor << 1) - floor;
+    }
+
+    /**
+     * Takes any double and produces a double in the 0.0 to 1.0 range, with a graph of input to output that
+     * looks much like a sine wave, curving to have a flat slope when given an integer input and a steep slope when the
+     * input is halfway between two integers, smoothly curving at any points between those extremes. This is meant for
+     * noise, where it may be useful to limit the amount of change between nearby points' noise values and prevent both
+     * sudden "jumps" in noise value and "cracks" where a line takes a sudden jagged movement at an angle.
+     * <br>
+     * An input of any even number should produce something very close to 0.0, any odd number should produce something
+     * very close to 1.0, and any number halfway between two incremental integers (like 8.5 or -10.5) should produce
+     * 0.5. In the (unlikely) event that this is given a double that is too large to represent many or any non-integer
+     * values, this will simply return 0.0 or 1.0. This version is called "Tight" because its range is tighter than
+     * {@link #sway(double)}.
+     * <br>
+     * This version of a sway method uses quintic interpolation; it uses up to the fifth power of value.
+     *
+     * @param value any double other than NaN or infinite values; extremely large values can't work properly
+     * @return a double from 0.0 (inclusive) to 1.0 (inclusive)
+     */
+    public static double swayTight(double value) {
+        int floor = (value >= 0.0 ? (int) value : (int) value - 1);
+        value -= floor;
+        floor &= 1;
+        return value * value * value * (value * (value * 6.0 - 15.0) + 10.0) * (-floor | 1) + floor;
+    }
+
+    /**
      * 1275 negative, odd {@code long} values that are calculated using a generalization of the golden ratio and
      * exponents of those generalizations. Mostly, these are useful because they are all 64-bit constants that have an
      * irrational-number-like pattern to their bits, which makes them pretty much all useful as increments for large
