@@ -417,6 +417,126 @@ public final class ArrayTools {
     }
 
     /**
+     * Takes a 2D source array and sets it into a 2D target array, as much as target can hold or source can supply.
+     * Modifies target in-place and also returns target for chaining.
+     * This is just like {@link #insert(char[][], char[][], int, int)} with x and y both always 0, but does slightly
+     * less math per call, and can be clearer as to the intent of the method.
+     *
+     * @param source a 2D char array that will be copied and inserted into target
+     * @param target a 2D char array that will be modified by receiving as much of source as it can hold
+     * @return target, modified, with the values from source set as much as possible
+     */
+    public static char[][] set(char[][] source, char[][] target) {
+        if (source == null || target == null || source.length == 0)
+            return target;
+        final int minWidth = Math.min(source.length, target.length);
+        for (int i = 0; i < minWidth; i++) {
+            System.arraycopy(source[i], 0, target[i], 0, Math.min(source[i].length, target[i].length));
+        }
+        return target;
+    }
+
+    /**
+     * Takes a 2D source array and sets it into a 2D target array, as much as target can hold or source can supply.
+     * Modifies target in-place and also returns target for chaining.
+     * This is just like {@link #insert(float[][], float[][], int, int)} with x and y both always 0, but does slightly
+     * less math per call, and can be clearer as to the intent of the method.
+     *
+     * @param source a 2D float array that will be copied and inserted into target
+     * @param target a 2D float array that will be modified by receiving as much of source as it can hold
+     * @return target, modified, with the values from source set as much as possible
+     */
+    public static float[][] set(float[][] source, float[][] target) {
+        if (source == null || target == null || source.length == 0)
+            return target;
+        final int minWidth = Math.min(source.length, target.length);
+        for (int i = 0; i < minWidth; i++) {
+            System.arraycopy(source[i], 0, target[i], 0, Math.min(source[i].length, target[i].length));
+        }
+        return target;
+    }
+
+    /**
+     * Takes a 2D source array and sets it into a 2D target array, as much as target can hold or source can supply.
+     * Modifies target in-place and also returns target for chaining.
+     * This is just like {@link #insert(double[][], double[][], int, int)} with x and y both always 0, but does slightly
+     * less math per call, and can be clearer as to the intent of the method.
+     *
+     * @param source a 2D double array that will be copied and inserted into target
+     * @param target a 2D double array that will be modified by receiving as much of source as it can hold
+     * @return target, modified, with the values from source set as much as possible
+     */
+    public static double[][] set(double[][] source, double[][] target) {
+        if (source == null || target == null || source.length == 0)
+            return target;
+        final int minWidth = Math.min(source.length, target.length);
+        for (int i = 0; i < minWidth; i++) {
+            System.arraycopy(source[i], 0, target[i], 0, Math.min(source[i].length, target[i].length));
+        }
+        return target;
+    }
+
+    /**
+     * Takes a 2D source array and sets it into a 2D target array, as much as target can hold or source can supply.
+     * Modifies target in-place and also returns target for chaining.
+     * This is just like {@link #insert(int[][], int[][], int, int)} with x and y both always 0, but does slightly
+     * less math per call, and can be clearer as to the intent of the method.
+     *
+     * @param source a 2D int array that will be copied and inserted into target
+     * @param target a 2D int array that will be modified by receiving as much of source as it can hold
+     * @return target, modified, with the values from source set as much as possible
+     */
+    public static int[][] set(int[][] source, int[][] target) {
+        if (source == null || target == null || source.length == 0)
+            return target;
+        final int minWidth = Math.min(source.length, target.length);
+        for (int i = 0; i < minWidth; i++) {
+            System.arraycopy(source[i], 0, target[i], 0, Math.min(source[i].length, target[i].length));
+        }
+        return target;
+    }
+
+    /**
+     * Takes a 2D source array and sets it into a 2D target array, as much as target can hold or source can supply.
+     * Modifies target in-place and also returns target for chaining.
+     * This is just like {@link #insert(long[][], long[][], int, int)} with x and y both always 0, but does slightly
+     * less math per call, and can be clearer as to the intent of the method.
+     *
+     * @param source a 2D long array that will be copied and inserted into target
+     * @param target a 2D long array that will be modified by receiving as much of source as it can hold
+     * @return target, modified, with the values from source set as much as possible
+     */
+    public static long[][] set(long[][] source, long[][] target) {
+        if (source == null || target == null || source.length == 0)
+            return target;
+        final int minWidth = Math.min(source.length, target.length);
+        for (int i = 0; i < minWidth; i++) {
+            System.arraycopy(source[i], 0, target[i], 0, Math.min(source[i].length, target[i].length));
+        }
+        return target;
+    }
+
+    /**
+     * Takes a 2D source array and sets it into a 2D target array, as much as target can hold or source can supply.
+     * Modifies target in-place and also returns target for chaining.
+     * This is just like {@link #insert(boolean[][], boolean[][], int, int)} with x and y both always 0, but does slightly
+     * less math per call, and can be clearer as to the intent of the method.
+     *
+     * @param source a 2D boolean array that will be copied and inserted into target
+     * @param target a 2D boolean array that will be modified by receiving as much of source as it can hold
+     * @return target, modified, with the values from source set as much as possible
+     */
+    public static boolean[][] set(boolean[][] source, boolean[][] target) {
+        if (source == null || target == null || source.length == 0)
+            return target;
+        final int minWidth = Math.min(source.length, target.length);
+        for (int i = 0; i < minWidth; i++) {
+            System.arraycopy(source[i], 0, target[i], 0, Math.min(source[i].length, target[i].length));
+        }
+        return target;
+    }
+    
+    /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(char[][], char)} to modify an existing 2D array instead.
      *
