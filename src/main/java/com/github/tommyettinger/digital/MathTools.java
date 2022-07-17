@@ -409,6 +409,127 @@ public final class MathTools {
     }
 
     /**
+     * Returns the next higher power of two relative to {@code n}, or n if it is already a power of two. This returns 2
+     * if n is any value less than 2 (including negative numbers, but also 1, which is a power of two).
+     *
+     * @param n the lower bound for the result
+     * @return the next higher power of two that is greater than or equal to n
+     */
+    public static int nextPowerOfTwo(final int n) {
+        return 1 << -Integer.numberOfLeadingZeros(Math.max(2, n) - 1);
+    }
+
+    /**
+     * Returns true if {@code value} is a power of two or is equal to {@link Integer#MIN_VALUE}; false otherwise.
+     *
+     * @param value any int
+     * @return true if {@code value} is a power of two (when treated as unsigned)
+     */
+    public static boolean isPowerOfTwo(int value) {
+        return value != 0 && (value & value - 1) == 0;
+    }
+
+    /**
+     * A close approximation to the gamma function for positive doubles, using an algorithm by T. J. Stieltjes.
+     * <a href="http://www.luschny.de/math/factorial/approx/SimpleCases.html">Source here</a>. This is exactly
+     * equivalent to {@code MathExtras.factorial(x - 1.0)}.
+     * @param x a real number; should usually be positive
+     * @return the approximate gamma of the given x
+     */
+    public static double gamma(double x) {
+        return factorial(x - 1.0);
+    }
+
+    /**
+     * A close approximation to the factorial function for real numbers, using an algorithm by T. J. Stieltjes.
+     * This performs a variable number of multiplications that starts at 1 when x is between 5 and 6, and requires more
+     * multiplications the lower x goes (to potentially many if x is, for instance, -1000.0, which would need 1006
+     * multiplications per call). As such, you should try to call this mostly on x values that are positive or have a
+     * low magnitude. <a href="http://www.luschny.de/math/factorial/approx/SimpleCases.html">Source here</a>.
+     * @param x a real number; should not be both large and negative
+     * @return the generalized factorial of the given x
+     */
+    public static double factorial(double x) {
+        double y = x + 1.0, p = 1.0;
+        for (; y < 7; y++)
+            p *= y;
+        double r = Math.exp(y * Math.log(y) - y + 1.0 / (12.0 * y + 2.0 / (5.0 * y + 53.0 / (42.0 * y))));
+        if (x < 7.0) r /= p;
+        return r * Math.sqrt(PI2_D / y);
+    }
+
+    /**
+     * A close approximation to the gamma function for positive doubles, using an algorithm by T. J. Stieltjes.
+     * <a href="http://www.luschny.de/math/factorial/approx/SimpleCases.html">Source here</a>. This is exactly
+     * equivalent to {@code MathExtras.factorial(x - 1.0)}.
+     * <br>
+     * This does all of its math on doubles internally and only casts to float at the end.
+     *
+     * @param x a real number; should usually be positive
+     * @return the approximate gamma of the given x
+     */
+    public static float gamma(float x) {
+        return factorial(x - 1f);
+    }
+
+    /**
+     * A close approximation to the factorial function for real numbers, using an algorithm by T. J. Stieltjes.
+     * This performs a variable number of multiplications that starts at 1 when x is between 5 and 6, and requires more
+     * multiplications the lower x goes (to potentially many if x is, for instance, -1000.0, which would need 1006
+     * multiplications per call). As such, you should try to call this mostly on x values that are positive or have a
+     * low magnitude. <a href="http://www.luschny.de/math/factorial/approx/SimpleCases.html">Source here</a>.
+     * <br>
+     * This does all of its math on doubles internally and only casts to float at the end.
+     *
+     * @param x a real number; should not be both large and negative
+     * @return the generalized factorial of the given x
+     */
+    public static float factorial(float x) {
+        double y = x + 1.0, p = 1.0;
+        for (; y < 7; y++)
+            p *= y;
+        double r = Math.exp(y * Math.log(y) - y + 1.0 / (12.0 * y + 2.0 / (5.0 * y + 53.0 / (42.0 * y))));
+        if (x < 7.0) r /= p;
+        return (float) (r * Math.sqrt(PI2_D / y));
+    }
+
+    /**
+     * Returns the square (second power) of its parameter. Purely here for convenience.
+     * @param n any float
+     * @return {@code n * n}
+     */
+    public static float square(final float n) {
+        return n * n;
+    }
+
+    /**
+     * Returns the square (second power) of its parameter. Purely here for convenience.
+     * @param n any double
+     * @return {@code n * n}
+     */
+    public static double square(final double n) {
+        return n * n;
+    }
+
+    /**
+     * Returns the cube (third power) of its parameter. Purely here for convenience.
+     * @param n any float
+     * @return {@code n * n * n}
+     */
+    public static float cube(final float n) {
+        return n * n * n;
+    }
+
+    /**
+     * Returns the cube (third power) of its parameter. Purely here for convenience.
+     * @param n any double
+     * @return {@code n * n * n}
+     */
+    public static double cube(final double n) {
+        return n * n * n;
+    }
+
+    /**
      * Like {@link Math#floor}, but returns a long.
      * Doesn't consider "weird doubles" like INFINITY and NaN.
      * This is only faster than {@code (long)Math.floor(t)} on Java 8 for supported desktop platforms.
@@ -553,27 +674,6 @@ public final class MathTools {
      */
     public static int roundPositive(float value) {
         return (int) (value + 0.5f);
-    }
-
-    /**
-     * Returns the next higher power of two relative to {@code n}, or n if it is already a power of two. This returns 2
-     * if n is any value less than 2 (including negative numbers, but also 1, which is a power of two).
-     *
-     * @param n the lower bound for the result
-     * @return the next higher power of two that is greater than or equal to n
-     */
-    public static int nextPowerOfTwo(final int n) {
-        return 1 << -Integer.numberOfLeadingZeros(Math.max(2, n) - 1);
-    }
-
-    /**
-     * Returns true if {@code value} is a power of two or is equal to {@link Integer#MIN_VALUE}; false otherwise.
-     *
-     * @param value any int
-     * @return true if {@code value} is a power of two (when treated as unsigned)
-     */
-    public static boolean isPowerOfTwo(int value) {
-        return value != 0 && (value & value - 1) == 0;
     }
 
     /**
