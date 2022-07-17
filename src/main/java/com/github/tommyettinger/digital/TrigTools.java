@@ -174,7 +174,7 @@ public final class TrigTools {
      * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
      */
     public static float cos(float radians) {
-        return SIN_TABLE[(int) ((radians + HALF_PI) * radToIndex) & TABLE_MASK];
+        return SIN_TABLE[(int) (radians * radToIndex) + SIN_TO_COS & TABLE_MASK];
     }
 
     /**
@@ -205,7 +205,7 @@ public final class TrigTools {
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      */
     public static float cosDeg(float degrees) {
-        return SIN_TABLE[(int) ((degrees + 90) * degToIndex) & TABLE_MASK];
+        return SIN_TABLE[(int) (degrees * degToIndex) + SIN_TO_COS & TABLE_MASK];
     }
 
     /**
@@ -236,7 +236,7 @@ public final class TrigTools {
      * @param turns an angle in turns, where 0 to 1 is one rotation
      */
     public static float cosTurns(float turns) {
-        return SIN_TABLE[(int) ((turns + 0.25f) * turnToIndex) & TABLE_MASK];
+        return SIN_TABLE[(int) (turns * turnToIndex) + SIN_TO_COS & TABLE_MASK];
     }
 
     /**
@@ -280,6 +280,67 @@ public final class TrigTools {
         final int idx = (int) (radians * radToIndexD) & TABLE_MASK;
         return SIN_TABLE_D[idx] / SIN_TABLE_D[idx + SIN_TO_COS & TABLE_MASK];
     }
+
+    /**
+     * Returns the sine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
+     * inclusive).
+     *
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
+     */
+    public static double sinDeg(double degrees) {
+        return SIN_TABLE_D[(int) (degrees * degToIndexD) & TABLE_MASK];
+    }
+
+    /**
+     * Returns the cosine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
+     * inclusive).
+     *
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
+     */
+    public static double cosDeg(double degrees) {
+        return SIN_TABLE_D[(int) (degrees * degToIndexD) + SIN_TO_COS & TABLE_MASK];
+    }
+
+    /**
+     * Returns the tangent in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
+     * inclusive).
+     *
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
+     */
+    public static double tanDeg(double degrees) {
+        final int idx = (int) (degrees * degToIndexD) & TABLE_MASK;
+        return SIN_TABLE_D[idx] / SIN_TABLE_D[idx + SIN_TO_COS & TABLE_MASK];
+    }
+
+    /**
+     * Returns the sine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
+     * inclusive).
+     *
+     * @param turns an angle in turns, where 0 to 1 is one rotation
+     */
+    public static double sinTurns(double turns) {
+        return SIN_TABLE_D[(int) (turns * turnToIndexD) & TABLE_MASK];
+    }
+
+    /**
+     * Returns the cosine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
+     * inclusive).
+     *
+     * @param turns an angle in turns, where 0 to 1 is one rotation
+     */
+    public static double cosTurns(double turns) {
+        return SIN_TABLE_D[(int) (turns * turnToIndexD) + SIN_TO_COS & TABLE_MASK];
+    }
+
+    /**
+     * Returns the tangent in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
+     * inclusive).
+     *
+     * @param turns an angle in turns, where 0 to 1 is one rotation
+     */
+    public static double tanTurns(double turns) {
+        final int idx = (int) (turns * turnToIndexD) & TABLE_MASK;
+        return SIN_TABLE_D[idx] / SIN_TABLE_D[idx + SIN_TO_COS & TABLE_MASK];
     }
 
     // ---
