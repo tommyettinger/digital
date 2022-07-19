@@ -415,6 +415,24 @@ public final class ArrayTools {
         }
         return target;
     }
+
+    /**
+     * Inserts as much of source into target at the given x,y position as target can hold or source can supply.
+     * Modifies target in-place and also returns target for chaining.
+     * Used primarily to place a smaller array into a different position in a larger array, often freshly allocated.
+     * This does not create copies of any T items; {@code source} will reference the same T items as {@code target}.
+     *
+     * @param source a 2D generic array that will be copied and inserted into target
+     * @param target a 2D generic array that will be modified by receiving as much of source as it can hold
+     * @param x      the x position in target to receive the items from the first cell in source
+     * @param y      the y position in target to receive the items from the first cell in source
+     * @return target, modified, with source inserted into it at the given position
+     */
+    public static <T> T[][] insert(T[][] source, T[][] target, int x, int y) {
+        if (source == null || target == null)
+            return target;
+        if (source.length < 1 || source[0].length < 1)
+            return target;
         for (int i = 0; i < source.length && x + i < target.length; i++) {
             System.arraycopy(source[i], 0, target[x + i], y, Math.min(source[i].length, target[x + i].length - y));
         }
@@ -540,7 +558,28 @@ public final class ArrayTools {
         }
         return target;
     }
-    
+
+    /**
+     * Takes a 2D source array and sets it into a 2D target array, as much as target can hold or source can supply.
+     * Modifies target in-place and also returns target for chaining.
+     * This is just like {@link #insert(Object[][], Object[][], int, int)} with x and y both always 0, but does slightly
+     * less math per call, and can be clearer as to the intent of the method.
+     * This does not create copies of any T items; {@code source} will reference the same T items as {@code target}.
+     *
+     * @param source a 2D generic array that will be copied and inserted into target
+     * @param target a 2D generic array that will be modified by receiving as much of source as it can hold
+     * @return target, modified, with the values from source set as much as possible
+     */
+    public static <T> T[][] set(T[][] source, T[][] target) {
+        if (source == null || target == null || source.length == 0)
+            return target;
+        final int minWidth = Math.min(source.length, target.length);
+        for (int i = 0; i < minWidth; i++) {
+            System.arraycopy(source[i], 0, target[i], 0, Math.min(source[i].length, target[i].length));
+        }
+        return target;
+    }
+
     /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(char[][], char)} to modify an existing 2D array instead.
@@ -720,14 +759,31 @@ public final class ArrayTools {
     }
 
     /**
+     * Fills {@code array2d} with identical references to {@code value} (not copies).
+     * Note that there is no fill() method that creates a new 2D array of a generic type.
+     *
+     * @param array2d a 2D array that will be modified in-place
+     * @param value   the value to fill all of array2D with
+     */
+    public static <T> void fill(T[][] array2d, T value) {
+        final int width = array2d.length;
+        for (int i = 0; i < width; i++) {
+            Arrays.fill(array2d[i], value);
+        }
+    }
+
+    /**
      * Fills {@code array3d} with {@code value}.
      * Not to be confused with {@link #fill(double[][], double)}, which fills a 2D array instead of a 3D one, or with
      * {@link #fill(double, int, int)}, which makes a new 2D array.
+     * This is named differently to avoid ambiguity between a 1D array of {@code double[][]}, which this can take, and a
+     * 2D array of {@code double[]}, which could be given to {@link #fill(Object[][], Object)}, but could also be given
+     * to this.
      *
      * @param array3d a 3D array that will be modified in-place
      * @param value   the value to fill all of array3d with
      */
-    public static void fill(double[][][] array3d, double value) {
+    public static void fill3D(double[][][] array3d, double value) {
         final int depth = array3d.length;
         final int width = depth == 0 ? 0 : array3d[0].length;
         final int height = width == 0 ? 0 : array3d[0][0].length;
@@ -900,6 +956,27 @@ public final class ArrayTools {
      * @param endY    the last y position to fill (inclusive)
      */
     public static void fill(long[][] array2d, long value, int startX, int startY, int endX, int endY) {
+        final int width = array2d.length;
+        final int height = width == 0 ? 0 : array2d[0].length;
+        for (int x = startX; x <= endX && x < width; x++) {
+            for (int y = startY; y <= endY && y < height; y++) {
+                array2d[x][y] = value;
+            }
+        }
+    }
+
+    /**
+     * Fills a sub-section of {@code array2d} with identical references to {@code value} (not copies), with the section
+     * defined by start/end x/y.
+     *
+     * @param array2d a 2D array that will be modified in-place
+     * @param value   the value to fill all of array2D with
+     * @param startX  the first x position to fill (inclusive)
+     * @param startY  the first y position to fill (inclusive)
+     * @param endX    the last x position to fill (inclusive)
+     * @param endY    the last y position to fill (inclusive)
+     */
+    public static <T> void fill(T[][] array2d, T value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
         final int height = width == 0 ? 0 : array2d[0].length;
         for (int x = startX; x <= endX && x < width; x++) {
