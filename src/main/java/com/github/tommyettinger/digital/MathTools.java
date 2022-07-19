@@ -15,7 +15,9 @@
  */
 package com.github.tommyettinger.digital;
 
-import static com.github.tommyettinger.digital.TrigTools.*;
+import static com.github.tommyettinger.digital.TrigTools.PI;
+import static com.github.tommyettinger.digital.TrigTools.PI2;
+import static com.github.tommyettinger.digital.TrigTools.PI2_D;
 
 /**
  * Mathematical operations not provided by {@link Math java.lang.Math}.
@@ -25,11 +27,17 @@ import static com.github.tommyettinger.digital.TrigTools.*;
  * Also includes code adapted from libGDX as their MathUtils class. There's also
  * {@link #cbrt(float)} by Marc B. Reynolds, building on the legendary fast inverse square root,
  * and a generalized bias/gain function, {@link #barronSpline(float, float, float)}, popularized by Jon Barron.
+ * The {@link #fastFloor(float)} and {@link #fastCeil(float)} methods were devised by Riven on JavaGaming.org .
+ * {@link #factorial(float)} and {@link #gamma(float)} are by T. J. Stieltjes.
+ * The lerp methods that operate on angles are originally from MathUtils in libGDX, which credits Nathan Sweet.
  *
  * @author Daniel Dyer
  * @author Tommy Ettinger
  * @author Marc B. Reynolds
  * @author Jon Barron
+ * @author Riven
+ * @author T. J. Stieltjes
+ * @author Nathan Sweet
  */
 public final class MathTools {
     private MathTools() {
@@ -181,7 +189,7 @@ public final class MathTools {
      * less than or equal to the specified maximum, adjust it so that it is.
      * <br>
      * Note that it can often be just as easy to directly call the same code this calls, while being slightly friendlier
-     * to inlining in large method: {@code Math.min(Math.max(value, min), max)}.
+     * to inlining in large methods: {@code Math.min(Math.max(value, min), max)}.
      *
      * @param value The value to check.
      * @param min   The minimum permitted value.
@@ -198,7 +206,7 @@ public final class MathTools {
      * less than or equal to the specified maximum, adjust it so that it is.
      * <br>
      * Note that it can often be just as easy to directly call the same code this calls, while being slightly friendlier
-     * to inlining in large method: {@code Math.min(Math.max(value, min), max)}.
+     * to inlining in large methods: {@code Math.min(Math.max(value, min), max)}.
      *
      * @param value The value to check.
      * @param min   The minimum permitted value.
@@ -215,7 +223,7 @@ public final class MathTools {
      * less than or equal to the specified maximum, adjust it so that it is.
      * <br>
      * Note that it can often be just as easy to directly call the same code this calls, while being slightly friendlier
-     * to inlining in large method: {@code Math.min(Math.max(value, min), max)}.
+     * to inlining in large methods: {@code Math.min(Math.max(value, min), max)}.
      *
      * @param value The value to check.
      * @param min   The minimum permitted value.
@@ -232,7 +240,7 @@ public final class MathTools {
      * less than or equal to the specified maximum, adjust it so that it is.
      * <br>
      * Note that it can often be just as easy to directly call the same code this calls, while being slightly friendlier
-     * to inlining in large method: {@code Math.min(Math.max(value, min), max)}.
+     * to inlining in large methods: {@code Math.min(Math.max(value, min), max)}.
      *
      * @param value The value to check.
      * @param min   The minimum permitted value.

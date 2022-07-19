@@ -21,6 +21,16 @@ package com.github.tommyettinger.digital;
  * Various trigonometric approximations, using a lookup table for sin(), cos(), and tan(), and Taylor series for their
  * inverses. This supplies variants for radians, degrees, and turns. This also has an atan2() approximation defined with
  * output in radians, degrees, and turns.
+ * <br>
+ * This is primarily derived from libGDX's MathUtils class. The main new functionalities are the variants that take or
+ * return measurements in turns, the now-available {@link #SIN_TABLE} and {@link #SIN_TABLE_D}, and double variants in
+ * general. Using the sin table directly allows {@link #tan(float)} to be implemented in a straightforward way, and it
+ * has other uses mentioned in its docs (in particular, uniform random unit vectors).
+ * <br>
+ * MathUtils had its sin and cos methods created by Riven on JavaGaming.org . The asin(), acos(), and atan() methods all
+ * use Taylor series approximations from the 1955 research study "Approximations for Digital Computers," by RAND
+ * Corporation; though one might think such code would be obsolete over 60 years later, the approximations from that
+ * study seem to have higher accuracy and speed than most attempts in later decades, often those aimed at DSP usage.
  */
 public final class TrigTools {
 

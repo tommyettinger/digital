@@ -27,7 +27,10 @@ import static com.github.tommyettinger.digital.BitConversion.floatToRawIntBits;
  * This uses a family of algorithms all based on Wang Yi's wyhash, but using at most 64-bit
  * math. Wyhash was designed foremost for speed and also general-purpose usability, but not
  * cryptographic security. The functions here pass the stringent SMHasher test battery,
- * including the "bad seeds" test that wyhash itself fails.
+ * including the "bad seeds" test that wyhash itself fails. This is based on an early version
+ * of wyhash,
+ * <a href="https://github.com/wangyi-fudan/wyhash/blob/version_1/wyhash.h">source here</a>,
+ * but has diverged significantly.
  * <br>
  * This provides an object-based API and a static API, where a Hasher object is
  * instantiated with a seed, and the static methods take a seed as their first argument.
