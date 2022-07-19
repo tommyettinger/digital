@@ -705,7 +705,7 @@ public final class ArrayTools {
      * Fills {@code array2d} with {@code value}.
      * Not to be confused with {@link #fill(boolean, int, int)}, which makes a new 2D array.
      *
-     * @param array2d a 2D array that will be modified in-place
+     * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
     public static void fill(boolean[][] array2d, boolean value) {
@@ -719,7 +719,7 @@ public final class ArrayTools {
      * Fills {@code array2d} with {@code value}.
      * Not to be confused with {@link #fill(char, int, int)}, which makes a new 2D array.
      *
-     * @param array2d a 2D array that will be modified in-place
+     * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
     public static void fill(char[][] array2d, char value) {
@@ -733,7 +733,7 @@ public final class ArrayTools {
      * Fills {@code array2d} with {@code value}.
      * Not to be confused with {@link #fill(float, int, int)}, which makes a new 2D array.
      *
-     * @param array2d a 2D array that will be modified in-place
+     * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
     public static void fill(float[][] array2d, float value) {
@@ -748,7 +748,7 @@ public final class ArrayTools {
      * Fills {@code array2d} with {@code value}.
      * Not to be confused with {@link #fill(double, int, int)}, which makes a new 2D array.
      *
-     * @param array2d a 2D array that will be modified in-place
+     * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
     public static void fill(double[][] array2d, double value) {
@@ -759,10 +759,51 @@ public final class ArrayTools {
     }
 
     /**
+     * Fills {@code array2d} with {@code value}.
+     * Not to be confused with {@link #fill(int, int, int)}, which makes a new 2D array.
+     *
+     * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
+     * @param value   the value to fill all of array2D with
+     */
+    public static void fill(int[][] array2d, int value) {
+        final int width = array2d.length;
+        for (int i = 0; i < width; i++) {
+            Arrays.fill(array2d[i], value);
+        }
+    }
+
+    /**
+     * Fills {@code array2d} with {@code value}.
+     * Not to be confused with {@link #fill(long, int, int)}, which makes a new 2D array.
+     *
+     * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
+     * @param value   the value to fill all of array2D with
+     */
+    public static void fill(long[][] array2d, long value) {
+        final int width = array2d.length;
+        for (int i = 0; i < width; i++) {
+            Arrays.fill(array2d[i], value);
+        }
+    }
+
+    /**
+     * Fills {@code array2d} with {@code value}.
+     * Not to be confused with {@link #fill(byte, int, int)}, which makes a new 2D array.
+     *
+     * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
+     * @param value   the value to fill all of array2D with
+     */
+    public static void fill(byte[][] array2d, byte value) {
+        final int width = array2d.length;
+        for (int i = 0; i < width; i++) {
+            Arrays.fill(array2d[i], value);
+        }
+    }
+    /**
      * Fills {@code array2d} with identical references to {@code value} (not copies).
      * Note that there is no fill() method that creates a new 2D array of a generic type.
      *
-     * @param array2d a 2D array that will be modified in-place
+     * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
     public static <T> void fill(T[][] array2d, T value) {
@@ -774,13 +815,85 @@ public final class ArrayTools {
 
     /**
      * Fills {@code array3d} with {@code value}.
+     * Not to be confused with {@link #fill(boolean[][], boolean)}, which fills a 2D array instead of a 3D one, or with
+     * {@link #fill(boolean, int, int)}, which makes a new 2D array.
+     * This is named differently to avoid ambiguity between a 1D array of {@code boolean[][]}, which this can take, and a
+     * 2D array of {@code boolean[]}, which could be given to {@link #fill(Object[][], Object)}, but could also be given
+     * to this.
+     *
+     * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
+     * @param value   the value to fill all of array3d with
+     */
+    public static void fill3D(boolean[][][] array3d, boolean value) {
+        final int depth = array3d.length;
+        final int width = depth == 0 ? 0 : array3d[0].length;
+        final int height = width == 0 ? 0 : array3d[0][0].length;
+        if (depth > 0 && width > 0) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    Arrays.fill(array3d[i][j], value);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Fills {@code array3d} with {@code value}.
+     * Not to be confused with {@link #fill(char[][], char)}, which fills a 2D array instead of a 3D one, or with
+     * {@link #fill(char, int, int)}, which makes a new 2D array.
+     * This is named differently to avoid ambiguity between a 1D array of {@code char[][]}, which this can take, and a
+     * 2D array of {@code char[]}, which could be given to {@link #fill(Object[][], Object)}, but could also be given
+     * to this.
+     *
+     * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
+     * @param value   the value to fill all of array3d with
+     */
+    public static void fill3D(char[][][] array3d, char value) {
+        final int depth = array3d.length;
+        final int width = depth == 0 ? 0 : array3d[0].length;
+        final int height = width == 0 ? 0 : array3d[0][0].length;
+        if (depth > 0 && width > 0) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    Arrays.fill(array3d[i][j], value);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Fills {@code array3d} with {@code value}.
+     * Not to be confused with {@link #fill(float[][], float)}, which fills a 2D array instead of a 3D one, or with
+     * {@link #fill(float, int, int)}, which makes a new 2D array.
+     * This is named differently to avoid ambiguity between a 1D array of {@code float[][]}, which this can take, and a
+     * 2D array of {@code float[]}, which could be given to {@link #fill(Object[][], Object)}, but could also be given
+     * to this.
+     *
+     * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
+     * @param value   the value to fill all of array3d with
+     */
+    public static void fill3D(float[][][] array3d, float value) {
+        final int depth = array3d.length;
+        final int width = depth == 0 ? 0 : array3d[0].length;
+        final int height = width == 0 ? 0 : array3d[0][0].length;
+        if (depth > 0 && width > 0) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    Arrays.fill(array3d[i][j], value);
+                }
+            }
+        }
+    }
+
+    /**
+     * Fills {@code array3d} with {@code value}.
      * Not to be confused with {@link #fill(double[][], double)}, which fills a 2D array instead of a 3D one, or with
      * {@link #fill(double, int, int)}, which makes a new 2D array.
      * This is named differently to avoid ambiguity between a 1D array of {@code double[][]}, which this can take, and a
      * 2D array of {@code double[]}, which could be given to {@link #fill(Object[][], Object)}, but could also be given
      * to this.
      *
-     * @param array3d a 3D array that will be modified in-place
+     * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array3d with
      */
     public static void fill3D(double[][][] array3d, double value) {
@@ -797,47 +910,99 @@ public final class ArrayTools {
     }
 
     /**
-     * Fills {@code array2d} with {@code value}.
-     * Not to be confused with {@link #fill(int, int, int)}, which makes a new 2D array.
+     * Fills {@code array3d} with {@code value}.
+     * Not to be confused with {@link #fill(int[][], int)}, which fills a 2D array instead of a 3D one, or with
+     * {@link #fill(int, int, int)}, which makes a new 2D array.
+     * This is named differently to avoid ambiguity between a 1D array of {@code int[][]}, which this can take, and a
+     * 2D array of {@code int[]}, which could be given to {@link #fill(Object[][], Object)}, but could also be given
+     * to this.
      *
-     * @param array2d a 2D array that will be modified in-place
-     * @param value   the value to fill all of array2D with
+     * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
+     * @param value   the value to fill all of array3d with
      */
-    public static void fill(int[][] array2d, int value) {
-        final int width = array2d.length;
-        for (int i = 0; i < width; i++) {
-            Arrays.fill(array2d[i], value);
+    public static void fill3D(int[][][] array3d, int value) {
+        final int depth = array3d.length;
+        final int width = depth == 0 ? 0 : array3d[0].length;
+        final int height = width == 0 ? 0 : array3d[0][0].length;
+        if (depth > 0 && width > 0) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    Arrays.fill(array3d[i][j], value);
+                }
+            }
         }
     }
 
     /**
-     * Fills {@code array2d} with {@code value}.
-     * Not to be confused with {@link #fill(long, int, int)}, which makes a new 2D array.
+     * Fills {@code array3d} with {@code value}.
+     * Not to be confused with {@link #fill(long[][], long)}, which fills a 2D array instead of a 3D one, or with
+     * {@link #fill(long, int, int)}, which makes a new 2D array.
+     * This is named differently to avoid ambiguity between a 1D array of {@code long[][]}, which this can take, and a
+     * 2D array of {@code long[]}, which could be given to {@link #fill(Object[][], Object)}, but could also be given
+     * to this.
      *
-     * @param array2d a 2D array that will be modified in-place
-     * @param value   the value to fill all of array2D with
+     * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
+     * @param value   the value to fill all of array3d with
      */
-    public static void fill(long[][] array2d, long value) {
-        final int width = array2d.length;
-        for (int i = 0; i < width; i++) {
-            Arrays.fill(array2d[i], value);
+    public static void fill3D(long[][][] array3d, long value) {
+        final int depth = array3d.length;
+        final int width = depth == 0 ? 0 : array3d[0].length;
+        final int height = width == 0 ? 0 : array3d[0][0].length;
+        if (depth > 0 && width > 0) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    Arrays.fill(array3d[i][j], value);
+                }
+            }
         }
     }
 
     /**
-     * Fills {@code array2d} with {@code value}.
-     * Not to be confused with {@link #fill(byte, int, int)}, which makes a new 2D array.
+     * Fills {@code array3d} with {@code value}.
+     * Not to be confused with {@link #fill(byte[][], byte)}, which fills a 2D array instead of a 3D one, or with
+     * {@link #fill(byte, int, int)}, which makes a new 2D array.
+     * This is named differently to avoid ambiguity between a 1D array of {@code byte[][]}, which this can take, and a
+     * 2D array of {@code byte[]}, which could be given to {@link #fill(Object[][], Object)}, but could also be given
+     * to this.
      *
-     * @param array2d a 2D array that will be modified in-place
-     * @param value   the value to fill all of array2D with
+     * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
+     * @param value   the value to fill all of array3d with
      */
-    public static void fill(byte[][] array2d, byte value) {
-        final int width = array2d.length;
-        for (int i = 0; i < width; i++) {
-            Arrays.fill(array2d[i], value);
+    public static void fill3D(byte[][][] array3d, byte value) {
+        final int depth = array3d.length;
+        final int width = depth == 0 ? 0 : array3d[0].length;
+        final int height = width == 0 ? 0 : array3d[0][0].length;
+        if (depth > 0 && width > 0) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    Arrays.fill(array3d[i][j], value);
+                }
+            }
         }
     }
 
+    /**
+     * Fills {@code array3d} with identical references to {@code value} (not copies).
+     * Not to be confused with {@link #fill(Object[][], Object)}, which fills a 2D array instead of a 3D one.
+     * This is named differently to avoid ambiguity between a 1D array of {@code T[][]}, which this can take, and a
+     * 2D array of {@code T[]}, which could be given to {@link #fill(Object[][], Object)}, but could also be given
+     * to this.
+     *
+     * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
+     * @param value   the value to fill all of array3d with
+     */
+    public static <T> void fill3D(T[][][] array3d, T value) {
+        final int depth = array3d.length;
+        final int width = depth == 0 ? 0 : array3d[0].length;
+        final int height = width == 0 ? 0 : array3d[0][0].length;
+        if (depth > 0 && width > 0) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    Arrays.fill(array3d[i][j], value);
+                }
+            }
+        }
+    }
 
     /**
      * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
