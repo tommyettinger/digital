@@ -82,8 +82,7 @@ repositories {
 dependencies {
     testImplementation "junit:junit:4.13.2"
 
-    // Should be uncommented if you target Java 8, I think.
-    // Should stay commented out if you target Java 7 (the default).
+    // ???
     //testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.8.2"
 
     constraints {

@@ -259,6 +259,17 @@ public final class MathTools {
      * @param d  the divisor; if this is negative then the result will be negative, otherwise it will be positive
      * @return the remainder of the division of op by d, with a sign matching d
      */
+    public static float remainder(final float op, final float d) {
+        return (op % d + d) % d;
+    }
+
+    /**
+     * Like the modulo operator {@code %}, but the result will always match the sign of {@code d} instead of {@code op}.
+     *
+     * @param op the dividend; negative values are permitted and wrap instead of producing negative results
+     * @param d  the divisor; if this is negative then the result will be negative, otherwise it will be positive
+     * @return the remainder of the division of op by d, with a sign matching d
+     */
     public static double remainder(final double op, final double d) {
         return (op % d + d) % d;
     }
@@ -467,9 +478,9 @@ public final class MathTools {
     }
 
     /**
-     * A close approximation to the gamma function for positive doubles, using an algorithm by T. J. Stieltjes.
+     * A close approximation to the gamma function for positive floats, using an algorithm by T. J. Stieltjes.
      * <a href="http://www.luschny.de/math/factorial/approx/SimpleCases.html">Source here</a>. This is exactly
-     * equivalent to {@code MathExtras.factorial(x - 1.0)}.
+     * equivalent to {@code MathExtras.factorial(x - 1f)}.
      * <br>
      * This does all of its math on doubles internally and only casts to float at the end.
      *
@@ -477,7 +488,7 @@ public final class MathTools {
      * @return the approximate gamma of the given x
      */
     public static float gamma(float x) {
-        return factorial(x - 1f);
+        return (float) factorial(x - 1.0);
     }
 
     /**
@@ -895,7 +906,8 @@ public final class MathTools {
 
 
     /**
-     * Returns true if the value is zero.
+     * Returns true if the value is zero. A suggested tolerance is {@code 0x1p-20}, which is the same value the float
+     * overload uses for its default tolerance, or a smaller number to reduce false-positives, such as {@code 0x1p-32}.
      *
      * @param value     any double
      * @param tolerance represent an upper bound below which the value is considered zero.
@@ -1089,6 +1101,9 @@ public final class MathTools {
      * counters (also called Weyl sequences) and also sometimes as multipliers for data that should be somewhat random.
      * The earlier numbers in the array are closer to the bit patterns of irrational numbers. Note that these are not at
      * all uniformly-distributed, and should not be used for tasks where random negative longs must be uniform.
+     * See <a href="http://extremelearning.com.au/unreasonable-effectiveness-of-quasirandom-sequences/#GeneralizingGoldenRatio">Martin Roberts' blog post</a>
+     * for more information on how these were constructed. This can be organized into groups of increasing size -- 1
+     * number from the 1D sequence in that post, 2 numbers from the 2D sequence, 3 numbers from the 3D sequence, etc.
      */
     public static final long[] GOLDEN_LONGS = {
             0x9E3779B97F4A7C15L,
