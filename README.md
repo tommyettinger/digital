@@ -36,16 +36,19 @@ atan, and atan2 in radians, degrees, and turns. It also allows
 access to the lookup table used by sin, cos, and tan. Much of
 TrigTools can be seen as similar to what libGDX's MathUtils
 class offers, but allowing access to the lookup table permits
-a few novel features (see its docs).
+a few novel features (see its docs). It supports float and
+double arguments/returns for all functions.
 
 MathTools offers a wild grab bag of math functions and
 constants, from simple lerp, floor, ceil, and clamp methods to
 an optimized cube root function and a parameterized spline. It
-is also based on MathUtils from libGDX.
+is also based on MathUtils from libGDX. It supports float and
+double arguments/returns for most functions; some make sense
+for float only, like the optimized cube root. 
 
 ArrayTools provides common code for dealing with 2D arrays, and
-also sometimes 1D arrays. It allows copying, inserting, and
-filling 2D arrays, and creating ranges of 1D arrays.
+also sometimes 1D or 3D arrays. It allows copying, inserting,
+and filling 2D arrays, and creating ranges of 1D arrays.
 
 Hasher is... large. It provides fast, high-quality hashing
 functions for primitive arrays (and arrays of objects, if they
@@ -70,14 +73,14 @@ With Gradle, add this to your dependencies (in your core module,
 for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.0.3"
+api "com.github.tommyettinger:digital:0.0.4"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.0.3:sources"
+api "com.github.tommyettinger:digital:0.0.4:sources"
 ```
 
 and this in your GdxDefinition.gwt.xml file:
