@@ -47,6 +47,12 @@ public final class TrigTools {
      */
     public static final float PI = (float) Math.PI;
     /**
+     * The {@code double} value that is closer than any other to
+     * <i>pi</i>, the ratio of the circumference of a circle to its
+     * diameter.
+     */
+    public static final double PI_D = Math.PI;
+    /**
      * 1.0f divided by {@link #PI}.
      */
     public static final float PI_INVERSE = (float) (1.0 / Math.PI);
