@@ -358,7 +358,7 @@ public final class MathTools {
      * distributed between -512 and 512, and absolute mean error of less than
      * 1E-6 in the same scenario. Uses a bit-twiddling method similar to one
      * presented in Hacker's Delight and also used in early 3D graphics (see
-     * <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a> for more, but
+     * {@link #invSqrt(float)} for more, but
      * this code approximates cbrt(x) and not 1/sqrt(x)). This specific code
      * was originally by Marc B. Reynolds, posted in his
      * <a href="https://github.com/Marc-B-Reynolds/Stand-alone-junk/blob/master/src/Posts/ballcube.c#L182-L197">"Stand-alone-junk" repo</a> .
@@ -379,6 +379,50 @@ public final class MathTools {
         x = 0.33333334f * (2f * x + x0 / (x * x));
         x = 0.33333334f * (2f * x + x0 / (x * x));
         return x;
+    }
+    
+    /**
+     * Fast inverse square root, best known for its implementation in Quake III Arena.
+     * This is an algorithm that estimates the {@code float} value of 1/sqrt(x).
+     * <br>
+     * It is often used for vector normalization, i.e. scaling it to a length of 1.
+     * For example, it can be used to compute angles of incidence and reflection for
+     * lighting and shading.
+     * <br>
+     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>
+     * 
+     * @param x any finite float to find the inverse square root of
+     * @return the inverse square root of x, approximated
+     */
+    public static float invSqrt(float x) {
+        float x2 = 0.5f * x;
+        int i = Float.floatToIntBits(x);
+        i = 0x5f3759df - (i >> 1);
+        float y = Float.intBitsToFloat(i);
+        y *= (1.5f - x2 * y * y);
+        return y;
+    }
+    
+    /**
+     * Fast inverse square root, best known for its implementation in Quake III Arena.
+     * This is an algorithm that estimates the {@code double} value of 1/sqrt(x).
+     * <br>
+     * It is often used for vector normalization, i.e. scaling it to a length of 1.
+     * For example, it can be used to compute angles of incidence and reflection for
+     * lighting and shading.
+     * <br>
+     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>
+     * 
+     * @param x any finite double to find the inverse square root of
+     * @return the inverse square root of x, approximated
+     */
+    public static double invSqrt(double x) {
+        double x2 = 0.5d * x;
+        long i = Double.doubleToLongBits(x);
+        i = 0x5fe6ec85e7de30daL - (i >> 1);
+        double y = Double.longBitsToDouble(i);
+        y *= (1.5d - x2 * y * y);
+        return y;
     }
 
     /**
