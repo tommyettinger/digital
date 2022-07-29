@@ -382,6 +382,56 @@ public final class MathTools {
     }
 
     /**
+     * Fast inverse square root, best known for its implementation in Quake III Arena.
+     * This is an algorithm that estimates the {@code float} value of 1/sqrt(x). It has
+     * comparable performance to the more-straightforward {@code 1f/(float)Math.sqrt(x)}
+     * on HotSpot JDKs, but this method outperforms the Math-based approach by over 40%
+     * on GraalVM 17. Some other platforms, such as Android and GWT, may have similar or
+     * very different performance relative to using Math, so if you expect to use this
+     * method often, you should test it in your app on the platforms you target.
+     * Precision will always be best with Math.
+     * <br>
+     * It is often used for vector normalization, i.e. scaling it to a length of 1.
+     * For example, it can be used to compute angles of incidence and reflection for
+     * lighting and shading.
+     * <br>
+     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>
+     *
+     * @param x a non-negative finite float to find the inverse square root of
+     * @return the inverse square root of x, approximated
+     */
+    public static float invSqrt(float x) {
+        int i = 0x5F3759DF - (BitConversion.floatToIntBits(x) >> 1);
+        float y = BitConversion.intBitsToFloat(i);
+        return y * (1.5f - 0.5f * x * y * y);
+    }
+
+    /**
+     * Fast inverse square root, best known for its implementation in Quake III Arena.
+     * This is an algorithm that estimates the {@code double} value of 1/sqrt(x). It has
+     * comparable performance to the more-straightforward {@code 1.0/Math.sqrt(x)}
+     * on HotSpot JDKs, but this method may outperform the Math-based approach on GraalVM
+     * 17 (the float version, {@link #invSqrt(float)}, does so by 40% or more). Some other
+     * platforms, such as Android and GWT, may have similar or
+     * very different performance relative to using Math, so if you expect to use this
+     * method often, you should test it in your app on the platforms you target.
+     * Precision will always be best with Math.
+     * <br>
+     * It is often used for vector normalization, i.e. scaling it to a length of 1.
+     * For example, it can be used to compute angles of incidence and reflection for
+     * lighting and shading.
+     * <br>
+     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>
+     *
+     * @param x a non-negative finite double to find the inverse square root of
+     * @return the inverse square root of x, approximated
+     */
+    public static double invSqrt(double x) {
+        long i = 0x5FE6EC85E7DE30DAL - (BitConversion.doubleToLongBits(x) >> 1);
+        double y = BitConversion.longBitsToDouble(i);
+        return y * (1.5 - 0.5 * x * y * y);
+    }
+    /**
      * A generalization on bias and gain functions that can represent both; this version is branch-less.
      * This is based on <a href="https://arxiv.org/abs/2010.09714">this micro-paper</a> by Jon Barron, which
      * generalizes the earlier bias and gain rational functions by Schlick. The second and final page of the
