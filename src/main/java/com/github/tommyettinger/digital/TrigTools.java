@@ -65,9 +65,13 @@ public final class TrigTools {
      */
     public static final float TAU = PI2;
     /**
-     * {@link #PI} divided by 2f.
+     * {@link #PI} divided by 2f; the same as {@link #ETA}.
      */
     public static final float HALF_PI = PI * 0.5f;
+    /**
+     * {@link #PI} divided by 2f; the same as {@link #HALF_PI}.
+     */
+    public static final float ETA = PI * 0.5f;
     /**
      * 2.0 times {@link Math#PI}; the same as {@link #TAU_D}.
      */
@@ -77,9 +81,13 @@ public final class TrigTools {
      */
     public static final double TAU_D = PI2_D;
     /**
-     * {@link Math#PI} divided by 2.0.
+     * {@link Math#PI} divided by 2.0; the same as {@link #ETA_D}.
      */
     public static final double HALF_PI_D = Math.PI * 0.5;
+    /**
+     * {@link Math#PI} divided by 2.0; the same as {@link #HALF_PI_D}.
+     */
+    public static final double ETA_D = Math.PI * 0.5;
     /**
      * {@link #PI} divided by 4f.
      */
