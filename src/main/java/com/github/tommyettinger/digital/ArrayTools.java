@@ -48,6 +48,15 @@ public final class ArrayTools {
             'Ū', 'ū', 'Ŭ', 'ŭ', 'Ů', 'ů', 'Ű', 'ű', 'Ų', 'ų', 'Ŵ', 'ŵ', 'Ŷ', 'ŷ', 'Ÿ', 'Ź', 'ź', 'Ż', 'ż', 'Ž', 'ž', 'Ǿ', 'ǿ', 'Ș', 'ș', 'Ț', 'ț',
             'Γ', 'Δ', 'Θ', 'Λ', 'Ξ', 'Π', 'Σ', 'Φ', 'Ψ', 'Ω', 'α', 'β', 'γ'};
 
+    /**
+     * An unseeded Random instance that is used by {@link #shuffle(int[])} and related overloads when given no Random
+     * argument or a null one. This cannot be relied upon to have a given state, even if you set the seed; if you need
+     * a deterministic state, use your own seeded Random object and pass it to shuffle(). You could assign null to this,
+     * but it's a very bad idea and will probably result in a crash; a better idea is to assign a subclass of Random
+     * with a larger state size, such as a RandomXS128 from libGDX or any generator from juniper.
+     */
+    public static Random RANDOM = new Random();
+
     private static final char[] emptyChars = new char[0];
     private static final int[] emptyInts = new int[0];
     private static final char[][] emptyChars2D = new char[0][0];
@@ -1303,28 +1312,28 @@ public final class ArrayTools {
      * @return the array passed in, after shuffling
      */
     public static long[] shuffle(long[] data) {
-        return shuffle(data, null);
+        return shuffle(data, RANDOM);
     }
     
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
      * @param data an array that will be shuffled in-place
-     * @param seed a seed for randomness; can be made null for unseeded
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
      * @return the array passed in, after shuffling
      */
-    public static long[] shuffle(long[] data, Long seed) {
+    public static long[] shuffle(long[] data, Random rand) {
         int sz;
         if (data == null || (sz = data.length) <= 0) return data;
-        Random rand = seed == null ? new Random() : new Random(seed);
+        if (rand == null) rand = RANDOM;
         long t;
-	    for (int i = sz - 1; i > 0; i--) {
-	        int j = rand.nextInt(i + 1);
-	        t = data[i];
-	        data[i] = data[j];
-	        data[j] = t;
-	    }
-	    return data;
+        for (int i = sz - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            t = data[i];
+            data[i] = data[j];
+            data[j] = t;
+        }
+        return data;
     }
     
     /**
@@ -1334,28 +1343,28 @@ public final class ArrayTools {
      * @return the array passed in, after shuffling
      */
     public static boolean[] shuffle(boolean[] data) {
-        return shuffle(data, null);
+        return shuffle(data, RANDOM);
     }
     
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
      * @param data an array that will be shuffled in-place
-     * @param seed a seed for randomness; can be made null for unseeded
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
      * @return the array passed in, after shuffling
      */
-    public static boolean[] shuffle(boolean[] data, Long seed) {
+    public static boolean[] shuffle(boolean[] data, Random rand) {
         int sz;
         if (data == null || (sz = data.length) <= 0) return data;
-        Random rand = seed == null ? new Random() : new Random(seed);
+        if (rand == null) rand = RANDOM;
         boolean t;
-	    for (int i = sz - 1; i > 0; i--) {
-	        int j = rand.nextInt(i + 1);
-	        t = data[i];
-	        data[i] = data[j];
-	        data[j] = t;
-	    }
-	    return data;
+        for (int i = sz - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            t = data[i];
+            data[i] = data[j];
+            data[j] = t;
+        }
+        return data;
     }
     
     /**
@@ -1365,28 +1374,28 @@ public final class ArrayTools {
      * @return the array passed in, after shuffling
      */
     public static char[] shuffle(char[] data) {
-        return shuffle(data, null);
+        return shuffle(data, RANDOM);
     }
     
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
      * @param data an array that will be shuffled in-place
-     * @param seed a seed for randomness; can be made null for unseeded
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
      * @return the array passed in, after shuffling
      */
-    public static char[] shuffle(char[] data, Long seed) {
+    public static char[] shuffle(char[] data, Random rand) {
         int sz;
         if (data == null || (sz = data.length) <= 0) return data;
-        Random rand = seed == null ? new Random() : new Random(seed);
+        if (rand == null) rand = RANDOM;
         char t;
-	    for (int i = sz - 1; i > 0; i--) {
-	        int j = rand.nextInt(i + 1);
-	        t = data[i];
-	        data[i] = data[j];
-	        data[j] = t;
-	    }
-	    return data;
+        for (int i = sz - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            t = data[i];
+            data[i] = data[j];
+            data[j] = t;
+        }
+        return data;
     }
     
     /**
@@ -1396,28 +1405,28 @@ public final class ArrayTools {
      * @return the array passed in, after shuffling
      */
     public static float[] shuffle(float[] data) {
-        return shuffle(data, null);
+        return shuffle(data, RANDOM);
     }
     
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
      * @param data an array that will be shuffled in-place
-     * @param seed a seed for randomness; can be made null for unseeded
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
      * @return the array passed in, after shuffling
      */
-    public static float[] shuffle(float[] data, Long seed) {
+    public static float[] shuffle(float[] data, Random rand) {
         int sz;
         if (data == null || (sz = data.length) <= 0) return data;
-        Random rand = seed == null ? new Random() : new Random(seed);
+        if (rand == null) rand = RANDOM;
         float t;
-	    for (int i = sz - 1; i > 0; i--) {
-	        int j = rand.nextInt(i + 1);
-	        t = data[i];
-	        data[i] = data[j];
-	        data[j] = t;
-	    }
-	    return data;
+        for (int i = sz - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            t = data[i];
+            data[i] = data[j];
+            data[j] = t;
+        }
+        return data;
     }
     
     /**
@@ -1427,28 +1436,28 @@ public final class ArrayTools {
      * @return the array passed in, after shuffling
      */
     public static double[] shuffle(double[] data) {
-        return shuffle(data, null);
+        return shuffle(data, RANDOM);
     }
     
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
      * @param data an array that will be shuffled in-place
-     * @param seed a seed for randomness; can be made null for unseeded
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
      * @return the array passed in, after shuffling
      */
-    public static double[] shuffle(double[] data, Long seed) {
+    public static double[] shuffle(double[] data, Random rand) {
         int sz;
         if (data == null || (sz = data.length) <= 0) return data;
-        Random rand = seed == null ? new Random() : new Random(seed);
+        if (rand == null) rand = RANDOM;
         double t;
-	    for (int i = sz - 1; i > 0; i--) {
-	        int j = rand.nextInt(i + 1);
-	        t = data[i];
-	        data[i] = data[j];
-	        data[j] = t;
-	    }
-	    return data;
+        for (int i = sz - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            t = data[i];
+            data[i] = data[j];
+            data[j] = t;
+        }
+        return data;
     }
     
     /**
@@ -1458,28 +1467,28 @@ public final class ArrayTools {
      * @return the array passed in, after shuffling
      */
     public static int[] shuffle(int[] data) {
-        return shuffle(data, null);
+        return shuffle(data, RANDOM);
     }
     
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
      * @param data an array that will be shuffled in-place
-     * @param seed a seed for randomness; can be made null for unseeded
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
      * @return the array passed in, after shuffling
      */
-    public static int[] shuffle(int[] data, Long seed) {
+    public static int[] shuffle(int[] data, Random rand) {
         int sz;
         if (data == null || (sz = data.length) <= 0) return data;
-        Random rand = seed == null ? new Random() : new Random(seed);
+        if (rand == null) rand = RANDOM;
         int t;
-	    for (int i = sz - 1; i > 0; i--) {
-	        int j = rand.nextInt(i + 1);
-	        t = data[i];
-	        data[i] = data[j];
-	        data[j] = t;
-	    }
-	    return data;
+        for (int i = sz - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            t = data[i];
+            data[i] = data[j];
+            data[j] = t;
+        }
+        return data;
     }
     
     /**
@@ -1489,28 +1498,28 @@ public final class ArrayTools {
      * @return the array passed in, after shuffling
      */
     public static short[] shuffle(short[] data) {
-        return shuffle(data, null);
+        return shuffle(data, RANDOM);
     }
     
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
      * @param data an array that will be shuffled in-place
-     * @param seed a seed for randomness; can be made null for unseeded
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
      * @return the array passed in, after shuffling
      */
-    public static short[] shuffle(short[] data, Long seed) {
+    public static short[] shuffle(short[] data, Random rand) {
         int sz;
         if (data == null || (sz = data.length) <= 0) return data;
-        Random rand = seed == null ? new Random() : new Random(seed);
+        if (rand == null) rand = RANDOM;
         short t;
-	    for (int i = sz - 1; i > 0; i--) {
-	        int j = rand.nextInt(i + 1);
-	        t = data[i];
-	        data[i] = data[j];
-	        data[j] = t;
-	    }
-	    return data;
+        for (int i = sz - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            t = data[i];
+            data[i] = data[j];
+            data[j] = t;
+        }
+        return data;
     }
     
     /**
@@ -1520,28 +1529,28 @@ public final class ArrayTools {
      * @return the array passed in, after shuffling
      */
     public static byte[] shuffle(byte[] data) {
-        return shuffle(data, null);
+        return shuffle(data, RANDOM);
     }
     
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
      * @param data an array that will be shuffled in-place
-     * @param seed a seed for randomness; can be made null for unseeded
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
      * @return the array passed in, after shuffling
      */
-    public static byte[] shuffle(byte[] data, Long seed) {
+    public static byte[] shuffle(byte[] data, Random rand) {
         int sz;
         if (data == null || (sz = data.length) <= 0) return data;
-        Random rand = seed == null ? new Random() : new Random(seed);
+        if (rand == null) rand = RANDOM;
         byte t;
-	    for (int i = sz - 1; i > 0; i--) {
-	        int j = rand.nextInt(i + 1);
-	        t = data[i];
-	        data[i] = data[j];
-	        data[j] = t;
-	    }
-	    return data;
+        for (int i = sz - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            t = data[i];
+            data[i] = data[j];
+            data[j] = t;
+        }
+        return data;
     }
     
     /**
@@ -1551,27 +1560,27 @@ public final class ArrayTools {
      * @return the array passed in, after shuffling
      */
     public static <T> T[] shuffle(T[] data) {
-        return shuffle(data, null);
+        return shuffle(data, RANDOM);
     }
     
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
      * @param data an array that will be shuffled in-place
-     * @param seed a seed for randomness; can be made null for unseeded
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
      * @return the array passed in, after shuffling
      */
-    public static <T> T[] shuffle(T[] data, Long seed) {
+    public static <T> T[] shuffle(T[] data, Random rand) {
         int sz;
         if (data == null || (sz = data.length) <= 0) return data;
-        Random rand = seed == null ? new Random() : new Random(seed);
+        if (rand == null) rand = RANDOM;
         T t;
-	    for (int i = sz - 1; i > 0; i--) {
-	        int j = rand.nextInt(i + 1);
-	        t = data[i];
-	        data[i] = data[j];
-	        data[j] = t;
-	    }
-	    return data;
+        for (int i = sz - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            t = data[i];
+            data[i] = data[j];
+            data[j] = t;
+        }
+        return data;
     }
 }
