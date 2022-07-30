@@ -17,6 +17,7 @@
 package com.github.tommyettinger.digital;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Static methods for various frequently-used operations on 1D and 2D arrays. Has methods for copying, inserting, and
@@ -1293,5 +1294,284 @@ public final class ArrayTools {
             data[i] = t;
         }
         return data;
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static long[] shuffle(long[] data) {
+        return shuffle(data, null);
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param seed a seed for randomness; can be made null for unseeded
+     * @return the array passed in, after shuffling
+     */
+    public static long[] shuffle(long[] data, Long seed) {
+        int sz;
+        if (data == null || (sz = data.length) <= 0) return data;
+        Random rand = seed == null ? new Random() : new Random(seed);
+        long t;
+	    for (int i = sz - 1; i > 0; i--) {
+	        int j = rand.nextInt(i + 1);
+	        t = data[i];
+	        data[i] = data[j];
+	        data[j] = t;
+	    }
+	    return data;
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static boolean[] shuffle(boolean[] data) {
+        return shuffle(data, null);
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param seed a seed for randomness; can be made null for unseeded
+     * @return the array passed in, after shuffling
+     */
+    public static boolean[] shuffle(boolean[] data, Long seed) {
+        int sz;
+        if (data == null || (sz = data.length) <= 0) return data;
+        Random rand = seed == null ? new Random() : new Random(seed);
+        boolean t;
+	    for (int i = sz - 1; i > 0; i--) {
+	        int j = rand.nextInt(i + 1);
+	        t = data[i];
+	        data[i] = data[j];
+	        data[j] = t;
+	    }
+	    return data;
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static char[] shuffle(char[] data) {
+        return shuffle(data, null);
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param seed a seed for randomness; can be made null for unseeded
+     * @return the array passed in, after shuffling
+     */
+    public static char[] shuffle(char[] data, Long seed) {
+        int sz;
+        if (data == null || (sz = data.length) <= 0) return data;
+        Random rand = seed == null ? new Random() : new Random(seed);
+        char t;
+	    for (int i = sz - 1; i > 0; i--) {
+	        int j = rand.nextInt(i + 1);
+	        t = data[i];
+	        data[i] = data[j];
+	        data[j] = t;
+	    }
+	    return data;
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static float[] shuffle(float[] data) {
+        return shuffle(data, null);
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param seed a seed for randomness; can be made null for unseeded
+     * @return the array passed in, after shuffling
+     */
+    public static float[] shuffle(float[] data, Long seed) {
+        int sz;
+        if (data == null || (sz = data.length) <= 0) return data;
+        Random rand = seed == null ? new Random() : new Random(seed);
+        float t;
+	    for (int i = sz - 1; i > 0; i--) {
+	        int j = rand.nextInt(i + 1);
+	        t = data[i];
+	        data[i] = data[j];
+	        data[j] = t;
+	    }
+	    return data;
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static double[] shuffle(double[] data) {
+        return shuffle(data, null);
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param seed a seed for randomness; can be made null for unseeded
+     * @return the array passed in, after shuffling
+     */
+    public static double[] shuffle(double[] data, Long seed) {
+        int sz;
+        if (data == null || (sz = data.length) <= 0) return data;
+        Random rand = seed == null ? new Random() : new Random(seed);
+        double t;
+	    for (int i = sz - 1; i > 0; i--) {
+	        int j = rand.nextInt(i + 1);
+	        t = data[i];
+	        data[i] = data[j];
+	        data[j] = t;
+	    }
+	    return data;
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static int[] shuffle(int[] data) {
+        return shuffle(data, null);
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param seed a seed for randomness; can be made null for unseeded
+     * @return the array passed in, after shuffling
+     */
+    public static int[] shuffle(int[] data, Long seed) {
+        int sz;
+        if (data == null || (sz = data.length) <= 0) return data;
+        Random rand = seed == null ? new Random() : new Random(seed);
+        int t;
+	    for (int i = sz - 1; i > 0; i--) {
+	        int j = rand.nextInt(i + 1);
+	        t = data[i];
+	        data[i] = data[j];
+	        data[j] = t;
+	    }
+	    return data;
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static short[] shuffle(short[] data) {
+        return shuffle(data, null);
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param seed a seed for randomness; can be made null for unseeded
+     * @return the array passed in, after shuffling
+     */
+    public static short[] shuffle(short[] data, Long seed) {
+        int sz;
+        if (data == null || (sz = data.length) <= 0) return data;
+        Random rand = seed == null ? new Random() : new Random(seed);
+        short t;
+	    for (int i = sz - 1; i > 0; i--) {
+	        int j = rand.nextInt(i + 1);
+	        t = data[i];
+	        data[i] = data[j];
+	        data[j] = t;
+	    }
+	    return data;
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static byte[] shuffle(byte[] data) {
+        return shuffle(data, null);
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param seed a seed for randomness; can be made null for unseeded
+     * @return the array passed in, after shuffling
+     */
+    public static byte[] shuffle(byte[] data, Long seed) {
+        int sz;
+        if (data == null || (sz = data.length) <= 0) return data;
+        Random rand = seed == null ? new Random() : new Random(seed);
+        byte t;
+	    for (int i = sz - 1; i > 0; i--) {
+	        int j = rand.nextInt(i + 1);
+	        t = data[i];
+	        data[i] = data[j];
+	        data[j] = t;
+	    }
+	    return data;
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static <T> T[] shuffle(T[] data) {
+        return shuffle(data, null);
+    }
+    
+    /**
+     * Shuffles the array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param seed a seed for randomness; can be made null for unseeded
+     * @return the array passed in, after shuffling
+     */
+    public static <T> T[] shuffle(T[] data, Long seed) {
+        int sz;
+        if (data == null || (sz = data.length) <= 0) return data;
+        Random rand = seed == null ? new Random() : new Random(seed);
+        T t;
+	    for (int i = sz - 1; i > 0; i--) {
+	        int j = rand.nextInt(i + 1);
+	        t = data[i];
+	        data[i] = data[j];
+	        data[j] = t;
+	    }
+	    return data;
     }
 }
