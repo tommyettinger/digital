@@ -139,6 +139,35 @@ public final class ArrayTools {
         }
         return r;
     }
+    
+    /**
+     * Stupidly simple convenience method that produces a char range from u0000 to uFFFF, limited to {@code buffer.length - 1}.
+     *
+     * @param buffer a char array that will be modified in-place; if null this returns null
+     * @return the range of chars as a char array
+     */
+    public static char[] charSpan(char[] buffer) {
+        int end;
+        if (buffer == null || (end = Math.min(buffer.length - 1, 0xFFFF)) < 0) return buffer;
+        for (char i = 0; i <= end; i++) {
+            buffer[i] = i;
+        }
+        return buffer;
+    }
+    
+    /**
+     * Stupidly simple convenience method that produces a char range from u0000 to end, including end, as a char array.
+     *
+     * @param end the inclusive upper bound on the range
+     * @return the range of chars as a char array
+     */
+    public static char[] charSpan(char end) {
+        char[] r = new char[end + 1];
+        for (char i = 0; i <= end; i++) {
+            r[i] = i;
+        }
+        return r;
+    }
 
     /**
      * Stupidly simple convenience method that produces a char array containing only letters that can be reasonably
