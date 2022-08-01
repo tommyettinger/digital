@@ -149,7 +149,7 @@ public final class ArrayTools {
     public static char[] charSpan(char[] buffer) {
         int end;
         if (buffer == null || (end = Math.min(buffer.length - 1, 0xFFFF)) < 0) return buffer;
-        for (char i = 0; i <= end; i++) {
+        for (char i = 0; end >= 0; i++, end--) {
             buffer[i] = i;
         }
         return buffer;
@@ -158,12 +158,13 @@ public final class ArrayTools {
     /**
      * Stupidly simple convenience method that produces a char range from u0000 to end, including end, as a char array.
      *
-     * @param end the inclusive upper bound on the range
+     * @param end the inclusive upper bound on the range; typically a char, but may be larger than 0xFFFF to repeat
      * @return the range of chars as a char array
      */
-    public static char[] charSpan(char end) {
+    public static char[] charSpan(int end) {
+        if(end < 0) return emptyChars;
         char[] r = new char[end + 1];
-        for (char i = 0; i <= end; i++) {
+        for (char i = 0; end >= 0; i++, end--) {
             r[i] = i;
         }
         return r;
