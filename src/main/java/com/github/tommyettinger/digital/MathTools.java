@@ -63,15 +63,35 @@ public final class MathTools {
     /**
      * The famous golden ratio, {@code (1.0 + Math.sqrt(5.0)) * 0.5}; this is the "most irrational" of irrational
      * numbers, and has various useful properties.
+     * <br>
+     * The same as {@link #PHI}.
      */
     public static final float GOLDEN_RATIO = 1.6180339887498949f;
 
     /**
+     * The famous golden ratio, {@code (1.0 + Math.sqrt(5.0)) * 0.5}; this is the "most irrational" of irrational
+     * numbers, and has various useful properties.
+     * <br>
+     * The same as {@link #GOLDEN_RATIO}.
+     */
+    public static final float PHI = GOLDEN_RATIO;
+    
+    /**
      * The famous golden ratio, {@code (1.0 + Math.sqrt(5.0)) * 0.5}, as a double; this is the "most irrational" of
      * irrational numbers, and has various useful properties.
+     * <br>
+     * The same as {@link #PHI_D}.
      */
     public static final double GOLDEN_RATIO_D = 1.6180339887498949;
 
+    /**
+     * The famous golden ratio, {@code (1.0 + Math.sqrt(5.0)) * 0.5}, as a double; this is the "most irrational" of
+     * irrational numbers, and has various useful properties.
+     * <br>
+     * The same as {@link #GOLDEN_RATIO_D}.
+     */
+    public static final double PHI_D = GOLDEN_RATIO_D;
+    
     /**
      * The inverse of the golden ratio, {@code (1.0 - Math.sqrt(5.0)) * -0.5} or {@code GOLDEN_RATIO - 1.0}; this also
      * has various useful properties.
@@ -83,7 +103,18 @@ public final class MathTools {
      * double; this also has various useful properties.
      */
     public static final double GOLDEN_RATIO_INVERSE_D = 0.6180339887498949;
+    
+    /**
+     * The reciprocal of the golden ratio, {@code (1.0 - Math.sqrt(5.0)) * 0.5} or {@code 1.0 - GOLDEN_RATIO}; this also
+     * has various useful properties.
+     */
+    public static final float PSI = -GOLDEN_RATIO_INVERSE;
 
+    /**
+     * The reciprocal of the golden ratio, {@code (1.0 - Math.sqrt(5.0)) * 0.5} or {@code 1.0 - GOLDEN_RATIO}, as a
+     * double; this also has various useful properties.
+     */
+    public static final double PSI_D = -GOLDEN_RATIO_INVERSE_D;
 
     private static final int BIG_ENOUGH_INT = 16 * 1024;
     private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
