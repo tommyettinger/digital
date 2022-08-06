@@ -105,13 +105,13 @@ public final class MathTools {
     public static final double GOLDEN_RATIO_INVERSE_D = 0.6180339887498949;
     
     /**
-     * The reciprocal of the golden ratio, {@code (1.0 - Math.sqrt(5.0)) * 0.5} or {@code 1.0 - GOLDEN_RATIO}; this also
+     * The conjugate of the golden ratio, {@code (1.0 - Math.sqrt(5.0)) * 0.5} or {@code 1.0 - GOLDEN_RATIO}; this also
      * has various useful properties.
      */
     public static final float PSI = -GOLDEN_RATIO_INVERSE;
 
     /**
-     * The reciprocal of the golden ratio, {@code (1.0 - Math.sqrt(5.0)) * 0.5} or {@code 1.0 - GOLDEN_RATIO}, as a
+     * The conjugate of the golden ratio, {@code (1.0 - Math.sqrt(5.0)) * 0.5} or {@code 1.0 - GOLDEN_RATIO}, as a
      * double; this also has various useful properties.
      */
     public static final double PSI_D = -GOLDEN_RATIO_INVERSE_D;
