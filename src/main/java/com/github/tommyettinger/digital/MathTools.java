@@ -61,6 +61,50 @@ public final class MathTools {
     public static final float E = 2.7182818284590452354f;
 
     /**
+     * The {@code float} value that is closer than any other to
+     * {@code Math.sqrt(2.0)}, the ratio of the hypotenuse of an
+     * isosceles right triangle to one of its legs.
+     */
+    public static final float ROOT2 = 1.4142135623730950488f;
+    
+    /**
+     * The {@code double} value that is closer than any other to
+     * {@code Math.sqrt(2.0)}, the ratio of the hypotenuse of an
+     * isosceles right triangle to one of its legs.
+     */
+    public static final double ROOT2_D = 1.4142135623730950488;
+    
+    /**
+     * The {@code float} value that is closer than any other to
+     * {@code Math.sqrt(3.0)}, the ratio of the diagonal length
+     * of a cube to its edge length.
+     */
+    public static final float ROOT3 = 1.7320508075688772935f;
+    
+    /**
+     * The {@code double} value that is closer than any other to
+     * {@code Math.sqrt(3.0)}, the ratio of the diagonal length
+     * of a cube to its edge length.
+     */
+    public static final double ROOT3_D = 1.7320508075688772935;
+    
+    /**
+     * The {@code float} value that is closer than any other to
+     * {@code Math.sqrt(5.0)}, which has various useful properties,
+     * such as appearing in many formulae involving the golden ratio
+     * which is of course chiefly due to being part of its calculation.
+     */
+    public static final float ROOT5 = 2.2360679774997896964f;
+    
+    /**
+     * The {@code double} value that is closer than any other to
+     * {@code Math.sqrt(5.0)}, which has various useful properties,
+     * such as appearing in many formulae involving the golden ratio
+     * which is of course chiefly due to being part of its calculation.
+     */
+    public static final double ROOT5_D = 2.2360679774997896964;
+    
+    /**
      * The famous golden ratio, {@code (1.0 + Math.sqrt(5.0)) * 0.5}; this is the "most irrational" of irrational
      * numbers, and has various useful properties.
      * <br>
