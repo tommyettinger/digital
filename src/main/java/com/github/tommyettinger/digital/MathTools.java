@@ -178,7 +178,7 @@ public final class MathTools {
 
     private static final int BIG_ENOUGH_INT = 16 * 1024;
     private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
-    private static final double CEIL = 0.9999999;
+    private static final double CEIL = 0x1.fffffep-1f; // was 0.9999999
     private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5f;
 
     /**
