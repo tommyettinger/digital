@@ -22,6 +22,9 @@ import java.util.List;
 import static com.github.tommyettinger.digital.BitConversion.doubleToRawLongBits;
 import static com.github.tommyettinger.digital.BitConversion.floatToRawIntBits;
 
+import static com.github.tommyettinger.digital.MathTools.EPSILON;
+import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
+
 /**
  * 64-bit and 32-bit hashing functions that we can rely on staying the same cross-platform.
  * This uses a family of algorithms all based on Wang Yi's wyhash, but using at most 64-bit
@@ -314,7 +317,7 @@ public class Hasher {
      * @return a pseudo-random float between 0f (inclusive) and 1f (exclusive), determined by {@code state}
      */
     public static float randomize1Float(long state) {
-        return ((((state = (((state * 0x632BE59BD9B4E019L) ^ 0x9E3779B97F4A7C15L) * 0xC6BC279692B5CC83L)) ^ state >>> 27) * 0xAEF17502108EF2D9L) >>> 40) * 0x1p-24f;
+        return ((((state = (((state * 0x632BE59BD9B4E019L) ^ 0x9E3779B97F4A7C15L) * 0xC6BC279692B5CC83L)) ^ state >>> 27) * 0xAEF17502108EF2D9L) >>> 40) * EPSILON;
     }
 
     /**
@@ -345,7 +348,7 @@ public class Hasher {
      */
     public static float randomize2Float(long state) {
         state ^= 0xD1B54A32D192ED03L;
-        return ((((state = (state ^ (state << 39 | state >>> 25) ^ (state << 17 | state >>> 47)) * 0x9E6C63D0676A9A99L) ^ state >>> 23 ^ state >>> 51) * 0x9E6D62D06F6A9A9BL) >>> 40) * 0x1p-24f;
+        return ((((state = (state ^ (state << 39 | state >>> 25) ^ (state << 17 | state >>> 47)) * 0x9E6C63D0676A9A99L) ^ state >>> 23 ^ state >>> 51) * 0x9E6D62D06F6A9A9BL) >>> 40) * EPSILON;
     }
 
     /**
@@ -382,7 +385,7 @@ public class Hasher {
         state *= 0xBEA225F9EB34556DL;
         state ^= state >>> 32;
         state *= 0xBEA225F9EB34556DL;
-        return (state >>> 40) * 0x1p-24f;
+        return (state >>> 40) * EPSILON;
     }
 
     /**
@@ -410,7 +413,7 @@ public class Hasher {
      * @return a pseudo-random double between 0.0 (inclusive) and 1.0 (exclusive), determined by {@code state}
      */
     public static double randomize1Double(long state) {
-        return (((state = ((state = (((state * 0x632BE59BD9B4E019L) ^ 0x9E3779B97F4A7C15L) * 0xC6BC279692B5CC83L)) ^ state >>> 27) * 0xAEF17502108EF2D9L) ^ state >>> 25) & 0x1FFFFFFFFFFFFFL) * 0x1p-53;
+        return (((state = ((state = (((state * 0x632BE59BD9B4E019L) ^ 0x9E3779B97F4A7C15L) * 0xC6BC279692B5CC83L)) ^ state >>> 27) * 0xAEF17502108EF2D9L) ^ state >>> 25) & 0x1FFFFFFFFFFFFFL) * EPSILON_D;
     }
 
     /**
@@ -440,7 +443,7 @@ public class Hasher {
      */
     public static double randomize2Double(long state) {
         state ^= 0xD1B54A32D192ED03L;
-        return (((state = ((state = (state ^ (state << 39 | state >>> 25) ^ (state << 17 | state >>> 47)) * 0x9E6C63D0676A9A99L) ^ state >>> 23 ^ state >>> 51) * 0x9E6D62D06F6A9A9BL) ^ state >>> 23) >>> 11) * 0x1p-53;
+        return (((state = ((state = (state ^ (state << 39 | state >>> 25) ^ (state << 17 | state >>> 47)) * 0x9E6C63D0676A9A99L) ^ state >>> 23 ^ state >>> 51) * 0x9E6D62D06F6A9A9BL) ^ state >>> 23) >>> 11) * EPSILON_D;
     }
 
     /**
@@ -476,7 +479,7 @@ public class Hasher {
         state *= 0xBEA225F9EB34556DL;
         state ^= state >>> 32;
         state *= 0xBEA225F9EB34556DL;
-        return (state >>> 11 ^ state >>> 40) * 0x1p-53;
+        return (state >>> 11 ^ state >>> 40) * EPSILON_D;
     }
 
     /**

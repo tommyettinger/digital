@@ -53,6 +53,18 @@ public final class MathTools {
      * false-positive equivalence with very small inputs.
      */
     public static final float FLOAT_ROUNDING_ERROR = 0x1p-20f; // was 0.000001f
+    
+    /**
+     * The smallest measurable difference between a given {@code float} value and a directly adjacent value.
+     * Useful for converting a 64-bit {@code long} value to a gradient between 0 and 1.
+     */
+    public static final float EPSILON = 0x1p-24f;
+    
+    /**
+     * The smallest measurable difference between a given {@code double} value and a directly adjacent value.
+     * Useful for converting a 64-bit {@code long} value to a gradient between 0 and 1.
+     */
+    public static final double EPSILON_D = 0x1p-53;
 
     /**
      * The {@code float} value that is closer than any other to
