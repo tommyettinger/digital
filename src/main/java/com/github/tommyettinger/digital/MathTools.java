@@ -15,6 +15,8 @@
  */
 package com.github.tommyettinger.digital;
 
+import java.util.Random;
+
 import static com.github.tommyettinger.digital.TrigTools.PI;
 import static com.github.tommyettinger.digital.TrigTools.PI2;
 import static com.github.tommyettinger.digital.TrigTools.PI2_D;
@@ -55,14 +57,16 @@ public final class MathTools {
     public static final float FLOAT_ROUNDING_ERROR = 0x1p-20f; // was 0.000001f
     
     /**
-     * The smallest measurable difference between a given {@code float} value and a directly adjacent value.
-     * Useful for converting a 64-bit {@code long} value to a gradient between 0 and 1.
+     * 2 to the -24 as a float; this is equal to {@code Math.ulp(0.5f)}, and is the smallest non-zero distance possible
+     * between two results of {@link Random#nextFloat()}.
+     * Useful for converting a 24-bit {@code int} or {@code long} value to a gradient between 0 and 1.
      */
     public static final float EPSILON = 0x1p-24f;
     
     /**
-     * The smallest measurable difference between a given {@code double} value and a directly adjacent value.
-     * Useful for converting a 64-bit {@code long} value to a gradient between 0 and 1.
+     * 2 to the -53 as a float; this is equal to {@code Math.ulp(0.5)}, and is the smallest non-zero distance possible
+     * between two results of {@link Random#nextDouble()}.
+     * Useful for converting a 53-bit {@code long} value to a gradient between 0 and 1.
      */
     public static final double EPSILON_D = 0x1p-53;
 
