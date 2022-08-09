@@ -176,7 +176,7 @@ public final class MathTools {
      */
     public static final double PSI_D = -GOLDEN_RATIO_INVERSE_D;
 
-    private static final int BIG_ENOUGH_INT = 16 * 1024;
+    private static final int BIG_ENOUGH_INT = 16384;
     private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
     private static final double CEIL = 0x1.fffffep-1f; // was 0.9999999
     private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5f;
@@ -741,7 +741,7 @@ public final class MathTools {
      * @return the floor of t, as an int
      */
     public static int fastFloor(final float t) {
-        return ((int) (t + 0x1p14) - 0x4000);
+        return ((int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT);
     }
 
     /**
@@ -767,7 +767,7 @@ public final class MathTools {
      * @return the ceiling of t, as an int
      */
     public static int fastCeil(final float t) {
-        return 0x4000 - (int) (0x1p14 - t);
+        return BIG_ENOUGH_INT - (int) (BIG_ENOUGH_FLOOR - t);
     }
 
     /**
