@@ -28,4 +28,26 @@ public class ArrayToolsTest {
         Assert.assertEquals('\uFFFF', span[0xFFFF]);
         Assert.assertEquals('\u0000', span[0]);
     }
+
+    public static void main(String[] args) {
+        char[][] letters = new char[][] {
+                ArrayTools.letterSpan(0, 16),
+                ArrayTools.letterSpan(16, 16),
+                ArrayTools.letterSpan(32, 16),
+                ArrayTools.letterSpan(48, 16),
+                ArrayTools.letterSpan(64, 16),
+                ArrayTools.letterSpan(80, 16),
+                ArrayTools.letterSpan(96, 16),
+                ArrayTools.letterSpan(112, 16),
+                ArrayTools.letterSpan(128, 16),
+        };
+        for (int i = 0; i < letters.length; i++) {
+            System.out.println(letters[i]);
+        }
+        System.out.println();
+        ArrayTools.shuffle2D(letters);
+        for (int i = 0; i < letters.length; i++) {
+            System.out.println(letters[i]);
+        }
+    }
 }

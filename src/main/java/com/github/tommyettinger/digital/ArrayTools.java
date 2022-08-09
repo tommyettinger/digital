@@ -1641,7 +1641,7 @@ public final class ArrayTools {
      * @return the array passed in, after shuffling
      */
     public static boolean[][] shuffle2D(boolean[][] data) {
-        return shuffle(data, RANDOM);
+        return shuffle2D(data, RANDOM);
     }
 
     /**
@@ -1656,6 +1656,42 @@ public final class ArrayTools {
         if (data == null || data[0] == null || (sz = data.length * (wide = data[0].length)) <= 0) return data;
         if (rand == null) rand = RANDOM;
         boolean t;
+        int ix = wide - 1, iy = data.length - 1;
+        for (int i = sz - 1; i > 0; i--, ix--) {
+            int j = rand.nextInt(i + 1), jy = j / wide, jx = j - jy * wide;
+            t = data[iy][ix];
+            data[iy][ix] = data[jy][jx];
+            data[jy][jx] = t;
+            if(ix == 0) {
+                ix = wide;
+                iy--;
+            }
+        }
+        return data;
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static char[][] shuffle2D(char[][] data) {
+        return shuffle2D(data, RANDOM);
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @return the array passed in, after shuffling
+     */
+    public static char[][] shuffle2D(char[][] data, Random rand) {
+        int sz, wide;
+        if (data == null || data[0] == null || (sz = data.length * (wide = data[0].length)) <= 0) return data;
+        if (rand == null) rand = RANDOM;
+        char t;
         int ix = wide - 1, iy = data.length - 1;
         for (int i = sz - 1; i > 0; i--, ix--) {
             int j = rand.nextInt(i + 1), jy = j / wide, jx = j - jy * wide;
