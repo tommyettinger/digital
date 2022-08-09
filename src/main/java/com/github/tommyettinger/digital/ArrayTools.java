@@ -1706,4 +1706,255 @@ public final class ArrayTools {
         return data;
     }
 
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static long[][] shuffle2D(long[][] data) {
+        return shuffle2D(data, RANDOM);
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @return the array passed in, after shuffling
+     */
+    public static long[][] shuffle2D(long[][] data, Random rand) {
+        int sz, wide;
+        if (data == null || data[0] == null || (sz = data.length * (wide = data[0].length)) <= 0) return data;
+        if (rand == null) rand = RANDOM;
+        long t;
+        int ix = wide - 1, iy = data.length - 1;
+        for (int i = sz - 1; i > 0; i--, ix--) {
+            int j = rand.nextInt(i + 1), jy = j / wide, jx = j - jy * wide;
+            t = data[iy][ix];
+            data[iy][ix] = data[jy][jx];
+            data[jy][jx] = t;
+            if(ix == 0) {
+                ix = wide;
+                iy--;
+            }
+        }
+        return data;
+    }
+    
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static int[][] shuffle2D(int[][] data) {
+        return shuffle2D(data, RANDOM);
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @return the array passed in, after shuffling
+     */
+    public static int[][] shuffle2D(int[][] data, Random rand) {
+        int sz, wide;
+        if (data == null || data[0] == null || (sz = data.length * (wide = data[0].length)) <= 0) return data;
+        if (rand == null) rand = RANDOM;
+        int t;
+        int ix = wide - 1, iy = data.length - 1;
+        for (int i = sz - 1; i > 0; i--, ix--) {
+            int j = rand.nextInt(i + 1), jy = j / wide, jx = j - jy * wide;
+            t = data[iy][ix];
+            data[iy][ix] = data[jy][jx];
+            data[jy][jx] = t;
+            if(ix == 0) {
+                ix = wide;
+                iy--;
+            }
+        }
+        return data;
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static byte[][] shuffle2D(byte[][] data) {
+        return shuffle2D(data, RANDOM);
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @return the array passed in, after shuffling
+     */
+    public static byte[][] shuffle2D(byte[][] data, Random rand) {
+        int sz, wide;
+        if (data == null || data[0] == null || (sz = data.length * (wide = data[0].length)) <= 0) return data;
+        if (rand == null) rand = RANDOM;
+        byte t;
+        int ix = wide - 1, iy = data.length - 1;
+        for (int i = sz - 1; i > 0; i--, ix--) {
+            int j = rand.nextInt(i + 1), jy = j / wide, jx = j - jy * wide;
+            t = data[iy][ix];
+            data[iy][ix] = data[jy][jx];
+            data[jy][jx] = t;
+            if(ix == 0) {
+                ix = wide;
+                iy--;
+            }
+        }
+        return data;
+    }
+    
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static short[][] shuffle2D(short[][] data) {
+        return shuffle2D(data, RANDOM);
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @return the array passed in, after shuffling
+     */
+    public static short[][] shuffle2D(short[][] data, Random rand) {
+        int sz, wide;
+        if (data == null || data[0] == null || (sz = data.length * (wide = data[0].length)) <= 0) return data;
+        if (rand == null) rand = RANDOM;
+        short t;
+        int ix = wide - 1, iy = data.length - 1;
+        for (int i = sz - 1; i > 0; i--, ix--) {
+            int j = rand.nextInt(i + 1), jy = j / wide, jx = j - jy * wide;
+            t = data[iy][ix];
+            data[iy][ix] = data[jy][jx];
+            data[jy][jx] = t;
+            if(ix == 0) {
+                ix = wide;
+                iy--;
+            }
+        }
+        return data;
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static float[][] shuffle2D(float[][] data) {
+        return shuffle2D(data, RANDOM);
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @return the array passed in, after shuffling
+     */
+    public static float[][] shuffle2D(float[][] data, Random rand) {
+        int sz, wide;
+        if (data == null || data[0] == null || (sz = data.length * (wide = data[0].length)) <= 0) return data;
+        if (rand == null) rand = RANDOM;
+        float t;
+        int ix = wide - 1, iy = data.length - 1;
+        for (int i = sz - 1; i > 0; i--, ix--) {
+            int j = rand.nextInt(i + 1), jy = j / wide, jx = j - jy * wide;
+            t = data[iy][ix];
+            data[iy][ix] = data[jy][jx];
+            data[jy][jx] = t;
+            if(ix == 0) {
+                ix = wide;
+                iy--;
+            }
+        }
+        return data;
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static double[][] shuffle2D(double[][] data) {
+        return shuffle2D(data, RANDOM);
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @return the array passed in, after shuffling
+     */
+    public static double[][] shuffle2D(double[][] data, Random rand) {
+        int sz, wide;
+        if (data == null || data[0] == null || (sz = data.length * (wide = data[0].length)) <= 0) return data;
+        if (rand == null) rand = RANDOM;
+        double t;
+        int ix = wide - 1, iy = data.length - 1;
+        for (int i = sz - 1; i > 0; i--, ix--) {
+            int j = rand.nextInt(i + 1), jy = j / wide, jx = j - jy * wide;
+            t = data[iy][ix];
+            data[iy][ix] = data[jy][jx];
+            data[jy][jx] = t;
+            if(ix == 0) {
+                ix = wide;
+                iy--;
+            }
+        }
+        return data;
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @return the array passed in, after shuffling
+     */
+    public static <T> T[][] shuffle2D(T[][] data) {
+        return shuffle2D(data, RANDOM);
+    }
+
+    /**
+     * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @return the array passed in, after shuffling
+     */
+    public static <T> T[][] shuffle2D(T[][] data, Random rand) {
+        int sz, wide;
+        if (data == null || data[0] == null || (sz = data.length * (wide = data[0].length)) <= 0) return data;
+        if (rand == null) rand = RANDOM;
+        T t;
+        int ix = wide - 1, iy = data.length - 1;
+        for (int i = sz - 1; i > 0; i--, ix--) {
+            int j = rand.nextInt(i + 1), jy = j / wide, jx = j - jy * wide;
+            t = data[iy][ix];
+            data[iy][ix] = data[jy][jx];
+            data[jy][jx] = t;
+            if(ix == 0) {
+                ix = wide;
+                iy--;
+            }
+        }
+        return data;
+    }
 }
