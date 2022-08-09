@@ -173,7 +173,7 @@ public final class ArrayTools {
     /**
      * Stupidly simple convenience method that produces a char array containing only letters that can be reasonably
      * displayed with many fonts. The letters are copied from a single source
-     * of 256 chars; if you need more chars or you don't need pure letters, you can use {@link #charSpan(char, char)}.
+     * of 256 chars; if you need more chars, or you don't need pure letters, you can use {@link #charSpan(char, char)}.
      * This set does not contain "visual duplicate" letters, such as Latin alphabet capital letter 'A' and Greek
      * alphabet capital letter alpha, 'Α'; it does contain many accented Latin letters and the visually-distinct Greek
      * letters, up to a point.
@@ -186,6 +186,26 @@ public final class ArrayTools {
             return emptyChars;
         char[] r = new char[Math.min(charCount, 256)];
         System.arraycopy(letters, 0, r, 0, r.length);
+        return r;
+    }
+
+    /**
+     * Stupidly simple convenience method that produces a char array containing only letters that can be reasonably
+     * displayed with many fonts. The letters are copied from a single source
+     * of 256 chars; if you need more chars, or you don't need pure letters, you can use {@link #charSpan(char, char)}.
+     * This set does not contain "visual duplicate" letters, such as Latin alphabet capital letter 'A' and Greek
+     * alphabet capital letter alpha, 'Α'; it does contain many accented Latin letters and the visually-distinct Greek
+     * letters, up to a point.
+     *
+     * @param start the index of the first letter in the source of 256 chars to use
+     * @param charCount the number of letters to return in an array; the maximum this can produce is 256
+     * @return the range of letters as a char array
+     */
+    public static char[] letterSpan(int start, int charCount) {
+        if (charCount <= 0 || start < 0 || start >= 256)
+            return emptyChars;
+        char[] r = new char[Math.min(charCount, 256 - start)];
+        System.arraycopy(letters, start, r, 0, r.length);
         return r;
     }
 
