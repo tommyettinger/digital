@@ -1385,7 +1385,31 @@ public final class ArrayTools {
         }
         return data;
     }
-    
+
+    /**
+     * Shuffles a section of the array given as a parameter, in-place, and returns the modified original array.
+     * This can be useful for shuffling collections such as libGDX's LongArray.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @param offset the index of the first element of the array that can be shuffled
+     * @param length the length of the section to shuffle
+     * @return the array passed in, after shuffling
+     */
+    public static long[] shuffle(long[] data, Random rand, int offset, int length) {
+        if(data == null || data.length == 0) return data;
+        offset = Math.min(Math.max(0, offset), data.length);
+        length = Math.min(data.length - offset, Math.max(0, length));
+        if (rand == null) rand = RANDOM;
+        for (int i = offset + length - 1; i > offset; i--) {
+            int ii = offset + rand.nextInt(i + 1 - offset);
+            long temp = data[i];
+            data[i] = data[ii];
+            data[ii] = temp;
+        }
+        return data;
+    }
+
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
@@ -1416,7 +1440,31 @@ public final class ArrayTools {
         }
         return data;
     }
-    
+
+    /**
+     * Shuffles a section of the array given as a parameter, in-place, and returns the modified original array.
+     * This can be useful for shuffling collections such as libGDX's BooleanArray.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @param offset the index of the first element of the array that can be shuffled
+     * @param length the length of the section to shuffle
+     * @return the array passed in, after shuffling
+     */
+    public static boolean[] shuffle(boolean[] data, Random rand, int offset, int length) {
+        if(data == null || data.length == 0) return data;
+        offset = Math.min(Math.max(0, offset), data.length);
+        length = Math.min(data.length - offset, Math.max(0, length));
+        if (rand == null) rand = RANDOM;
+        for (int i = offset + length - 1; i > offset; i--) {
+            int ii = offset + rand.nextInt(i + 1 - offset);
+            boolean temp = data[i];
+            data[i] = data[ii];
+            data[ii] = temp;
+        }
+        return data;
+    }
+
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
@@ -1447,7 +1495,31 @@ public final class ArrayTools {
         }
         return data;
     }
-    
+
+    /**
+     * Shuffles a section of the array given as a parameter, in-place, and returns the modified original array.
+     * This can be useful for shuffling collections such as libGDX's CharArray.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @param offset the index of the first element of the array that can be shuffled
+     * @param length the length of the section to shuffle
+     * @return the array passed in, after shuffling
+     */
+    public static char[] shuffle(char[] data, Random rand, int offset, int length) {
+        if(data == null || data.length == 0) return data;
+        offset = Math.min(Math.max(0, offset), data.length);
+        length = Math.min(data.length - offset, Math.max(0, length));
+        if (rand == null) rand = RANDOM;
+        for (int i = offset + length - 1; i > offset; i--) {
+            int ii = offset + rand.nextInt(i + 1 - offset);
+            char temp = data[i];
+            data[i] = data[ii];
+            data[ii] = temp;
+        }
+        return data;
+    }
+
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
@@ -1478,7 +1550,31 @@ public final class ArrayTools {
         }
         return data;
     }
-    
+
+    /**
+     * Shuffles a section of the array given as a parameter, in-place, and returns the modified original array.
+     * This can be useful for shuffling collections such as libGDX's FloatArray.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @param offset the index of the first element of the array that can be shuffled
+     * @param length the length of the section to shuffle
+     * @return the array passed in, after shuffling
+     */
+    public static float[] shuffle(float[] data, Random rand, int offset, int length) {
+        if(data == null || data.length == 0) return data;
+        offset = Math.min(Math.max(0, offset), data.length);
+        length = Math.min(data.length - offset, Math.max(0, length));
+        if (rand == null) rand = RANDOM;
+        for (int i = offset + length - 1; i > offset; i--) {
+            int ii = offset + rand.nextInt(i + 1 - offset);
+            float temp = data[i];
+            data[i] = data[ii];
+            data[ii] = temp;
+        }
+        return data;
+    }
+
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
@@ -1509,7 +1605,30 @@ public final class ArrayTools {
         }
         return data;
     }
-    
+
+    /**
+     * Shuffles a section of the array given as a parameter, in-place, and returns the modified original array.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @param offset the index of the first element of the array that can be shuffled
+     * @param length the length of the section to shuffle
+     * @return the array passed in, after shuffling
+     */
+    public static double[] shuffle(double[] data, Random rand, int offset, int length) {
+        if(data == null || data.length == 0) return data;
+        offset = Math.min(Math.max(0, offset), data.length);
+        length = Math.min(data.length - offset, Math.max(0, length));
+        if (rand == null) rand = RANDOM;
+        for (int i = offset + length - 1; i > offset; i--) {
+            int ii = offset + rand.nextInt(i + 1 - offset);
+            double temp = data[i];
+            data[i] = data[ii];
+            data[ii] = temp;
+        }
+        return data;
+    }
+
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
@@ -1540,7 +1659,31 @@ public final class ArrayTools {
         }
         return data;
     }
-    
+
+    /**
+     * Shuffles a section of the array given as a parameter, in-place, and returns the modified original array.
+     * This can be useful for shuffling collections such as libGDX's IntArray.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @param offset the index of the first element of the array that can be shuffled
+     * @param length the length of the section to shuffle
+     * @return the array passed in, after shuffling
+     */
+    public static int[] shuffle(int[] data, Random rand, int offset, int length) {
+        if(data == null || data.length == 0) return data;
+        offset = Math.min(Math.max(0, offset), data.length);
+        length = Math.min(data.length - offset, Math.max(0, length));
+        if (rand == null) rand = RANDOM;
+        for (int i = offset + length - 1; i > offset; i--) {
+            int ii = offset + rand.nextInt(i + 1 - offset);
+            int temp = data[i];
+            data[i] = data[ii];
+            data[ii] = temp;
+        }
+        return data;
+    }
+
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
@@ -1571,7 +1714,31 @@ public final class ArrayTools {
         }
         return data;
     }
-    
+
+    /**
+     * Shuffles a section of the array given as a parameter, in-place, and returns the modified original array.
+     * This can be useful for shuffling collections such as libGDX's ShortArray.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @param offset the index of the first element of the array that can be shuffled
+     * @param length the length of the section to shuffle
+     * @return the array passed in, after shuffling
+     */
+    public static short[] shuffle(short[] data, Random rand, int offset, int length) {
+        if(data == null || data.length == 0) return data;
+        offset = Math.min(Math.max(0, offset), data.length);
+        length = Math.min(data.length - offset, Math.max(0, length));
+        if (rand == null) rand = RANDOM;
+        for (int i = offset + length - 1; i > offset; i--) {
+            int ii = offset + rand.nextInt(i + 1 - offset);
+            short temp = data[i];
+            data[i] = data[ii];
+            data[ii] = temp;
+        }
+        return data;
+    }
+
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
@@ -1602,7 +1769,31 @@ public final class ArrayTools {
         }
         return data;
     }
-    
+
+    /**
+     * Shuffles a section of the array given as a parameter, in-place, and returns the modified original array.
+     * This can be useful for shuffling collections such as libGDX's ByteArray.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @param offset the index of the first element of the array that can be shuffled
+     * @param length the length of the section to shuffle
+     * @return the array passed in, after shuffling
+     */
+    public static byte[] shuffle(byte[] data, Random rand, int offset, int length) {
+        if(data == null || data.length == 0) return data;
+        offset = Math.min(Math.max(0, offset), data.length);
+        length = Math.min(data.length - offset, Math.max(0, length));
+        if (rand == null) rand = RANDOM;
+        for (int i = offset + length - 1; i > offset; i--) {
+            int ii = offset + rand.nextInt(i + 1 - offset);
+            byte temp = data[i];
+            data[i] = data[ii];
+            data[ii] = temp;
+        }
+        return data;
+    }
+
     /**
      * Shuffles the array given as a parameter, in-place, and returns the modified original.
      *
@@ -1633,6 +1824,32 @@ public final class ArrayTools {
         }
         return data;
     }
+
+
+    /**
+     * Shuffles a section of the array given as a parameter, in-place, and returns the modified original array.
+     * This can be useful for shuffling collections such as libGDX's Array types.
+     *
+     * @param data an array that will be shuffled in-place
+     * @param rand a possibly-seeded random number generator; can be null to use the unseeded {@link #RANDOM}
+     * @param offset the index of the first element of the array that can be shuffled
+     * @param length the length of the section to shuffle
+     * @return the array passed in, after shuffling
+     */
+    public static <T> T[] shuffle(T[] data, Random rand, int offset, int length) {
+        if(data == null || data.length == 0) return data;
+        offset = Math.min(Math.max(0, offset), data.length);
+        length = Math.min(data.length - offset, Math.max(0, length));
+        if (rand == null) rand = RANDOM;
+        for (int i = offset + length - 1; i > offset; i--) {
+            int ii = offset + rand.nextInt(i + 1 - offset);
+            T temp = data[i];
+            data[i] = data[ii];
+            data[ii] = temp;
+        }
+        return data;
+    }
+
 
     /**
      * Shuffles the rectangular 2D array given as a parameter, in-place, and returns the modified original.

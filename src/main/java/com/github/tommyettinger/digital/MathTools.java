@@ -528,7 +528,7 @@ public final class MathTools {
      * generalizes the earlier bias and gain rational functions by Schlick. The second and final page of the
      * paper has useful graphs of what the s (shape) and t (turning point) parameters do; shape should be 0
      * or greater, while turning must be between 0 and 1, inclusive. This effectively combines two different
-     * curving functions so they continue into each other when x equals turning. The shape parameter will
+     * curving functions so that they continue into each other when x equals turning. The shape parameter will
      * cause this to imitate "smoothstep-like" splines when greater than 1 (where the values ease into their
      * starting and ending levels), or to be the inverse when less than 1 (where values start like square
      * root does, taking off very quickly, but also end like square does, landing abruptly at the ending
