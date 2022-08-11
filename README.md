@@ -44,11 +44,15 @@ constants, from simple lerp, floor, ceil, and clamp methods to
 an optimized cube root function and a parameterized spline. It
 is also based on MathUtils from libGDX. It supports float and
 double arguments/returns for most functions; some make sense
-for float only, like the optimized cube root. 
+for float only, like the optimized cube root. There's also a
+lot of commonly-defined constants, such as the square root of
+2 and the golden ratio, as floats and doubles.
 
 ArrayTools provides common code for dealing with 2D arrays, and
 also sometimes 1D or 3D arrays. It allows copying, inserting,
-and filling 2D arrays, and creating ranges of 1D arrays.
+and filling 2D arrays, and creating ranges of 1D arrays. It also
+has a lot of methods for shuffling 1D arrays, 2D arrays, and
+sections of 1D arrays, for all primitive types and for objects.
 
 Hasher is... large. It provides fast, high-quality hashing
 functions for primitive arrays (and arrays of objects, if they
@@ -73,14 +77,14 @@ With Gradle, add this to your dependencies (in your core module,
 for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.0.4"
+api "com.github.tommyettinger:digital:0.1.0"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.0.4:sources"
+api "com.github.tommyettinger:digital:0.1.0:sources"
 ```
 
 and this in your GdxDefinition.gwt.xml file:
@@ -91,6 +95,7 @@ and this in your GdxDefinition.gwt.xml file:
 
 You can also use JitPack to get a recent commit; in that case,
 follow [its instructions here](https://jitpack.io/#tommyettinger/digital/).
+This also has instructions for Maven and other build tools.
 
 ## License
 
