@@ -654,6 +654,22 @@ public final class MathTools {
     }
 
     /**
+     * Binet's formula for the Fibonacci sequence, which is a closed-form expression where which each resulting value
+     * is the sum of the two proceeding values. This has several useful applications, such as finding values within
+     * Pascal's triangle, which is itself useful in various areas of mathematics involving polynomial functions.
+     * <br>
+     * Negative inputs are allowed here, but may behave differently than positive inputs.
+     * <br>
+     * For more information see <a href="https://en.wikipedia.org/wiki/Fibonacci_number#Closed-form_expression">Wikipedia</a>.
+     * 
+     * @param n an integer index; should not be too large
+     * @return the Fibonacci number at index n
+     */
+    public static int fibonacci(int n) {
+        return (int) ((Math.pow(PHI_D, n) - Math.pow(PSI_D, n)) / ROOT5_D);
+    }
+    
+    /**
      * Returns the square (second power) of its parameter. Purely here for convenience.
      * @param n any float
      * @return {@code n * n}
