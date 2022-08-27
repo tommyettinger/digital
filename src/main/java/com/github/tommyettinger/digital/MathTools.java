@@ -658,17 +658,41 @@ public final class MathTools {
      * is the sum of the two proceeding values. This has several useful applications, such as finding values within
      * Pascal's triangle, which is itself useful in various areas of mathematics involving polynomial functions.
      * <br>
-     * Negative inputs are allowed here, but may behave differently than positive inputs.
+     * Negative inputs are allowed here, but may behave differently than positive inputs. When given non-negative
+     * integer inputs, this is only correct for inputs from 0 to 46 inclusive; the largest Fibonacci number this can
+     * correctly calculate is 1836311903, given an input of 46. You can get a larger range of values by passing a
+     * {@code long} input to {@link #fibonacci(long)}.
      * <br>
      * For more information see <a href="https://en.wikipedia.org/wiki/Fibonacci_number#Closed-form_expression">Wikipedia</a>.
      * 
-     * @param n an integer index; should not be too large
-     * @return the Fibonacci number at index n
+     * @param n an int index; should be less than 47
+     * @return the Fibonacci number at index n, as an int
      */
     public static int fibonacci(int n) {
         return (int) ((Math.pow(PHI_D, n) - Math.pow(PSI_D, n)) / ROOT5_D);
     }
-    
+
+    /**
+     * Binet's formula for the Fibonacci sequence, which is a closed-form expression where which each resulting value
+     * is the sum of the two proceeding values. This has several useful applications, such as finding values within
+     * Pascal's triangle, which is itself useful in various areas of mathematics involving polynomial functions.
+     * <br>
+     * Negative inputs are allowed here, but may behave differently than positive inputs. When given non-negative
+     * integer inputs, this is only correct for inputs from 0 to 71 inclusive; the largest Fibonacci number this can
+     * correctly calculate is 308061521170129, given an input of 71. This means that all Fibonacci numbers that can be
+     * stored in a non-negative {@code int} can be produced by this method, as well as a substantial amount of
+     * non-negative {@code long} Fibonacci numbers. If you only have inputs that are less than 47, and you want
+     * {@code int} results, you can use {@link #fibonacci(int)} instead.
+     * <br>
+     * For more information see <a href="https://en.wikipedia.org/wiki/Fibonacci_number#Closed-form_expression">Wikipedia</a>.
+     *
+     * @param n a long index; should be less than 72
+     * @return the Fibonacci number at index n, as a long
+     */
+    public static long fibonacci(long n) {
+        return (long) ((Math.pow(PHI_D, n) - Math.pow(PSI_D, n)) / ROOT5_D);
+    }
+
     /**
      * Returns the square (second power) of its parameter. Purely here for convenience.
      * @param n any float

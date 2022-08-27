@@ -107,4 +107,30 @@ public class PrecisionTest {
                           "Maximum error:    %3.8f\n" +
                           "Worst position:   %3.8f,%3.8f\n", absError / counter, relError / counter, maxError, worstX, worstY);
     }
+
+    @Test
+    public void fibonacciTest() {
+        {
+            int idx = 2;
+            int old = MathTools.fibonacci(1), ancient = MathTools.fibonacci(0), t;
+            while (old + ancient == (t = MathTools.fibonacci(idx))) {
+                idx++;
+                ancient = old;
+                old = t;
+            }
+            System.out.println("Int failed at " + idx + " with calculated value " + t + " but correct value " + (old + ancient));
+            System.out.println("Previous value " + old);
+        }
+        {
+            long idx = 2;
+            long old = MathTools.fibonacci(1L), ancient = MathTools.fibonacci(0L), t;
+            while (old + ancient == (t = MathTools.fibonacci(idx))) {
+                idx++;
+                ancient = old;
+                old = t;
+            }
+            System.out.println("Long failed at " + idx + " with calculated value " + t + " but correct value " + (old + ancient));
+            System.out.println("Previous value " + old);
+        }
+    }
 }
