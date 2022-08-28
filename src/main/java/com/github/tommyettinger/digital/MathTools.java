@@ -664,12 +664,14 @@ public final class MathTools {
      * {@code long} input to {@link #fibonacci(long)}.
      * <br>
      * For more information see <a href="https://en.wikipedia.org/wiki/Fibonacci_number#Closed-form_expression">Wikipedia</a>.
-     * 
+     * This does not use the exact constant values in the "Computation by rounding" section, because extremely small
+     * adjustments to those constants proved to counterbalance accrued floating-point error for a few more inputs.
+     *
      * @param n an int index; should be less than 47
      * @return the Fibonacci number at index n, as an int
      */
     public static int fibonacci(int n) {
-        return (int) ((Math.pow(PHI_D, n) - Math.pow(PSI_D, n)) / ROOT5_D);
+        return (int) ((Math.pow(1.618033988749895, n)) / 2.236067977499795 + 0.49999999999999917);
     }
 
     /**
@@ -678,19 +680,21 @@ public final class MathTools {
      * Pascal's triangle, which is itself useful in various areas of mathematics involving polynomial functions.
      * <br>
      * Negative inputs are allowed here, but may behave differently than positive inputs. When given non-negative
-     * integer inputs, this is only correct for inputs from 0 to 71 inclusive; the largest Fibonacci number this can
-     * correctly calculate is 308061521170129, given an input of 71. This means that all Fibonacci numbers that can be
+     * integer inputs, this is only correct for inputs from 0 to 77 inclusive; the largest Fibonacci number this can
+     * correctly calculate is 5527939700884757, given an input of 77. This means that all Fibonacci numbers that can be
      * stored in a non-negative {@code int} can be produced by this method, as well as a substantial amount of
      * non-negative {@code long} Fibonacci numbers. If you only have inputs that are less than 47, and you want
      * {@code int} results, you can use {@link #fibonacci(int)} instead.
      * <br>
      * For more information see <a href="https://en.wikipedia.org/wiki/Fibonacci_number#Closed-form_expression">Wikipedia</a>.
+     * This does not use the exact constant values in the "Computation by rounding" section, because extremely small
+     * adjustments to those constants proved to counterbalance accrued floating-point error for a few more inputs.
      *
-     * @param n a long index; should be less than 72
+     * @param n a long index; should be less than 78
      * @return the Fibonacci number at index n, as a long
      */
     public static long fibonacci(long n) {
-        return (long) ((Math.pow(PHI_D, n) - Math.pow(PSI_D, n)) / ROOT5_D);
+        return (long) ((Math.pow(1.618033988749895, n)) / 2.236067977499795 + 0.49999999999999917);
     }
 
     /**
