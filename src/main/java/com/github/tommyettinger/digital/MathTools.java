@@ -473,6 +473,27 @@ public final class MathTools {
     }
 
     /**
+     * The nth root of x, taking advantage of how any nth root can be written as raising x to power of 1/n.
+     * <br>
+     * For a detailed description of how this function handles negative roots and roots of negative numbers,
+     * refer to the documentation for {@link Math#pow(double, double)}.
+     * <br>
+     * Additionally, this function aliases results which are extremely close to mathematical integers to actual
+     * {@code int} values to compensate for any internal precision loss from {@code Math.pow(double, double)}.
+     * 
+     * @param x a number to find the nth root of
+     * @param n the degree of the root
+     * @return a number which, when raised to the power n, yields x
+     */
+    public static float nthrt(final float x, final float n) {        
+        float f = (float) Math.pow(x, 1f / n);
+        if (Float.isNaN(f) || Float.isInfinite(f))
+            return f;
+        int i = round(f);
+        return isEqual(i, f) ? i : f;
+    }
+    
+    /**
      * Fast inverse square root, best known for its implementation in Quake III Arena.
      * This is an algorithm that estimates the {@code float} value of 1/sqrt(x). It has
      * comparable performance to the more-straightforward {@code 1f/(float)Math.sqrt(x)}
