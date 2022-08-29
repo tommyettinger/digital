@@ -77,14 +77,14 @@ With Gradle, add this to your dependencies (in your core module,
 for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.0"
+api "com.github.tommyettinger:digital:0.1.1"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.0:sources"
+api "com.github.tommyettinger:digital:0.1.1:sources"
 ```
 
 and this in your GdxDefinition.gwt.xml file:
@@ -104,4 +104,6 @@ This also has instructions for Maven and other build tools.
 [SquidLib](https://github.com/yellowstonegames/SquidLib),
 [SquidSquad](https://github.com/yellowstonegames/SquidSquad),
 [Uncommon Maths](https://maths.uncommons.org/), and
-[wyhash](https://github.com/wangyi-fudan/wyhash).
+[wyhash](https://github.com/wangyi-fudan/wyhash). More code
+is not from a particular repository (for example, some is from
+Wikipedia); see each file for specific author credits.

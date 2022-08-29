@@ -473,16 +473,19 @@ public final class MathTools {
     }
 
     /**
-     * The nth root of x, taking advantage of how any nth root can be written as raising x to power of 1/n.
+     * Returns the nth root of x. Any values within {@link #FLOAT_ROUNDING_ERROR} of an int are rounded to that int to
+     * reduce the likelihood of floating-point error adversely affecting the result.
      * <br>
      * For a detailed description of how this function handles negative roots and roots of negative numbers,
-     * refer to the documentation for {@link Math#pow(double, double)}.
+     * refer to the documentation for {@link Math#pow(double, double)}. This implementation starts by calling
+     * {@code Math.pow(x, 1f / n)}, so consider the documentation in Math for the reciprocal of the power.
      * <br>
-     * Additionally, this function aliases results which are extremely close to mathematical integers to actual
-     * {@code int} values to compensate for any internal precision loss from {@code Math.pow(double, double)}.
-     * 
+     * Unlike {@link #cbrt(float)}, this is not an approximation, and isn't any faster than calling Math.pow() with the
+     * reciprocal of the power. Its advantage is in precision when integer results are mathematically correct, but Math
+     * won't calculate them correctly on its own.
+     *
      * @param x a number to find the nth root of
-     * @param n the degree of the root
+     * @param n the degree of the root; may be negative or non-integer
      * @return a number which, when raised to the power n, yields x
      */
     public static float nthrt(final float x, final float n) {        
@@ -708,7 +711,7 @@ public final class MathTools {
      * {@code int} results, you can use {@link #fibonacci(int)} instead.
      * <br>
      * For more information see <a href="https://en.wikipedia.org/wiki/Fibonacci_number#Closed-form_expression">Wikipedia</a>.
-     * This does not use the exact constant values in the "Computation by rounding" section, because extremely small
+     * This does not use the exact constant values in the "Computation by rounding" section, because minuscule
      * adjustments to those constants proved to counterbalance accrued floating-point error for a few more inputs.
      *
      * @param n a long index; should be less than 78
@@ -1092,7 +1095,7 @@ public final class MathTools {
     }
 
     /**
-     * Returns true if the value is zero (using the default tolerance, {@link #FLOAT_ROUNDING_ERROR}, as upper bound).
+     * Returns true if the value is zero (using the default tolerance, {@link #FLOAT_ROUNDING_ERROR}, as outer bound).
      *
      * @param value any float
      */
@@ -1101,10 +1104,10 @@ public final class MathTools {
     }
 
     /**
-     * Returns true if the value is zero.
+     * Returns true if the value is zero, using the given tolerance.
      *
      * @param value     any float
-     * @param tolerance represent an upper bound below which the value is considered zero.
+     * @param tolerance represent an outer bound below which the value is considered zero.
      */
     public static boolean isZero(float value, float tolerance) {
         return Math.abs(value) <= tolerance;
@@ -1116,7 +1119,7 @@ public final class MathTools {
      * overload uses for its default tolerance, or a smaller number to reduce false-positives, such as {@code 0x1p-32}.
      *
      * @param value     any double
-     * @param tolerance represent an upper bound below which the value is considered zero.
+     * @param tolerance represent an outer bound below which the value is considered zero.
      */
     public static boolean isZero(double value, double tolerance) {
         return Math.abs(value) <= tolerance;
