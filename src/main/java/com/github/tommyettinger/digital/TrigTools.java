@@ -73,6 +73,10 @@ public final class TrigTools {
      */
     public static final float ETA = HALF_PI;
     /**
+     * 1.0 divided by {@link #PI}.
+     */
+    public static final double PI_INVERSE_D = (1.0 / Math.PI);
+    /**
      * 2.0 times {@link Math#PI}; the same as {@link #TAU_D}.
      */
     public static final double PI2_D = Math.PI * 2.0;
@@ -202,14 +206,22 @@ public final class TrigTools {
     }
 
     /**
-     * Returns the tangent in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
-     * inclusive).
+     * Returns the tangent in radians, using a Padé approximant.
+     * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
      *
-     * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
+     * @param radians a float angle in radians, where 0 to {@link #PI2} is one rotation
+     * @return a float approximation of tan()
      */
     public static float tan(float radians) {
-        final int idx = (int) (radians * radToIndex) & TABLE_MASK;
-        return SIN_TABLE[idx] / SIN_TABLE[idx + SIN_TO_COS & TABLE_MASK];
+        radians *= TrigTools.PI_INVERSE;
+        radians += 0.5f;
+        radians -= Math.floor(radians) + 0.5f;
+        radians *= TrigTools.PI;
+        final float x2 = radians * radians, x4 = x2 * x2;
+        return radians * ((0.0010582010582010583f) * x4 - (0.1111111111111111f) * x2 + 1f)
+                / ((0.015873015873015872f) * x4 - (0.4444444444444444f) * x2 + 1f);
+        // how we calculated those large constants above:
+//        return x * ((1.0/945.0) * x4 - (1.0/9.0) * x2 + 1.0) / ((1.0/63.0) * x4 - (4.0/9.0) * x2 + 1.0);
     }
 
     /**
@@ -233,14 +245,20 @@ public final class TrigTools {
     }
 
     /**
-     * Returns the tangent in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
-     * inclusive).
+     * Returns the tangent in degrees, using a Padé approximant.
+     * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
      *
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
+     * @return a float approximation of tan()
      */
     public static float tanDeg(float degrees) {
-        final int idx = (int) (degrees * degToIndex) & TABLE_MASK;
-        return SIN_TABLE[idx] / SIN_TABLE[idx + SIN_TO_COS & TABLE_MASK];
+        degrees *= (1f/180f);
+        degrees += 0.5f;
+        degrees -= Math.floor(degrees) + 0.5f;
+        degrees *= TrigTools.PI;
+        final float x2 = degrees * degrees, x4 = x2 * x2;
+        return degrees * ((0.0010582010582010583f) * x4 - (0.1111111111111111f) * x2 + 1f)
+                / ((0.015873015873015872f) * x4 - (0.4444444444444444f) * x2 + 1f);
     }
 
     /**
@@ -264,14 +282,19 @@ public final class TrigTools {
     }
 
     /**
-     * Returns the tangent in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
-     * inclusive).
+     * Returns the tangent in turns, using a Padé approximant.
+     * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
      *
      * @param turns an angle in turns, where 0 to 1 is one rotation
+     * @return a float approximation of tan()
      */
     public static float tanTurns(float turns) {
-        final int idx = (int) (turns * turnToIndex) & TABLE_MASK;
-        return SIN_TABLE[idx] / SIN_TABLE[idx + SIN_TO_COS & TABLE_MASK];
+        turns += turns + 0.5f;
+        turns -= Math.floor(turns) + 0.5f;
+        turns *= TrigTools.PI;
+        final float x2 = turns * turns, x4 = x2 * x2;
+        return turns * ((0.0010582010582010583f) * x4 - (0.1111111111111111f) * x2 + 1f)
+                / ((0.015873015873015872f) * x4 - (0.4444444444444444f) * x2 + 1f);
     }
 
     /**
@@ -295,14 +318,21 @@ public final class TrigTools {
     }
 
     /**
-     * Returns the tangent in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
-     * inclusive).
-     *
-     * @param radians an angle in radians, where 0 to {@link #PI2_D} is one rotation
+     * Returns the tangent in radians, using a Padé approximant.
+     * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
+     * @param radians a double angle in radians, where 0 to {@link #PI2} is one rotation
+     * @return a double approximation of tan()
      */
     public static double tan(double radians) {
-        final int idx = (int) (radians * radToIndexD) & TABLE_MASK;
-        return SIN_TABLE_D[idx] / SIN_TABLE_D[idx + SIN_TO_COS & TABLE_MASK];
+        radians *= TrigTools.PI_INVERSE_D;
+        radians += 0.5;
+        radians -= Math.floor(radians) + 0.5;
+        radians *= TrigTools.PI_D;
+        final double x2 = radians * radians, x4 = x2 * x2;
+        return radians * ((0.0010582010582010583) * x4 - (0.1111111111111111) * x2 + 1.0)
+                / ((0.015873015873015872) * x4 - (0.4444444444444444) * x2 + 1.0);
+        // how we calculated those large constants above:
+//        return x * ((1.0/945.0) * x4 - (1.0/9.0) * x2 + 1.0) / ((1.0/63.0) * x4 - (4.0/9.0) * x2 + 1.0);
     }
 
     /**
@@ -326,14 +356,20 @@ public final class TrigTools {
     }
 
     /**
-     * Returns the tangent in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
-     * inclusive).
+     * Returns the tangent in degrees, using a Padé approximant.
+     * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
      *
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
+     * @return a double approximation of tan()
      */
     public static double tanDeg(double degrees) {
-        final int idx = (int) (degrees * degToIndexD) & TABLE_MASK;
-        return SIN_TABLE_D[idx] / SIN_TABLE_D[idx + SIN_TO_COS & TABLE_MASK];
+        degrees *= 1.0/180.0;
+        degrees += 0.5;
+        degrees -= Math.floor(degrees) + 0.5;
+        degrees *= TrigTools.PI_D;
+        final double x2 = degrees * degrees, x4 = x2 * x2;
+        return degrees * ((0.0010582010582010583) * x4 - (0.1111111111111111) * x2 + 1.0)
+                / ((0.015873015873015872) * x4 - (0.4444444444444444) * x2 + 1.0);
     }
 
     /**
@@ -357,14 +393,19 @@ public final class TrigTools {
     }
 
     /**
-     * Returns the tangent in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
-     * inclusive).
+     * Returns the tangent in turns, using a Padé approximant.
+     * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
      *
      * @param turns an angle in turns, where 0 to 1 is one rotation
+     * @return a double approximation of tan()
      */
     public static double tanTurns(double turns) {
-        final int idx = (int) (turns * turnToIndexD) & TABLE_MASK;
-        return SIN_TABLE_D[idx] / SIN_TABLE_D[idx + SIN_TO_COS & TABLE_MASK];
+        turns += turns + 0.5;
+        turns -= Math.floor(turns) + 0.5;
+        turns *= TrigTools.PI_D;
+        final double x2 = turns * turns, x4 = x2 * x2;
+        return turns * ((0.0010582010582010583) * x4 - (0.1111111111111111) * x2 + 1.0)
+                / ((0.015873015873015872) * x4 - (0.4444444444444444) * x2 + 1.0);
     }
 
     // ---
@@ -390,8 +431,8 @@ public final class TrigTools {
         double c7 = c5 * c2;
         double c9 = c7 * c2;
         double c11 = c9 * c2;
-        return (Math.signum(i) * (QUARTER_PI_D
-                + (0.99997726 * c - 0.33262347 * c3 + 0.19354346 * c5 - 0.11643287 * c7 + 0.05265332 * c9 - 0.0117212 * c11)));
+        return Math.signum(i) * (QUARTER_PI_D
+                + (0.99997726 * c - 0.33262347 * c3 + 0.19354346 * c5 - 0.11643287 * c7 + 0.05265332 * c9 - 0.0117212 * c11));
     }
 
     /**
