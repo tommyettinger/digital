@@ -207,7 +207,17 @@ public final class TrigTools {
 
     /**
      * Returns the tangent in radians, using a Padé approximant.
-     * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
+     * Padé approximants tend to be most accurate when they aren't producing results of extreme magnitude; in the tan()
+     * function, those results occur on and near odd multiples of {@code PI/2}, and this method is least accurate when
+     * given inputs near those multiples.
+     * <br> For inputs between -1.57 to 1.57 (just inside half-pi), separated by 0x1p-20f,
+     * absolute error is 0.00890192, relative error is 0.00000090, and the maximum error is 17.98901367 when given
+     * 1.56999838. The maximum error might seem concerning, but it's the difference between the correct 1253.22167969
+     * and the 1235.23266602 this returns, so for many purposes the difference won't be noticeable.
+     * <br> For inputs between -1.55 to 1.55 (getting less close to half-pi), separated by 0x1p-20f, absolute error is
+     * 0.00023368, relative error is -0.00000009, and the maximum error is 0.02355957 when given -1.54996467. The
+     * maximum error is the difference between the correct -47.99691010 and the -47.97335052 this returns.
+     * <br> Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer by Soonts</a>.
      *
      * @param radians a float angle in radians, where 0 to {@link #PI2} is one rotation
      * @return a float approximation of tan()
@@ -215,13 +225,16 @@ public final class TrigTools {
     public static float tan(float radians) {
         radians *= TrigTools.PI_INVERSE;
         radians += 0.5f;
-        radians -= Math.floor(radians) + 0.5f;
+        radians -= Math.floor(radians);
+        radians -= 0.5f;
         radians *= TrigTools.PI;
         final float x2 = radians * radians, x4 = x2 * x2;
         return radians * ((0.0010582010582010583f) * x4 - (0.1111111111111111f) * x2 + 1f)
                 / ((0.015873015873015872f) * x4 - (0.4444444444444444f) * x2 + 1f);
-        // how we calculated those large constants above:
+        // How we calculated those long constants above (from Stack Exchange, by Soonts):
 //        return x * ((1.0/945.0) * x4 - (1.0/9.0) * x2 + 1.0) / ((1.0/63.0) * x4 - (4.0/9.0) * x2 + 1.0);
+        // Normally, it would be best to show the division steps, but if GWT isn't computing mathematical constants at
+        // compile-time, which I don't know if it does, that would make the shown-division way slower by 4 divisions.
     }
 
     /**

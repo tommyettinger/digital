@@ -107,6 +107,35 @@ public class PrecisionTest {
                           "Maximum error:    %3.8f\n" +
                           "Worst position:   %3.8f,%3.8f\n", absError / counter, relError / counter, maxError, worstX, worstY);
     }
+
+    @Test
+    public void testTan(){
+        double absError = 0.0, relError = 0.0, maxError = 0.0;
+        float worstX = 0;
+        long counter = 0L;
+        // 1.57 is just inside half-pi. This avoids testing the extremely large results at close to half-pi.
+        // near half-pi, the correct result becomes tremendously large, and this doesn't grow as quickly.
+        for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
+
+            double err = TrigTools.tan(x) - (float) Math.tan(x),
+                    ae = Math.abs(err);
+            relError += err;
+            absError += ae;
+            if (maxError != (maxError = Math.max(maxError, ae))) {
+                worstX = x;
+            }
+            ++counter;
+        }
+        System.out.printf(
+                "Absolute error:   %3.8f\n" +
+                "Relative error:   %3.8f\n" +
+                "Maximum error:    %3.8f\n" +
+                "Worst input:      %3.8f\n" +
+                "Worst approx output: %3.8f\n" +
+                "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, TrigTools.tan(worstX), (float)Math.tan(worstX));
+    }
+
+
     public static long fibonacciRound(int n) {
         return (long) ((Math.pow(1.618033988749895, n)) / 2.236067977499795 + 0.49999999999999917); // used 2.236067977499794 before
 //        return (long) ((Math.pow(MathTools.PHI_D, n) - Math.pow(MathTools.PSI_D, n)) / MathTools.ROOT5_D);
