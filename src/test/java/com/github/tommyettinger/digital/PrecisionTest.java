@@ -135,6 +135,45 @@ public class PrecisionTest {
                 "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, TrigTools.tan(worstX), (float)Math.tan(worstX));
     }
 
+    @Test
+    public void testTanOld(){
+        double absError = 0.0, relError = 0.0, maxError = 0.0;
+        float worstX = 0;
+        long counter = 0L;
+        // 1.57 is just inside half-pi. This avoids testing the extremely large results at close to half-pi.
+        // near half-pi, the correct result becomes tremendously large, and this doesn't grow as quickly.
+        for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
+
+            double err = tanOld(x) - (float) Math.tan(x),
+                    ae = Math.abs(err);
+            relError += err;
+            absError += ae;
+            if (maxError != (maxError = Math.max(maxError, ae))) {
+                worstX = x;
+            }
+            ++counter;
+        }
+        System.out.printf(
+                "Absolute error:   %3.8f\n" +
+                "Relative error:   %3.8f\n" +
+                "Maximum error:    %3.8f\n" +
+                "Worst input:      %3.8f\n" +
+                "Worst approx output: %3.8f\n" +
+                "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, tanOld(worstX), (float)Math.tan(worstX));
+    }
+
+
+    public static float tanOld(float radians) {
+        //Between -1.57 and 1.57, separated by 0x1p-20f:
+        //Absolute error:   0.16286708
+        //Relative error:   0.12471680
+        //Maximum error:    510.82177734
+        //Worst input:      -1.57000005
+        //Worst approx output: -745.02648926
+        //Correct output:      -1255.84826660
+        final int idx = (int) (radians * TrigTools.TABLE_SIZE / TrigTools.PI2) & TrigTools.TABLE_MASK;
+        return TrigTools.SIN_TABLE[idx] / TrigTools.SIN_TABLE[idx + TrigTools.SIN_TO_COS & TrigTools.TABLE_MASK];
+    }
 
     public static long fibonacciRound(int n) {
         return (long) ((Math.pow(1.618033988749895, n)) / 2.236067977499795 + 0.49999999999999917); // used 2.236067977499794 before
