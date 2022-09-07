@@ -217,6 +217,12 @@ public final class TrigTools {
      * <br> For inputs between -1.55 to 1.55 (getting less close to half-pi), separated by 0x1p-20f, absolute error is
      * 0.00023368, relative error is -0.00000009, and the maximum error is 0.02355957 when given -1.54996467. The
      * maximum error is the difference between the correct -47.99691010 and the -47.97335052 this returns.
+     * <br> While you don't have to use a dedicated method for tan(), and you can use {@code sin(x)/cos(x)},
+     * approximating tan() in this way is very susceptible to error building up from any of sin(), cos() or the
+     * division. Where this tan() has a maximum error in the -1.55 to 1.55 range of 0.02355957, the simpler division
+     * technique on the same range has a maximum error of 1.25724030 (about 50 times worse), as well as larger absolute
+     * and relative errors. Casting the double result of {@link Math#tan(double)} to float will get the highest
+     * precision, but can be anywhere from 2.5x to nearly 4x slower than this, depending on JVM.
      * <br> Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer by Soonts</a>.
      *
      * @param radians a float angle in radians, where 0 to {@link #PI2} is one rotation

@@ -142,7 +142,7 @@ public class PrecisionTest {
         long counter = 0L;
         // 1.57 is just inside half-pi. This avoids testing the extremely large results at close to half-pi.
         // near half-pi, the correct result becomes tremendously large, and this doesn't grow as quickly.
-        for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
+        for (float x = -1.55f; x <= 1.55f; x += 0x1p-20f) {
 
             double err = tanOld(x) - (float) Math.tan(x),
                     ae = Math.abs(err);
