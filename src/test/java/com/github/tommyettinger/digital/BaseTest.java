@@ -407,4 +407,65 @@ public class BaseTest {
 			System.out.println(b.base + ": " + b.signed(4.89684f));
 		}
 	}
+
+	@Test
+	public void testTimePrint() {
+		Random r = new Random(123);
+		String low, high;
+		for (int i = 0; i < 100000; i++) {
+			float time = r.nextFloat() * 6000f;
+			low = formatTimeMMSSF(time);
+			high = formatterTimeMMSSF(time);
+			if(!low.equals(high))
+				System.out.println("Format: " + high + "\nCustom: " + low);
+			Assert.assertEquals(low, high);
+		}
+
+	}
+	public static final char[] DIGITS = "0123456789".toCharArray();
+	public static final char[] chars = {'0', '0', ':', '0', '0', '.', '0'};
+
+	/**
+	 * Given a time in seconds, formats a String to store a 2-digit minute section and a 2-digit second section, with 1
+	 * digit for tenths-of-a-second. Does not allocate except for the String it returns.
+	 * @param time a float time in seconds; should be less than 6000 (which would require too many digits for minutes)
+	 * @return a 7-character String storing the formatted time
+	 */
+	public static String formatTimeMMSSF(float time) {
+		if(time < 0f || time >= 6000f) return "--:----";
+		float div = time / 60f, mod = (time % 60f) * 10f;
+		int mm = (int) Math.floor(div), ss = Math.round(mod);
+		chars[0] = '0';
+		chars[2] = ':';
+		chars[3] = '0';
+		chars[4] = '0';
+		chars[5] = '.';
+		chars[1] = DIGITS[mm % 10];
+		if ((mm /= 10) != 0)
+			chars[0] = DIGITS[mm];
+		chars[6] = DIGITS[ss % 10];
+		if ((ss /= 10) != 0)
+		{
+			chars[4] = DIGITS[ss % 10];
+			if((ss /= 10) != 0)
+				chars[3] = DIGITS[ss];
+		}
+		return new String(chars);
+	}
+
+	/**
+	 * Just like {@link #formatTimeMMSSF(float)}, but uses {@link String#format(String, Object...)}, and allocates quite
+	 * a lot more.
+	 * @param time a float time in seconds; should be less than 6000 (which would require too many digits for minutes)
+	 * @return a 7-character String storing the formatted time
+	 */
+	public static String formatterTimeMMSSF(float time) {
+		if (time < 0f || time >= 6000f) return "--:----";
+		return String.format("%02d:%04.1f", (int)Math.floor(time / 60f), time % 60f);
+	}
+
+//	fun formatTimeMMSSF(time: Float): String {
+//		if (time == Float.MAX_VALUE) return "--:--"
+//		return "%02d:%04.1f".format(floor(time / 60).toInt(), time % 60f)
+//	}
 }
