@@ -33,7 +33,7 @@ requiring an Exception to be caught.
 TrigTools tries to be as complete as possible at covering
 trigonometric functions, offering sin, cos, tan, asin, acos,
 atan, and atan2 in radians, degrees, and turns. It also allows
-access to the lookup table used by sin, cos, and tan. Much of
+access to the lookup table used by sin and cos. Much of
 TrigTools can be seen as similar to what libGDX's MathUtils
 class offers, but allowing access to the lookup table permits
 a few novel features (see its docs). It supports float and
@@ -77,14 +77,14 @@ With Gradle, add this to your dependencies (in your core module,
 for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.1"
+api "com.github.tommyettinger:digital:0.1.2"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.1:sources"
+api "com.github.tommyettinger:digital:0.1.2:sources"
 ```
 
 and this in your GdxDefinition.gwt.xml file:
