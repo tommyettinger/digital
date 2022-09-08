@@ -271,9 +271,10 @@ public final class TrigTools {
      * @return a float approximation of tan()
      */
     public static float tanDeg(float degrees) {
-        degrees *= (1f/180f);
+        degrees *= 1f/180f;
         degrees += 0.5f;
-        degrees -= Math.floor(degrees) + 0.5f;
+        degrees -= Math.floor(degrees);
+        degrees -= 0.5f;
         degrees *= TrigTools.PI;
         final float x2 = degrees * degrees, x4 = x2 * x2;
         return degrees * ((0.0010582010582010583f) * x4 - (0.1111111111111111f) * x2 + 1f)
@@ -308,8 +309,10 @@ public final class TrigTools {
      * @return a float approximation of tan()
      */
     public static float tanTurns(float turns) {
-        turns += turns + 0.5f;
-        turns -= Math.floor(turns) + 0.5f;
+        turns += turns;
+        turns += 0.5f;
+        turns -= Math.floor(turns);
+        turns -= 0.5f;
         turns *= TrigTools.PI;
         final float x2 = turns * turns, x4 = x2 * x2;
         return turns * ((0.0010582010582010583f) * x4 - (0.1111111111111111f) * x2 + 1f)
@@ -345,7 +348,8 @@ public final class TrigTools {
     public static double tan(double radians) {
         radians *= TrigTools.PI_INVERSE_D;
         radians += 0.5;
-        radians -= Math.floor(radians) + 0.5;
+        radians -= Math.floor(radians);
+        radians -= 0.5;
         radians *= TrigTools.PI_D;
         final double x2 = radians * radians, x4 = x2 * x2;
         return radians * ((0.0010582010582010583) * x4 - (0.1111111111111111) * x2 + 1.0)
@@ -384,7 +388,8 @@ public final class TrigTools {
     public static double tanDeg(double degrees) {
         degrees *= 1.0/180.0;
         degrees += 0.5;
-        degrees -= Math.floor(degrees) + 0.5;
+        degrees -= Math.floor(degrees);
+        degrees -= 0.5;
         degrees *= TrigTools.PI_D;
         final double x2 = degrees * degrees, x4 = x2 * x2;
         return degrees * ((0.0010582010582010583) * x4 - (0.1111111111111111) * x2 + 1.0)
@@ -419,8 +424,10 @@ public final class TrigTools {
      * @return a double approximation of tan()
      */
     public static double tanTurns(double turns) {
-        turns += turns + 0.5;
-        turns -= Math.floor(turns) + 0.5;
+        turns += turns;
+        turns += 0.5;
+        turns -= Math.floor(turns);
+        turns -= 0.5;
         turns *= TrigTools.PI_D;
         final double x2 = turns * turns, x4 = x2 * x2;
         return turns * ((0.0010582010582010583) * x4 - (0.1111111111111111) * x2 + 1.0)
