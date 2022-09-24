@@ -134,6 +134,31 @@ public class PrecisionTest {
     }
 
     @Test
+    public void testSinBhaskaroid(){
+        double absError = 0.0, relError = 0.0, maxError = 0.0;
+        float worstX = 0;
+        long counter = 0L;
+        for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
+
+            double err = sinBhaskaroid(x) - (float) Math.sin(x),
+                    ae = Math.abs(err);
+            relError += err;
+            absError += ae;
+            if (maxError != (maxError = Math.max(maxError, ae))) {
+                worstX = x;
+            }
+            ++counter;
+        }
+        System.out.printf(
+                        "Absolute error:      %3.10f\n" +
+                        "Relative error:      %3.10f\n" +
+                        "Maximum error:       %3.10f\n" +
+                        "Worst input:         %3.10f\n" +
+                        "Worst approx output: %3.10f\n" +
+                        "Correct output:      %3.10f\n", absError / counter, relError / counter, maxError, worstX, sinBhaskaroid(worstX), (float)Math.sin(worstX));
+    }
+
+    @Test
     public void testSinNewTable(){
         double absError = 0.0, relError = 0.0, maxError = 0.0;
         float worstX = 0;
@@ -351,6 +376,25 @@ public class PrecisionTest {
         return radians * (-1f + alpha - alpha * radians) * ((floor & 2) - 1);
     }
 
+    /**
+     * Wow, this one seems quite good.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * @param radians
+     * @return
+     */
+    public static float sinBhaskaroid(float radians) {
+        //Absolute error:   0.00014983
+        //Relative error:   0.00000000
+        //Maximum error:    0.00035501
+        //Worst input:      -4.20848226547241200000
+        //Worst approx output: 0.87534791
+        //Correct output:      0.87570292
+        radians *= TrigTools.PI_INVERSE * 2f;
+        final int floor = (int) Math.ceil(radians) & -2;
+        radians -= floor;
+        float x2 = radians * radians, x3 = radians * x2;
+        return (((11 * radians - 3 * x3) / (7 + x2)) * (1f - (floor & 2)));
+    }
 
     public static float tanNewTable(float radians) {
         //Between -1.57 and 1.57, separated by 0x1p-20f:
