@@ -32,12 +32,12 @@ package com.github.tommyettinger.digital;
  * Corporation; though one might think such code would be obsolete over 60 years later, the approximations from that
  * study seem to have higher accuracy and speed than most attempts in later decades, often those aimed at DSP usage.
  */
-public final class TrigTools {
+public final class OldTrigTools {
 
     /**
      * Not meant to be instantiated.
      */
-    private TrigTools() {
+    private OldTrigTools() {
     }
 
     /**
@@ -172,7 +172,7 @@ public final class TrigTools {
 
     static {
         for (int i = 0; i < TABLE_SIZE; i++)
-            SIN_TABLE[i] = (float) (SIN_TABLE_D[i] = Math.sin(((double)i) / TABLE_SIZE * PI2_D));
+            SIN_TABLE[i] = (float) (SIN_TABLE_D[i] = Math.sin((i + 0.5f) / TABLE_SIZE * radFull));
         // The four right angles get extra-precise values, because they are
         // the most likely to need to be correct.
         SIN_TABLE[0] = 0f;
@@ -229,11 +229,11 @@ public final class TrigTools {
      * @return a float approximation of tan()
      */
     public static float tan(float radians) {
-        radians *= TrigTools.PI_INVERSE;
+        radians *= OldTrigTools.PI_INVERSE;
         radians += 0.5f;
         radians -= Math.floor(radians);
         radians -= 0.5f;
-        radians *= TrigTools.PI;
+        radians *= OldTrigTools.PI;
         final float x2 = radians * radians, x4 = x2 * x2;
         return radians * ((0.0010582010582010583f) * x4 - (0.1111111111111111f) * x2 + 1f)
                 / ((0.015873015873015872f) * x4 - (0.4444444444444444f) * x2 + 1f);
@@ -275,7 +275,7 @@ public final class TrigTools {
         degrees += 0.5f;
         degrees -= Math.floor(degrees);
         degrees -= 0.5f;
-        degrees *= TrigTools.PI;
+        degrees *= OldTrigTools.PI;
         final float x2 = degrees * degrees, x4 = x2 * x2;
         return degrees * ((0.0010582010582010583f) * x4 - (0.1111111111111111f) * x2 + 1f)
                 / ((0.015873015873015872f) * x4 - (0.4444444444444444f) * x2 + 1f);
@@ -313,7 +313,7 @@ public final class TrigTools {
         turns += 0.5f;
         turns -= Math.floor(turns);
         turns -= 0.5f;
-        turns *= TrigTools.PI;
+        turns *= OldTrigTools.PI;
         final float x2 = turns * turns, x4 = x2 * x2;
         return turns * ((0.0010582010582010583f) * x4 - (0.1111111111111111f) * x2 + 1f)
                 / ((0.015873015873015872f) * x4 - (0.4444444444444444f) * x2 + 1f);
@@ -346,11 +346,11 @@ public final class TrigTools {
      * @return a double approximation of tan()
      */
     public static double tan(double radians) {
-        radians *= TrigTools.PI_INVERSE_D;
+        radians *= OldTrigTools.PI_INVERSE_D;
         radians += 0.5;
         radians -= Math.floor(radians);
         radians -= 0.5;
-        radians *= TrigTools.PI_D;
+        radians *= OldTrigTools.PI_D;
         final double x2 = radians * radians, x4 = x2 * x2;
         return radians * ((0.0010582010582010583) * x4 - (0.1111111111111111) * x2 + 1.0)
                 / ((0.015873015873015872) * x4 - (0.4444444444444444) * x2 + 1.0);
@@ -390,7 +390,7 @@ public final class TrigTools {
         degrees += 0.5;
         degrees -= Math.floor(degrees);
         degrees -= 0.5;
-        degrees *= TrigTools.PI_D;
+        degrees *= OldTrigTools.PI_D;
         final double x2 = degrees * degrees, x4 = x2 * x2;
         return degrees * ((0.0010582010582010583) * x4 - (0.1111111111111111) * x2 + 1.0)
                 / ((0.015873015873015872) * x4 - (0.4444444444444444) * x2 + 1.0);
@@ -428,7 +428,7 @@ public final class TrigTools {
         turns += 0.5;
         turns -= Math.floor(turns);
         turns -= 0.5;
-        turns *= TrigTools.PI_D;
+        turns *= OldTrigTools.PI_D;
         final double x2 = turns * turns, x4 = x2 * x2;
         return turns * ((0.0010582010582010583) * x4 - (0.1111111111111111) * x2 + 1.0)
                 / ((0.015873015873015872) * x4 - (0.4444444444444444) * x2 + 1.0);

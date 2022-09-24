@@ -136,15 +136,15 @@ public class PrecisionTest {
     }
 
     @Test
-    public void testTanOld(){
+    public void testTanNewTable(){
         double absError = 0.0, relError = 0.0, maxError = 0.0;
         float worstX = 0;
         long counter = 0L;
         // 1.57 is just inside half-pi. This avoids testing the extremely large results at close to half-pi.
         // near half-pi, the correct result becomes tremendously large, and this doesn't grow as quickly.
-        for (float x = -1.55f; x <= 1.55f; x += 0x1p-20f) {
+        for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
 
-            double err = tanOld(x) - (float) Math.tan(x),
+            double err = tanNewTable(x) - (float) Math.tan(x),
                     ae = Math.abs(err);
             relError += err;
             absError += ae;
@@ -159,20 +159,65 @@ public class PrecisionTest {
                 "Maximum error:    %3.8f\n" +
                 "Worst input:      %3.8f\n" +
                 "Worst approx output: %3.8f\n" +
-                "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, tanOld(worstX), (float)Math.tan(worstX));
+                "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, tanNewTable(worstX), (float)Math.tan(worstX));
+    }
+
+    @Test
+    public void testTanOldTable(){
+        double absError = 0.0, relError = 0.0, maxError = 0.0;
+        float worstX = 0;
+        long counter = 0L;
+        // 1.57 is just inside half-pi. This avoids testing the extremely large results at close to half-pi.
+        // near half-pi, the correct result becomes tremendously large, and this doesn't grow as quickly.
+        for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
+
+            double err = tanOldTable(x) - (float) Math.tan(x),
+                    ae = Math.abs(err);
+            relError += err;
+            absError += ae;
+            if (maxError != (maxError = Math.max(maxError, ae))) {
+                worstX = x;
+            }
+            ++counter;
+        }
+        System.out.printf(
+                "Absolute error:   %3.8f\n" +
+                "Relative error:   %3.8f\n" +
+                "Maximum error:    %3.8f\n" +
+                "Worst input:      %3.8f\n" +
+                "Worst approx output: %3.8f\n" +
+                "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, tanOldTable(worstX), (float)Math.tan(worstX));
+    }
+
+    public static float tanNewTable(float radians) {
+        //Between -1.57 and 1.57, separated by 0x1p-20f:
+
+        // NEW TABLE, doesn't add 0.5
+
+        //Absolute error:   0.13866072
+        //Relative error:   0.00007237
+        //Maximum error:    386.65045166
+        //Worst input:      -1.57000005
+        //Worst approx output: -869.19781494
+        //Correct output:      -1255.84826660
+        final int idx = (int) (radians * TrigTools.TABLE_SIZE / TrigTools.PI2) & TrigTools.TABLE_MASK;
+        return TrigTools.SIN_TABLE[idx] / TrigTools.SIN_TABLE[idx + TrigTools.SIN_TO_COS & TrigTools.TABLE_MASK];
     }
 
 
-    public static float tanOld(float radians) {
+    public static float tanOldTable(float radians) {
         //Between -1.57 and 1.57, separated by 0x1p-20f:
+
+        // OLD TABLE
+
         //Absolute error:   0.16286708
         //Relative error:   0.12471680
         //Maximum error:    510.82177734
         //Worst input:      -1.57000005
         //Worst approx output: -745.02648926
         //Correct output:      -1255.84826660
-        final int idx = (int) (radians * TrigTools.TABLE_SIZE / TrigTools.PI2) & TrigTools.TABLE_MASK;
-        return TrigTools.SIN_TABLE[idx] / TrigTools.SIN_TABLE[idx + TrigTools.SIN_TO_COS & TrigTools.TABLE_MASK];
+        final int idx = (int) (radians * OldTrigTools.TABLE_SIZE / OldTrigTools.PI2) & OldTrigTools.TABLE_MASK;
+        return OldTrigTools.SIN_TABLE[idx] / OldTrigTools.SIN_TABLE[idx + OldTrigTools.SIN_TO_COS & OldTrigTools.TABLE_MASK];
     }
 
     public static long fibonacciRound(int n) {
@@ -275,7 +320,7 @@ public class PrecisionTest {
 //                    System.out.println("Phi up: " + phi);
                 }
             }
-            // an attempt to break out of locally optimal, globally sub-optimal values.
+            // an attempt to break out of locally optimal, globally suboptimal values.
             if((r & 127L) == 0L){
                 if((r & 128L) == 0)
                     root = Math.nextUp(Math.nextUp(root));
@@ -337,7 +382,7 @@ public class PrecisionTest {
 //                    System.out.println("Phi up: " + phi);
                 }
             }
-            // an attempt to break out of locally optimal, globally sub-optimal values.
+            // an attempt to break out of locally optimal, globally suboptimal values.
             if((r & 127L) == 0L){
                 if((r & 128L) == 0)
                     root = Math.nextUp(Math.nextUp(root));
