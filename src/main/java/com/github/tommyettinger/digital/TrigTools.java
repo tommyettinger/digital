@@ -119,18 +119,13 @@ public final class TrigTools {
      */
     public static final int TABLE_MASK = TABLE_SIZE - 1;
 
+    static final float radToIndex = TABLE_SIZE / PI2;
+    static final float degToIndex = TABLE_SIZE / 360f;
+    static final float turnToIndex = TABLE_SIZE;
 
-    private static final float radFull = PI2;
-    private static final float degFull = 360;
-    private static final float turnFull = 1;
-
-    private static final float radToIndex = TABLE_SIZE / radFull;
-    private static final float degToIndex = TABLE_SIZE / degFull;
-    private static final float turnToIndex = TABLE_SIZE;
-
-    private static final double radToIndexD = TABLE_SIZE / PI2_D;
-    private static final double degToIndexD = TABLE_SIZE / 360.0;
-    private static final double turnToIndexD = TABLE_SIZE;
+    static final double radToIndexD = TABLE_SIZE / PI2_D;
+    static final double degToIndexD = TABLE_SIZE / 360.0;
+    static final double turnToIndexD = TABLE_SIZE;
 
     /**
      * Multiply by this to convert from radians to degrees.

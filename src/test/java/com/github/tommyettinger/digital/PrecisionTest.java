@@ -109,6 +109,32 @@ public class PrecisionTest {
     }
 
     @Test
+    public void testSinNewTable(){
+        double absError = 0.0, relError = 0.0, maxError = 0.0;
+        float worstX = 0;
+        long counter = 0L;
+        for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
+
+            double err = sinNewTable(x) - (float) Math.sin(x),
+                    ae = Math.abs(err);
+            relError += err;
+            absError += ae;
+            if (maxError != (maxError = Math.max(maxError, ae))) {
+                worstX = x;
+            }
+            ++counter;
+        }
+        System.out.printf(
+                "Absolute error:   %3.8f\n" +
+                        "Relative error:   %3.8f\n" +
+                        "Maximum error:    %3.8f\n" +
+                        "Worst input:      %3.8f\n" +
+                        "Worst approx output: %3.8f\n" +
+                        "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, sinNewTable(worstX), (float)Math.sin(worstX));
+    }
+
+
+    @Test
     public void testTan(){
         double absError = 0.0, relError = 0.0, maxError = 0.0;
         float worstX = 0;
@@ -187,6 +213,16 @@ public class PrecisionTest {
                 "Worst input:      %3.8f\n" +
                 "Worst approx output: %3.8f\n" +
                 "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, tanOldTable(worstX), (float)Math.tan(worstX));
+    }
+
+    public static float sinNewTable(float radians) {
+        //Absolute error:   0.00012207
+        //Relative error:   0.00000000
+        //Maximum error:    0.00038354
+        //Worst input:      -6.28050089
+        //Worst approx output: 0.00306796
+        //Correct output:      0.00268442
+        return TrigTools.SIN_TABLE[(int) (radians * TrigTools.radToIndex) & TrigTools.TABLE_MASK];
     }
 
     public static float tanNewTable(float radians) {
