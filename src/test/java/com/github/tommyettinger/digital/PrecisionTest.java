@@ -335,6 +335,21 @@ public class PrecisionTest {
         return radians * (-0.775f - 0.225f * radians) * ((floor & 2) - 1);
     }
 
+    public static float sinFuzz(float radians, float alpha)
+    {
+        // With alpha == 0.22401
+        //Absolute error:   0.00052595
+        //Relative error:   -0.00000000
+        //Maximum error:    0.00091943
+        //Worst input:      -3.31969690
+        //Worst approx output: 0.17624471
+        //Correct output:      0.17716414
+        radians *= 0.6366197723675814f;
+        final int floor = (int)Math.floor(radians) & -2;
+        radians -= floor;
+        radians *= 2f - radians;
+        return radians * (-1f + alpha - alpha * radians) * ((floor & 2) - 1);
+    }
 
 
     public static float tanNewTable(float radians) {
@@ -541,5 +556,57 @@ public class PrecisionTest {
         System.out.printf("Got up to index %d with phi = %22.20f, half = %22.20f, root = %22.20f\n",
                 furthest, bestPhi, bestHalf, bestRoot);
         // Got up to index 78 with half = 0.49999999999999920000, root = 2.23606797749979500000
+    }
+
+
+
+    @Test
+    public void testSinFuzz() {
+        float alpha = 0.22401f, bestAlpha = alpha;
+        double bestMax = 0.0011f;
+        System.out.printf("Starting with alpha = %22.20f\n", bestAlpha);
+        long seed = Hasher.randomize3(System.nanoTime()); // this can use a fixed seed as well.
+        System.out.println("Using seed " + seed);
+        for (int i = 0; i < 1000; i++) {
+            double absError = 0.0, relError = 0.0, maxError = 0.0;
+            float worstX = 0;
+            long counter = 0L;
+            for (float x = 0f; x <= TrigTools.PI2; x += 0x1p-16f) {
+                double err = sinFuzz(x, alpha) - (float) Math.sin(x),
+                        ae = Math.abs(err);
+                relError += err;
+                absError += ae;
+                if (maxError != (maxError = Math.max(maxError, ae))) {
+                    worstX = x;
+                }
+                ++counter;
+            }
+//            System.out.printf(
+//                    "Absolute error:   %3.8f\n" +
+//                            "Relative error:   %3.8f\n" +
+//                            "Maximum error:    %3.8f\n" +
+//                            "Worst input:      %3.8f\n" +
+//                            "Worst approx output: %3.8f\n" +
+//                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, sinSmooth(worstX), (float)Math.sin(worstX));
+
+            if(bestMax > (bestMax = Math.min(maxError, bestMax))){
+                bestAlpha = alpha;
+            }
+            long r = Hasher.randomize1(seed++);
+            alpha += r * 0x1p-73;
+//            if(r < 0x400000000000000L){
+//                alpha = Math.nextDown(alpha);
+//            }
+//            else
+//            {
+//                alpha = Math.nextUp(alpha);
+//            }
+            // an attempt to break out of locally optimal, globally suboptimal values.
+            if((r & 127L) == 0L){
+                alpha += Hasher.randomize2(r) * 0x1p-71;
+            }
+        }
+        System.out.printf("Found alpha = %22.20f, gets best max error = %22.20f\n", bestAlpha, bestMax);
+        //Got up to index 77 with phi = 1.61803398874989500000, root = 2.23606797749979500000
     }
 }
