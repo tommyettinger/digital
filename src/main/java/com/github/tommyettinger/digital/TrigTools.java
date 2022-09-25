@@ -541,7 +541,12 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoothDeg(float degrees) {
-        //
+        //Absolute error:   0.00014982
+        //Relative error:   0.00000000
+        //Maximum error:    0.00035495
+        //Worst input:      -299.00579834
+        //Worst approx output: 0.87421572
+        //Correct output:      0.87457067
         degrees = degrees * (1f / 90f);
         final int ceil = (int) Math.ceil(degrees) & -2;
         degrees -= ceil;
@@ -625,7 +630,12 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoothTurns(float turns) {
-        //
+        //Absolute error:   0.00014983
+        //Relative error:   0.00000000
+        //Maximum error:    0.00035477
+        //Worst input:      -0.83077192
+        //Worst approx output: 0.87360507
+        //Correct output:      0.87395984
         turns = turns * 4f;
         final int ceil = (int) Math.ceil(turns) & -2;
         turns -= ceil;

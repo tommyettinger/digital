@@ -245,42 +245,6 @@ public class PrecisionTest {
     }
 
     @Test
-    public void testSinSquared() {
-        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
-        functions.put("sinOldSmooth", PrecisionTest::sinOldSmooth);
-        functions.put("sinBhaskaroid", TrigTools::sinSmooth);
-        functions.put("sinNewTable", TrigTools::sin);
-        functions.put("sinOldTable", OldTrigTools::sin);
-
-        for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
-            System.out.println("Running " + ent.getKey());
-            final FloatUnaryOperator op = ent.getValue();
-            double absError = 0.0, relError = 0.0, maxError = 0.0;
-            float worstX = 0;
-            long counter = 0L;
-            for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
-
-                double err = op.applyAsFloat(x) * abs(op.applyAsFloat(x)) - (float) Math.sin(x) * (float) abs(Math.sin(x)),
-                        ae = abs(err);
-                relError += err;
-                absError += ae;
-                if (maxError != (maxError = Math.max(maxError, ae))) {
-                    worstX = x;
-                }
-                ++counter;
-            }
-            System.out.printf(
-                    "Absolute error:   %3.8f\n" +
-                            "Relative error:   %3.8f\n" +
-                            "Maximum error:    %3.8f\n" +
-                            "Worst input:      %3.8f\n" +
-                            "Worst approx output: %3.8f\n" +
-                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX) * abs(op.applyAsFloat(worstX)), (float) Math.sin(worstX) * (float) abs(Math.sin(worstX)));
-        }
-    }
-
-
-    @Test
     public void testSin() {
         HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
         functions.put("sinSmooth", TrigTools::sinSmooth);
@@ -311,6 +275,74 @@ public class PrecisionTest {
                             "Worst input:      %3.8f\n" +
                             "Worst approx output: %3.8f\n" +
                             "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX), (float) Math.sin(worstX));
+        }
+    }
+
+    @Test
+    public void testSinDeg() {
+        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        functions.put("sinSmoothDeg", TrigTools::sinSmoothDeg);
+        functions.put("sinDegNewTable", TrigTools::sinDeg);
+        functions.put("sinDegOldTable", OldTrigTools::sinDeg);
+
+        for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final FloatUnaryOperator op = ent.getValue();
+            double absError = 0.0, relError = 0.0, maxError = 0.0;
+            float worstX = 0;
+            long counter = 0L;
+            for (float x = -360; x <= 360; x += 0x1p-14f) {
+
+                double err = op.applyAsFloat(x) - (float) Math.sin(Math.toRadians(x)),
+                        ae = abs(err);
+                relError += err;
+                absError += ae;
+                if (maxError != (maxError = Math.max(maxError, ae))) {
+                    worstX = x;
+                }
+                ++counter;
+            }
+            System.out.printf(
+                    "Absolute error:   %3.8f\n" +
+                            "Relative error:   %3.8f\n" +
+                            "Maximum error:    %3.8f\n" +
+                            "Worst input:      %3.8f\n" +
+                            "Worst approx output: %3.8f\n" +
+                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX), (float) Math.sin(Math.toRadians(worstX)));
+        }
+    }
+
+    @Test
+    public void testSinTurns() {
+        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        functions.put("sinSmoothTurns", TrigTools::sinSmoothTurns);
+        functions.put("sinTurnsNewTable", TrigTools::sinTurns);
+        functions.put("sinTurnsOldTable", OldTrigTools::sinTurns);
+
+        for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final FloatUnaryOperator op = ent.getValue();
+            double absError = 0.0, relError = 0.0, maxError = 0.0;
+            float worstX = 0;
+            long counter = 0L;
+            for (float x = -1; x <= 1; x += 0x1p-21f) {
+
+                double err = op.applyAsFloat(x) - (float) Math.sin(x * 2 * Math.PI),
+                        ae = abs(err);
+                relError += err;
+                absError += ae;
+                if (maxError != (maxError = Math.max(maxError, ae))) {
+                    worstX = x;
+                }
+                ++counter;
+            }
+            System.out.printf(
+                    "Absolute error:   %3.8f\n" +
+                            "Relative error:   %3.8f\n" +
+                            "Maximum error:    %3.8f\n" +
+                            "Worst input:      %3.8f\n" +
+                            "Worst approx output: %3.8f\n" +
+                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX), (float) Math.sin(worstX * 2 * Math.PI));
         }
     }
 
@@ -381,6 +413,41 @@ public class PrecisionTest {
                             "Worst input:      %3.8f\n" +
                             "Worst approx output: %3.8f\n" +
                             "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX), (float) Math.cos(worstX));
+        }
+    }
+
+    @Test
+    public void testSinSquared() {
+        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        functions.put("sinOldSmooth", PrecisionTest::sinOldSmooth);
+        functions.put("sinBhaskaroid", TrigTools::sinSmooth);
+        functions.put("sinNewTable", TrigTools::sin);
+        functions.put("sinOldTable", OldTrigTools::sin);
+
+        for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final FloatUnaryOperator op = ent.getValue();
+            double absError = 0.0, relError = 0.0, maxError = 0.0;
+            float worstX = 0;
+            long counter = 0L;
+            for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
+
+                double err = op.applyAsFloat(x) * abs(op.applyAsFloat(x)) - (float) Math.sin(x) * (float) abs(Math.sin(x)),
+                        ae = abs(err);
+                relError += err;
+                absError += ae;
+                if (maxError != (maxError = Math.max(maxError, ae))) {
+                    worstX = x;
+                }
+                ++counter;
+            }
+            System.out.printf(
+                    "Absolute error:   %3.8f\n" +
+                            "Relative error:   %3.8f\n" +
+                            "Maximum error:    %3.8f\n" +
+                            "Worst input:      %3.8f\n" +
+                            "Worst approx output: %3.8f\n" +
+                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX) * abs(op.applyAsFloat(worstX)), (float) Math.sin(worstX) * (float) abs(Math.sin(worstX)));
         }
     }
 
