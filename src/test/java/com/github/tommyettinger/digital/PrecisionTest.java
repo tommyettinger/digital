@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.DoubleUnaryOperator;
 
 import static java.lang.Math.abs;
 
@@ -280,6 +281,76 @@ public class PrecisionTest {
 
 
     @Test
+    public void testSin() {
+        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        functions.put("sinSmooth", TrigTools::sinSmooth);
+        functions.put("sinNewTable", TrigTools::sin);
+        functions.put("sinOldTable", OldTrigTools::sin);
+
+        for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final FloatUnaryOperator op = ent.getValue();
+            double absError = 0.0, relError = 0.0, maxError = 0.0;
+            float worstX = 0;
+            long counter = 0L;
+            for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
+
+                double err = op.applyAsFloat(x) - (float) Math.sin(x),
+                        ae = abs(err);
+                relError += err;
+                absError += ae;
+                if (maxError != (maxError = Math.max(maxError, ae))) {
+                    worstX = x;
+                }
+                ++counter;
+            }
+            System.out.printf(
+                    "Absolute error:   %3.8f\n" +
+                            "Relative error:   %3.8f\n" +
+                            "Maximum error:    %3.8f\n" +
+                            "Worst input:      %3.8f\n" +
+                            "Worst approx output: %3.8f\n" +
+                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX), (float) Math.sin(worstX));
+        }
+    }
+
+
+    @Test
+    public void testSinD() {
+        HashMap<String, DoubleUnaryOperator> functions = new HashMap<>(8);
+        functions.put("sinSmooth", TrigTools::sinSmooth);
+        functions.put("sinNewTable", TrigTools::sin);
+        functions.put("sinOldTable", OldTrigTools::sin);
+
+        for (Map.Entry<String, DoubleUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final DoubleUnaryOperator op = ent.getValue();
+            double absError = 0.0, relError = 0.0, maxError = 0.0;
+            float worstX = 0;
+            long counter = 0L;
+            for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
+
+                double err = op.applyAsDouble(x) - Math.sin(x),
+                        ae = abs(err);
+                relError += err;
+                absError += ae;
+                if (maxError != (maxError = Math.max(maxError, ae))) {
+                    worstX = x;
+                }
+                ++counter;
+            }
+            System.out.printf(
+                    "Absolute error:   %3.8f\n" +
+                            "Relative error:   %3.8f\n" +
+                            "Maximum error:    %3.8f\n" +
+                            "Worst input:      %3.8f\n" +
+                            "Worst approx output: %3.8f\n" +
+                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsDouble(worstX), Math.sin(worstX));
+        }
+    }
+
+
+    @Test
     public void testCos() {
         HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
         functions.put("cosSmooth", TrigTools::cosSmooth);
@@ -312,7 +383,6 @@ public class PrecisionTest {
                             "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX), (float) Math.cos(worstX));
         }
     }
-
 
     @Test
     public void testCosSquared() {
