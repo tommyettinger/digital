@@ -532,12 +532,12 @@ public final class TrigTools {
      * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
      * This takes an input in degrees, and takes and returns floats.
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
-     * use this if you notice statistical issues with the tabular approximation of sin(); in particular, only 16384
-     * outputs are possible from {@link TrigTools#sin(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible sin() returns, you can use this.
+     * use this if you notice statistical issues with the tabular approximation of sinDeg(); in particular, only 16384
+     * outputs are possible from {@link TrigTools#sinDeg(float)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
-     * @param degrees an angle in degrees; most precise between -PI2 and PI2
+     * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoothDeg(float degrees) {
@@ -553,12 +553,12 @@ public final class TrigTools {
      * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
      * century. This takes an input in degrees, and takes and returns floats.
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
-     * use this if you notice statistical issues with the tabular approximation of cos(); in particular, only 16384
-     * outputs are possible from {@link TrigTools#cos(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible cos() returns, you can use this.
+     * use this if you notice statistical issues with the tabular approximation of cosDeg(); in particular, only 16384
+     * outputs are possible from {@link TrigTools#cosDeg(float)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
-     * @param degrees an angle in degrees; most precise between -PI2 and PI2
+     * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static float cosSmoothDeg(float degrees) {
@@ -574,12 +574,12 @@ public final class TrigTools {
      * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
      * This takes an input in degrees, and takes and returns doubles.
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
-     * use this if you notice statistical issues with the tabular approximation of sin(); in particular, only 16384
-     * outputs are possible from {@link TrigTools#sin(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible sin() returns, you can use this.
+     * use this if you notice statistical issues with the tabular approximation of sinDeg(); in particular, only 16384
+     * outputs are possible from {@link TrigTools#sinDeg(float)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
-     * @param degrees an angle in degrees; most precise between -PI2 and PI2
+     * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static double sinSmoothDeg(double degrees) {
@@ -595,12 +595,12 @@ public final class TrigTools {
      * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
      * century. This takes an input in degrees, and takes and returns doubles.
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
-     * use this if you notice statistical issues with the tabular approximation of cos(); in particular, only 16384
-     * outputs are possible from {@link TrigTools#cos(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible cos() returns, you can use this.
+     * use this if you notice statistical issues with the tabular approximation of cosDeg(); in particular, only 16384
+     * outputs are possible from {@link TrigTools#cosDeg(float)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
-     * @param degrees an angle in degrees; most precise between -PI2 and PI2
+     * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static double cosSmoothDeg(double degrees) {
@@ -610,6 +610,90 @@ public final class TrigTools {
         degrees -= ceil;
         final double x2 = degrees * degrees, x3 = degrees * x2;
         return (((11 * degrees - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+    }
+
+    /**
+     * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
+     * This takes an input in turns, and takes and returns floats.
+     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * use this if you notice statistical issues with the tabular approximation of sinTurns(); in particular, only 16384
+     * outputs are possible from {@link TrigTools#sinTurns(float)}, and about half of those are duplicates, so if you
+     * need more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this.
+     * <br>
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * @param turns an angle in turns; most precise between -1 and 1
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static float sinSmoothTurns(float turns) {
+        //
+        turns = turns * 4f;
+        final int ceil = (int) Math.ceil(turns) & -2;
+        turns -= ceil;
+        final float x2 = turns * turns, x3 = turns * x2;
+        return (((11 * turns - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+    }
+
+    /**
+     * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
+     * century. This takes an input in turns, and takes and returns floats.
+     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * use this if you notice statistical issues with the tabular approximation of cosTurns(); in particular, only 16384
+     * outputs are possible from {@link TrigTools#cosTurns(float)}, and about half of those are duplicates, so if you
+     * need more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this.
+     * <br>
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * @param turns an angle in turns; most precise between -1 and 1
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static float cosSmoothTurns(float turns) {
+        //
+        turns = turns * 4f + 1f;
+        final int ceil = (int) Math.ceil(turns) & -2;
+        turns -= ceil;
+        final float x2 = turns * turns, x3 = turns * x2;
+        return (((11 * turns - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+    }
+
+    /**
+     * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
+     * This takes an input in turns, and takes and returns doubles.
+     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * use this if you notice statistical issues with the tabular approximation of sinTurns(); in particular, only 16384
+     * outputs are possible from {@link TrigTools#sinTurns(float)}, and about half of those are duplicates, so if you
+     * need more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this.
+     * <br>
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * @param turns an angle in turns; most precise between -1 and 1
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static double sinSmoothTurns(double turns) {
+        //
+        turns = turns * 4.0;
+        final long ceil = (long) Math.ceil(turns) & -2L;
+        turns -= ceil;
+        final double x2 = turns * turns, x3 = turns * x2;
+        return (((11 * turns - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+    }
+
+    /**
+     * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
+     * century. This takes an input in turns, and takes and returns doubles.
+     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * use this if you notice statistical issues with the tabular approximation of cosTurns(); in particular, only 16384
+     * outputs are possible from {@link TrigTools#cosTurns(float)}, and about half of those are duplicates, so if you
+     * need more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this.
+     * <br>
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * @param turns an angle in turns; most precise between -1 and 1
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static double cosSmoothTurns(double turns) {
+        //
+        turns = turns * 4.0 + 1.0;
+        final long ceil = (long) Math.ceil(turns) & -2L;
+        turns -= ceil;
+        final double x2 = turns * turns, x3 = turns * x2;
+        return (((11 * turns - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
     }
 
     // ---
