@@ -2,6 +2,11 @@ package com.github.tommyettinger.digital;
 
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.lang.Math.abs;
+
 public class PrecisionTest {
     @Test
     public void testAtan2(){
@@ -13,7 +18,7 @@ public class PrecisionTest {
             for (int j = Float.floatToIntBits(1f); j < n; j+=511) {
                 float y = Float.intBitsToFloat(j) - 1.5f;
                 double err = TrigTools.atan2(y, x) - Math.atan2(y, x),
-                        ae = Math.abs(err);
+                        ae = abs(err);
                 relError += err;
                 absError += ae;
                 if(maxError != (maxError = Math.max(maxError, ae))){
@@ -38,7 +43,7 @@ public class PrecisionTest {
             for (int j = Float.floatToIntBits(1f); j < n; j+=511) {
                 float y = Float.intBitsToFloat(j) - 1.5f;
                 double err = TrigTools.atan2Deg(y, x) - Math.toDegrees(Math.atan2(y, x)),
-                        ae = Math.abs(err);
+                        ae = abs(err);
                 relError += err;
                 absError += ae;
                 if(maxError != (maxError = Math.max(maxError, ae))){
@@ -65,7 +70,7 @@ public class PrecisionTest {
                 double m = (Math.atan2(y, x) / 2.0 / Math.PI);
                 if(m < 0.0) m += 1.0;
                 double err = TrigTools.atan2Turns(y, x) - m,
-                        ae = Math.abs(err);
+                        ae = abs(err);
                 relError += err;
                 absError += ae;
                 if(maxError != (maxError = Math.max(maxError, ae))){
@@ -92,7 +97,7 @@ public class PrecisionTest {
                 double m = Math.toDegrees(Math.atan2(y, x));
                 if(m < 0.0) m += 360.0;
                 double err = TrigTools.atan2Deg360(y, x) - m,
-                        ae = Math.abs(err);
+                        ae = abs(err);
                 relError += err;
                 absError += ae;
                 if(maxError != (maxError = Math.max(maxError, ae))){
@@ -115,8 +120,8 @@ public class PrecisionTest {
         long counter = 0L;
         for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
 
-            double err = sinSmooth(x) - (float) Math.sin(x),
-                    ae = Math.abs(err);
+            double err = sinOldSmooth(x) - (float) Math.sin(x),
+                    ae = abs(err);
             relError += err;
             absError += ae;
             if (maxError != (maxError = Math.max(maxError, ae))) {
@@ -130,7 +135,7 @@ public class PrecisionTest {
                         "Maximum error:    %3.8f\n" +
                         "Worst input:      %3.8f\n" +
                         "Worst approx output: %3.8f\n" +
-                        "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, sinSmooth(worstX), (float)Math.sin(worstX));
+                        "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, sinOldSmooth(worstX), (float)Math.sin(worstX));
     }
 
     @Test
@@ -141,7 +146,7 @@ public class PrecisionTest {
         for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
 
             double err = sinBhaskaroid(x) - (float) Math.sin(x),
-                    ae = Math.abs(err);
+                    ae = abs(err);
             relError += err;
             absError += ae;
             if (maxError != (maxError = Math.max(maxError, ae))) {
@@ -166,7 +171,7 @@ public class PrecisionTest {
         for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
 
             double err = sinNewTable(x) - (float) Math.sin(x),
-                    ae = Math.abs(err);
+                    ae = abs(err);
             relError += err;
             absError += ae;
             if (maxError != (maxError = Math.max(maxError, ae))) {
@@ -191,7 +196,7 @@ public class PrecisionTest {
         for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
 
             double err = sinNewTable2(x) - (float) Math.sin(x),
-                    ae = Math.abs(err);
+                    ae = abs(err);
             relError += err;
             absError += ae;
             if (maxError != (maxError = Math.max(maxError, ae))) {
@@ -216,7 +221,7 @@ public class PrecisionTest {
         for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
 
             double err = sinOldTable(x) - (float) Math.sin(x),
-                    ae = Math.abs(err);
+                    ae = abs(err);
             relError += err;
             absError += ae;
             if (maxError != (maxError = Math.max(maxError, ae))) {
@@ -233,6 +238,116 @@ public class PrecisionTest {
                         "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, sinOldTable(worstX), (float)Math.sin(worstX));
     }
 
+    @FunctionalInterface
+    public interface FloatUnaryOperator {
+        float applyAsFloat(float x);
+    }
+
+    @Test
+    public void testSinSquared() {
+        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        functions.put("sinOldSmooth", PrecisionTest::sinOldSmooth);
+        functions.put("sinBhaskaroid", TrigTools::sinSmooth);
+        functions.put("sinNewTable", TrigTools::sin);
+        functions.put("sinOldTable", OldTrigTools::sin);
+
+        for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final FloatUnaryOperator op = ent.getValue();
+            double absError = 0.0, relError = 0.0, maxError = 0.0;
+            float worstX = 0;
+            long counter = 0L;
+            for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
+
+                double err = op.applyAsFloat(x) * abs(op.applyAsFloat(x)) - (float) Math.sin(x) * (float) abs(Math.sin(x)),
+                        ae = abs(err);
+                relError += err;
+                absError += ae;
+                if (maxError != (maxError = Math.max(maxError, ae))) {
+                    worstX = x;
+                }
+                ++counter;
+            }
+            System.out.printf(
+                    "Absolute error:   %3.8f\n" +
+                            "Relative error:   %3.8f\n" +
+                            "Maximum error:    %3.8f\n" +
+                            "Worst input:      %3.8f\n" +
+                            "Worst approx output: %3.8f\n" +
+                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX) * abs(op.applyAsFloat(worstX)), (float) Math.sin(worstX) * (float) abs(Math.sin(worstX)));
+        }
+    }
+
+
+    @Test
+    public void testCos() {
+        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        functions.put("cosSmooth", TrigTools::cosSmooth);
+        functions.put("cosNewTable", TrigTools::cos);
+        functions.put("cosOldTable", OldTrigTools::cos);
+
+        for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final FloatUnaryOperator op = ent.getValue();
+            double absError = 0.0, relError = 0.0, maxError = 0.0;
+            float worstX = 0;
+            long counter = 0L;
+            for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
+
+                double err = op.applyAsFloat(x) - (float) Math.cos(x),
+                        ae = abs(err);
+                relError += err;
+                absError += ae;
+                if (maxError != (maxError = Math.max(maxError, ae))) {
+                    worstX = x;
+                }
+                ++counter;
+            }
+            System.out.printf(
+                    "Absolute error:   %3.8f\n" +
+                            "Relative error:   %3.8f\n" +
+                            "Maximum error:    %3.8f\n" +
+                            "Worst input:      %3.8f\n" +
+                            "Worst approx output: %3.8f\n" +
+                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX), (float) Math.cos(worstX));
+        }
+    }
+
+
+    @Test
+    public void testCosSquared() {
+        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        functions.put("cosSmooth", TrigTools::cosSmooth);
+        functions.put("cosNewTable", TrigTools::cos);
+        functions.put("cosOldTable", OldTrigTools::cos);
+
+        for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final FloatUnaryOperator op = ent.getValue();
+            double absError = 0.0, relError = 0.0, maxError = 0.0;
+            float worstX = 0;
+            long counter = 0L;
+            for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
+
+                double err = op.applyAsFloat(x) * abs(op.applyAsFloat(x)) - (float) Math.cos(x) * (float) abs(Math.cos(x)),
+                        ae = abs(err);
+                relError += err;
+                absError += ae;
+                if (maxError != (maxError = Math.max(maxError, ae))) {
+                    worstX = x;
+                }
+                ++counter;
+            }
+            System.out.printf(
+                    "Absolute error:   %3.8f\n" +
+                            "Relative error:   %3.8f\n" +
+                            "Maximum error:    %3.8f\n" +
+                            "Worst input:      %3.8f\n" +
+                            "Worst approx output: %3.8f\n" +
+                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX) * abs(op.applyAsFloat(worstX)), (float) Math.cos(worstX) * (float) abs(Math.cos(worstX)));
+        }
+    }
+
 
     @Test
     public void testTan(){
@@ -244,7 +359,7 @@ public class PrecisionTest {
         for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
 
             double err = TrigTools.tan(x) - (float) Math.tan(x),
-                    ae = Math.abs(err);
+                    ae = abs(err);
             relError += err;
             absError += ae;
             if (maxError != (maxError = Math.max(maxError, ae))) {
@@ -271,7 +386,7 @@ public class PrecisionTest {
         for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
 
             double err = tanNewTable(x) - (float) Math.tan(x),
-                    ae = Math.abs(err);
+                    ae = abs(err);
             relError += err;
             absError += ae;
             if (maxError != (maxError = Math.max(maxError, ae))) {
@@ -298,7 +413,7 @@ public class PrecisionTest {
         for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
 
             double err = tanOldTable(x) - (float) Math.tan(x),
-                    ae = Math.abs(err);
+                    ae = abs(err);
             relError += err;
             absError += ae;
             if (maxError != (maxError = Math.max(maxError, ae))) {
@@ -342,10 +457,11 @@ public class PrecisionTest {
         //Worst input:      -6.28050089
         //Worst approx output: 0.00325970
         //Correct output:      0.00268442
-        return OldTrigTools.SIN_TABLE[(int) (radians * OldTrigTools.radToIndex) & OldTrigTools.TABLE_MASK];
+        return OldTrigTools.sin(radians);
+//        return OldTrigTools.SIN_TABLE[(int) (radians * OldTrigTools.radToIndex) & OldTrigTools.TABLE_MASK];
     }
 
-    public static float sinSmooth(float radians)
+    public static float sinOldSmooth(float radians)
     {
         //Absolute error:   0.00050517
         //Relative error:   -0.00000000
@@ -377,23 +493,28 @@ public class PrecisionTest {
     }
 
     /**
-     * Wow, this one seems quite good.
+     * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
+     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * use this if you notice statistical issues with the tabular approximation of sin(); in particular, only 16384
+     * outputs are possible from {@link TrigTools#sin(float)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible sin() returns, you can use this.
+     * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
-     * @param radians
-     * @return
+     * @param radians an angle in radians; most precise between -PI2 and PI2
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinBhaskaroid(float radians) {
-        //Absolute error:   0.00014983
-        //Relative error:   0.00000000
-        //Maximum error:    0.00035501
-        //Worst input:      -4.20848226547241200000
-        //Worst approx output: 0.87534791
-        //Correct output:      0.87570292
-        radians *= TrigTools.PI_INVERSE * 2f;
-        final int floor = (int) Math.ceil(radians) & -2;
-        radians -= floor;
-        float x2 = radians * radians, x3 = radians * x2;
-        return (((11 * radians - 3 * x3) / (7 + x2)) * (1f - (floor & 2)));
+        //Absolute error:      0.0001498343
+        //Relative error:      0.0000000000
+        //Maximum error:       0.0003550053
+        //Worst input:         -4.2084822655
+        //Worst approx output: 0.8753479123
+        //Correct output:      0.8757029176
+        radians = radians * (TrigTools.PI_INVERSE * 2f);
+        final int ceil = (int) Math.ceil(radians) & -2;
+        radians -= ceil;
+        final float x2 = radians * radians, x3 = radians * x2;
+        return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
     }
 
     public static float tanNewTable(float radians) {
@@ -617,7 +738,7 @@ public class PrecisionTest {
             long counter = 0L;
             for (float x = 0f; x <= TrigTools.PI2; x += 0x1p-16f) {
                 double err = sinFuzz(x, alpha) - (float) Math.sin(x),
-                        ae = Math.abs(err);
+                        ae = abs(err);
                 relError += err;
                 absError += ae;
                 if (maxError != (maxError = Math.max(maxError, ae))) {

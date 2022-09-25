@@ -429,6 +429,59 @@ public final class TrigTools {
                 / ((0.015873015873015872) * x4 - (0.4444444444444444) * x2 + 1.0);
     }
 
+    /**
+     * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
+     * This takes an input in radians.
+     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * use this if you notice statistical issues with the tabular approximation of sin(); in particular, only 16384
+     * outputs are possible from {@link TrigTools#sin(float)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible sin() returns, you can use this.
+     * <br>
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * @param radians an angle in radians; most precise between -PI2 and PI2
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static float sinSmooth(float radians) {
+        //Absolute error:      0.0001498343
+        //Relative error:      0.0000000000
+        //Maximum error:       0.0003550053
+        //Worst input:         -4.2084822655
+        //Worst approx output: 0.8753479123
+        //Correct output:      0.8757029176
+        radians = radians * (TrigTools.PI_INVERSE * 2f);
+        final int ceil = (int) Math.ceil(radians) & -2;
+        radians -= ceil;
+        final float x2 = radians * radians, x3 = radians * x2;
+        return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+    }
+
+    /**
+     * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
+     * century. This takes an input in radians.
+     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * use this if you notice statistical issues with the tabular approximation of cos(); in particular, only 16384
+     * outputs are possible from {@link TrigTools#cos(float)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible cos() returns, you can use this.
+     * <br>
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * @param radians an angle in radians; most precise between -PI2 and PI2
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static float cosSmooth(float radians) {
+        //Absolute error:   0.00014983
+        //Relative error:   -0.00000004
+        //Maximum error:    0.00035512
+        //Worst input:      5.77527666
+        //Worst approx output: 0.87340844
+        //Correct output:      0.87376356
+        radians = radians * (TrigTools.PI_INVERSE * 2f) + 1f;
+        final int ceil = (int) Math.ceil(radians) & -2;
+        radians -= ceil;
+        final float x2 = radians * radians, x3 = radians * x2;
+        return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+    }
+
+
     // ---
 
     /**
