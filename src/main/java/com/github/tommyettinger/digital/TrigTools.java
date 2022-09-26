@@ -18,19 +18,31 @@
 package com.github.tommyettinger.digital;
 
 /**
- * Various trigonometric approximations, using a lookup table for sin(), cos(), and tan(), and Taylor series for their
- * inverses. This supplies variants for radians, degrees, and turns. This also has an atan2() approximation defined with
- * output in radians, degrees, and turns.
+ * Various trigonometric approximations, using a lookup table for sin() and cos(), a non-tabular approximation for
+ * sinSmooth() and cosSmooth(), a Padé approximant for tan(), and Taylor series for the inverses of sin(), cos(), and
+ * tan(). This supplies variants for radians, degrees, and turns. This also has an atan2() approximation defined with
+ * output in radians, degrees, and turns. The lookup-table-based sin() and cos() can be extraordinarily fast if the 64KB
+ * table can stay in a processor cache, while the "smooth" approximations may have higher quality but perform less
+ * quickly compared to an in-cache lookup table.
  * <br>
  * This is primarily derived from libGDX's MathUtils class. The main new functionalities are the variants that take or
  * return measurements in turns, the now-available {@link #SIN_TABLE} and {@link #SIN_TABLE_D}, and double variants in
- * general. Using the sin table directly allows {@link #tan(float)} to be implemented in a straightforward way, and it
- * has other uses mentioned in its docs (in particular, uniform random unit vectors).
+ * general. Using the sin table directly has other uses mentioned in its docs (in particular, uniform random unit
+ * vectors). Because using a lookup table for sine and cosine has very small "jumps" between what it returns for
+ * smoothly increasing inputs, it may be unsuitable for some usage, such as calculating tan() or some statistical code.
+ * TrigTools provides sinSmooth(), cosSmooth(), and degree/turn variants of those for when the precision should be high
+ * but it is most important to have a smoothly-curving graph of returns. A different smooth approximation is used for
+ * tan().
  * <br>
  * MathUtils had its sin and cos methods created by Riven on JavaGaming.org . The asin(), acos(), and atan() methods all
  * use Taylor series approximations from the 1955 research study "Approximations for Digital Computers," by RAND
  * Corporation; though one might think such code would be obsolete over 60 years later, the approximations from that
  * study seem to have higher accuracy and speed than most attempts in later decades, often those aimed at DSP usage.
+ * Even older is the basis for sinSmooth() and cosSmooth(); the versions here are updated to be more precise, but are
+ * closely related to a 7th-century sine approximation by Bhaskara I. The update was given in
+ * <a href="https://math.stackexchange.com/a/3886664">this Stack Exchange answer by WimC</a>. Also from Stack Exchange,
+ * <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer by Soonts</a> provided the tan()
+ * approximation usedhere.
  */
 public final class TrigTools {
 
@@ -135,6 +147,16 @@ public final class TrigTools {
      * Multiply by this to convert from degrees to radians.
      */
     public static final float degreesToRadians = PI / 180f;
+
+    /**
+     * Multiply by this to convert from radians to degrees.
+     */
+    public static final double radiansToDegreesD = 180.0 / Math.PI;
+    /**
+     * Multiply by this to convert from degrees to radians.
+     */
+    public static final double degreesToRadiansD = Math.PI / 180.0;
+
     /**
      * A precalculated table of 16384 floats, corresponding to the y-value of points on the unit circle, ordered by
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
@@ -146,14 +168,6 @@ public final class TrigTools {
      */
     public static final float[] SIN_TABLE = new float[TABLE_SIZE];
 
-    /**
-     * Multiply by this to convert from radians to degrees.
-     */
-    public static final double radiansToDegreesD = 180.0 / Math.PI;
-    /**
-     * Multiply by this to convert from degrees to radians.
-     */
-    public static final double degreesToRadiansD = Math.PI / 180.0;
     /**
      * A precalculated table of 16384 doubles, corresponding to the y-value of points on the unit circle, ordered by
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
@@ -437,7 +451,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#sin(float)}, and about half of those are duplicates, so if you need
      * more possible results in-between the roughly 8192 possible sin() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param radians an angle in radians; most precise between -PI2 and PI2
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
@@ -463,7 +477,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#cos(float)}, and about half of those are duplicates, so if you need
      * more possible results in-between the roughly 8192 possible cos() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param radians an angle in radians; most precise between -PI2 and PI2
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
@@ -489,7 +503,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#sin(float)}, and about half of those are duplicates, so if you need
      * more possible results in-between the roughly 8192 possible sin() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param radians an angle in radians; most precise between -PI2 and PI2
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
@@ -515,7 +529,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#cos(float)}, and about half of those are duplicates, so if you need
      * more possible results in-between the roughly 8192 possible cos() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param radians an angle in radians; most precise between -PI2 and PI2
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
@@ -536,7 +550,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#sinDeg(float)}, and about half of those are duplicates, so if you need
      * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
@@ -562,7 +576,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#cosDeg(float)}, and about half of those are duplicates, so if you need
      * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
@@ -583,7 +597,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#sinDeg(float)}, and about half of those are duplicates, so if you need
      * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
@@ -604,7 +618,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#cosDeg(float)}, and about half of those are duplicates, so if you need
      * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
@@ -625,7 +639,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#sinTurns(float)}, and about half of those are duplicates, so if you
      * need more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param turns an angle in turns; most precise between -1 and 1
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
@@ -651,7 +665,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#cosTurns(float)}, and about half of those are duplicates, so if you
      * need more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param turns an angle in turns; most precise between -1 and 1
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
@@ -672,7 +686,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#sinTurns(float)}, and about half of those are duplicates, so if you
      * need more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param turns an angle in turns; most precise between -1 and 1
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
@@ -693,7 +707,7 @@ public final class TrigTools {
      * outputs are possible from {@link TrigTools#cosTurns(float)}, and about half of those are duplicates, so if you
      * need more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this.
      * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This StackExchange answer by WimC</a>.
+     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param turns an angle in turns; most precise between -1 and 1
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
@@ -1274,7 +1288,7 @@ public final class TrigTools {
      * 1955 research study "Approximations for Digital Computers," by RAND Corporation (this is sheet 11's algorithm,
      * which is the fourth-fastest and fourth-least precise).
      * For finite inputs only, you may get a tiny speedup by using {@link #atanUncheckedDeg(double)}, but this method will be correct
-     * enough for infinite inputs, and atanUnchecked() will not be.
+     * enough for infinite inputs, and atanUncheckedDeg() will not be.
      *
      * @param i an input to the inverse tangent function; any float is accepted
      * @return an output from the inverse tangent function in degrees, from {@code -90} to {@code 90} inclusive
@@ -1306,7 +1320,7 @@ public final class TrigTools {
      *
      * @param i an input to the inverse tangent function; any float is accepted
      * @return an output from the inverse tangent function in turns, from {@code -0.25} to {@code 0.25} inclusive
-     * @see #atanUnchecked(double) If you know the input will be finite, you can use atanUnchecked() instead.
+     * @see #atanUncheckedTurns(double) If you know the input will be finite, you can use atanUncheckedTurns() instead.
      */
     public static float atanTurns(float i) {
         // We use double precision internally, because some constants need double precision.
@@ -1362,7 +1376,7 @@ public final class TrigTools {
      * 1955 research study "Approximations for Digital Computers," by RAND Corporation (this is sheet 11's algorithm,
      * which is the fourth-fastest and fourth-least precise).
      * For finite inputs only, you may get a tiny speedup by using {@link #atanUncheckedDeg(double)}, but this method will be correct
-     * enough for infinite inputs, and atanUnchecked() will not be.
+     * enough for infinite inputs, and atanUncheckedDeg() will not be.
      *
      * @param i an input to the inverse tangent function; any double is accepted
      * @return an output from the inverse tangent function in degrees, from {@code -90} to {@code 90} inclusive
@@ -1394,7 +1408,7 @@ public final class TrigTools {
      *
      * @param i an input to the inverse tangent function; any double is accepted
      * @return an output from the inverse tangent function in turns, from {@code -0.25} to {@code 0.25} inclusive
-     * @see #atanUnchecked(double) If you know the input will be finite, you can use atanUnchecked() instead.
+     * @see #atanUncheckedTurns(double) If you know the input will be finite, you can use atanUncheckedTurns() instead.
      */
     public static double atanTurns(double i) {
         // We use double precision internally, because some constants need double precision.
