@@ -37,7 +37,8 @@ access to the lookup table used by sin and cos. Much of
 TrigTools can be seen as similar to what libGDX's MathUtils
 class offers, but allowing access to the lookup table permits
 a few novel features (see its docs). It supports float and
-double arguments/returns for all functions.
+double arguments/returns for all functions. It also provides
+"smooth" sin and cos approximations that aren't table-based.
 
 MathTools offers a wild grab bag of math functions and
 constants, from simple lerp, floor, ceil, and clamp methods to
@@ -46,7 +47,12 @@ is also based on MathUtils from libGDX. It supports float and
 double arguments/returns for most functions; some make sense
 for float only, like the optimized cube root. There's also a
 lot of commonly-defined constants, such as the square root of
-2 and the golden ratio, as floats and doubles.
+2 and the golden ratio, as floats and doubles. Some methods
+here are useful in other mathematical code, like gamma and
+greatestCommonDivisor; others are more esoteric, like
+modularMultiplicativeInverse. There are also a few functions
+here, "sway" and relatives, that look like sine waves when
+graphed, but are simpler to calculate internally.
 
 ArrayTools provides common code for dealing with 2D arrays, and
 also sometimes 1D or 3D arrays. It allows copying, inserting,
@@ -77,14 +83,14 @@ With Gradle, add this to your dependencies (in your core module,
 for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.2"
+api "com.github.tommyettinger:digital:0.1.3"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.2:sources"
+api "com.github.tommyettinger:digital:0.1.3:sources"
 ```
 
 and this in your GdxDefinition.gwt.xml file:
