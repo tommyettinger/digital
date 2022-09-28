@@ -1304,6 +1304,40 @@ public final class MathTools {
     }
 
     /**
+     * Given a state that is typically random-seeming, this produces an int within a bounded range that is similarly
+     * random-seeming.
+     * @param state can be a long or an int; typically produced by a random- or hash-like process
+     * @param bound the outer exclusive bound, as an int
+     * @return an int between 0 (inclusive) and bound (exclusive)
+     */
+    public static int boundedInt(long state, int bound) {
+         final int res = (int)((bound * (state & 0xFFFFFFFFL)) >> 32);
+         return res + (res >>> 31);
+    }
+
+    /**
+     * Given a state that is typically random-seeming, this produces a long within a bounded range that is similarly
+     * random-seeming.
+     * @param state must be a long; typically produced by a random- or hash-like process
+     * @param innerBound the inner exclusive bound, as a long
+     * @param outerBound the outer exclusive bound, as a long
+     * @return a long between innerBound (inclusive) and outerBound (exclusive)
+     */
+    public static long boundedLong(long state, long innerBound, long outerBound) {
+        if (outerBound < innerBound) {
+            long t = outerBound;
+            outerBound = innerBound + 1L;
+            innerBound = t + 1L;
+        }
+        final long bound = outerBound - innerBound;
+        final long randLow = state & 0xFFFFFFFFL;
+        final long boundLow = bound & 0xFFFFFFFFL;
+        final long randHigh = (state >>> 32);
+        final long boundHigh = (bound >>> 32);
+        return innerBound + (randHigh * boundLow >>> 32) + (randLow * boundHigh >>> 32) + randHigh * boundHigh;
+    }
+
+    /**
      * 1275 negative, odd {@code long} values that are calculated using a generalization of the golden ratio and
      * exponents of those generalizations. Mostly, these are useful because they are all 64-bit constants that have an
      * irrational-number-like pattern to their bits, which makes them pretty much all useful as increments for large

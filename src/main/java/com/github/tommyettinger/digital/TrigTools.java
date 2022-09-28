@@ -42,7 +42,7 @@ package com.github.tommyettinger.digital;
  * closely related to a 7th-century sine approximation by Bhaskara I. The update was given in
  * <a href="https://math.stackexchange.com/a/3886664">this Stack Exchange answer by WimC</a>. Also from Stack Exchange,
  * <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer by Soonts</a> provided the tan()
- * approximation usedhere.
+ * approximation used here.
  */
 public final class TrigTools {
 
