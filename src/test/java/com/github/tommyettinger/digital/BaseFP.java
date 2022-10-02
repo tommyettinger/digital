@@ -152,7 +152,13 @@ public class BaseFP {
      * Internal; used for temporary buffer space.
      */
     private transient final char[] progress;
+    /**
+     * Internal; used for temporary buffer space.
+     */
+    private transient final char[] backupBuffer;
 
+
+    private static final char[] backupToBase10 = "0123456789".toCharArray();
     /**
      * Constructs a Base with the given digits, ordered from smallest to largest, with any letters in the digits treated
      * as case-insensitive, and the normal sign characters '+' and '-'. All digits must be unique when compared as
@@ -205,7 +211,8 @@ public class BaseFP {
         length8Byte = (int) Math.ceil(Math.log(0x1p64) * logBase);
         length23Bit = (int) Math.ceil(Math.log(0x1p23) * logBase);
         length52Bit = (int) Math.ceil(Math.log(0x1p52) * logBase);
-        progress = new char[Math.max(length8Byte + 1, length52Bit + 3)];
+        progress = new char[Math.max(length8Byte + 1, length52Bit + 9)];
+        backupBuffer = new char[5];
     }
 
     /**
@@ -231,6 +238,7 @@ public class BaseFP {
         length23Bit = other.length23Bit;
         length52Bit = other.length52Bit;
         progress = new char[other.progress.length];
+        backupBuffer = new char[other.backupBuffer.length];
     }
 
     /**
@@ -1223,7 +1231,7 @@ public class BaseFP {
         int run = 2 + length52Bit;
         int trim = 0;
         final long sign = bits >> -1;
-        final long expo = bits >>> 52 & 0x7FF;
+        long expo = (bits >>> 52 & 0x7FF) - 1023L;
         long mant = (bits & 0xFFFFFFFFFFFFFL);
 
         boolean skipping = true;
@@ -1238,13 +1246,31 @@ public class BaseFP {
             progress[run] = toEncoded[(int) (mant % base)];
 
         }
-        progress[run] = '.';
-        progress[--run] = '1';
+        if(!skipping)
+            progress[run--] = '.';
+        progress[run] = '1';
 
         if (sign != 0) {
             progress[--run] = negativeSign;
         }
-        return String.valueOf(progress, run, length52Bit + 3 - run - trim);
+        trim = length52Bit + 3 - trim;
+        progress[trim++] = paddingChar;
+//        int run = length8Byte;
+        int backRun = 4;
+        final long esign = expo >> -1;
+        // number is made negative because 0x80000000 and -(0x80000000) are both negative.
+        // then modulus later will also return a negative number or 0, and we can negate that to get a good index.
+        expo = -(expo + esign ^ esign);
+        for (; ; backRun--) {
+            backupBuffer[backRun] = backupToBase10[(int)-(expo % 10)];
+            if ((expo /= 10) == 0)
+                break;
+        }
+        if (esign != 0) {
+            backupBuffer[--backRun] = negativeSign;
+        }
+        System.arraycopy(backupBuffer, backRun, progress, trim, 5 - backRun);
+        return String.valueOf(progress, run, trim - run + 5 - backRun);
 
     }
 
