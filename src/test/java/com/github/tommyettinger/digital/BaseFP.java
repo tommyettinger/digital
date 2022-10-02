@@ -147,7 +147,7 @@ public class BaseFP {
     /**
      * Internal; stored lengths of the most common number sizes in this base.
      */
-    private final int length1Byte, length2Byte, length4Byte, length8Byte;
+    private final int length1Byte, length2Byte, length4Byte, length8Byte, length23Bit, length52Bit;
     /**
      * Internal; used for temporary buffer space.
      */
@@ -203,7 +203,9 @@ public class BaseFP {
         length2Byte = (int) Math.ceil(Math.log(0x1p16) * logBase);
         length4Byte = (int) Math.ceil(Math.log(0x1p32) * logBase);
         length8Byte = (int) Math.ceil(Math.log(0x1p64) * logBase);
-        progress = new char[length8Byte + 1];
+        length23Bit = (int) Math.ceil(Math.log(0x1p23) * logBase);
+        length52Bit = (int) Math.ceil(Math.log(0x1p52) * logBase);
+        progress = new char[Math.max(length8Byte + 1, length52Bit + 3)];
     }
 
     /**
@@ -226,7 +228,9 @@ public class BaseFP {
         length2Byte = other.length2Byte;
         length4Byte = other.length4Byte;
         length8Byte = other.length8Byte;
-        progress = new char[length8Byte + 1];
+        length23Bit = other.length23Bit;
+        length52Bit = other.length52Bit;
+        progress = new char[other.progress.length];
     }
 
     /**
@@ -1215,7 +1219,33 @@ public class BaseFP {
      * @return a new String containing {@code number} in the radix this specifies.
      */
     public String signed(double number) {
-        return signed(BitConversion.doubleToRawLongBits(number));
+        long bits = BitConversion.doubleToRawLongBits(number);
+        int run = 2 + length52Bit;
+        int trim = 0;
+        final long sign = bits >> -1;
+        final long expo = bits >>> 52 & 0x7FF;
+        long mant = (bits & 0xFFFFFFFFFFFFFL);
+
+        boolean skipping = true;
+        for (; run >= 3; run--, mant /= base) {
+            if ((mant % base) == 0L && skipping)
+            {
+                trim++;
+                continue;
+            }
+            else
+                skipping = false;
+            progress[run] = toEncoded[(int) (mant % base)];
+
+        }
+        progress[run] = '.';
+        progress[--run] = '1';
+
+        if (sign != 0) {
+            progress[--run] = negativeSign;
+        }
+        return String.valueOf(progress, run, length52Bit + 3 - run - trim);
+
     }
 
     /**
