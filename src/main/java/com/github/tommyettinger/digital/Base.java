@@ -32,11 +32,11 @@ import java.util.Random;
  * {@link #scrambledBase(Random)}, which when called creates a base-72 Base with randomized choices for digits;
  * this could be useful for obfuscating plain-text saved data so the average player can't read it.
  * <br>
- * Each of these base systems provides a way to write bytes,
- * shorts, ints, and longs as variable-character-count signed numbers or as fixed-character-count unsigned numbers,
- * using {@link #signed(long)} and {@link #unsigned(long)} respectively. There is only one reading method for each size
- * of number, but it is capable of reading both the signed and unsigned results, and never throws an Exception (it just
- * returns 0 if no number could be read).
+ * Each of these base systems provides a way to write bytes, shorts, ints, and longs as variable-character-count signed
+ * numbers or as fixed-character-count unsigned numbers, using {@link #signed(long)} and {@link #unsigned(long)}
+ * respectively. There is only one reading method for each size of number, but it is capable of reading both the signed
+ * and unsigned results, and never throws an Exception (it just returns 0 if no number could be read). Each base system
+ * can also read and write floats and doubles, but only using their bit representation, treated as an int or long.
  */
 @SuppressWarnings("ShiftOutOfRange")
 public class Base {
@@ -79,12 +79,12 @@ public class Base {
     public static final Base SIMPLE64 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!?", false, '$', '+', '-');
     /**
      * The largest base here, this uses digits 0-9 first, then A-Z, then a-z, them many punctuation characters:
-     * <code>`~!@#$%^&amp;*()[]{}&lt;&gt;.?;|_=</code>  . This uses + to indicate a positive sign, and - for negative.
+     * <code>'/!@#$%^&amp;*()[]{}&lt;&gt;.?;|_=</code>  . This uses + to indicate a positive sign, and - for negative.
      * This can encode a 32-bit number with 5 chars (unsigned); none of the other bases can. As a drawback, if a BASE86
      * encoded number is stored in libGDX's "minimal JSON" format, it will often need quoting, which of the other bases,
      * only {@link #BASE64} requires sometimes.
      */
-    public static final Base BASE86 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'~!@#$%^&*()[]{}<>.?;|_=", false, ' ', '+', '-');
+    public static final Base BASE86 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'/!@#$%^&*()[]{}<>.?;|_=", false, ' ', '+', '-');
 
     /**
      * All Base instances this knows about from its own constants.
