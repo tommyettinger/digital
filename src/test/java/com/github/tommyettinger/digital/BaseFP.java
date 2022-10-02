@@ -1233,6 +1233,11 @@ public class BaseFP {
         final long sign = bits >> -1;
         long expo = (bits >>> 52 & 0x7FF) - 1023L;
         long mant = (bits & 0xFFFFFFFFFFFFFL);
+        if(expo == 1024) {
+            if(mant != 0L) return "NaN";
+            if(sign == 0) return "Infinity";
+            return negativeSign + "Infinity";
+        }
 
         boolean skipping = true;
         for (; run >= 3; run--, mant /= base) {
@@ -1248,7 +1253,14 @@ public class BaseFP {
         }
         if(!skipping)
             progress[run--] = '.';
-        progress[run] = '1';
+        if(expo == -1023) {
+            if(skipping)
+                return (sign == 0 ? "0" : negativeSign + "0") + paddingChar + "0";
+            progress[run] = '0';
+            expo++;
+        }
+        else
+            progress[run] = '1';
 
         if (sign != 0) {
             progress[--run] = negativeSign;

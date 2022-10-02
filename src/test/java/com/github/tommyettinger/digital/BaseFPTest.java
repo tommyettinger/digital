@@ -27,14 +27,16 @@ public class BaseFPTest {
 			{Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
 				Double.MAX_VALUE, Double.MIN_VALUE, Double.MIN_NORMAL, 1.5, -1.1},
 		};
-
+		for(double in : inputs) {
+			System.out.println("TCE 0x" + BaseFP.BASE16.signed(in));
+			System.out.println("JDK " + Double.toHexString(in));
+		}
 		for(BaseFP enc : BASES)
 		{
-			for(double in : inputs){
-				System.out.println(enc.signed(in));
+//			for(double in : inputs){
 //				Assert.assertEquals(in, enc.readDouble(enc.signed(in)), Double.MIN_VALUE);
 //				Assert.assertEquals(in, enc.readDouble(enc.unsigned(in)), Double.MIN_VALUE);
-			}
+//			}
 //			Assert.assertTrue(Double.isNaN(enc.readDouble(enc.signed(Double.NaN))));
 //			Assert.assertTrue(Double.isNaN(enc.readDouble(enc.unsigned(Double.NaN))));
 //			Assert.assertArrayEquals(enc.doubleSplit(enc.join(" ", inputs), " "), inputs, 0.00001);
