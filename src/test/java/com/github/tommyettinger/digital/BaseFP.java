@@ -39,44 +39,44 @@ import java.util.Random;
  * can also read and write floats and doubles, but only using their bit representation, treated as an int or long.
  */
 @SuppressWarnings("ShiftOutOfRange")
-public class Base {
+public class BaseFP {
     /**
      * Binary, using the digits 0 and 1.
      */
-    public static final Base BASE2 = new Base("01", true, '$', '+', '-');
+    public static final BaseFP BASE2 = new BaseFP("01", true, '$', '+', '-');
     /**
      * Octal, using the digits 0-7.
      */
-    public static final Base BASE8 = new Base("01234567", true, '$', '+', '-');
+    public static final BaseFP BASE8 = new BaseFP("01234567", true, '$', '+', '-');
     /**
      * Decimal, using the digits 0-9.
      */
-    public static final Base BASE10 = new Base("0123456789", true, '$', '+', '-');
+    public static final BaseFP BASE10 = new BaseFP("0123456789", true, '$', '+', '-');
     /**
      * Hexadecimal, using the digits 0-9 and then A-F (case-insensitive).
      */
-    public static final Base BASE16 = new Base("0123456789ABCDEF", true, 'p', '+', '-');
+    public static final BaseFP BASE16 = new BaseFP("0123456789ABCDEF", true, 'p', '+', '-');
     /**
      * Hexatrigesimal, using the digits 0-9 and then A-Z (case-insensitive).
      */
-    public static final Base BASE36 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", true, '$', '+', '-');
+    public static final BaseFP BASE36 = new BaseFP("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", true, '$', '+', '-');
     /**
      * One of three base-64 schemes available here, this is the more-standard one, using the digits A-Z, then a-z, then
      * 0-9, then + and / (case-sensitive). This uses * in place of + to indicate a positive sign, and - for negative.
      * Because this can use the / character, it sometimes needs quoting when used with libGDX's "minimal JSON" format.
      */
-    public static final Base BASE64 = new Base("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", false, '=', '*', '-');
+    public static final BaseFP BASE64 = new BaseFP("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", false, '=', '*', '-');
     /**
      * One of three base-64 schemes available here, this is meant for URI-encoding, using the digits A-Z, then a-z, then
      * 0-9, then + and - (case-sensitive). This uses * in place of + to indicate a positive sign, and ! in place of - .
      */
-    public static final Base URI_SAFE = new Base("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-", false, '$', '*', '!');
+    public static final BaseFP URI_SAFE = new BaseFP("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-", false, '$', '*', '!');
     /**
      * One of three base-64 schemes available here, this is a non-standard one that is more in-line with common
      * expectations for how numbers should look. It uses the digits 0-9, then A-Z, then a-z, then ! and ? (all
      * case-sensitive). Unlike the other base-64 schemes, this uses + for its positive sign and - for its negative sign.
      */
-    public static final Base SIMPLE64 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!?", false, '$', '+', '-');
+    public static final BaseFP SIMPLE64 = new BaseFP("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!?", false, '$', '+', '-');
     /**
      * The largest base here, this uses digits 0-9 first, then A-Z, then a-z, them many punctuation characters:
      * <code>'/!@#$%^&amp;*()[]{}&lt;&gt;:?;|_=</code> . This uses + to indicate a positive sign, and - for negative.
@@ -84,13 +84,13 @@ public class Base {
      * encoded number is stored in libGDX's "minimal JSON" format, it will often need quoting, which of the other bases,
      * only {@link #BASE64} requires sometimes.
      */
-    public static final Base BASE86 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'/!@#$%^&*()[]{}<>:?;|_=", false, '\\', '+', '-');
+    public static final BaseFP BASE86 = new BaseFP("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'/!@#$%^&*()[]{}<>:?;|_=", false, '\\', '+', '-');
 
     /**
      * All Base instances this knows about from its own constants.
      * We use Arrays.asList() here to ensure the returned List is immutable.
      */
-    private static final List<Base> BASES = Arrays.asList(BASE2, BASE8, BASE10, BASE16, BASE36, BASE64, URI_SAFE, SIMPLE64, BASE86);
+    private static final List<BaseFP> BASES = Arrays.asList(BASE2, BASE8, BASE10, BASE16, BASE36, BASE64, URI_SAFE, SIMPLE64, BASE86);
 
     /**
      * Returns an immutable List of the Base instances this knows about from the start. Mostly useful for testing.
@@ -99,7 +99,7 @@ public class Base {
      *
      * @return an immutable List of all Base instances this knows about from the start
      */
-    public static List<Base> values() {
+    public static List<BaseFP> values() {
         return BASES;
     }
 
@@ -162,7 +162,7 @@ public class Base {
      *
      * @param digits a String with two or more ASCII characters, all unique; none can be '$', '+', or '-'
      */
-    public Base(String digits) {
+    public BaseFP(String digits) {
         this(digits, true, '$', '+', '-');
     }
 
@@ -181,7 +181,7 @@ public class Base {
      * @param positiveSign    typically '+'
      * @param negativeSign    typically '-'
      */
-    public Base(String digits, boolean caseInsensitive, char padding, char positiveSign, char negativeSign) {
+    public BaseFP(String digits, boolean caseInsensitive, char padding, char positiveSign, char negativeSign) {
         paddingChar = padding;
         this.caseInsensitive = caseInsensitive;
         this.positiveSign = positiveSign;
@@ -214,7 +214,7 @@ public class Base {
      *
      * @param other another Base; must be non-null
      */
-    public Base(Base other) {
+    public BaseFP(BaseFP other) {
         paddingChar = other.paddingChar;
         caseInsensitive = other.caseInsensitive;
         positiveSign = other.positiveSign;
@@ -239,7 +239,7 @@ public class Base {
      * @param random a Random used to shuffle the possible digits
      * @return a new Base with 72 random digits, as well as a random positive and negative sign
      */
-    public static Base scrambledBase(Random random) {
+    public static BaseFP scrambledBase(Random random) {
         char[] options = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?!@#$%^&*-|=+;".toCharArray();
         // Apply Fisher-Yates shuffle to the options.
         for (int i = options.length - 1; i > 0; i--) {
@@ -252,7 +252,7 @@ public class Base {
         char pad = options[options.length - 3], plus = options[options.length - 2], minus = options[options.length - 1];
 
         // The actual chars here don't matter, because they are replaced with the shuffled options.
-        Base base = new Base("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?!@#$%^&*-", false, pad, plus, minus);
+        BaseFP base = new BaseFP("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?!@#$%^&*-", false, pad, plus, minus);
         System.arraycopy(options, 0, base.toEncoded, 0, 72);
         // Makes any digits that don't represent a number use the placeholder -1 value.
         Arrays.fill(base.fromEncoded, -1);
@@ -274,8 +274,8 @@ public class Base {
      * @param random a Random used to shuffle the possible digits
      * @return a new Base that uses the same digits, but almost always with different values for those digits
      */
-    public Base scramble(Random random) {
-        Base base = new Base(this);
+    public BaseFP scramble(Random random) {
+        BaseFP base = new BaseFP(this);
         Arrays.fill(base.fromEncoded, -1);
 
         // Apply Fisher-Yates shuffle to the options.
@@ -312,10 +312,10 @@ public class Base {
      * @param data a String that was almost always produced by {@link #serializeToString()}
      * @return the Base that {@code data} stores
      */
-    public static Base deserializeFromString(String data) {
+    public static BaseFP deserializeFromString(String data) {
         int len;
         if ((len = data.length()) >= 5) {
-            return new Base(data.substring(0, len - 4), data.charAt(len - 4) != '0', data.charAt(len - 3), data.charAt(len - 2), data.charAt(len - 1));
+            return new BaseFP(data.substring(0, len - 4), data.charAt(len - 4) != '0', data.charAt(len - 3), data.charAt(len - 2), data.charAt(len - 1));
         }
         throw new IllegalArgumentException("The given data does not store a serialized Base.");
     }
@@ -2718,7 +2718,7 @@ public class Base {
         if (o == null || getClass() != o.getClass())
             return false;
 
-        Base base = (Base) o;
+        BaseFP base = (BaseFP) o;
 
         if (paddingChar != base.paddingChar)
             return false;
