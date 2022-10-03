@@ -1234,9 +1234,9 @@ public class BaseFP {
         long expo = (bits >>> 52 & 0x7FF) - 1023L;
         long mant = (bits & 0xFFFFFFFFFFFFFL);
         if(expo == 1024) {
-            if(mant != 0L) return "NaN" + paddingChar + "0";
-            if(sign == 0) return "Infinity" + paddingChar + "0";
-            return negativeSign + "Infinity" + paddingChar + "0";
+            if(mant != 0L) return paddingChar + "NaN";
+            if(sign == 0) return paddingChar + "Infinity";
+            return paddingChar + (negativeSign + "Infinity");
         }
 
         boolean skipping = true;
@@ -1349,7 +1349,15 @@ public class BaseFP {
         if(signedFormat){
             int h, lim;
             char c = cs.charAt(start);
-            if (c == negativeSign) {
+            if(c == paddingChar) {
+                if(start + 1 < end){
+                    if((c = cs.charAt(start+1)) == 'I' || c == positiveSign)
+                        return Double.POSITIVE_INFINITY;
+                    else if(c == negativeSign)
+                        return Double.NEGATIVE_INFINITY;
+                }
+                return Double.NaN;
+            } else if (c == negativeSign) {
                 len = -1;
                 h = 0;
                 lim = length8Byte + 1;
