@@ -1234,9 +1234,9 @@ public class BaseFP {
         long expo = (bits >>> 52 & 0x7FF) - 1023L;
         long mant = (bits & 0xFFFFFFFFFFFFFL);
         if(expo == 1024) {
-            if(mant != 0L) return "NaN";
-            if(sign == 0) return "Infinity";
-            return negativeSign + "Infinity";
+            if(mant != 0L) return "NaN" + paddingChar + "0";
+            if(sign == 0) return "Infinity" + paddingChar + "0";
+            return negativeSign + "Infinity" + paddingChar + "0";
         }
 
         boolean skipping = true;
@@ -1314,9 +1314,10 @@ public class BaseFP {
      * @return the double that cs represents
      */
     public double readDouble(final CharSequence cs) {
-        return BitConversion.longBitsToDouble(readLong(cs, 0, cs.length()));
+        return readDouble(cs, 0, cs.length());
     }
 
+    //TODO: docs need work here.
     /**
      * Reads in a CharSequence containing only the digits present in this Base, with an optional sign at the
      * start, and returns the double those bits represent, or 0.0 if nothing could be read.  The leading sign can be
@@ -1334,6 +1335,54 @@ public class BaseFP {
      * @return the double that cs represents
      */
     public double readDouble(final CharSequence cs, final int start, int end) {
+        int len = cs.length(), padIdx = start;
+        if (start < 0 || end <= 0 || end - start <= 0 || len - start <= 0 || end > len)
+            return 0;
+        boolean signedFormat = false;
+        for (int i = start; i < end; i++) {
+            if(cs.charAt(i) == paddingChar){
+                signedFormat = true;
+                padIdx = i;
+                break;
+            }
+        }
+        if(signedFormat){
+            int h, lim;
+            char c = cs.charAt(start);
+            if (c == negativeSign) {
+                len = -1;
+                h = 0;
+                lim = length8Byte + 1;
+            } else if (c == positiveSign) {
+                len = 1;
+                h = 0;
+                lim = length8Byte + 1;
+            } else if ((h = fromEncoded[c & 127]) < 0)
+                return 0;
+            else {
+                len = 1;
+                lim = length8Byte;
+            }
+            long data = h;
+            long divisor = 1L;
+            boolean pastPoint = false;
+            int scaleFactor = BASE10.readInt(cs, padIdx+1, end);
+            for (int i = start + 1; i < padIdx && i < start + lim; i++) {
+                c = cs.charAt(i);
+                if(c == '.'){
+                    pastPoint = true;
+                    continue;
+                }
+                if(pastPoint)
+                    divisor *= base;
+                if ((h = fromEncoded[c & 127]) < 0)
+                    return Math.scalb((double) (data * len) / divisor, scaleFactor);
+                data *= base;
+                data += h;
+            }
+            return Math.scalb((double) (data * len) / divisor, scaleFactor);
+
+        }
         return BitConversion.longBitsToDouble(readLong(cs, start, end));
     }
 
