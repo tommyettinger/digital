@@ -32,6 +32,7 @@ public class BaseFPTest {
 			System.out.println("JDK " + Double.toHexString(in));
 		}
 		for(BaseFP enc : BASES)
+//		BaseFP enc = BaseFP.BASE64;
 		{
 			for(double in : inputs){
 				System.out.println(BaseFP.BASE16.unsigned(in) + " is " + in + ", in base " + enc.base + ", " + enc.signed(in)

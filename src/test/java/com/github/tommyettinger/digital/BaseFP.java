@@ -1254,7 +1254,8 @@ public class BaseFP {
             progress[run--] = '.';
         if(expo == -1023) {
             if(skipping)
-                return (sign == 0 ? "0" : negativeSign + "0") + paddingChar + "0";
+                return (sign == 0 ? String.valueOf(toEncoded[0]) : negativeSign + String.valueOf(toEncoded[0])) +
+                        paddingChar + toEncoded[0];
             progress[run] = toEncoded[0];
             expo++;
         }
@@ -1361,7 +1362,8 @@ public class BaseFP {
                         return Double.NEGATIVE_INFINITY;
                 }
                 return Double.NaN;
-            }            int scaleFactor = BASE10.readInt(cs, padIdx+1, end);
+            }
+            int scaleFactor = BASE10.readInt(cs, padIdx+1, end);
             long prefix = readLong(cs, start, dotIdx);
 
             long data = 0L;
