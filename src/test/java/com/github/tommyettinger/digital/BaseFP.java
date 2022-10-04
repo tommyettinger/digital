@@ -1279,7 +1279,7 @@ public class BaseFP {
                 break;
         }
         if (esign != 0) {
-            backupBuffer[--backRun] = negativeSign;
+            backupBuffer[--backRun] = '-'; // don't use negativeSign here because this is parsed as base-10.
         }
         System.arraycopy(backupBuffer, backRun, progress, trim, 5 - backRun);
         return String.valueOf(progress, run, trim - run + 5 - backRun);
