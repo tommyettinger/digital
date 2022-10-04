@@ -1249,25 +1249,24 @@ public class BaseFP {
             else
                 skipping = false;
             progress[run] = toEncoded[(int) (mant % base)];
-
         }
         if(!skipping)
             progress[run--] = '.';
         if(expo == -1023) {
             if(skipping)
                 return (sign == 0 ? "0" : negativeSign + "0") + paddingChar + "0";
-            progress[run] = '0';
+            progress[run] = toEncoded[0];
             expo++;
         }
         else
-            progress[run] = '1';
+            progress[run] = toEncoded[1];
 
         if (sign != 0) {
             progress[--run] = negativeSign;
         }
         trim = length52Bit + 3 - trim;
         progress[trim++] = paddingChar;
-//        int run = length8Byte;
+
         int backRun = 4;
         final long esign = expo >> -1;
         // number is made negative because 0x80000000 and -(0x80000000) are both negative.
@@ -1335,20 +1334,25 @@ public class BaseFP {
      * @return the double that cs represents
      */
     public double readDouble(final CharSequence cs, final int start, int end) {
-        int len = cs.length(), padIdx = start;
+        int len = cs.length(), padIdx = start, dotIdx = end;
         if (start < 0 || end <= 0 || end - start <= 0 || len - start <= 0 || end > len)
-            return 0;
+            return Double.NaN;
+        char c;
         boolean signedFormat = false;
         for (int i = start; i < end; i++) {
-            if(cs.charAt(i) == paddingChar){
+            c = cs.charAt(i);
+            if(c == '.')
+                dotIdx = i;
+            else if(c == paddingChar){
                 signedFormat = true;
                 padIdx = i;
                 break;
             }
         }
         if(signedFormat){
+            dotIdx = Math.min(dotIdx, padIdx);
             int h, lim;
-            char c = cs.charAt(start);
+            c = cs.charAt(start);
             if(c == paddingChar) {
                 if(start + 1 < end){
                     if((c = cs.charAt(start+1)) == 'I' || c == positiveSign)
@@ -1357,38 +1361,38 @@ public class BaseFP {
                         return Double.NEGATIVE_INFINITY;
                 }
                 return Double.NaN;
-            } else if (c == negativeSign) {
-                len = -1;
-                h = 0;
-                lim = length8Byte + 1;
-            } else if (c == positiveSign) {
-                len = 1;
-                h = 0;
-                lim = length8Byte + 1;
-            } else if ((h = fromEncoded[c & 127]) < 0)
-                return 0;
-            else {
-                len = 1;
-                lim = length8Byte;
-            }
-            long data = h;
-            long divisor = 1L;
-            boolean pastPoint = false;
-            int scaleFactor = BASE10.readInt(cs, padIdx+1, end);
-            for (int i = start + 1; i < padIdx && i < start + lim; i++) {
-                c = cs.charAt(i);
-                if(c == '.'){
-                    pastPoint = true;
-                    continue;
-                }
-                if(pastPoint)
-                    divisor *= base;
-                if ((h = fromEncoded[c & 127]) < 0)
-                    return Math.scalb((double) (data * len) / divisor, scaleFactor);
+            }            int scaleFactor = BASE10.readInt(cs, padIdx+1, end);
+            long prefix = readLong(cs, start, dotIdx);
+
+            long data = 0L;
+            int idx = dotIdx + 1;
+            for (; idx < end && idx < padIdx; idx++) {
+                if ((h = fromEncoded[cs.charAt(idx) & 127]) < 0)
+                    return Double.NaN;
                 data *= base;
                 data += h;
             }
-            return Math.scalb((double) (data * len) / divisor, scaleFactor);
+            for (; idx < dotIdx + 1 + length52Bit; idx++) {
+                data *= base;
+            }
+
+
+
+
+//            for (int i = start + 1; i < padIdx && i < start + lim; i++) {
+//                c = cs.charAt(i);
+//                if(c == '.') {
+//                    pastPoint = true;
+//                    continue;
+//                }
+//                if(pastPoint)
+//                    divisor *= base;
+//                if ((h = fromEncoded[c & 127]) < 0)
+//                    return Math.scalb((double) (data * len) / divisor, scaleFactor);
+//                data *= base;
+//                data += h;
+//            }
+            return Math.scalb(prefix + data * Math.copySign(0x1p-52, prefix), scaleFactor);
 
         }
         return BitConversion.longBitsToDouble(readLong(cs, start, end));

@@ -33,10 +33,12 @@ public class BaseFPTest {
 		}
 		for(BaseFP enc : BASES)
 		{
-//			for(double in : inputs){
-//				Assert.assertEquals(in, enc.readDouble(enc.signed(in)), Double.MIN_VALUE);
-//				Assert.assertEquals(in, enc.readDouble(enc.unsigned(in)), Double.MIN_VALUE);
-//			}
+			for(double in : inputs){
+				System.out.println(BaseFP.BASE16.unsigned(in) + " is " + in + ", in base " + enc.base + ", " + enc.signed(in)
+						+ ", in JDK hex " + Double.toHexString(in));
+				Assert.assertEquals(in, enc.readDouble(enc.signed(in)), 0.0);
+				Assert.assertEquals(in, enc.readDouble(enc.unsigned(in)), 0.0);
+			}
 //			Assert.assertTrue(Double.isNaN(enc.readDouble(enc.signed(Double.NaN))));
 //			Assert.assertTrue(Double.isNaN(enc.readDouble(enc.unsigned(Double.NaN))));
 //			Assert.assertArrayEquals(enc.doubleSplit(enc.join(" ", inputs), " "), inputs, 0.00001);
