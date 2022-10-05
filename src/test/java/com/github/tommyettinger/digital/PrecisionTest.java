@@ -1,5 +1,6 @@
 package com.github.tommyettinger.digital;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -8,6 +9,8 @@ import java.util.function.DoubleUnaryOperator;
 
 import static java.lang.Math.abs;
 
+// REMOVE the @Ignore if you want to run any tests! They take a while to run as a whole, though.
+@Ignore
 public class PrecisionTest {
     @Test
     public void testAtan2(){

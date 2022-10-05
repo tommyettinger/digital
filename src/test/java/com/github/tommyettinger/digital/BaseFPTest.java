@@ -1,12 +1,15 @@
 package com.github.tommyettinger.digital;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+// REMOVE the @Ignore if you want to run any tests!
+@Ignore
 public class BaseFPTest {
 
 	public static final List<BaseFP> BASES = Arrays.asList(BaseFP.BASE2, BaseFP.BASE8, BaseFP.BASE10, BaseFP.BASE16,

@@ -49,13 +49,16 @@ public final class ArrayTools {
             'Γ', 'Δ', 'Θ', 'Λ', 'Ξ', 'Π', 'Σ', 'Φ', 'Ψ', 'Ω', 'α', 'β', 'γ'};
 
     /**
-     * An unseeded Random instance that is used by {@link #shuffle(int[])} and related overloads when given no Random
-     * argument or a null one. This cannot be relied upon to have a given state, even if you set the seed; if you need
-     * a deterministic state, use your own seeded Random object and pass it to shuffle(). You could assign null to this,
-     * but it's a very bad idea and will probably result in a crash; a better idea is to assign a subclass of Random
-     * with a larger state size, such as a RandomXS128 from libGDX or any generator from juniper.
+     * An unseeded Random instance (specifically, an {@link AlternateRandom}) that is used by {@link #shuffle(int[])}
+     * and related overloads when given no Random argument or a null one. This cannot be relied upon to have a given
+     * state, even if you set the seed; if you need a deterministic state, use your own seeded Random object and pass
+     * it to shuffle(). You could assign null to this, but it's a very bad idea and will probably result in a crash; a
+     * better idea is to assign a subclass of Random with a large state size, such as a RandomXS128 from libGDX or any
+     * generator from juniper. The default AlternateRandom has quite a large state already (320 bits), and so is likely
+     * to be better at shuffling than a RandomXS128, but RandomXS128 and all of juniper's generators allow reading and
+     * directly setting the state, so if that matters to you, use one of those.
      */
-    public static Random RANDOM = new Random();
+    public static Random RANDOM = new AlternateRandom();
 
     private static final char[] emptyChars = new char[0];
     private static final int[] emptyInts = new int[0];
