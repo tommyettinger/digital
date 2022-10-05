@@ -52,12 +52,12 @@ public final class BitConversion {
 
 	public static long doubleToReversedLongBits (final double value) {
 		dv.setFloat64(0, value, true);
-		return ((long)dv.getInt32(4, false) << 32) | (dv.getInt32(0, false) & 0xffffffffL);
+		return ((long)dv.getInt32(0, false) << 32) | (dv.getInt32(4, false) & 0xffffffffL);
 	}
 
 	public static double reversedLongBitsToDouble (final long bits) {
-		dv.setInt32(0, (int)(bits >>> 32), true);
-		dv.setInt32(4, (int)(bits & 0xffffffffL), true);
+		dv.setInt32(4, (int)(bits >>> 32), true);
+		dv.setInt32(0, (int)(bits & 0xffffffffL), true);
 		return dv.getFloat64(0, false);
 	}
 
