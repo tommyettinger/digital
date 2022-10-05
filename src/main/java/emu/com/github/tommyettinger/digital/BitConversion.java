@@ -50,6 +50,17 @@ public final class BitConversion {
 		return wda.get(0);
 	}
 
+	public static long doubleToReversedLongBits (final double value) {
+		dv.setFloat64(0, value, true);
+		return ((long)dv.getInt32(4, false) << 32) | (dv.getInt32(0, false) & 0xffffffffL);
+	}
+
+	public static double reversedLongBitsToDouble (final long bits) {
+		dv.setInt32(0, (int)(bits >>> 32), true);
+		dv.setInt32(4, (int)(bits & 0xffffffffL), true);
+		return dv.getFloat64(0, false);
+	}
+
 	public static int doubleToLowIntBits (final double value) {
 		wda.set(0, value);
 		return wia.get(0);

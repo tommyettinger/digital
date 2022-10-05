@@ -66,6 +66,36 @@ public final class BitConversion {
     }
 
     /**
+     * Gets the bit representation of the given double {@code value}, but with reversed byte order. On desktop, this is
+     * equivalent to calling {@code Long.reverseBytes(Double.doubleToRawLongBits(value))}, but it is implemented using
+     * typed arrays on GWT. Note that this reverses byte order, not bit order.
+     * <br>
+     * This method runs at the expected speed on desktop and mobile, where it should compile down to two (very fast)
+     * intrinsics, but GWT should run it much more quickly than a direct translation of the Java would provide.
+     *
+     * @param value any double
+     * @return the bits that represent the floating-point value, with their byte order reversed from normal.
+     */
+    public static long doubleToReversedLongBits(final double value) {
+        return Long.reverseBytes(Double.doubleToRawLongBits(value));
+    }
+
+    /**
+     * Reverses the byte order of {@code bits} and converts that to a double. On desktop, this is equivalent to calling
+     * {@code Double.longBitsToDouble(Long.reverseBytes(bits))}, but it is implemented using typed arrays on GWT. Note
+     * that this reverses byte order, not bit order.
+     * <br>
+     * This method runs at the expected speed on desktop and mobile, where it should compile down to two (very fast)
+     * intrinsics, but GWT should run it much more quickly than a direct translation of the Java would provide.
+     *
+     * @param bits a long
+     * @return the {@code double} floating-point value with the given bits using their byte order reversed from normal.
+     */
+    public static double reversedLongBitsToDouble(final long bits) {
+        return Double.longBitsToDouble(Long.reverseBytes(bits));
+    }
+
+    /**
      * Identical to {@link Double#longBitsToDouble(long)} on desktop; optimized on GWT. Uses JS typed arrays on GWT,
      * which are well-supported now across all recent browsers and have fallbacks in GWT in the unlikely event of a
      * browser not supporting them. JS typed arrays support double, but not long, so this needs to compose a long from

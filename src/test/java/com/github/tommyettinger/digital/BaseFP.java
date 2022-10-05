@@ -1283,7 +1283,6 @@ public class BaseFP {
         }
         System.arraycopy(backupBuffer, backRun, progress, trim, 5 - backRun);
         return String.valueOf(progress, run, trim - run + 5 - backRun);
-
     }
 
     /**
