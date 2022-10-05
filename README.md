@@ -13,10 +13,10 @@ useful as a package, since they often depend on each other.
 BitConversion allows converting float and double values to
 int and long versions of their underlying bits (and it does
 this in a way that works on GWT efficiently). It also has
-some methods that convert between float and int with reversed
-byte order (using a fast intrinsic on desktop JDKs and a
-special trick on GWT), and others that get only the low or
-high half of a double's bits as an int. It is modeled after
+some methods that convert float-int and double-long with
+reversed byte order (using a fast intrinsic on desktop JDKs
+and a special trick on GWT), and others that get only the low
+or high half of a double's bits as an int. It is modeled after
 the NumberUtils class from libGDX, but offers extra methods.
 
 Base is much larger, and allows converting any Java primitive
@@ -77,20 +77,32 @@ dirty random number generators when applied to numbers in a
 sequence. The unary hashes can output longs, bounded ints,
 floats, and doubles, so they may be useful in a lot of cases.
 
+AlternateRandom is a quick micro-port of a random number generator
+from the closely-related [juniper](https://github.com/tommyettinger/juniper)
+library. It is used only in ArrayTools here, as the default when
+no `Random` object is specified. The alternative would be to use
+a `java.util.Random` object, but that can't produce as many
+possible shuffles of mid-size arrays, and is slower, both of which
+AlternateRandom solves to some extent. If you don't use juniper,
+then AlternateRandom is a pretty good replacement for `Random`;
+if you do use juniper, then its `WhiskerRandom` or `PasarRandom`
+generators are similar to or the same as AlternateRandom's
+algorithm, and offer many more features.
+
 ## How do I get it?
 
 With Gradle, add this to your dependencies (in your core module,
 for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.3"
+api "com.github.tommyettinger:digital:0.1.4"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.3:sources"
+api "com.github.tommyettinger:digital:0.1.4:sources"
 ```
 
 and this in your GdxDefinition.gwt.xml file:
