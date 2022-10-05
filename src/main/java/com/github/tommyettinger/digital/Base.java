@@ -1301,7 +1301,7 @@ public class Base {
      * @return a new String containing the bits of {@code number} in the radix this specifies.
      */
     public String unsigned(float number) {
-        return unsigned(BitConversion.floatToRawIntBits(number));
+        return '.'+unsigned(BitConversion.floatToRawIntBits(number));
     }
 
     /**
@@ -1313,7 +1313,7 @@ public class Base {
      * @return {@code builder}, with the bits of {@code number} appended in the radix this specifies
      */
     public StringBuilder appendUnsigned(StringBuilder builder, float number) {
-        return appendUnsigned(builder, BitConversion.floatToRawIntBits(number));
+        return appendUnsigned(builder.append('.'), BitConversion.floatToRawIntBits(number));
     }
 
     /**
@@ -1324,7 +1324,7 @@ public class Base {
      * @return a new String containing {@code number} in the radix this specifies.
      */
     public String signed(float number) {
-        return signed(BitConversion.floatToRawIntBits(number));
+        return signed(BitConversion.floatToReversedIntBits(number));
     }
 
     /**
@@ -1337,7 +1337,7 @@ public class Base {
      * @return {@code builder}, with the encoded {@code number} appended
      */
     public StringBuilder appendSigned(StringBuilder builder, float number) {
-        return appendSigned(builder, BitConversion.floatToRawIntBits(number));
+        return appendSigned(builder, BitConversion.floatToReversedIntBits(number));
     }
 
     /**
@@ -1355,7 +1355,7 @@ public class Base {
      * @return the float that cs represents
      */
     public float readFloat(final CharSequence cs) {
-        return BitConversion.intBitsToFloat(readInt(cs, 0, cs.length()));
+        return readFloat(cs, 0, cs.length());
     }
 
     /**
@@ -1375,7 +1375,9 @@ public class Base {
      * @return the float that cs represents
      */
     public float readFloat(final CharSequence cs, final int start, int end) {
-        return BitConversion.intBitsToFloat(readInt(cs, start, end));
+        if(cs.length() == 0) return 0f;
+        if(cs.charAt(start) == '.') return BitConversion.intBitsToFloat(readInt(cs, start+1, end));
+        return BitConversion.reversedIntBitsToFloat(readInt(cs, start, end));
     }
 
     /**
@@ -1395,7 +1397,9 @@ public class Base {
      * @return the float that cs represents
      */
     public float readFloat(final char[] cs, final int start, int end) {
-        return BitConversion.intBitsToFloat(readInt(cs, start, end));
+        if(cs.length == 0) return 0f;
+        if(cs[start] == '.') return BitConversion.intBitsToFloat(readInt(cs, start+1, end));
+        return BitConversion.reversedIntBitsToFloat(readInt(cs, start, end));
     }
 
     /**
