@@ -1192,7 +1192,7 @@ public class Base {
      * @return a new String containing the bits of {@code number} in the radix this specifies.
      */
     public String unsigned(double number) {
-        return unsigned(BitConversion.doubleToRawLongBits(number));
+        return '.' + unsigned(BitConversion.doubleToRawLongBits(number));
     }
 
     /**
@@ -1204,7 +1204,7 @@ public class Base {
      * @return {@code builder}, with the bits of {@code number} appended in the radix this specifies
      */
     public StringBuilder appendUnsigned(StringBuilder builder, double number) {
-        return appendUnsigned(builder, BitConversion.doubleToRawLongBits(number));
+        return appendUnsigned(builder.append('.'), BitConversion.doubleToRawLongBits(number));
     }
 
     /**
@@ -1215,7 +1215,7 @@ public class Base {
      * @return a new String containing {@code number} in the radix this specifies.
      */
     public String signed(double number) {
-        return signed(BitConversion.doubleToRawLongBits(number));
+        return signed(BitConversion.doubleToReversedLongBits(number));
     }
 
     /**
@@ -1228,7 +1228,7 @@ public class Base {
      * @return {@code builder}, with the encoded {@code number} appended
      */
     public StringBuilder appendSigned(StringBuilder builder, double number) {
-        return appendSigned(builder, BitConversion.doubleToRawLongBits(number));
+        return appendSigned(builder, BitConversion.doubleToReversedLongBits(number));
     }
 
     /**
@@ -1246,7 +1246,7 @@ public class Base {
      * @return the double that cs represents
      */
     public double readDouble(final CharSequence cs) {
-        return BitConversion.longBitsToDouble(readLong(cs, 0, cs.length()));
+        return readDouble(cs, 0, cs.length());
     }
 
     /**
@@ -1266,7 +1266,9 @@ public class Base {
      * @return the double that cs represents
      */
     public double readDouble(final CharSequence cs, final int start, int end) {
-        return BitConversion.longBitsToDouble(readLong(cs, start, end));
+        if(cs.length() == 0) return 0.0;
+        if(cs.charAt(start) == '.') return BitConversion.longBitsToDouble(readLong(cs, start+1, end));
+        return BitConversion.reversedLongBitsToDouble(readLong(cs, start, end));
     }
 
     /**
@@ -1286,7 +1288,9 @@ public class Base {
      * @return the double that cs represents
      */
     public double readDouble(final char[] cs, final int start, int end) {
-        return BitConversion.longBitsToDouble(readLong(cs, start, end));
+        if(cs.length == 0) return 0.0;
+        if(cs[start] == '.') return BitConversion.longBitsToDouble(readLong(cs, start+1, end));
+        return BitConversion.reversedLongBitsToDouble(readLong(cs, start, end));
     }
 
     /**
