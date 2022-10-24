@@ -593,6 +593,77 @@ public final class MathTools {
     }
 
     /**
+     * A way of taking a double in the (0.0, 1.0) range and mapping it to a Gaussian or normal distribution, so high
+     * inputs correspond to high outputs, and similarly for the low range. This is centered on 0.0 and its standard
+     * deviation seems to be 1.0 (the same as {@link java.util.Random#nextGaussian()}). If this is given an input of 0.0
+     * or less, it returns -38.5, which is slightly less than the result when given {@link Double#MIN_VALUE}. If it is
+     * given an input of 1.0 or more, it returns 38.5, which is significantly larger than the result when given the
+     * largest double less than 1.0 (this value is further from 1.0 than {@link Double#MIN_VALUE} is from 0.0). If
+     * given {@link Double#NaN}, it returns whatever {@link Math#copySign(double, double)} returns for the arguments
+     * {@code 38.5, Double.NaN}, which is implementation-dependent. It uses an algorithm by Peter John Acklam, as
+     * implemented by Sherali Karimov.
+     * <a href="https://web.archive.org/web/20150910002142/http://home.online.no/~pjacklam/notes/invnorm/impl/karimov/StatUtil.java">Original source</a>.
+     * <a href="https://web.archive.org/web/20151030215612/http://home.online.no/~pjacklam/notes/invnorm/">Information on the algorithm</a>.
+     * <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia's page on the probit function</a> may help, but
+     * is more likely to just be confusing.
+     * <br>
+     * Acklam's algorithm and Karimov's implementation are both quite fast. This appears faster when generating
+     * Gaussian-distributed numbers than using either the Box-Muller Transform or Marsaglia's Polar Method, though it
+     * isn't as precise and can't produce as extreme min and max results in the extreme cases they should appear. If
+     * given a typical uniform random {@code double} that's exclusive on 1.0, it won't produce a result higher than
+     * {@code 8.209536145151493}, and will only produce results of at least {@code -8.209536145151493} if 0.0 is
+     * excluded from the inputs (if 0.0 is an input, the result is {@code -38.5}).
+     * <br>
+     * This can be used both as an optimization for generating Gaussian random values, and as a way of generating
+     * Gaussian values that match a pattern present in the inputs (which you could have by using a sub-random sequence
+     * as the input, such as those produced by a van der Corput, Halton, Sobol or R2 sequence). Most methods of generating
+     * Gaussian values (e.g. Box-Muller and Marsaglia polar) do not have any way to preserve a particular pattern.
+     *
+     * @see #probitInverse(double) probitInverse() provides a way to take normal-distributed values and go back to 0-1 .
+     * @param d should be between 0 and 1, exclusive, but other values are tolerated
+     * @return a normal-distributed double centered on 0.0; all results will be between -38.5 and 38.5, both inclusive
+     */
+    public static double probit (final double d) {
+        if (d <= 0 || d >= 1) {
+            return Math.copySign(38.5, d - 0.5);
+        } else if (d < 0.02425) {
+            final double q = Math.sqrt(-2.0 * Math.log(d));
+            return (((((-7.784894002430293e-03 * q - 3.223964580411365e-01) * q - 2.400758277161838e+00) * q - 2.549732539343734e+00) * q + 4.374664141464968e+00) * q + 2.938163982698783e+00) / (
+                    (((7.784695709041462e-03 * q + 3.224671290700398e-01) * q + 2.445134137142996e+00) * q + 3.754408661907416e+00) * q + 1.0);
+        } else if (0.97575 < d) {
+            final double q = Math.sqrt(-2.0 * Math.log(1 - d));
+            return -(((((-7.784894002430293e-03 * q - 3.223964580411365e-01) * q - 2.400758277161838e+00) * q - 2.549732539343734e+00) * q + 4.374664141464968e+00) * q + 2.938163982698783e+00) / (
+                    (((7.784695709041462e-03 * q + 3.224671290700398e-01) * q + 2.445134137142996e+00) * q + 3.754408661907416e+00) * q + 1.0);
+        }
+        final double q = d - 0.5;
+        final double r = q * q;
+        return (((((-3.969683028665376e+01 * r + 2.209460984245205e+02) * r - 2.759285104469687e+02) * r + 1.383577518672690e+02) * r - 3.066479806614716e+01) * r + 2.506628277459239e+00) * q / (
+                ((((-5.447609879822406e+01 * r + 1.615858368580409e+02) * r - 1.556989798598866e+02) * r + 6.680131188771972e+01) * r - 1.328068155288572e+01) * r + 1.0);
+    }
+
+    /**
+     * Inverse to the {@link #probit(double)} function; takes a normal-distributed input and returns a value between 0.0
+     * and 1.0, both inclusive. This is based on a scaled error function approximation; the original approximation has a
+     * maximum error of {@code 3.0e-7}, and scaling it shouldn't change that too drastically. The CDF of the normal
+     * distribution is essentially the same as this method.
+     * <br>
+     * Equivalent to a scaled error function from Abramowitz and Stegun, 1964; equation 7.1.27 .
+     * See <a href="https://en.wikipedia.org/wiki/Error_function#Approximation_with_elementary_functions">Wikipedia</a>.
+     * @param x any finite double, typically normal-distributed but not necessarily
+     * @return a double between 0 and 1, inclusive
+     */
+    public double probitInverse(final double x) {
+        final double a1 = 0.0705230784, a2 = 0.0422820123, a3 = 0.0092705272, a4 = 0.0001520143, a5 = 0.0002765672, a6 = 0.0000430638;
+        final double sign = Math.signum(x), y1 = sign * x * 0.7071067811865475, y2 = y1 * y1, y3 = y1 * y2, y4 = y2 * y2, y5 = y2 * y3, y6 = y3 * y3;
+        double n = 1.0 + a1 * y1 + a2 * y2 + a3 * y3 + a4 * y4 + a5 * y5 + a6 * y6;
+        n *= n;
+        n *= n;
+        n *= n;
+        return sign * (0.5 - 0.5 / (n * n)) + 0.5;
+    }
+
+
+    /**
      * Returns the next higher power of two relative to {@code n}, or n if it is already a power of two. This returns 2
      * if n is any value less than 2 (including negative numbers, but also 1, which is a power of two).
      *
