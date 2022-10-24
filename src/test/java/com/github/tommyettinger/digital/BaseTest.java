@@ -256,6 +256,15 @@ public class BaseTest {
 		long[] inputs = {0x00000000L, 0x00000001L, 0xFFFFFFFFL, 0x7FFFFFFFL,
 			0xFFFFFFFFFFFFFFFFL, 0x7FFFFFFFFFFFFFFFL,
 			0x80000000L,  0x8000000000000000L, 0x12345678L, 0x89ABCDEFL, 0x1234567890ABCDEFL, 0xFEDCBA0987654321L};
+		long[][] inputs2D = {{0x00000000L, 0x00000001L, 0xFFFFFFFFL, 0x7FFFFFFFL,
+				0xFFFFFFFFFFFFFFFFL, 0x7FFFFFFFFFFFFFFFL, 0x80000000L,  0x8000000000000000L,
+				0x12345678L, 0x89ABCDEFL, 0x1234567890ABCDEFL, 0xFEDCBA0987654321L
+				},{0x00000000L, 0x00000001L, 0xFFFFFFFFL, 0x7FFFFFFFL,
+				0xFFFFFFFFFFFFFFFFL, 0x7FFFFFFFFFFFFFFFL, 0x80000000L,  0x8000000000000000L,
+				0x12345678L, 0x89ABCDEFL,
+				},{0x00000000L, 0x00000001L, 0xFFFFFFFFL, 0x7FFFFFFFL,
+				0xFFFFFFFFFFFFFFFFL, 0x7FFFFFFFFFFFFFFFL, 0x80000000L,  0x8000000000000000L,
+				},};
 
 		for(Base enc : BASES)
 		{
@@ -263,18 +272,36 @@ public class BaseTest {
 				Assert.assertEquals(in, enc.readLong(enc.signed(in)));
 				Assert.assertEquals(in, enc.readLong(enc.unsigned(in)));
 			}
+			Assert.assertArrayEquals(enc.longSplit2D(enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D).toString(), "`", ","), inputs2D);
+			Assert.assertArrayEquals(enc.longSplit2D(" " + enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D), "`", ",", 1, Integer.MAX_VALUE), inputs2D);
+			for(long[] inp : inputs2D){
+				String joined = enc.appendJoined(new StringBuilder(), " ", inp).toString();
+				System.out.println(joined);
+				Assert.assertArrayEquals(enc.longSplit(joined, " "), inp);
+			}
 		}
 	}
 
 	@Test
 	public void testReadInt(){
 		int[] inputs = {0, 1, -1, 2147483647, -2147483647, -2147483648, 1234, -98765};
+		int[][] inputs2D = {
+				{0, 1, -1, 2147483647, -2147483647, -2147483648, 1234, -98765},
+				{0, 1, -1, 2147483647, -2147483647, -2147483648},
+				{0, 1, -1, 2147483647}
+		};
 
-		for(Base enc : BASES)
-		{
-			for(int in : inputs){
+		for(Base enc : BASES) {
+			for (int in : inputs) {
 				Assert.assertEquals(in, enc.readInt(enc.signed(in)));
 				Assert.assertEquals(in, enc.readInt(enc.unsigned(in)));
+			}
+			Assert.assertArrayEquals(enc.intSplit2D(enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D).toString(), "`", ","), inputs2D);
+			Assert.assertArrayEquals(enc.intSplit2D(" " + enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D), "`", ",", 1, Integer.MAX_VALUE), inputs2D);
+			for (int[] inp : inputs2D) {
+				String joined = enc.appendJoined(new StringBuilder(), " ", inp).toString();
+				System.out.println(joined);
+				Assert.assertArrayEquals(enc.intSplit(joined, " "), inp);
 			}
 		}
 	}
@@ -282,12 +309,24 @@ public class BaseTest {
 	@Test
 	public void testReadShort(){
 		short[] inputs = {0, 1, -1, 32767, -32768, 1234, -9876};
+		short[][] inputs2D = {
+				{0, 1, -1, 32767, -32768, 1234, -9876},
+				{0, 1, -1, 32767, -32768},
+				{0, 1, -1},
+		};
 
 		for(Base enc : BASES)
 		{
 			for(short in : inputs){
 				Assert.assertEquals(in, enc.readShort(enc.signed(in)));
 				Assert.assertEquals(in, enc.readShort(enc.unsigned(in)));
+			}
+			Assert.assertArrayEquals(enc.shortSplit2D(enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D).toString(), "`", ","), inputs2D);
+			Assert.assertArrayEquals(enc.shortSplit2D(" " + enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D), "`", ",", 1, Integer.MAX_VALUE), inputs2D);
+			for(short[] inp : inputs2D){
+				String joined = enc.appendJoined(new StringBuilder(), " ", inp).toString();
+				System.out.println(joined);
+				Assert.assertArrayEquals(enc.shortSplit(joined, " "), inp);
 			}
 		}
 	}
@@ -325,11 +364,11 @@ public class BaseTest {
 
 		double[][] inputs2D = {
 			{0.0, -0.0, 1.0, -1.0, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
-				Double.MAX_VALUE, Double.MIN_VALUE, Double.MIN_NORMAL, 1.5, -1.1},
+				Double.MAX_VALUE, Double.MIN_VALUE, Double.MIN_NORMAL, 1.5, -1.1, Double.NaN},
 			{1.0, -1.0, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
-				Double.MAX_VALUE, Double.MIN_VALUE, Double.MIN_NORMAL, 1.5, -1.1},
+				Double.MAX_VALUE, Double.MIN_VALUE, Double.MIN_NORMAL, 1.5, -1.1, Double.NaN},
 			{Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
-				Double.MAX_VALUE, Double.MIN_VALUE, Double.MIN_NORMAL, 1.5, -1.1},
+				Double.MAX_VALUE, Double.MIN_VALUE, Double.MIN_NORMAL, 1.5, -1.1, Double.NaN},
 		};
 
 		for(Base enc : BASES)
