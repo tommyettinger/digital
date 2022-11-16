@@ -89,7 +89,21 @@ public final class MathTools {
      * isosceles right triangle to one of its legs.
      */
     public static final double ROOT2_D = 1.4142135623730950488;
-    
+
+    /**
+     * The {@code float} value that is closer than any other to
+     * {@code 1.0 / Math.sqrt(2.0)}, the inverse of the square
+     * root of 2.
+     */
+    public static final float ROOT2_INVERSE = (float) (1.0 / ROOT2_D);
+
+    /**
+     * The {@code double} value that is closer than any other to
+     * {@code 1.0 / Math.sqrt(2.0)}, the inverse of the square
+     * root of 2.
+     */
+    public static final double ROOT2_INVERSE_D = (1.0 / ROOT2_D);
+
     /**
      * The {@code float} value that is closer than any other to
      * {@code Math.sqrt(3.0)}, the ratio of the diagonal length
