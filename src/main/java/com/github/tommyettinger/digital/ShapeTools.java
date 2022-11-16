@@ -13,6 +13,26 @@ public final class ShapeTools {
     }
 
     /**
+     * The vertices of a tetrahedron with unitary edge length, as float[3] items representing points.
+     */
+    public static final float[][] tetrahedronVertices = {
+            {-0.5f, 0f, -0.5f * ROOT2_INVERSE,},
+            {+0.5f, 0f, -0.5f * ROOT2_INVERSE,},
+            {0f, -0.5f, +0.5f * ROOT2_INVERSE,},
+            {0f, +0.5f, +0.5f * ROOT2_INVERSE,},
+    };
+
+    /**
+     * The faces of a tetrahedron, as int[3] items representing indices into {@link #tetrahedronVertices}.
+     */
+    public static final int[][] tetrahedronFaces = {
+            {0, 1, 2,},
+            {0, 1, 3,},
+            {0, 2, 3,},
+            {1, 2, 3,},
+    };
+
+    /**
      * The vertices of a cube with unitary edge length, as float[3] items representing points.
      */
     public static final float[][] cubeVertices = {
