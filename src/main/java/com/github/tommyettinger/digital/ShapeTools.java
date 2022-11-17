@@ -293,10 +293,38 @@ public final class ShapeTools {
      */
     public static final double[][] UNIT_TETRAHEDRON_VERTICES_D = new double[TETRAHEDRON_VERTICES_D.length][];
 
+    /**
+     * A variant on {@link #CUBE_VERTICES} that has each vertex at distance 1 from the origin.
+     */
+    public static final float[][] UNIT_CUBE_VERTICES = new float[CUBE_VERTICES.length][];
+
+    /**
+     * A variant on {@link #CUBE_VERTICES_D} that has each vertex at distance 1 from the origin.
+     */
+    public static final double[][] UNIT_CUBE_VERTICES_D = new double[CUBE_VERTICES_D.length][];
+
+    /**
+     * A variant on {@link #OCTAHEDRON_VERTICES} that has each vertex at distance 1 from the origin.
+     */
+    public static final float[][] UNIT_OCTAHEDRON_VERTICES = new float[OCTAHEDRON_VERTICES.length][];
+
+    /**
+     * A variant on {@link #OCTAHEDRON_VERTICES_D} that has each vertex at distance 1 from the origin.
+     */
+    public static final double[][] UNIT_OCTAHEDRON_VERTICES_D = new double[OCTAHEDRON_VERTICES_D.length][];
+
     static {
         for (int i = 0; i < TETRAHEDRON_VERTICES.length; i++) {
             UNIT_TETRAHEDRON_VERTICES[i] = nor(TETRAHEDRON_VERTICES[i]);
             UNIT_TETRAHEDRON_VERTICES_D[i] = nor_d(TETRAHEDRON_VERTICES_D[i]);
+        }
+        for (int i = 0; i < CUBE_VERTICES.length; i++) {
+            UNIT_CUBE_VERTICES[i] = nor(CUBE_VERTICES[i]);
+            UNIT_CUBE_VERTICES_D[i] = nor_d(CUBE_VERTICES_D[i]);
+        }
+        for (int i = 0; i < OCTAHEDRON_VERTICES.length; i++) {
+            UNIT_OCTAHEDRON_VERTICES[i] = nor(OCTAHEDRON_VERTICES[i]);
+            UNIT_OCTAHEDRON_VERTICES_D[i] = nor_d(OCTAHEDRON_VERTICES_D[i]);
         }
     }
 }
