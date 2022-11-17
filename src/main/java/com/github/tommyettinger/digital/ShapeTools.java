@@ -313,6 +313,26 @@ public final class ShapeTools {
      */
     public static final double[][] UNIT_OCTAHEDRON_VERTICES_D = new double[OCTAHEDRON_VERTICES_D.length][];
 
+    /**
+     * A variant on {@link #DODECAHEDRON_VERTICES} that has each vertex at distance 1 from the origin.
+     */
+    public static final float[][] UNIT_DODECAHEDRON_VERTICES = new float[DODECAHEDRON_VERTICES.length][];
+
+    /**
+     * A variant on {@link #DODECAHEDRON_VERTICES_D} that has each vertex at distance 1 from the origin.
+     */
+    public static final double[][] UNIT_DODECAHEDRON_VERTICES_D = new double[DODECAHEDRON_VERTICES_D.length][];
+
+    /**
+     * A variant on {@link #ICOSAHEDRON_VERTICES} that has each vertex at distance 1 from the origin.
+     */
+    public static final float[][] UNIT_ICOSAHEDRON_VERTICES = new float[ICOSAHEDRON_VERTICES.length][];
+
+    /**
+     * A variant on {@link #ICOSAHEDRON_VERTICES_D} that has each vertex at distance 1 from the origin.
+     */
+    public static final double[][] UNIT_ICOSAHEDRON_VERTICES_D = new double[ICOSAHEDRON_VERTICES_D.length][];
+
     static {
         for (int i = 0; i < TETRAHEDRON_VERTICES.length; i++) {
             UNIT_TETRAHEDRON_VERTICES[i] = nor(TETRAHEDRON_VERTICES[i]);
@@ -325,6 +345,14 @@ public final class ShapeTools {
         for (int i = 0; i < OCTAHEDRON_VERTICES.length; i++) {
             UNIT_OCTAHEDRON_VERTICES[i] = nor(OCTAHEDRON_VERTICES[i]);
             UNIT_OCTAHEDRON_VERTICES_D[i] = nor_d(OCTAHEDRON_VERTICES_D[i]);
+        }
+        for (int i = 0; i < DODECAHEDRON_VERTICES.length; i++) {
+            UNIT_DODECAHEDRON_VERTICES[i] = nor(DODECAHEDRON_VERTICES[i]);
+            UNIT_DODECAHEDRON_VERTICES_D[i] = nor_d(DODECAHEDRON_VERTICES_D[i]);
+        }
+        for (int i = 0; i < ICOSAHEDRON_VERTICES.length; i++) {
+            UNIT_ICOSAHEDRON_VERTICES[i] = nor(ICOSAHEDRON_VERTICES[i]);
+            UNIT_ICOSAHEDRON_VERTICES_D[i] = nor_d(ICOSAHEDRON_VERTICES_D[i]);
         }
     }
 }
