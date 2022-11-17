@@ -16,7 +16,7 @@ public final class ShapeTools {
     /**
      * The vertices of a tetrahedron with unitary edge length, as float[3] items representing points.
      */
-    public static final float[][] tetrahedronVertices = {
+    public static final float[][] TETRAHEDRON_VERTICES = {
             {-0.5f, 0f, -0.5f * ROOT2_INVERSE,},
             {+0.5f, 0f, -0.5f * ROOT2_INVERSE,},
             {0f, -0.5f, +0.5f * ROOT2_INVERSE,},
@@ -24,9 +24,9 @@ public final class ShapeTools {
     };
 
     /**
-     * The faces of a tetrahedron, as int[3] items representing indices into {@link #tetrahedronVertices}.
+     * The faces of a tetrahedron, as int[3] items representing indices into {@link #TETRAHEDRON_VERTICES}.
      */
-    public static final int[][] tetrahedronFaces = {
+    public static final int[][] TETRAHEDRON_FACES = {
             {0, 1, 2,},
             {0, 1, 3,},
             {0, 2, 3,},
@@ -36,7 +36,7 @@ public final class ShapeTools {
     /**
      * The vertices of a cube with unitary edge length, as float[3] items representing points.
      */
-    public static final float[][] cubeVertices = {
+    public static final float[][] CUBE_VERTICES = {
             {-0.5f, -0.5f, -0.5f,},
             {-0.5f, -0.5f, +0.5f,},
             {-0.5f, +0.5f, -0.5f,},
@@ -48,9 +48,9 @@ public final class ShapeTools {
     };
 
     /**
-     * The faces of a cube, as int[4] items representing indices into {@link #cubeVertices}.
+     * The faces of a cube, as int[4] items representing indices into {@link #CUBE_VERTICES}.
      */
-    public static final int[][] cubeFaces = {
+    public static final int[][] CUBE_FACES = {
             {0, 1, 2, 3,},
             {0, 1, 4, 5,},
             {2, 3, 6, 7,},
@@ -62,7 +62,7 @@ public final class ShapeTools {
     /**
      * The vertices of an octahedron with unitary edge length, as float[3] items representing points.
      */
-    public static final float[][] octahedronVertices = {
+    public static final float[][] OCTAHEDRON_VERTICES = {
             {-ROOT2_INVERSE, 0f, 0f},
             {0f, -ROOT2_INVERSE, 0f},
             {0f, 0f, -ROOT2_INVERSE},
@@ -72,9 +72,9 @@ public final class ShapeTools {
     };
 
     /**
-     * The faces of an octahedron, as int[3] items representing indices into {@link #octahedronVertices}.
+     * The faces of an octahedron, as int[3] items representing indices into {@link #OCTAHEDRON_VERTICES}.
      */
-    public static final int[][] octahedronFaces = {
+    public static final int[][] OCTAHEDRON_FACES = {
             {0, 1, 2,},
             {0, 2, 3,},
             {0, 3, 4,},
@@ -88,7 +88,7 @@ public final class ShapeTools {
     /**
      * The vertices of a dodecahedron with unitary edge length, as float[3] items representing points.
      */
-    public static final float[][] dodecahedronVertices = {
+    public static final float[][] DODECAHEDRON_VERTICES = {
             {-0.5f * GOLDEN_RATIO, -0.5f * GOLDEN_RATIO, -0.5f * GOLDEN_RATIO,},    // 0
             {-0.5f * GOLDEN_RATIO, -0.5f * GOLDEN_RATIO, +0.5f * GOLDEN_RATIO,},    // 1
             {-0.5f * GOLDEN_RATIO, +0.5f * GOLDEN_RATIO, -0.5f * GOLDEN_RATIO,},    // 2
@@ -112,9 +112,9 @@ public final class ShapeTools {
     };
 
     /**
-     * The faces of a dodecahedron, as int[5] items representing indices into {@link #dodecahedronVertices}.
+     * The faces of a dodecahedron, as int[5] items representing indices into {@link #DODECAHEDRON_VERTICES}.
      */
-    public static final int[][] dodecahedronFaces = {
+    public static final int[][] DODECAHEDRON_FACES = {
             {8, 9, 0, 1, 16,}, //touching bottom edge, tip of left edge
             {8, 9, 4, 5, 18,}, //touching bottom edge, tip of right edge
             {10, 11, 2, 3, 17,}, //touching top edge, tip of left edge
@@ -127,5 +127,53 @@ public final class ShapeTools {
             {16, 17, 1, 3, 14,}, //touching left edge, tip of far edge
             {18, 19, 4, 6, 13,}, //touching right edge, tip of near edge
             {18, 19, 5, 7, 15,}, //touching right edge, tip of far edge
+    };
+
+    /**
+     * The vertices of an icosahedron with unitary edge length, as float[3] items representing points.
+     * These points are specially organized so that {@code ICOSAHEDRON_VERTICES[i]} will always contain the opposite
+     * point of {@code ICOSAHEDRON_VERTICES[i ^ 1]} (such as with the North Pole and South Pole).
+     */
+    public static final float[][] ICOSAHEDRON_VERTICES = {
+            {0f, -0.5f, -0.5f * GOLDEN_RATIO,}, // 0 bottom edge, touching near
+            {0f, +0.5f, +0.5f * GOLDEN_RATIO,}, // 1 top edge, touching far
+            {0f, +0.5f, -0.5f * GOLDEN_RATIO,}, // 2 bottom edge, touching far
+            {0f, -0.5f, +0.5f * GOLDEN_RATIO,}, // 3 top edge, touching near
+            {-0.5f * GOLDEN_RATIO, 0f, -0.5f,}, // 4 left edge, touching bottom
+            {+0.5f * GOLDEN_RATIO, 0f, +0.5f,}, // 5 right edge, touching top
+            {-0.5f * GOLDEN_RATIO, 0f, +0.5f,}, // 6 left edge, touching top
+            {+0.5f * GOLDEN_RATIO, 0f, -0.5f,}, // 7 right edge, touching bottom
+            {-0.5f, -0.5f * GOLDEN_RATIO, 0f,}, // 8 near edge, touching left
+            {+0.5f, +0.5f * GOLDEN_RATIO, 0f,}, // 9 far edge, touching right
+            {+0.5f, -0.5f * GOLDEN_RATIO, 0f,}, //10 near edge, touching right
+            {-0.5f, +0.5f * GOLDEN_RATIO, 0f,}, //11 far edge, touching left
+    };
+
+    /**
+     * The faces of an icosahedron, as int[3] items representing indices into {@link #ICOSAHEDRON_VERTICES}.
+     * These faces are specially organized so that {@code ICOSAHEDRON_FACES[i]} will always contain the opposite face
+     * of {@code ICOSAHEDRON_FACES[i ^ 1]}.
+     */
+    public static final int[][] ICOSAHEDRON_FACES = {
+            {0, 2, 4,},
+            {1, 3, 5,},
+            {0, 2, 7,},
+            {1, 3, 6,},
+            {4, 6, 8,},
+            {5, 7, 9,},
+            {4, 6, 11,},
+            {5, 7, 10,},
+            {8, 10, 0,},
+            {9, 11, 1,},
+            {8, 10, 3,},
+            {9, 11, 2,},
+            {0, 8, 4,},
+            {1, 9, 5,},
+            {0, 10, 7,},
+            {1, 11, 6,},
+            {2, 9, 7,},
+            {3, 8, 6,},
+            {2, 11, 4,},
+            {3, 10, 5,},
     };
 }
