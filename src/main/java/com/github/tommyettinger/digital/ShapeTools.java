@@ -260,4 +260,43 @@ public final class ShapeTools {
             {2, 11, 4,},
             {3, 10, 5,},
     };
+
+    private static double len2_d(double[] v) {
+        return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+    }
+    private static float len2(float[] v) {
+        return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+    }
+
+    private static double len_d(double[] v) {
+        return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    }
+    private static float len(float[] v) {
+        return (float) Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    }
+    private static double[] nor_d(double[] v) {
+        final double il = 1.0/len_d(v);
+        return new double[] {v[0] * il, v[1] * il, v[2] * il};
+    }
+    private static float[] nor(float[] v) {
+        final float il = 1f/len(v);
+        return new float[] {v[0] * il, v[1] * il, v[2] * il};
+    }
+
+    /**
+     * A variant on {@link #TETRAHEDRON_VERTICES} that has each vertex at distance 1 from the origin.
+     */
+    public static final float[][] UNIT_TETRAHEDRON_VERTICES = new float[TETRAHEDRON_VERTICES.length][];
+
+    /**
+     * A variant on {@link #TETRAHEDRON_VERTICES_D} that has each vertex at distance 1 from the origin.
+     */
+    public static final double[][] UNIT_TETRAHEDRON_VERTICES_D = new double[TETRAHEDRON_VERTICES_D.length][];
+
+    static {
+        for (int i = 0; i < TETRAHEDRON_VERTICES.length; i++) {
+            UNIT_TETRAHEDRON_VERTICES[i] = nor(TETRAHEDRON_VERTICES[i]);
+            UNIT_TETRAHEDRON_VERTICES_D[i] = nor_d(TETRAHEDRON_VERTICES_D[i]);
+        }
+    }
 }
