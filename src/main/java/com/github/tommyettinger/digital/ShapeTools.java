@@ -1,7 +1,9 @@
 package com.github.tommyettinger.digital;
 
 import static com.github.tommyettinger.digital.MathTools.GOLDEN_RATIO;
+import static com.github.tommyettinger.digital.MathTools.GOLDEN_RATIO_D;
 import static com.github.tommyettinger.digital.MathTools.ROOT2_INVERSE;
+import static com.github.tommyettinger.digital.MathTools.ROOT2_INVERSE_D;
 
 /**
  * Static data for 3D shapes, for now.
@@ -21,6 +23,16 @@ public final class ShapeTools {
             {+0.5f, 0f, -0.5f * ROOT2_INVERSE,},
             {0f, -0.5f, +0.5f * ROOT2_INVERSE,},
             {0f, +0.5f, +0.5f * ROOT2_INVERSE,},
+    };
+
+    /**
+     * The vertices of a tetrahedron with unitary edge length, as double[3] items representing points.
+     */
+    public static final double[][] TETRAHEDRON_VERTICES_D = {
+            {-0.5, 0, -0.5 * ROOT2_INVERSE_D,},
+            {+0.5, 0, -0.5 * ROOT2_INVERSE_D,},
+            {0, -0.5, +0.5 * ROOT2_INVERSE_D,},
+            {0, +0.5, +0.5 * ROOT2_INVERSE_D,},
     };
 
     /**
@@ -48,6 +60,20 @@ public final class ShapeTools {
     };
 
     /**
+     * The vertices of a cube with unitary edge length, as double[3] items representing points.
+     */
+    public static final double[][] CUBE_VERTICES_D = {
+            {-0.5, -0.5, -0.5,},
+            {-0.5, -0.5, +0.5,},
+            {-0.5, +0.5, -0.5,},
+            {-0.5, +0.5, +0.5,},
+            {+0.5, -0.5, -0.5,},
+            {+0.5, -0.5, +0.5,},
+            {+0.5, +0.5, -0.5,},
+            {+0.5, +0.5, +0.5,},
+    };
+
+    /**
      * The faces of a cube, as int[4] items representing indices into {@link #CUBE_VERTICES}.
      */
     public static final int[][] CUBE_FACES = {
@@ -69,6 +95,18 @@ public final class ShapeTools {
             {0f, +ROOT2_INVERSE, 0f},
             {0f, 0f, +ROOT2_INVERSE},
             {+ROOT2_INVERSE, 0f, 0f},
+    };
+
+    /**
+     * The vertices of an octahedron with unitary edge length, as double[3] items representing points.
+     */
+    public static final double[][] OCTAHEDRON_VERTICES_D = {
+            {-ROOT2_INVERSE_D, 0, 0},
+            {0, -ROOT2_INVERSE_D, 0},
+            {0, 0, -ROOT2_INVERSE_D},
+            {0, +ROOT2_INVERSE_D, 0},
+            {0, 0, +ROOT2_INVERSE_D},
+            {+ROOT2_INVERSE_D, 0, 0},
     };
 
     /**
@@ -112,6 +150,32 @@ public final class ShapeTools {
     };
 
     /**
+     * The vertices of a dodecahedron with unitary edge length, as double[3] items representing points.
+     */
+    public static final double[][] DODECAHEDRON_VERTICES_D = {
+            {-0.5 * GOLDEN_RATIO_D, -0.5 * GOLDEN_RATIO_D, -0.5 * GOLDEN_RATIO_D,},    // 0
+            {-0.5 * GOLDEN_RATIO_D, -0.5 * GOLDEN_RATIO_D, +0.5 * GOLDEN_RATIO_D,},    // 1
+            {-0.5 * GOLDEN_RATIO_D, +0.5 * GOLDEN_RATIO_D, -0.5 * GOLDEN_RATIO_D,},    // 2
+            {-0.5 * GOLDEN_RATIO_D, +0.5 * GOLDEN_RATIO_D, +0.5 * GOLDEN_RATIO_D,},    // 3
+            {+0.5 * GOLDEN_RATIO_D, -0.5 * GOLDEN_RATIO_D, -0.5 * GOLDEN_RATIO_D,},    // 4
+            {+0.5 * GOLDEN_RATIO_D, -0.5 * GOLDEN_RATIO_D, +0.5 * GOLDEN_RATIO_D,},    // 5
+            {+0.5 * GOLDEN_RATIO_D, +0.5 * GOLDEN_RATIO_D, -0.5 * GOLDEN_RATIO_D,},    // 6
+            {+0.5 * GOLDEN_RATIO_D, +0.5 * GOLDEN_RATIO_D, +0.5 * GOLDEN_RATIO_D,},    // 7
+            {0, -0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D, -0.5,},                      // 8
+            {0, -0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D, +0.5,},                      // 9
+            {0, +0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D, -0.5,},                      // 10
+            {0, +0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D, +0.5,},                      // 11
+            {-0.5, 0, -0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D,},                      // 12
+            {+0.5, 0, -0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D,},                      // 13
+            {-0.5, 0, +0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D,},                      // 14
+            {+0.5, 0, +0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D,},                      // 15
+            {-0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D, -0.5, 0,},                      // 16
+            {-0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D, +0.5, 0,},                      // 17
+            {+0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D, -0.5, 0,},                      // 18
+            {+0.5 * GOLDEN_RATIO_D * GOLDEN_RATIO_D, +0.5, 0,},                      // 19
+    };
+
+    /**
      * The faces of a dodecahedron, as int[5] items representing indices into {@link #DODECAHEDRON_VERTICES}.
      */
     public static final int[][] DODECAHEDRON_FACES = {
@@ -147,6 +211,26 @@ public final class ShapeTools {
             {+0.5f, +0.5f * GOLDEN_RATIO, 0f,}, // 9 far edge, touching right
             {+0.5f, -0.5f * GOLDEN_RATIO, 0f,}, //10 near edge, touching right
             {-0.5f, +0.5f * GOLDEN_RATIO, 0f,}, //11 far edge, touching left
+    };
+
+    /**
+     * The vertices of an icosahedron with unitary edge length, as double[3] items representing points.
+     * These points are specially organized so that {@code ICOSAHEDRON_VERTICES_D[i]} will always contain the opposite
+     * point of {@code ICOSAHEDRON_VERTICES_D[i ^ 1]} (such as with the North Pole and South Pole).
+     */
+    public static final double[][] ICOSAHEDRON_VERTICES_D = {
+            {0, -0.5, -0.5 * GOLDEN_RATIO_D,}, // 0 bottom edge, touching near
+            {0, +0.5, +0.5 * GOLDEN_RATIO_D,}, // 1 top edge, touching far
+            {0, +0.5, -0.5 * GOLDEN_RATIO_D,}, // 2 bottom edge, touching far
+            {0, -0.5, +0.5 * GOLDEN_RATIO_D,}, // 3 top edge, touching near
+            {-0.5 * GOLDEN_RATIO_D, 0, -0.5,}, // 4 left edge, touching bottom
+            {+0.5 * GOLDEN_RATIO_D, 0, +0.5,}, // 5 right edge, touching top
+            {-0.5 * GOLDEN_RATIO_D, 0, +0.5,}, // 6 left edge, touching top
+            {+0.5 * GOLDEN_RATIO_D, 0, -0.5,}, // 7 right edge, touching bottom
+            {-0.5, -0.5 * GOLDEN_RATIO_D, 0,}, // 8 near edge, touching left
+            {+0.5, +0.5 * GOLDEN_RATIO_D, 0,}, // 9 far edge, touching right
+            {+0.5, -0.5 * GOLDEN_RATIO_D, 0,}, //10 near edge, touching right
+            {-0.5, +0.5 * GOLDEN_RATIO_D, 0,}, //11 far edge, touching left
     };
 
     /**
