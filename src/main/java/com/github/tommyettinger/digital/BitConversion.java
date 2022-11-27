@@ -258,4 +258,18 @@ public final class BitConversion {
         return num & -num;
     }
 
+    /**
+     * 32-bit signed integer multiplication that is correct on all platforms, including GWT. Unlike desktop, Android,
+     * and iOS targets, GWT uses the equivalent of a {@code double} to represent an {@code int}, which means any
+     * multiplication where the product is large enough (over 2 to the 53) can start to lose precision instead of being
+     * wrapped, like it would on overflow in a normal JDK. Using this will prevent the possibility of precision loss.
+     * <br>
+     * This should compile down to a call to {@code Math.imul()} on GWT, hence the name here.
+     * @param left the multiplicand
+     * @param right the multiplier
+     * @return the product of left times right, wrapping on overflow as is normal for Java
+     */
+    public static int imul(int left, int right) {
+        return left * right;
+    }
 }

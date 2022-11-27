@@ -109,4 +109,7 @@ public final class BitConversion {
 		return num & ~(num - 1L);
 	}
 
+	public static native int imul(int left, int right)/*-{
+	    return Math.imul(left, right);
+	}-*/;
 }
