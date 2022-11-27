@@ -402,19 +402,17 @@ public final class MathTools {
 
     /**
      * Given any odd int {@code a}, this finds another odd int {@code b} such that {@code a * b == 1}.
-     * <br>
-     * This is incompatible with GWT, but it should usually only find uses in exploratory code or in tests anyway...
-     * It is only incompatible because it tends to rely on multiplication overflow to work. The overload that takes a
-     * long and gets the inverse modulo (2 to the 64) is GWT-compatible.
+     * Note that this is now GWT-compatible thanks to {@link BitConversion#imul(int, int)}, though this
+     * is unlikely to matter much.
      *
      * @param a any odd int; note that even numbers do not have inverses modulo 2 to the 32
      * @return the multiplicative inverse of {@code a} modulo 4294967296 (or, 2 to the 32)
      */
     public static int modularMultiplicativeInverse(final int a) {
         int x = 2 ^ a * 3;
-        x *= 2 - a * x;
-        x *= 2 - a * x;
-        x *= 2 - a * x;
+        x = BitConversion.imul(x, 2 - BitConversion.imul(a, x));
+        x = BitConversion.imul(x, 2 - BitConversion.imul(a, x));
+        x = BitConversion.imul(x, 2 - BitConversion.imul(a, x));
         return x;
     }
 
