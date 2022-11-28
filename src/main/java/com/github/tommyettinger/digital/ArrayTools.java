@@ -72,14 +72,49 @@ public final class ArrayTools {
             "ALLOCES", "CAIM", "MURMUR", "OROBAS", "GREMORY", "OSE", "AMY", "ORIAS", "VAPULA", "ZAGAN", "VALAC",
             "ANDRAS", "FLAUROS", "ANDREALPHUS", "KIMARIS", "AMDUSIAS", "BELIAL", "DECARABIA", "SEERE", "DANTALION",
             "ANDROMALIUS",};
+    private static final String[] chemistryLowerCase = {
+            "hydrogen", "helium", "lithium", "beryllium", "boron", "carbon", "nitrogen", "oxygen", "fluorine", "neon",
+            "sodium", "magnesium", "aluminium", "silicon", "phosphorus", "sulfur", "chlorine", "argon", "potassium",
+            "calcium", "scandium", "titanium", "vanadium", "chromium", "manganese", "iron", "cobalt", "nickel",
+            "copper", "zinc", "gallium", "germanium", "arsenic", "selenium", "bromine", "krypton", "rubidium",
+            "strontium", "yttrium", "zirconium", "niobium", "molybdenum", "technetium", "ruthenium", "rhodium",
+            "palladium", "silver", "cadmium", "indium", "tin", "antimony", "tellurium", "iodine", "xenon", "caesium",
+            "barium", "lanthanum", "cerium", "praseodymium", "neodymium", "promethium", "samarium", "europium",
+            "gadolinium", "terbium", "dysprosium", "holmium", "erbium", "thulium", "ytterbium", "lutetium", "hafnium",
+            "tantalum", "tungsten", "rhenium", "osmium", "iridium", "platinum", "gold", "mercury", "thallium", "lead",
+            "bismuth", "polonium", "astatine", "radon", "francium", "radium", "actinium", "thorium", "protactinium",
+            "uranium", "neptunium", "plutonium", "americium", "curium", "berkelium", "californium", "einsteinium",
+            "fermium", "mendelevium", "nobelium", "lawrencium", "rutherfordium", "dubnium", "seaborgium", "bohrium",
+            "hassium", "meitnerium", "darmstadtium", "roentgenium", "copernicium", "nihonium", "flerovium", "moscovium",
+            "livermorium", "tennessine", "oganesson"
+    };
+    private static final String[] chemistryUpperCase = {
+            "HYDROGEN", "HELIUM", "LITHIUM", "BERYLLIUM", "BORON", "CARBON", "NITROGEN", "OXYGEN", "FLUORINE", "NEON",
+            "SODIUM", "MAGNESIUM", "ALUMINIUM", "SILICON", "PHOSPHORUS", "SULFUR", "CHLORINE", "ARGON", "POTASSIUM",
+            "CALCIUM", "SCANDIUM", "TITANIUM", "VANADIUM", "CHROMIUM", "MANGANESE", "IRON", "COBALT", "NICKEL",
+            "COPPER", "ZINC", "GALLIUM", "GERMANIUM", "ARSENIC", "SELENIUM", "BROMINE", "KRYPTON", "RUBIDIUM",
+            "STRONTIUM", "YTTRIUM", "ZIRCONIUM", "NIOBIUM", "MOLYBDENUM", "TECHNETIUM", "RUTHENIUM", "RHODIUM",
+            "PALLADIUM", "SILVER", "CADMIUM", "INDIUM", "TIN", "ANTIMONY", "TELLURIUM", "IODINE", "XENON", "CAESIUM",
+            "BARIUM", "LANTHANUM", "CERIUM", "PRASEODYMIUM", "NEODYMIUM", "PROMETHIUM", "SAMARIUM", "EUROPIUM",
+            "GADOLINIUM", "TERBIUM", "DYSPROSIUM", "HOLMIUM", "ERBIUM", "THULIUM", "YTTERBIUM", "LUTETIUM", "HAFNIUM",
+            "TANTALUM", "TUNGSTEN", "RHENIUM", "OSMIUM", "IRIDIUM", "PLATINUM", "GOLD", "MERCURY", "THALLIUM", "LEAD",
+            "BISMUTH", "POLONIUM", "ASTATINE", "RADON", "FRANCIUM", "RADIUM", "ACTINIUM", "THORIUM", "PROTACTINIUM",
+            "URANIUM", "NEPTUNIUM", "PLUTONIUM", "AMERICIUM", "CURIUM", "BERKELIUM", "CALIFORNIUM", "EINSTEINIUM",
+            "FERMIUM", "MENDELEVIUM", "NOBELIUM", "LAWRENCIUM", "RUTHERFORDIUM", "DUBNIUM", "SEABORGIUM", "BOHRIUM",
+            "HASSIUM", "MEITNERIUM", "DARMSTADTIUM", "ROENTGENIUM", "COPERNICIUM", "NIHONIUM", "FLEROVIUM", "MOSCOVIUM",
+            "LIVERMORIUM", "TENNESSINE", "OGANESSON"
+    };
 
     private static final String[] allSymbols = new String[greekLowerCase.length + greekUpperCase.length +
-            demonsLowerCase.length + demonsUpperCase.length];
+            demonsLowerCase.length + demonsUpperCase.length + chemistryLowerCase.length + chemistryUpperCase.length];
     static {
+        int ins = 0;
         System.arraycopy(greekLowerCase, 0, allSymbols, 0, greekLowerCase.length);
-        System.arraycopy(greekUpperCase, 0, allSymbols, greekLowerCase.length, greekUpperCase.length);
-        System.arraycopy(demonsLowerCase, 0, allSymbols, greekLowerCase.length + greekUpperCase.length, demonsLowerCase.length);
-        System.arraycopy(demonsUpperCase, 0, allSymbols, greekLowerCase.length + greekUpperCase.length + demonsLowerCase.length, demonsUpperCase.length);
+        System.arraycopy(greekUpperCase, 0, allSymbols, ins += greekLowerCase.length, greekUpperCase.length);
+        System.arraycopy(demonsLowerCase, 0, allSymbols, ins += greekUpperCase.length, demonsLowerCase.length);
+        System.arraycopy(demonsUpperCase, 0, allSymbols, ins += demonsLowerCase.length, demonsUpperCase.length);
+        System.arraycopy(chemistryLowerCase, 0, allSymbols, ins += demonsUpperCase.length, chemistryLowerCase.length);
+        System.arraycopy(chemistryUpperCase, 0, allSymbols, ins += chemistryLowerCase.length, chemistryUpperCase.length);
     }
     /**
      * An unseeded Random instance (specifically, an {@link AlternateRandom}) that is used by {@link #shuffle(int[])}
@@ -262,12 +297,13 @@ public final class ArrayTools {
 
     /**
      * Stupidly simple convenience method that produces a String array containing various short terms, such as the names
-     * of Greek letters (24 in lower case and then 24 in upper case) and the names of demons from the Ars Goetia (72
-     * names in lower-case and then 72 in upper case, some of which can include the underscore). This can be useful for
-     * quickly obtaining Strings that are guaranteed to at least be different and not overly long. This group of 192
-     * total Strings is used to seed every Hasher in {@link Hasher#predefined}.
+     * of Greek letters (24 in lower case and then 24 in upper case), the names of demons from the Ars Goetia (72
+     * names in lower case and then 72 in upper case, some of which can include the underscore), and the names of
+     * chemical elements from the periodic table (118 names in lower case and then 118 in upper case). This can be
+     * useful for quickly obtaining Strings that are guaranteed to at least be different and not overly long. This group
+     * of 428 total Strings is used to seed every Hasher in {@link Hasher#predefined}.
      *
-     * @param stringCount the number of Strings to return in an array; the maximum this will produce is 192
+     * @param stringCount the number of Strings to return in an array; the maximum this will produce is 428
      * @return the range of Strings as an array
      */
     public static String[] stringSpan(int stringCount) {
@@ -280,13 +316,14 @@ public final class ArrayTools {
 
     /**
      * Stupidly simple convenience method that produces a String array containing various short terms, such as the names
-     * of Greek letters (24 in lower case and then 24 in upper case) and the names of demons from the Ars Goetia (72
-     * names in lower-case and then 72 in upper case, some of which can include the underscore). This can be useful for
-     * quickly obtaining Strings that are guaranteed to at least be different and not overly long. This group of 192
-     * total Strings is used to seed every Hasher in {@link Hasher#predefined}.
+     * of Greek letters (24 in lower case and then 24 in upper case), the names of demons from the Ars Goetia (72
+     * names in lower case and then 72 in upper case, some of which can include the underscore), and the names of
+     * chemical elements from the periodic table (118 names in lower case and then 118 in upper case). This can be
+     * useful for quickly obtaining Strings that are guaranteed to at least be different and not overly long. This group
+     * of 428 total Strings is used to seed every Hasher in {@link Hasher#predefined}.
      *
-     * @param start the index of the first letter in the source of 256 chars to use
-     * @param charCount the number of letters to return in an array; the maximum this can produce is 256
+     * @param start the index of the first letter in the source of 428 Strings to use
+     * @param charCount the number of Strings to return in an array; the maximum this can produce is 428
      * @return the range of letters as a char array
      */
     public static String[] stringSpan(int start, int charCount) {
@@ -298,14 +335,15 @@ public final class ArrayTools {
     }
 
     /**
-     * Gets the nth letter from a set of 192 short terms, such as the names of Greek letters (24 in lower case and then
-     * 24 in upper case) and the names of demons from the Ars Goetia (72 names in lower-case and then 72 in upper case,
-     * some of which can include the underscore). This can be useful for quickly obtaining Strings that are guaranteed
-     * to at least be different and not overly long. This group of 192 total Strings is used to seed every Hasher in
+     * Gets the nth String from a set of 428 short terms, such as the names of Greek letters (24 in lower case and then
+     * 24 in upper case), the names of demons from the Ars Goetia (72 names in lower case and then 72 in upper case,
+     * some of which can include the underscore), and the names of chemical elements from the periodic table (118 names
+     * in lower case and then 118 in upper case). This can be useful for quickly obtaining Strings that are guaranteed
+     * to at least be different and not overly long. This group of 428 total Strings is used to seed every Hasher in
      * {@link Hasher#predefined}.
      *
-     * @param index typically from 0 to 191, but all ints are allowed and will produce Strings
-     * @return the String at the given index in a 192-element group of miscellaneous short terms
+     * @param index typically from 0 to 427, but all ints are allowed and will produce Strings
+     * @return the String at the given index in a 428-element group of miscellaneous short terms
      */
     public static String stringAt(int index) {
         return allSymbols[(index & 1023) % allSymbols.length];
