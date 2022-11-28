@@ -350,6 +350,41 @@ public final class ArrayTools {
     }
 
     /**
+     * Gets the nth String from a set of 24 names of Greek letters in lower case. This can be useful for quickly
+     * obtaining Strings that are guaranteed to at least be different and not overly long.
+     *
+     * @param index typically from 0 to 23, but all ints are allowed and will produce Strings
+     * @return the String at the given index in a 24-element group of Greek letter names
+     */
+    public static String greekLetterAt(int index) {
+        return greekLowerCase[(index & 1023) % greekLowerCase.length];
+    }
+
+    /**
+     * Gets the nth String from a set of
+     * <a href="https://en.wikipedia.org/wiki/List_of_demons_in_the_Ars_Goetia">72 names of demons from the Ars Goetia</a>
+     * in lower case. This can be useful for quickly obtaining Strings that are guaranteed to at least be different and
+     * not overly long.
+     *
+     * @param index typically from 0 to 71, but all ints are allowed and will produce Strings
+     * @return the String at the given index in a 72-element group of Greek letter names
+     */
+    public static String demonNameAt(int index) {
+        return demonsLowerCase[(index & 1023) % demonsLowerCase.length];
+    }
+
+    /**
+     * Gets the nth String from the 118 names of chemical elements on the periodic table in lower case. This can be
+     * useful for quickly obtaining Strings that are guaranteed to at least be different and not overly long.
+     *
+     * @param index typically from 0 to 117, but all ints are allowed and will produce Strings
+     * @return the String at the given index in a 118-element group of Greek letter names
+     */
+    public static String chemicalElementAt(int index) {
+        return chemistryLowerCase[(index & 1023) % chemistryLowerCase.length];
+    }
+
+    /**
      * Gets a copy of the 2D char array, source, that has the same data but shares no references with source.
      *
      * @param source a 2D char array
