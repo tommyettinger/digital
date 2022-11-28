@@ -48,6 +48,39 @@ public final class ArrayTools {
             'Ū', 'ū', 'Ŭ', 'ŭ', 'Ů', 'ů', 'Ű', 'ű', 'Ų', 'ų', 'Ŵ', 'ŵ', 'Ŷ', 'ŷ', 'Ÿ', 'Ź', 'ź', 'Ż', 'ż', 'Ž', 'ž', 'Ǿ', 'ǿ', 'Ș', 'ș', 'Ț', 'ț',
             'Γ', 'Δ', 'Θ', 'Λ', 'Ξ', 'Π', 'Σ', 'Φ', 'Ψ', 'Ω', 'α', 'β', 'γ'};
 
+    private static final String[] greekLowerCase = {"alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta",
+            "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon",
+            "phi", "chi", "psi", "omega",};
+    private static final String[] greekUpperCase = {"ALPHA", "BETA", "GAMMA", "DELTA", "EPSILON", "ZETA", "ETA",
+            "THETA", "IOTA", "KAPPA", "LAMBDA", "MU", "NU", "XI", "OMICRON", "PI", "RHO", "SIGMA", "TAU", "UPSILON",
+            "PHI", "CHI", "PSI", "OMEGA",};
+    private static final String[] demonsLowerCase = {
+            "baal", "agares", "vassago", "samigina", "marbas", "valefor", "amon", "barbatos", "paimon", "buer",
+            "gusion", "sitri", "beleth", "leraje", "eligos", "zepar", "botis", "bathin", "sallos", "purson",
+            "marax", "ipos", "aim", "naberius", "glasya_labolas", "bune", "ronove", "berith", "astaroth", "forneus",
+            "foras", "asmoday", "gaap", "furfur", "marchosias", "stolas", "phenex", "halphas", "malphas", "raum",
+            "focalor", "vepar", "sabnock", "shax", "vine", "bifrons", "vual", "haagenti", "crocell", "furcas", "balam",
+            "alloces", "caim", "murmur", "orobas", "gremory", "ose", "amy", "orias", "vapula", "zagan", "valac",
+            "andras", "flauros", "andrealphus", "kimaris", "amdusias", "belial", "decarabia", "seere", "dantalion",
+            "andromalius",};
+    private static final String[] demonsUpperCase = {
+            "BAAL", "AGARES", "VASSAGO", "SAMIGINA", "MARBAS", "VALEFOR", "AMON", "BARBATOS", "PAIMON", "BUER",
+            "GUSION", "SITRI", "BELETH", "LERAJE", "ELIGOS", "ZEPAR", "BOTIS", "BATHIN", "SALLOS", "PURSON",
+            "MARAX", "IPOS", "AIM", "NABERIUS", "GLASYA_LABOLAS", "BUNE", "RONOVE", "BERITH", "ASTAROTH", "FORNEUS",
+            "FORAS", "ASMODAY", "GAAP", "FURFUR", "MARCHOSIAS", "STOLAS", "PHENEX", "HALPHAS", "MALPHAS", "RAUM",
+            "FOCALOR", "VEPAR", "SABNOCK", "SHAX", "VINE", "BIFRONS", "VUAL", "HAAGENTI", "CROCELL", "FURCAS", "BALAM",
+            "ALLOCES", "CAIM", "MURMUR", "OROBAS", "GREMORY", "OSE", "AMY", "ORIAS", "VAPULA", "ZAGAN", "VALAC",
+            "ANDRAS", "FLAUROS", "ANDREALPHUS", "KIMARIS", "AMDUSIAS", "BELIAL", "DECARABIA", "SEERE", "DANTALION",
+            "ANDROMALIUS",};
+
+    private static final String[] allSymbols = new String[greekLowerCase.length + greekUpperCase.length +
+            demonsLowerCase.length + demonsUpperCase.length];
+    static {
+        System.arraycopy(greekLowerCase, 0, allSymbols, 0, greekLowerCase.length);
+        System.arraycopy(greekUpperCase, 0, allSymbols, greekLowerCase.length, greekUpperCase.length);
+        System.arraycopy(demonsLowerCase, 0, allSymbols, greekLowerCase.length + greekUpperCase.length, demonsLowerCase.length);
+        System.arraycopy(demonsUpperCase, 0, allSymbols, greekLowerCase.length + greekUpperCase.length + demonsLowerCase.length, demonsUpperCase.length);
+    }
     /**
      * An unseeded Random instance (specifically, an {@link AlternateRandom}) that is used by {@link #shuffle(int[])}
      * and related overloads when given no Random argument or a null one. This cannot be relied upon to have a given
@@ -68,6 +101,7 @@ public final class ArrayTools {
     private static final long[][] emptyLongs2D = new long[0][0];
     private static final float[][] emptyFloats2D = new float[0][0];
     private static final double[][] emptyDoubles2D = new double[0][0];
+    private static final String[] emptyStrings = new String[0];
 
     /**
      * Stupidly simple convenience method that produces a range from 0 to end, not including end, as an int array.
@@ -224,6 +258,57 @@ public final class ArrayTools {
      */
     public static char letterAt(int index) {
         return letters[index & 255];
+    }
+
+    /**
+     * Stupidly simple convenience method that produces a String array containing various short terms, such as the names
+     * of Greek letters (24 in lower case and then 24 in upper case) and the names of demons from the Ars Goetia (72
+     * names in lower-case and then 72 in upper case, some of which can include the underscore). This can be useful for
+     * quickly obtaining Strings that are guaranteed to at least be different and not overly long. This group of 192
+     * total Strings is used to seed every Hasher in {@link Hasher#predefined}.
+     *
+     * @param stringCount the number of Strings to return in an array; the maximum this will produce is 192
+     * @return the range of Strings as an array
+     */
+    public static String[] stringSpan(int stringCount) {
+        if (stringCount <= 0)
+            return emptyStrings;
+        String[] r = new String[Math.min(stringCount, allSymbols.length)];
+        System.arraycopy(allSymbols, 0, r, 0, r.length);
+        return r;
+    }
+
+    /**
+     * Stupidly simple convenience method that produces a String array containing various short terms, such as the names
+     * of Greek letters (24 in lower case and then 24 in upper case) and the names of demons from the Ars Goetia (72
+     * names in lower-case and then 72 in upper case, some of which can include the underscore). This can be useful for
+     * quickly obtaining Strings that are guaranteed to at least be different and not overly long. This group of 192
+     * total Strings is used to seed every Hasher in {@link Hasher#predefined}.
+     *
+     * @param start the index of the first letter in the source of 256 chars to use
+     * @param charCount the number of letters to return in an array; the maximum this can produce is 256
+     * @return the range of letters as a char array
+     */
+    public static String[] stringSpan(int start, int charCount) {
+        if (charCount <= 0 || start < 0 || start >= allSymbols.length)
+            return emptyStrings;
+        String[] r = new String[Math.min(charCount, allSymbols.length - start)];
+        System.arraycopy(allSymbols, start, r, 0, r.length);
+        return r;
+    }
+
+    /**
+     * Gets the nth letter from a set of 192 short terms, such as the names of Greek letters (24 in lower case and then
+     * 24 in upper case) and the names of demons from the Ars Goetia (72 names in lower-case and then 72 in upper case,
+     * some of which can include the underscore). This can be useful for quickly obtaining Strings that are guaranteed
+     * to at least be different and not overly long. This group of 192 total Strings is used to seed every Hasher in
+     * {@link Hasher#predefined}.
+     *
+     * @param index typically from 0 to 191, but all ints are allowed and will produce Strings
+     * @return the String at the given index in a 192-element group of miscellaneous short terms
+     */
+    public static String stringAt(int index) {
+        return allSymbols[(index & 1023) % allSymbols.length];
     }
 
     /**
