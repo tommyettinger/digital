@@ -61,13 +61,14 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
  * provide extremely strong randomization for any possible input pattern, using the MX3 unary
  * hash with an extra XOR at the beginning to prevent a fixed point at 0.
  * <br>
- * There are also 192 predefined instances of Hasher that you can either
+ * There are also 428 predefined instances of Hasher that you can either
  * select from the array {@link #predefined} or select by hand, such as {@link #omega}.
  * The predefined instances are named after the 24 greek letters, then the same letters
  * with a trailing underscore, then
  * <a href="https://en.wikipedia.org/wiki/List_of_demons_in_the_Ars_Goetia">72 names of demons from the Ars Goetia</a>,
- * then the names of those demons with trailing underscores. The greek letters are traditional,
- * and the demons are perfectly fitting for video games.
+ * then the names of those demons with trailing underscores, then the names of 118 chemical elements, then those names
+ * with trailing underscores. The greek letters are traditional, the demons are perfectly fitting for video games, and
+ * chemistry has been closely linked with computing for many years now.
  *
  * @author Tommy Ettinger
  */
@@ -602,9 +603,12 @@ public class Hasher {
             ose_ = new Hasher("OSE"), amy_ = new Hasher("AMY"), orias_ = new Hasher("ORIAS"), vapula_ = new Hasher("VAPULA"),
             zagan_ = new Hasher("ZAGAN"), valac_ = new Hasher("VALAC"), andras_ = new Hasher("ANDRAS"), flauros_ = new Hasher("FLAUROS"),
             andrealphus_ = new Hasher("ANDREALPHUS"), kimaris_ = new Hasher("KIMARIS"), amdusias_ = new Hasher("AMDUSIAS"), belial_ = new Hasher("BELIAL"),
-            decarabia_ = new Hasher("DECARABIA"), seere_ = new Hasher("SEERE"), dantalion_ = new Hasher("DANTALION"), andromalius_ = new Hasher("ANDROMALIUS");
+            decarabia_ = new Hasher("DECARABIA"), seere_ = new Hasher("SEERE"), dantalion_ = new Hasher("DANTALION"), andromalius_ = new Hasher("ANDROMALIUS"),
+            hydrogen = new Hasher("hydrogen"), helium = new Hasher("helium"), lithium = new Hasher("lithium"), beryllium = new Hasher("beryllium"), boron = new Hasher("boron"), carbon = new Hasher("carbon"), nitrogen = new Hasher("nitrogen"), oxygen = new Hasher("oxygen"), fluorine = new Hasher("fluorine"), neon = new Hasher("neon"), sodium = new Hasher("sodium"), magnesium = new Hasher("magnesium"), aluminium = new Hasher("aluminium"), silicon = new Hasher("silicon"), phosphorus = new Hasher("phosphorus"), sulfur = new Hasher("sulfur"), chlorine = new Hasher("chlorine"), argon = new Hasher("argon"), potassium = new Hasher("potassium"), calcium = new Hasher("calcium"), scandium = new Hasher("scandium"), titanium = new Hasher("titanium"), vanadium = new Hasher("vanadium"), chromium = new Hasher("chromium"), manganese = new Hasher("manganese"), iron = new Hasher("iron"), cobalt = new Hasher("cobalt"), nickel = new Hasher("nickel"), copper = new Hasher("copper"), zinc = new Hasher("zinc"), gallium = new Hasher("gallium"), germanium = new Hasher("germanium"), arsenic = new Hasher("arsenic"), selenium = new Hasher("selenium"), bromine = new Hasher("bromine"), krypton = new Hasher("krypton"), rubidium = new Hasher("rubidium"), strontium = new Hasher("strontium"), yttrium = new Hasher("yttrium"), zirconium = new Hasher("zirconium"), niobium = new Hasher("niobium"), molybdenum = new Hasher("molybdenum"), technetium = new Hasher("technetium"), ruthenium = new Hasher("ruthenium"), rhodium = new Hasher("rhodium"), palladium = new Hasher("palladium"), silver = new Hasher("silver"), cadmium = new Hasher("cadmium"), indium = new Hasher("indium"), tin = new Hasher("tin"), antimony = new Hasher("antimony"), tellurium = new Hasher("tellurium"), iodine = new Hasher("iodine"), xenon = new Hasher("xenon"), caesium = new Hasher("caesium"), barium = new Hasher("barium"), lanthanum = new Hasher("lanthanum"), cerium = new Hasher("cerium"), praseodymium = new Hasher("praseodymium"), neodymium = new Hasher("neodymium"), promethium = new Hasher("promethium"), samarium = new Hasher("samarium"), europium = new Hasher("europium"), gadolinium = new Hasher("gadolinium"), terbium = new Hasher("terbium"), dysprosium = new Hasher("dysprosium"), holmium = new Hasher("holmium"), erbium = new Hasher("erbium"), thulium = new Hasher("thulium"), ytterbium = new Hasher("ytterbium"), lutetium = new Hasher("lutetium"), hafnium = new Hasher("hafnium"), tantalum = new Hasher("tantalum"), tungsten = new Hasher("tungsten"), rhenium = new Hasher("rhenium"), osmium = new Hasher("osmium"), iridium = new Hasher("iridium"), platinum = new Hasher("platinum"), gold = new Hasher("gold"), mercury = new Hasher("mercury"), thallium = new Hasher("thallium"), lead = new Hasher("lead"), bismuth = new Hasher("bismuth"), polonium = new Hasher("polonium"), astatine = new Hasher("astatine"), radon = new Hasher("radon"), francium = new Hasher("francium"), radium = new Hasher("radium"), actinium = new Hasher("actinium"), thorium = new Hasher("thorium"), protactinium = new Hasher("protactinium"), uranium = new Hasher("uranium"), neptunium = new Hasher("neptunium"), plutonium = new Hasher("plutonium"), americium = new Hasher("americium"), curium = new Hasher("curium"), berkelium = new Hasher("berkelium"), californium = new Hasher("californium"), einsteinium = new Hasher("einsteinium"), fermium = new Hasher("fermium"), mendelevium = new Hasher("mendelevium"), nobelium = new Hasher("nobelium"), lawrencium = new Hasher("lawrencium"), rutherfordium = new Hasher("rutherfordium"), dubnium = new Hasher("dubnium"), seaborgium = new Hasher("seaborgium"), bohrium = new Hasher("bohrium"), hassium = new Hasher("hassium"), meitnerium = new Hasher("meitnerium"), darmstadtium = new Hasher("darmstadtium"), roentgenium = new Hasher("roentgenium"), copernicium = new Hasher("copernicium"), nihonium = new Hasher("nihonium"), flerovium = new Hasher("flerovium"), moscovium = new Hasher("moscovium"), livermorium = new Hasher("livermorium"), tennessine = new Hasher("tennessine"), oganesson = new Hasher("oganesson"),
+            hydrogen_ = new Hasher("HYDROGEN"), helium_ = new Hasher("HELIUM"), lithium_ = new Hasher("LITHIUM"), beryllium_ = new Hasher("BERYLLIUM"), boron_ = new Hasher("BORON"), carbon_ = new Hasher("CARBON"), nitrogen_ = new Hasher("NITROGEN"), oxygen_ = new Hasher("OXYGEN"), fluorine_ = new Hasher("FLUORINE"), neon_ = new Hasher("NEON"), sodium_ = new Hasher("SODIUM"), magnesium_ = new Hasher("MAGNESIUM"), aluminium_ = new Hasher("ALUMINIUM"), silicon_ = new Hasher("SILICON"), phosphorus_ = new Hasher("PHOSPHORUS"), sulfur_ = new Hasher("SULFUR"), chlorine_ = new Hasher("CHLORINE"), argon_ = new Hasher("ARGON"), potassium_ = new Hasher("POTASSIUM"), calcium_ = new Hasher("CALCIUM"), scandium_ = new Hasher("SCANDIUM"), titanium_ = new Hasher("TITANIUM"), vanadium_ = new Hasher("VANADIUM"), chromium_ = new Hasher("CHROMIUM"), manganese_ = new Hasher("MANGANESE"), iron_ = new Hasher("IRON"), cobalt_ = new Hasher("COBALT"), nickel_ = new Hasher("NICKEL"), copper_ = new Hasher("COPPER"), zinc_ = new Hasher("ZINC"), gallium_ = new Hasher("GALLIUM"), germanium_ = new Hasher("GERMANIUM"), arsenic_ = new Hasher("ARSENIC"), selenium_ = new Hasher("SELENIUM"), bromine_ = new Hasher("BROMINE"), krypton_ = new Hasher("KRYPTON"), rubidium_ = new Hasher("RUBIDIUM"), strontium_ = new Hasher("STRONTIUM"), yttrium_ = new Hasher("YTTRIUM"), zirconium_ = new Hasher("ZIRCONIUM"), niobium_ = new Hasher("NIOBIUM"), molybdenum_ = new Hasher("MOLYBDENUM"), technetium_ = new Hasher("TECHNETIUM"), ruthenium_ = new Hasher("RUTHENIUM"), rhodium_ = new Hasher("RHODIUM"), palladium_ = new Hasher("PALLADIUM"), silver_ = new Hasher("SILVER"), cadmium_ = new Hasher("CADMIUM"), indium_ = new Hasher("INDIUM"), tin_ = new Hasher("TIN"), antimony_ = new Hasher("ANTIMONY"), tellurium_ = new Hasher("TELLURIUM"), iodine_ = new Hasher("IODINE"), xenon_ = new Hasher("XENON"), caesium_ = new Hasher("CAESIUM"), barium_ = new Hasher("BARIUM"), lanthanum_ = new Hasher("LANTHANUM"), cerium_ = new Hasher("CERIUM"), praseodymium_ = new Hasher("PRASEODYMIUM"), neodymium_ = new Hasher("NEODYMIUM"), promethium_ = new Hasher("PROMETHIUM"), samarium_ = new Hasher("SAMARIUM"), europium_ = new Hasher("EUROPIUM"), gadolinium_ = new Hasher("GADOLINIUM"), terbium_ = new Hasher("TERBIUM"), dysprosium_ = new Hasher("DYSPROSIUM"), holmium_ = new Hasher("HOLMIUM"), erbium_ = new Hasher("ERBIUM"), thulium_ = new Hasher("THULIUM"), ytterbium_ = new Hasher("YTTERBIUM"), lutetium_ = new Hasher("LUTETIUM"), hafnium_ = new Hasher("HAFNIUM"), tantalum_ = new Hasher("TANTALUM"), tungsten_ = new Hasher("TUNGSTEN"), rhenium_ = new Hasher("RHENIUM"), osmium_ = new Hasher("OSMIUM"), iridium_ = new Hasher("IRIDIUM"), platinum_ = new Hasher("PLATINUM"), gold_ = new Hasher("GOLD"), mercury_ = new Hasher("MERCURY"), thallium_ = new Hasher("THALLIUM"), lead_ = new Hasher("LEAD"), bismuth_ = new Hasher("BISMUTH"), polonium_ = new Hasher("POLONIUM"), astatine_ = new Hasher("ASTATINE"), radon_ = new Hasher("RADON"), francium_ = new Hasher("FRANCIUM"), radium_ = new Hasher("RADIUM"), actinium_ = new Hasher("ACTINIUM"), thorium_ = new Hasher("THORIUM"), protactinium_ = new Hasher("PROTACTINIUM"), uranium_ = new Hasher("URANIUM"), neptunium_ = new Hasher("NEPTUNIUM"), plutonium_ = new Hasher("PLUTONIUM"), americium_ = new Hasher("AMERICIUM"), curium_ = new Hasher("CURIUM"), berkelium_ = new Hasher("BERKELIUM"), californium_ = new Hasher("CALIFORNIUM"), einsteinium_ = new Hasher("EINSTEINIUM"), fermium_ = new Hasher("FERMIUM"), mendelevium_ = new Hasher("MENDELEVIUM"), nobelium_ = new Hasher("NOBELIUM"), lawrencium_ = new Hasher("LAWRENCIUM"), rutherfordium_ = new Hasher("RUTHERFORDIUM"), dubnium_ = new Hasher("DUBNIUM"), seaborgium_ = new Hasher("SEABORGIUM"), bohrium_ = new Hasher("BOHRIUM"), hassium_ = new Hasher("HASSIUM"), meitnerium_ = new Hasher("MEITNERIUM"), darmstadtium_ = new Hasher("DARMSTADTIUM"), roentgenium_ = new Hasher("ROENTGENIUM"), copernicium_ = new Hasher("COPERNICIUM"), nihonium_ = new Hasher("NIHONIUM"), flerovium_ = new Hasher("FLEROVIUM"), moscovium_ = new Hasher("MOSCOVIUM"), livermorium_ = new Hasher("LIVERMORIUM"), tennessine_ = new Hasher("TENNESSINE"), oganesson_ = new Hasher("OGANESSON");
+
     /**
-     * Has a length of 192, which may be relevant if automatically choosing a predefined hash functor.
+     * Has a length of 428, which may be relevant if automatically choosing a predefined hash functor.
      */
     public static final Hasher[] predefined = new Hasher[]{alpha, beta, gamma, delta, epsilon, zeta, eta, theta, iota,
             kappa, lambda, mu, nu, xi, omicron, pi, rho, sigma, tau, upsilon, phi, chi, psi, omega,
@@ -627,7 +631,39 @@ public class Hasher {
             focalor_, vepar_, sabnock_, shax_, vine_, bifrons_, vual_, haagenti_,
             crocell_, furcas_, balam_, alloces_, caim_, murmur_, orobas_, gremory_,
             ose_, amy_, orias_, vapula_, zagan_, valac_, andras_, flauros_,
-            andrealphus_, kimaris_, amdusias_, belial_, decarabia_, seere_, dantalion_, andromalius_};
+            andrealphus_, kimaris_, amdusias_, belial_, decarabia_, seere_, dantalion_, andromalius_,
+
+            hydrogen, helium, lithium, beryllium, boron, carbon, nitrogen, oxygen, fluorine, neon,
+            sodium, magnesium, aluminium, silicon, phosphorus, sulfur, chlorine, argon, potassium,
+            calcium, scandium, titanium, vanadium, chromium, manganese, iron, cobalt, nickel,
+            copper, zinc, gallium, germanium, arsenic, selenium, bromine, krypton, rubidium,
+            strontium, yttrium, zirconium, niobium, molybdenum, technetium, ruthenium, rhodium,
+            palladium, silver, cadmium, indium, tin, antimony, tellurium, iodine, xenon, caesium,
+            barium, lanthanum, cerium, praseodymium, neodymium, promethium, samarium, europium,
+            gadolinium, terbium, dysprosium, holmium, erbium, thulium, ytterbium, lutetium, hafnium,
+            tantalum, tungsten, rhenium, osmium, iridium, platinum, gold, mercury, thallium, lead,
+            bismuth, polonium, astatine, radon, francium, radium, actinium, thorium, protactinium,
+            uranium, neptunium, plutonium, americium, curium, berkelium, californium, einsteinium,
+            fermium, mendelevium, nobelium, lawrencium, rutherfordium, dubnium, seaborgium, bohrium,
+            hassium, meitnerium, darmstadtium, roentgenium, copernicium, nihonium, flerovium, moscovium,
+            livermorium, tennessine, oganesson,
+
+            hydrogen_, helium_, lithium_, beryllium_, boron_, carbon_, nitrogen_, oxygen_, fluorine_, neon_,
+            sodium_, magnesium_, aluminium_, silicon_, phosphorus_, sulfur_, chlorine_, argon_, potassium_,
+            calcium_, scandium_, titanium_, vanadium_, chromium_, manganese_, iron_, cobalt_, nickel_,
+            copper_, zinc_, gallium_, germanium_, arsenic_, selenium_, bromine_, krypton_, rubidium_,
+            strontium_, yttrium_, zirconium_, niobium_, molybdenum_, technetium_, ruthenium_, rhodium_,
+            palladium_, silver_, cadmium_, indium_, tin_, antimony_, tellurium_, iodine_, xenon_, caesium_,
+            barium_, lanthanum_, cerium_, praseodymium_, neodymium_, promethium_, samarium_, europium_,
+            gadolinium_, terbium_, dysprosium_, holmium_, erbium_, thulium_, ytterbium_, lutetium_, hafnium_,
+            tantalum_, tungsten_, rhenium_, osmium_, iridium_, platinum_, gold_, mercury_, thallium_, lead_,
+            bismuth_, polonium_, astatine_, radon_, francium_, radium_, actinium_, thorium_, protactinium_,
+            uranium_, neptunium_, plutonium_, americium_, curium_, berkelium_, californium_, einsteinium_,
+            fermium_, mendelevium_, nobelium_, lawrencium_, rutherfordium_, dubnium_, seaborgium_, bohrium_,
+            hassium_, meitnerium_, darmstadtium_, roentgenium_, copernicium_, nihonium_, flerovium_, moscovium_,
+            livermorium_, tennessine_, oganesson_,
+
+    };
 
     public long hash64(final boolean[] data) {
         if (data == null) return 0;

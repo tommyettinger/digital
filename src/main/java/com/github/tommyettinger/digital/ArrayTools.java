@@ -86,7 +86,7 @@ public final class ArrayTools {
             "uranium", "neptunium", "plutonium", "americium", "curium", "berkelium", "californium", "einsteinium",
             "fermium", "mendelevium", "nobelium", "lawrencium", "rutherfordium", "dubnium", "seaborgium", "bohrium",
             "hassium", "meitnerium", "darmstadtium", "roentgenium", "copernicium", "nihonium", "flerovium", "moscovium",
-            "livermorium", "tennessine", "oganesson"
+            "livermorium", "tennessine", "oganesson",
     };
     private static final String[] chemistryUpperCase = {
             "HYDROGEN", "HELIUM", "LITHIUM", "BERYLLIUM", "BORON", "CARBON", "NITROGEN", "OXYGEN", "FLUORINE", "NEON",
@@ -102,7 +102,7 @@ public final class ArrayTools {
             "URANIUM", "NEPTUNIUM", "PLUTONIUM", "AMERICIUM", "CURIUM", "BERKELIUM", "CALIFORNIUM", "EINSTEINIUM",
             "FERMIUM", "MENDELEVIUM", "NOBELIUM", "LAWRENCIUM", "RUTHERFORDIUM", "DUBNIUM", "SEABORGIUM", "BOHRIUM",
             "HASSIUM", "MEITNERIUM", "DARMSTADTIUM", "ROENTGENIUM", "COPERNICIUM", "NIHONIUM", "FLEROVIUM", "MOSCOVIUM",
-            "LIVERMORIUM", "TENNESSINE", "OGANESSON"
+            "LIVERMORIUM", "TENNESSINE", "OGANESSON",
     };
 
     private static final String[] allSymbols = new String[greekLowerCase.length + greekUpperCase.length +
