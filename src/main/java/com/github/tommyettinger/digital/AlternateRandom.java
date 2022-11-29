@@ -208,10 +208,11 @@ public class AlternateRandom extends Random {
         stateB = (fa << 44 | fa >>> 20);
         stateC = fb + fd;
         stateD = fd + 0x9E3779B97F4A7C15L;
-        long u = (stateE = fa ^ fc);
-        final long c = Long.bitCount(u) - 32L << 32;
-        u *= 0xC6AC29E4C6AC29E5L;
-        return 0x1.fb760cp-35 * (c + (u & 0xFFFFFFFFL) - (u >>> 32));
+        final long bits = (stateE = fa ^ fc);
+        return MathTools.probit(BitConversion.longBitsToDouble(1022L - Long.numberOfTrailingZeros(bits) << 52 | bits >>> 12));
+//        final long c = Long.bitCount(bits) - 32L << 32;
+//        bits *= 0xC6AC29E4C6AC29E5L;
+//        return 0x1.fb760cp-35 * (c + (bits & 0xFFFFFFFFL) - (bits >>> 32));
     }
 
     @Override
