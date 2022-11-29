@@ -6,7 +6,9 @@ import static com.github.tommyettinger.digital.MathTools.ROOT2_INVERSE;
 import static com.github.tommyettinger.digital.MathTools.ROOT2_INVERSE_D;
 
 /**
- * Static data for 3D shapes, for now.
+ * Static data for the 3D platonic solids. These are provided for the polyhedra with edge length 1, and for scaled
+ * versions of those polyhedra where each vertex has distance 1 from the center (the origin); both float and double
+ * arrays are here.
  */
 public final class ShapeTools {
     /**
