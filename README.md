@@ -59,6 +59,11 @@ also sometimes 1D or 3D arrays. It allows copying, inserting,
 and filling 2D arrays, and creating ranges of 1D arrays. It also
 has a lot of methods for shuffling 1D arrays, 2D arrays, and
 sections of 1D arrays, for all primitive types and for objects.
+There are also some "filler supplies" in ArrayTools -- methods
+for filling up char, int, or String arrays with contents that
+are guaranteed to be distinct up to a certain limit. The same
+data that can be used to fill up arrays with ArrayTools also
+gets used by Hasher for seeding its predefined instances.
 
 Hasher is... large. It provides fast, high-quality hashing
 functions for primitive arrays (and arrays of objects, if they
@@ -89,20 +94,26 @@ if you do use juniper, then its `WhiskerRandom` or `PasarRandom`
 generators are similar to or the same as AlternateRandom's
 algorithm, and offer many more features.
 
+ShapeTools provides some predefined mathematical constants for
+the vertices and faces of 3D polyhedra (currently, just the 5
+Platonic solids). It could be useful for code that needs 3D shapes
+in code for something like continuous noise, but doesn't have
+access to 3D models.
+
 ## How do I get it?
 
 With Gradle, add this to your dependencies (in your core module,
 for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.4"
+api "com.github.tommyettinger:digital:0.1.5"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.4:sources"
+api "com.github.tommyettinger:digital:0.1.5:sources"
 ```
 
 and this in your GdxDefinition.gwt.xml file:
