@@ -722,6 +722,71 @@ public final class MathTools {
         return sign * (0.5 - 0.5 / (n * n)) + 0.5;
     }
 
+    /**
+     * Inverse to the {@link #probit(double)} function; takes a normal-distributed input and returns a value between 0.0
+     * and 1.0, both inclusive. This is based on a scaled error function approximation; the original approximation has a
+     * maximum error of {@code 3.0e-7}, and scaling it shouldn't change that too drastically. The CDF of the normal
+     * distribution is essentially the same as this method.
+     * <br>
+     * Equivalent to a scaled error function from Abramowitz and Stegun, 1964; equation 7.1.27 .
+     * See <a href="https://en.wikipedia.org/wiki/Error_function#Approximation_with_elementary_functions">Wikipedia</a>.
+     * @param x any finite float, typically normal-distributed but not necessarily
+     * @return a float between 0 and 1, inclusive
+     */
+    public float probitInverse(final float x) {
+        final float a1 = 0.0705230784f, a2 = 0.0422820123f, a3 = 0.0092705272f, a4 = 0.0001520143f, a5 = 0.0002765672f, a6 = 0.0000430638f;
+        final float sign = Math.signum(x), y1 = sign * x * 0.7071067811865475f, y2 = y1 * y1, y3 = y1 * y2, y4 = y2 * y2, y5 = y2 * y3, y6 = y3 * y3;
+        float n = 1f + a1 * y1 + a2 * y2 + a3 * y3 + a4 * y4 + a5 * y5 + a6 * y6;
+        n *= n;
+        n *= n;
+        n *= n;
+        return sign * (0.5f - 0.5f / (n * n)) + 0.5f;
+    }
+
+    /**
+     * The "error function" erf(), which takes any finite double as input and produces a double between -1 and 1. This
+     * may be useful for reducing potentially-infinite results, such as those from a normal distribution, to a -1 to 1
+     * range; you can also use {@link #probitInverse(double)} to reduce a value to the 0 to 1 range. Note that in the
+     * case of a normal distribution, calling this will result in an approximately uniform, not normal, distribution
+     * from -1 to 1.
+     * <br>
+     * This implementation is from Abramowitz and Stegun, 1964; equation 7.1.27 .
+     * See <a href="https://en.wikipedia.org/wiki/Error_function#Approximation_with_elementary_functions">Wikipedia</a>.
+     * @param x any finite double
+     * @return a double between -1 and 1, inclusive
+     */
+    public double erf(final double x) {
+        final double a1 = 0.0705230784, a2 = 0.0422820123, a3 = 0.0092705272, a4 = 0.0001520143, a5 = 0.0002765672, a6 = 0.0000430638;
+        final double sign = Math.signum(x), y1 = sign * x, y2 = y1 * y1, y3 = y1 * y2, y4 = y2 * y2, y5 = y2 * y3, y6 = y3 * y3;
+        double n = 1.0 + a1 * y1 + a2 * y2 + a3 * y3 + a4 * y4 + a5 * y5 + a6 * y6;
+        n *= n;
+        n *= n;
+        n *= n;
+        return sign * (1.0 - 1.0 / (n * n));
+    }
+
+    /**
+     * The "error function" erf(), which takes any finite float as input and produces a float between -1 and 1. This
+     * may be useful for reducing potentially-infinite results, such as those from a normal distribution, to a -1 to 1
+     * range; you can also use {@link #probitInverse(double)} to reduce a value to the 0 to 1 range. Note that in the
+     * case of a normal distribution, calling this will result in an approximately uniform, not normal, distribution
+     * from -1 to 1.
+     * <br>
+     * This implementation is from Abramowitz and Stegun, 1964; equation 7.1.27 .
+     * See <a href="https://en.wikipedia.org/wiki/Error_function#Approximation_with_elementary_functions">Wikipedia</a>.
+     * @param x any finite float
+     * @return a float between -1 and 1, inclusive
+     */
+    public float erf(final float x) {
+        final float a1 = 0.0705230784f, a2 = 0.0422820123f, a3 = 0.0092705272f, a4 = 0.0001520143f, a5 = 0.0002765672f, a6 = 0.0000430638f;
+        final float sign = Math.signum(x), y1 = sign * x, y2 = y1 * y1, y3 = y1 * y2, y4 = y2 * y2, y5 = y2 * y3, y6 = y3 * y3;
+        float n = 1f + a1 * y1 + a2 * y2 + a3 * y3 + a4 * y4 + a5 * y5 + a6 * y6;
+        n *= n;
+        n *= n;
+        n *= n;
+        return sign * (1f - 1f / (n * n));
+    }
+
 
     /**
      * Returns the next higher power of two relative to {@code n}, or n if it is already a power of two. This returns 2
