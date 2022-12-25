@@ -1024,14 +1024,14 @@ public final class ArrayTools {
         if (source == null)
             return null;
         if (source.length == 0)
-            return (T[][])new Object[0][0];
+            return Arrays.copyOf(source, 0);
         final int minWidth = Math.min(source.length - startX, width);
         final int minHeight = Math.min(source[0].length - startY, height);
         if(minWidth == 0 || minHeight == 0)
-            return (T[][])new Object[0][0];
-        T[][] result = (T[][])new Object[minWidth][minHeight];
+            return Arrays.copyOf(source, 0);
+        T[][] result = Arrays.copyOf(source, minWidth);
         for (int i = 0, x = startX; i < minWidth; i++, x++) {
-            System.arraycopy(source[x], startY, result[i], 0, minHeight);
+            result[i] = Arrays.copyOfRange(source[x], startY, startY + minHeight);
         }
         return result;
     }
