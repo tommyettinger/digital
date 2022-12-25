@@ -1237,6 +1237,33 @@ public final class ArrayTools {
     }
 
     /**
+     * Iterates (potentially more than once) through {@code contents} and assigns the values it gets from there into
+     * {@code modifying}. This iterated in column-major order, so all y values in the first column of contents will be
+     * assigned before the next column is entered. If every item in contents is used, this will keep filling, looping
+     * back to start with the beginning of contents. This does only a shallow copy of the items in contents; the exact
+     * references will still be shared between contents and modifying.
+     * @param modifying a 2D T array that will be modified in-place; does not have to be rectangular
+     * @param contents a T array or varargs that will be used to fill modifying
+     * @return modifying, after it has been filled up
+     */
+    @SafeVarargs
+    public static <T> T[][] sequentialFill(T[][] modifying, T... contents) {
+        if(modifying == null || contents == null)
+            return modifying;
+        final int limit = contents.length;
+        if(limit == 0)
+            return modifying;
+        int ci = 0;
+        for (int x = 0; x < modifying.length; x++) {
+            for (int y = 0; y < modifying[x].length; y++) {
+                modifying[x][y] = contents[ci++];
+                if(ci == limit) ci = 0;
+            }
+        }
+        return modifying;
+    }
+
+    /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(char[][], char)} to modify an existing 2D array instead.
      *

@@ -59,6 +59,28 @@ public class ArrayToolsTest {
         System.out.println();
     }
 
+    @Test
+    public void testCharSequentialFill() {
+        char[] contents = ArrayTools.letterSpan(100);
+        char[][] large = new char[12][11], small = new char[6][6];
+        ArrayTools.sequentialFill(large, contents);
+        Assert.assertEquals(contents[0], large[0][0]);
+        Assert.assertEquals(contents[1], large[0][1]);
+        Assert.assertEquals(contents[2], large[0][2]);
+        Assert.assertEquals(contents[11], large[1][0]);
+        Assert.assertEquals(contents[12], large[1][1]);
+        Assert.assertEquals(contents[13], large[1][2]);
+        Assert.assertEquals(contents[0], large[9][1]);
+        ArrayTools.sequentialFill(small, contents);
+        Assert.assertEquals(contents[0], small[0][0]);
+        Assert.assertEquals(contents[1], small[0][1]);
+        Assert.assertEquals(contents[2], small[0][2]);
+        Assert.assertEquals(contents[6], small[1][0]);
+        Assert.assertEquals(contents[7], small[1][1]);
+        Assert.assertEquals(contents[8], small[1][2]);
+
+    }
+
     public static void main(String[] args) {
         char[][] letters = new char[][] {
                 ArrayTools.letterSpan(0, 16),
