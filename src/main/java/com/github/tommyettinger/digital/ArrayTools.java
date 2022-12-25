@@ -828,6 +828,188 @@ public final class ArrayTools {
     }
 
     /**
+     * Takes a 2D source array and produces a usually-smaller section allocated as a new 2D array.
+     *
+     * @param source a 2D byte array that will be copied and inserted into target
+     * @param startX the lowest x coordinate to take from source
+     * @param startY the lowest y coordinate to take from source
+     * @param width the maximum x-size to take from source; may be less if less space was available
+     * @param height the maximum y-size to take from source; may be less if less space was available
+     * @return a new 2D array that tries to match the specified width and height, getting items from source
+     */
+    public static byte[][] section(byte[][] source, int startX, int startY, int width, int height) {
+        if (source == null)
+            return null;
+        if (source.length == 0)
+            return new byte[0][0];
+        final int minWidth = Math.min(source.length - startX, width);
+        final int minHeight = Math.min(source[0].length - startY, height);
+        if(minWidth == 0 || minHeight == 0)
+            return new byte[0][0];
+        byte[][] result = new byte[minWidth][minHeight];
+        for (int i = 0, x = startX; i < minWidth; i++, x++) {
+            System.arraycopy(source[x], startY, result[i], 0, minHeight);
+        }
+        return result;
+    }
+
+    /**
+     * Takes a 2D source array and produces a usually-smaller section allocated as a new 2D array.
+     *
+     * @param source a 2D short array that will be copied and inserted into target
+     * @param startX the lowest x coordinate to take from source
+     * @param startY the lowest y coordinate to take from source
+     * @param width the maximum x-size to take from source; may be less if less space was available
+     * @param height the maximum y-size to take from source; may be less if less space was available
+     * @return a new 2D array that tries to match the specified width and height, getting items from source
+     */
+    public static short[][] section(short[][] source, int startX, int startY, int width, int height) {
+        if (source == null)
+            return null;
+        if (source.length == 0)
+            return new short[0][0];
+        final int minWidth = Math.min(source.length - startX, width);
+        final int minHeight = Math.min(source[0].length - startY, height);
+        if(minWidth == 0 || minHeight == 0)
+            return new short[0][0];
+        short[][] result = new short[minWidth][minHeight];
+        for (int i = 0, x = startX; i < minWidth; i++, x++) {
+            System.arraycopy(source[x], startY, result[i], 0, minHeight);
+        }
+        return result;
+    }
+
+    /**
+     * Takes a 2D source array and produces a usually-smaller section allocated as a new 2D array.
+     *
+     * @param source a 2D int array that will be copied and inserted into target
+     * @param startX the lowest x coordinate to take from source
+     * @param startY the lowest y coordinate to take from source
+     * @param width the maximum x-size to take from source; may be less if less space was available
+     * @param height the maximum y-size to take from source; may be less if less space was available
+     * @return a new 2D array that tries to match the specified width and height, getting items from source
+     */
+    public static int[][] section(int[][] source, int startX, int startY, int width, int height) {
+        if (source == null)
+            return null;
+        if (source.length == 0)
+            return new int[0][0];
+        final int minWidth = Math.min(source.length - startX, width);
+        final int minHeight = Math.min(source[0].length - startY, height);
+        if(minWidth == 0 || minHeight == 0)
+            return new int[0][0];
+        int[][] result = new int[minWidth][minHeight];
+        for (int i = 0, x = startX; i < minWidth; i++, x++) {
+            System.arraycopy(source[x], startY, result[i], 0, minHeight);
+        }
+        return result;
+    }
+
+    /**
+     * Takes a 2D source array and produces a usually-smaller section allocated as a new 2D array.
+     *
+     * @param source a 2D long array that will be copied and inserted into target
+     * @param startX the lowest x coordinate to take from source
+     * @param startY the lowest y coordinate to take from source
+     * @param width the maximum x-size to take from source; may be less if less space was available
+     * @param height the maximum y-size to take from source; may be less if less space was available
+     * @return a new 2D array that tries to match the specified width and height, getting items from source
+     */
+    public static long[][] section(long[][] source, int startX, int startY, int width, int height) {
+        if (source == null)
+            return null;
+        if (source.length == 0)
+            return new long[0][0];
+        final int minWidth = Math.min(source.length - startX, width);
+        final int minHeight = Math.min(source[0].length - startY, height);
+        if(minWidth == 0 || minHeight == 0)
+            return new long[0][0];
+        long[][] result = new long[minWidth][minHeight];
+        for (int i = 0, x = startX; i < minWidth; i++, x++) {
+            System.arraycopy(source[x], startY, result[i], 0, minHeight);
+        }
+        return result;
+    }
+
+    /**
+     * Takes a 2D source array and produces a usually-smaller section allocated as a new 2D array.
+     *
+     * @param source a 2D boolean array that will be copied and inserted into target
+     * @param startX the lowest x coordinate to take from source
+     * @param startY the lowest y coordinate to take from source
+     * @param width the maximum x-size to take from source; may be less if less space was available
+     * @param height the maximum y-size to take from source; may be less if less space was available
+     * @return a new 2D array that tries to match the specified width and height, getting items from source
+     */
+    public static boolean[][] section(boolean[][] source, int startX, int startY, int width, int height) {
+        if (source == null)
+            return null;
+        if (source.length == 0)
+            return new boolean[0][0];
+        final int minWidth = Math.min(source.length - startX, width);
+        final int minHeight = Math.min(source[0].length - startY, height);
+        if(minWidth == 0 || minHeight == 0)
+            return new boolean[0][0];
+        boolean[][] result = new boolean[minWidth][minHeight];
+        for (int i = 0, x = startX; i < minWidth; i++, x++) {
+            System.arraycopy(source[x], startY, result[i], 0, minHeight);
+        }
+        return result;
+    }
+
+    /**
+     * Takes a 2D source array and produces a usually-smaller section allocated as a new 2D array.
+     *
+     * @param source a 2D float array that will be copied and inserted into target
+     * @param startX the lowest x coordinate to take from source
+     * @param startY the lowest y coordinate to take from source
+     * @param width the maximum x-size to take from source; may be less if less space was available
+     * @param height the maximum y-size to take from source; may be less if less space was available
+     * @return a new 2D array that tries to match the specified width and height, getting items from source
+     */
+    public static float[][] section(float[][] source, int startX, int startY, int width, int height) {
+        if (source == null)
+            return null;
+        if (source.length == 0)
+            return new float[0][0];
+        final int minWidth = Math.min(source.length - startX, width);
+        final int minHeight = Math.min(source[0].length - startY, height);
+        if(minWidth == 0 || minHeight == 0)
+            return new float[0][0];
+        float[][] result = new float[minWidth][minHeight];
+        for (int i = 0, x = startX; i < minWidth; i++, x++) {
+            System.arraycopy(source[x], startY, result[i], 0, minHeight);
+        }
+        return result;
+    }
+
+    /**
+     * Takes a 2D source array and produces a usually-smaller section allocated as a new 2D array.
+     *
+     * @param source a 2D double array that will be copied and inserted into target
+     * @param startX the lowest x coordinate to take from source
+     * @param startY the lowest y coordinate to take from source
+     * @param width the maximum x-size to take from source; may be less if less space was available
+     * @param height the maximum y-size to take from source; may be less if less space was available
+     * @return a new 2D array that tries to match the specified width and height, getting items from source
+     */
+    public static double[][] section(double[][] source, int startX, int startY, int width, int height) {
+        if (source == null)
+            return null;
+        if (source.length == 0)
+            return new double[0][0];
+        final int minWidth = Math.min(source.length - startX, width);
+        final int minHeight = Math.min(source[0].length - startY, height);
+        if(minWidth == 0 || minHeight == 0)
+            return new double[0][0];
+        double[][] result = new double[minWidth][minHeight];
+        for (int i = 0, x = startX; i < minWidth; i++, x++) {
+            System.arraycopy(source[x], startY, result[i], 0, minHeight);
+        }
+        return result;
+    }
+
+    /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(char[][], char)} to modify an existing 2D array instead.
      *
