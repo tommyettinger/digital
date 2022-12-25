@@ -114,7 +114,10 @@ public final class TrigTools {
      */
     public static final double QUARTER_PI_D = Math.PI * 0.25;
 
-    private static final int SIN_BITS = 14; // 64KB. Adjust for accuracy.
+    /**
+     * The hard-coded size of {@link #SIN_TABLE} in bits; this is 14 now, and could be adjusted in the future.
+     */
+    public static final int SIN_BITS = 14; // 64KB. Adjust for accuracy.
     /**
      * The size of {@link #SIN_TABLE}, available separately from the table's length for convenience.
      */
@@ -131,13 +134,31 @@ public final class TrigTools {
      */
     public static final int TABLE_MASK = TABLE_SIZE - 1;
 
-    static final float radToIndex = TABLE_SIZE / PI2;
-    static final float degToIndex = TABLE_SIZE / 360f;
-    static final float turnToIndex = TABLE_SIZE;
+    /**
+     * Multiply by this to convert from a float angle in radians to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     */
+    public static final float radToIndex = TABLE_SIZE / PI2;
+    /**
+     * Multiply by this to convert from a float angle in degrees to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     */
+    public static final float degToIndex = TABLE_SIZE / 360f;
+    /**
+     * Multiply by this to convert from a float angle in turns to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     */
+    public static final float turnToIndex = TABLE_SIZE;
 
-    static final double radToIndexD = TABLE_SIZE / PI2_D;
-    static final double degToIndexD = TABLE_SIZE / 360.0;
-    static final double turnToIndexD = TABLE_SIZE;
+    /**
+     * Multiply by this to convert from a double angle in radians to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     */
+    public static final double radToIndexD = TABLE_SIZE / PI2_D;
+    /**
+     * Multiply by this to convert from a double angle in degrees to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     */
+    public static final double degToIndexD = TABLE_SIZE / 360.0;
+    /**
+     * Multiply by this to convert from a double angle in turns to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     */
+    public static final double turnToIndexD = TABLE_SIZE;
 
     /**
      * Multiply by this to convert from radians to degrees.
@@ -165,6 +186,7 @@ public final class TrigTools {
      * A quick way to get a random unit vector is to get a random 14-bit number, as with
      * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get y, then look up
      * {@code (angle + TrigTools.SIN_TO_COS) & TrigTools.TABLE_MASK} (or {@code (angle + 4096) & 16383}) to get x.
+     * Note that if {@link #SIN_BITS} changes, this table will be a different size, and so will {@link #SIN_TO_COS}.
      */
     public static final float[] SIN_TABLE = new float[TABLE_SIZE];
 
@@ -176,6 +198,7 @@ public final class TrigTools {
      * A quick way to get a random unit vector is to get a random 14-bit number, as with
      * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get y, then look up
      * {@code (angle + TrigTools.SIN_TO_COS) & TrigTools.TABLE_MASK} (or {@code (angle + 4096) & 16383}) to get x.
+     * Note that if {@link #SIN_BITS} changes, this table will be a different size, and so will {@link #SIN_TO_COS}.
      */
     public static final double[] SIN_TABLE_D = new double[TABLE_SIZE];
 

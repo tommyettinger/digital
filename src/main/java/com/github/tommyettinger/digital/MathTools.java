@@ -672,12 +672,19 @@ public final class MathTools {
      * isn't as precise and can't produce as extreme min and max results in the extreme cases they should appear. If
      * given a typical uniform random {@code double} that's exclusive on 1.0, it won't produce a result higher than
      * {@code 8.209536145151493}, and will only produce results of at least {@code -8.209536145151493} if 0.0 is
-     * excluded from the inputs (if 0.0 is an input, the result is {@code -38.5}).
+     * excluded from the inputs (if 0.0 is an input, the result is {@code -38.5}). This requires a fair amount of
+     * floating-point multiplication and one division for all {@code d} where it is between 0 and 1 exclusive, but
+     * roughly 1/20 of the time it need a {@link Math#sqrt(double)} and {@link Math#log(double)} as well.
      * <br>
      * This can be used both as an optimization for generating Gaussian random values, and as a way of generating
      * Gaussian values that match a pattern present in the inputs (which you could have by using a sub-random sequence
      * as the input, such as those produced by a van der Corput, Halton, Sobol or R2 sequence). Most methods of generating
-     * Gaussian values (e.g. Box-Muller and Marsaglia polar) do not have any way to preserve a particular pattern.
+     * Gaussian values (e.g. Box-Muller and Marsaglia polar) do not have any way to preserve a particular pattern. Note
+     * that if you don't need to preserve patterns in input, then either the Ziggurat method (which is available and the
+     * default in the juniper library for pseudo-random generation) or the Marsaglia polar method (which is the default
+     * in the JDK Random class) will perform better in each one's optimal circumstances. The Marsaglia polar method does
+     * well when generating multiple numbers at a time, while Ziggurat is often the best when you need one Gaussian
+     * value per input.
      *
      * @see #probitInverse(double) probitInverse() provides a way to take normal-distributed values and go back to 0-1 .
      * @param d should be between 0 and 1, exclusive, but other values are tolerated
@@ -1503,7 +1510,7 @@ public final class MathTools {
      * Given a state that is typically random-seeming, this produces an int within a bounded range that is similarly
      * random-seeming.
      * @param state can be a long or an int; typically produced by a random- or hash-like process
-     * @param bound the outer exclusive bound, as an int
+     * @param bound the outer exclusive bound, as an int; does not have to be positive
      * @return an int between 0 (inclusive) and bound (exclusive)
      */
     public static int boundedInt(long state, int bound) {
@@ -1514,6 +1521,11 @@ public final class MathTools {
     /**
      * Given a state that is typically random-seeming, this produces a long within a bounded range that is similarly
      * random-seeming.
+     * <br>
+     * Implementation note: This can be optimized on Java 19 and higher using Math.unsignedMultiplyHigh(), which does
+     * most of the work here in about half the time. We can't use Math.multiplyHigh() on its own, because that method is
+     * just strange, though we could do some steps after-the-fact to get it in the right range.
+     *
      * @param state must be a long; typically produced by a random- or hash-like process
      * @param innerBound the inner exclusive bound, as a long
      * @param outerBound the outer exclusive bound, as a long
