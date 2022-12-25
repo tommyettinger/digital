@@ -802,6 +802,32 @@ public final class ArrayTools {
     }
 
     /**
+     * Takes a 2D source array and produces a usually-smaller section allocated as a new 2D array.
+     *
+     * @param source a 2D char array that will be copied and inserted into target
+     * @param startX the lowest x coordinate to take from source
+     * @param startY the lowest y coordinate to take from source
+     * @param width the maximum x-size to take from source; may be less if less space was available
+     * @param height the maximum y-size to take from source; may be less if less space was available
+     * @return a new 2D array that tries to match the specified width and height, getting items from source
+     */
+    public static char[][] section(char[][] source, int startX, int startY, int width, int height) {
+        if (source == null)
+            return null;
+        if (source.length == 0)
+            return new char[0][0];
+        final int minWidth = Math.min(source.length - startX, width);
+        final int minHeight = Math.min(source[0].length - startY, height);
+        if(minWidth == 0 || minHeight == 0)
+            return new char[0][0];
+        char[][] result = new char[minWidth][minHeight];
+        for (int i = 0, x = startX; i < minWidth; i++, x++) {
+            System.arraycopy(source[x], startY, result[i], 0, minHeight);
+        }
+        return result;
+    }
+
+    /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(char[][], char)} to modify an existing 2D array instead.
      *
@@ -1226,7 +1252,7 @@ public final class ArrayTools {
     }
 
     /**
-     * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
+     * Fills a subsection of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(boolean, int, int)}, which makes a new 2D array.
      *
      * @param array2d a 2D array that will be modified in-place
@@ -1247,7 +1273,7 @@ public final class ArrayTools {
     }
 
     /**
-     * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
+     * Fills a subsection of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(char, int, int)}, which makes a new 2D array.
      *
      * @param array2d a 2D array that will be modified in-place
@@ -1268,7 +1294,7 @@ public final class ArrayTools {
     }
 
     /**
-     * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
+     * Fills a subsection of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(float, int, int)}, which makes a new 2D array.
      *
      * @param array2d a 2D array that will be modified in-place
@@ -1289,7 +1315,7 @@ public final class ArrayTools {
     }
 
     /**
-     * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
+     * Fills a subsection of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(double, int, int)}, which makes a new 2D array.
      *
      * @param array2d a 2D array that will be modified in-place
@@ -1310,7 +1336,7 @@ public final class ArrayTools {
     }
 
     /**
-     * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
+     * Fills a subsection of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(int, int, int)}, which makes a new 2D array.
      *
      * @param array2d a 2D array that will be modified in-place
@@ -1331,7 +1357,7 @@ public final class ArrayTools {
     }
 
     /**
-     * Fills a sub-section of {@code array2d} with {@code value}, with the section defined by start/end x/y.
+     * Fills a subsection of {@code array2d} with {@code value}, with the section defined by start/end x/y.
      * Not to be confused with {@link #fill(long, int, int)}, which makes a new 2D array.
      *
      * @param array2d a 2D array that will be modified in-place
@@ -1352,7 +1378,7 @@ public final class ArrayTools {
     }
 
     /**
-     * Fills a sub-section of {@code array2d} with identical references to {@code value} (not copies), with the section
+     * Fills a subsection of {@code array2d} with identical references to {@code value} (not copies), with the section
      * defined by start/end x/y.
      *
      * @param array2d a 2D array that will be modified in-place
