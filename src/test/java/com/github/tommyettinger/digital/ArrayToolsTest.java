@@ -29,6 +29,30 @@ public class ArrayToolsTest {
         Assert.assertEquals('\u0000', span[0]);
     }
 
+    @Test
+    public void testCharSection() {
+        char[][] letters = new char[][] {
+                ArrayTools.letterSpan(0, 16),
+                ArrayTools.letterSpan(16, 16),
+                ArrayTools.letterSpan(32, 16),
+                ArrayTools.letterSpan(48, 16),
+                ArrayTools.letterSpan(64, 16),
+                ArrayTools.letterSpan(80, 16),
+                ArrayTools.letterSpan(96, 16),
+                ArrayTools.letterSpan(112, 16),
+                ArrayTools.letterSpan(128, 16),
+        };
+        for (int i = 0; i < letters.length; i++) {
+            System.out.println(letters[i]);
+        }
+        System.out.println();
+        char[][] sub = ArrayTools.section(letters, 4, 5, 8, 6);
+        for (int i = 0; i < sub.length; i++) {
+            System.out.println(sub[i]);
+        }
+        System.out.println();
+    }
+
     public static void main(String[] args) {
         char[][] letters = new char[][] {
                 ArrayTools.letterSpan(0, 16),
