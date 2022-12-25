@@ -51,6 +51,12 @@ public class ArrayToolsTest {
             System.out.println(sub[i]);
         }
         System.out.println();
+
+        sub = ArrayTools.section(letters, 5, 10, 6, 8);
+        for (int i = 0; i < sub.length; i++) {
+            System.out.println(sub[i]);
+        }
+        System.out.println();
     }
 
     public static void main(String[] args) {
