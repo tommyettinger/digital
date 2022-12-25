@@ -1010,6 +1010,33 @@ public final class ArrayTools {
     }
 
     /**
+     * Takes a 2D source array and produces a usually-smaller section allocated as a new 2D array. This does only a
+     * shallow copy of the items in source; the exact references will still be shared between source and the result.
+     *
+     * @param source a 2D T array that will be copied and inserted into target
+     * @param startX the lowest x coordinate to take from source
+     * @param startY the lowest y coordinate to take from source
+     * @param width the maximum x-size to take from source; may be less if less space was available
+     * @param height the maximum y-size to take from source; may be less if less space was available
+     * @return a new 2D array that tries to match the specified width and height, getting items from source
+     */
+    public static <T> T[][] section(T[][] source, int startX, int startY, int width, int height) {
+        if (source == null)
+            return null;
+        if (source.length == 0)
+            return (T[][])new Object[0][0];
+        final int minWidth = Math.min(source.length - startX, width);
+        final int minHeight = Math.min(source[0].length - startY, height);
+        if(minWidth == 0 || minHeight == 0)
+            return (T[][])new Object[0][0];
+        T[][] result = (T[][])new Object[minWidth][minHeight];
+        for (int i = 0, x = startX; i < minWidth; i++, x++) {
+            System.arraycopy(source[x], startY, result[i], 0, minHeight);
+        }
+        return result;
+    }
+
+    /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(char[][], char)} to modify an existing 2D array instead.
      *
