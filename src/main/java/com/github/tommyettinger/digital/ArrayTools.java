@@ -1062,6 +1062,181 @@ public final class ArrayTools {
     }
 
     /**
+     * Iterates (potentially more than once) through {@code contents} and assigns the values it gets from there into
+     * {@code modifying}. This iterated in column-major order, so all y values in the first column of contents will be
+     * assigned before the next column is entered. If every item in contents is used, this will keep filling, looping
+     * back to start with the beginning of contents.
+     * @param modifying a 2D byte array that will be modified in-place; does not have to be rectangular
+     * @param contents a byte array or varargs that will be used to fill modifying
+     * @return modifying, after it has been filled up
+     */
+    public static byte[][] sequentialFill(byte[][] modifying, byte... contents) {
+        if(modifying == null || contents == null)
+            return modifying;
+        final int limit = contents.length;
+        if(limit == 0)
+            return modifying;
+        int ci = 0;
+        for (int x = 0; x < modifying.length; x++) {
+            for (int y = 0; y < modifying[x].length; y++) {
+                modifying[x][y] = contents[ci++];
+                if(ci == limit) ci = 0;
+            }
+        }
+        return modifying;
+    }
+
+    /**
+     * Iterates (potentially more than once) through {@code contents} and assigns the values it gets from there into
+     * {@code modifying}. This iterated in column-major order, so all y values in the first column of contents will be
+     * assigned before the next column is entered. If every item in contents is used, this will keep filling, looping
+     * back to start with the beginning of contents.
+     * @param modifying a 2D short array that will be modified in-place; does not have to be rectangular
+     * @param contents a short array or varargs that will be used to fill modifying
+     * @return modifying, after it has been filled up
+     */
+    public static short[][] sequentialFill(short[][] modifying, short... contents) {
+        if(modifying == null || contents == null)
+            return modifying;
+        final int limit = contents.length;
+        if(limit == 0)
+            return modifying;
+        int ci = 0;
+        for (int x = 0; x < modifying.length; x++) {
+            for (int y = 0; y < modifying[x].length; y++) {
+                modifying[x][y] = contents[ci++];
+                if(ci == limit) ci = 0;
+            }
+        }
+        return modifying;
+    }
+
+    /**
+     * Iterates (potentially more than once) through {@code contents} and assigns the values it gets from there into
+     * {@code modifying}. This iterated in column-major order, so all y values in the first column of contents will be
+     * assigned before the next column is entered. If every item in contents is used, this will keep filling, looping
+     * back to start with the beginning of contents.
+     * @param modifying a 2D int array that will be modified in-place; does not have to be rectangular
+     * @param contents an int array or varargs that will be used to fill modifying
+     * @return modifying, after it has been filled up
+     */
+    public static int[][] sequentialFill(int[][] modifying, int... contents) {
+        if(modifying == null || contents == null)
+            return modifying;
+        final int limit = contents.length;
+        if(limit == 0)
+            return modifying;
+        int ci = 0;
+        for (int x = 0; x < modifying.length; x++) {
+            for (int y = 0; y < modifying[x].length; y++) {
+                modifying[x][y] = contents[ci++];
+                if(ci == limit) ci = 0;
+            }
+        }
+        return modifying;
+    }
+
+    /**
+     * Iterates (potentially more than once) through {@code contents} and assigns the values it gets from there into
+     * {@code modifying}. This iterated in column-major order, so all y values in the first column of contents will be
+     * assigned before the next column is entered. If every item in contents is used, this will keep filling, looping
+     * back to start with the beginning of contents.
+     * @param modifying a 2D long array that will be modified in-place; does not have to be rectangular
+     * @param contents a long array or varargs that will be used to fill modifying
+     * @return modifying, after it has been filled up
+     */
+    public static long[][] sequentialFill(long[][] modifying, long... contents) {
+        if(modifying == null || contents == null)
+            return modifying;
+        final int limit = contents.length;
+        if(limit == 0)
+            return modifying;
+        int ci = 0;
+        for (int x = 0; x < modifying.length; x++) {
+            for (int y = 0; y < modifying[x].length; y++) {
+                modifying[x][y] = contents[ci++];
+                if(ci == limit) ci = 0;
+            }
+        }
+        return modifying;
+    }
+
+    /**
+     * Iterates (potentially more than once) through {@code contents} and assigns the values it gets from there into
+     * {@code modifying}. This iterated in column-major order, so all y values in the first column of contents will be
+     * assigned before the next column is entered. If every item in contents is used, this will keep filling, looping
+     * back to start with the beginning of contents.
+     * @param modifying a 2D boolean array that will be modified in-place; does not have to be rectangular
+     * @param contents a boolean array or varargs that will be used to fill modifying
+     * @return modifying, after it has been filled up
+     */
+    public static boolean[][] sequentialFill(boolean[][] modifying, boolean... contents) {
+        if(modifying == null || contents == null)
+            return modifying;
+        final int limit = contents.length;
+        if(limit == 0)
+            return modifying;
+        int ci = 0;
+        for (int x = 0; x < modifying.length; x++) {
+            for (int y = 0; y < modifying[x].length; y++) {
+                modifying[x][y] = contents[ci++];
+                if(ci == limit) ci = 0;
+            }
+        }
+        return modifying;
+    }
+
+    /**
+     * Iterates (potentially more than once) through {@code contents} and assigns the values it gets from there into
+     * {@code modifying}. This iterated in column-major order, so all y values in the first column of contents will be
+     * assigned before the next column is entered. If every item in contents is used, this will keep filling, looping
+     * back to start with the beginning of contents.
+     * @param modifying a 2D float array that will be modified in-place; does not have to be rectangular
+     * @param contents a float array or varargs that will be used to fill modifying
+     * @return modifying, after it has been filled up
+     */
+    public static float[][] sequentialFill(float[][] modifying, float... contents) {
+        if(modifying == null || contents == null)
+            return modifying;
+        final int limit = contents.length;
+        if(limit == 0)
+            return modifying;
+        int ci = 0;
+        for (int x = 0; x < modifying.length; x++) {
+            for (int y = 0; y < modifying[x].length; y++) {
+                modifying[x][y] = contents[ci++];
+                if(ci == limit) ci = 0;
+            }
+        }
+        return modifying;
+    }
+
+    /**
+     * Iterates (potentially more than once) through {@code contents} and assigns the values it gets from there into
+     * {@code modifying}. This iterated in column-major order, so all y values in the first column of contents will be
+     * assigned before the next column is entered. If every item in contents is used, this will keep filling, looping
+     * back to start with the beginning of contents.
+     * @param modifying a 2D double array that will be modified in-place; does not have to be rectangular
+     * @param contents a double array or varargs that will be used to fill modifying
+     * @return modifying, after it has been filled up
+     */
+    public static double[][] sequentialFill(double[][] modifying, double... contents) {
+        if(modifying == null || contents == null)
+            return modifying;
+        final int limit = contents.length;
+        if(limit == 0)
+            return modifying;
+        int ci = 0;
+        for (int x = 0; x < modifying.length; x++) {
+            for (int y = 0; y < modifying[x].length; y++) {
+                modifying[x][y] = contents[ci++];
+                if(ci == limit) ci = 0;
+            }
+        }
+        return modifying;
+    }
+
+    /**
      * Creates a 2D array of the given width and height, filled with entirely with the value contents.
      * You may want to use {@link #fill(char[][], char)} to modify an existing 2D array instead.
      *
