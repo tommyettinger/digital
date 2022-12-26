@@ -262,6 +262,8 @@ public class PrecisionTest {
         functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinNewTable", TrigTools::sin);
         functions.put("sinOldTable", OldTrigTools::sin);
+        functions.put("sinNick", PrecisionTest::sinNick);
+        functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -674,6 +676,57 @@ public class PrecisionTest {
         radians -= ceil;
         final float x2 = radians * radians, x3 = radians * x2;
         return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+    }
+
+    /**
+     * The technique for sine approximation is mostly from
+     * <a href="https://web.archive.org/web/20080228213915/http://devmaster.net/forums/showthread.php?t=5784">this archived DevMaster thread</a>,
+     * with credit to "Nick". Changes have been made to accelerate wrapping from any float to the valid input range.
+     * @param radians an angle in radians as a float, often from 0 to pi * 2, though not required to be.
+     * @return the sine of the given angle, as a float between -1f and 1f (both inclusive)
+     */
+    public static float sinNick(float radians)
+    {
+        //Mean absolute error: 0.0005051695
+        //Mean relative error: 0.0019536310
+        //Maximum error:       0.00109063
+        //Worst input:         -3.33434725
+        //Worst approx output: 0.19047257
+        //Correct output:      0.19156320
+        radians *= 0.6366197723675814f;
+        int floor = (int)radians;
+        if(floor > radians) --floor;
+        floor &= -2;
+        radians -= floor;
+        radians *= 2f - radians;
+        return radians * (-0.775f - 0.225f * radians) * ((floor & 2) - 1);
+    }
+
+    public static double sinLeibovici(double x) {
+        final double a = -0.13299564481202533;
+        final double b = 0.0032172781382236062;
+        final double c = 0.033670915730403934;
+        final double d = 4.96282801828961E-4;
+        final double x2 = x*x;
+        final double x4 = x2*x2;
+        return x * (1.0 + a*x2 + b*x4)/(1.0 + c*x2 + d*x4);
+    }
+
+    /**
+     * Also from the same question as {@link #sinBhaskaroid(float)}, but a different answer:
+     * <a href="https://math.stackexchange.com/a/3887193">This answer by Claude Leibovici</a>.
+     * @param x angle in radians
+     * @return sine from -1 to 1, inclusive
+     */
+    public static float sinLeibovici(float x) {
+        x = ((x + TrigTools.PI) % TrigTools.PI2 + TrigTools.PI2) % TrigTools.PI2 - TrigTools.PI;
+        final float a = -0.13299564481202533f;
+        final float b = 0.0032172781382236062f;
+        final float c = 0.033670915730403934f;
+        final float d = 4.96282801828961E-4f;
+        final float x2 = x*x;
+        final float x4 = x2*x2;
+        return x * ((1f + a*x2 + b*x4)/(1f + c*x2 + d*x4));
     }
 
     public static float tanNewTable(float radians) {
