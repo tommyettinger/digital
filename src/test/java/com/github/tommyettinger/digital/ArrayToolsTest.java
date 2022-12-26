@@ -64,19 +64,19 @@ public class ArrayToolsTest {
 
     @Test
     public void testStringSection() {
-        String[][] letters = new String[9][16];
-        ArrayTools.sequentialFill(letters, ArrayTools.stringSpan(48, 144));
-        for (int i = 0; i < letters.length; i++) {
-            System.out.println(String.join(", ", letters[i]));
+        String[][] words = new String[9][16];
+        ArrayTools.sequentialFill(words, ArrayTools.stringSpan(48 + 144, 144));
+        for (int i = 0; i < words.length; i++) {
+            System.out.println(String.join(", ", words[i]));
         }
         System.out.println();
-        String[][] sub = ArrayTools.section(letters, 4, 5, 8, 6);
+        String[][] sub = ArrayTools.section(words, 4, 5, 8, 6);
         for (int i = 0; i < sub.length; i++) {
             System.out.println(String.join(", ", sub[i]));
         }
         System.out.println();
 
-        sub = ArrayTools.section(letters, 5, 10, 6, 8);
+        sub = ArrayTools.section(words, 5, 10, 6, 8);
         for (int i = 0; i < sub.length; i++) {
             System.out.println(String.join(", ", sub[i]));
         }
