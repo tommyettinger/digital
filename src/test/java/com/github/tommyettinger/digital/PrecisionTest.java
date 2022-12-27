@@ -264,6 +264,7 @@ public class PrecisionTest {
         functions.put("sinOldTable", OldTrigTools::sin);
         functions.put("sinNick", PrecisionTest::sinNick);
         functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
+        functions.put("sinSteadman", PrecisionTest::sinSteadman);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -727,6 +728,60 @@ public class PrecisionTest {
         final float x2 = x*x;
         final float x4 = x2*x2;
         return x * ((1f + a*x2 + b*x4)/(1f + c*x2 + d*x4));
+    }
+
+    /**
+     * <a href="https://www.nullhardware.com/blog/fixed-point-sine-and-cosine-for-embedded-systems/">From here</a>, by
+     * Andrew Steadman. This uses almost entirely integer (fixed-point) math, and like the sine-table-based
+     * approximations here, it can't produce a perfectly smooth, continuously curving line of outputs. It is actually
+     * rather accurate, though, other than that.
+     * @param radians an angle in radians
+     * @return a sine value from -1 to 1
+     */
+    public static float sinSteadman(float radians) {
+        //Mean absolute error: 0.0001392388
+        //Mean relative error: 0.0007815455
+        //Maximum error:       0.00047594
+        //Worst input:         -3.52834749
+        //Worst approx output: 0.37670898
+        //Correct output:      0.37718493
+
+
+        int i = (short)(radians * 10430.378350470453f);//10430.378350470453f
+        /* Convert (signed) input to a value between 0 and 8192. (8192 is pi/2, which is the region of the curve fit). */
+        /* ------------------------------------------------------------------- */
+
+        int c = i >> 31; //carry for output pos/neg
+
+
+        // this block and the commented code just below it should be identical, just one is branchless.
+        int fl = (i&0x4000); // flip input value to corresponding value in range [0..8192)
+        int sg = -fl >> 31;
+        i = (i + sg ^ sg);
+//        if(0x4000 == (i&0x4000)) // flip input value to corresponding value in range [0..8192)
+//            i = (1<<15) - i;
+
+
+        i = (i & 0x7FFF) >>> 1;
+        /* ------------------------------------------------------------------- */
+
+    /* The following section implements the formula:
+     = y * 2^-n * ( A1 - 2^(q-p)* y * 2^-n * y * 2^-n * [B1 - 2^-r * y * 2^-n * C1 * y]) * 2^(a-q)
+    Where the constants are defined as follows:
+    */
+        final int A1 = 0xC8EC8A4B, B1 = 0xA3B2292C, C1 = 0x47645;
+
+        int n=13, p=32, q=31, r=3, a=12;
+
+        int y = (C1*i)>>>n;
+        y = B1 - ((i*y)>>>r);
+        y = i * (y>>>n);
+        y = i * (y>>>n);
+        y = A1 - (y>>>(p-q));
+        y = i * (y>>>n);
+        y = (y+(1<<(q-a-1)))>>>(q-a); // Rounding
+
+        return (y + c ^ c) * 0x1p-12f;
     }
 
     public static float tanNewTable(float radians) {
