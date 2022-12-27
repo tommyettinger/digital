@@ -18,6 +18,11 @@ reversed byte order (using a fast intrinsic on desktop JDKs
 and a special trick on GWT), and others that get only the low
 or high half of a double's bits as an int. It is modeled after
 the NumberUtils class from libGDX, but offers extra methods.
+It also has, purely for GWT purposes, an `imul()` method that
+acts just like integer multiplication on most platforms, but
+compiles down to a call to the JavaScript `Math.imul()`
+function on GWT, which automatically handles overflow in the
+same way a desktop JVM would.
 
 Base is much larger, and allows converting any Java primitive
 number type to a specific base/radix/number-system. Here,
@@ -42,7 +47,7 @@ double arguments/returns for all functions. It also provides
 
 MathTools offers a wild grab bag of math functions and
 constants, from simple lerp, floor, ceil, and clamp methods to
-an optimized cube root function and a parameterized spline. It
+an optimized cube root function and parameterized splines. It
 is also based on MathUtils from libGDX. It supports float and
 double arguments/returns for most functions; some make sense
 for float only, like the optimized cube root. There's also a
@@ -76,11 +81,19 @@ do much with 3D or higher sizes at the moment. However, the only
 change that would be needed to add a `hash()` method for, say, a
 `float[][][]` is to copy the `hash(float[][])` method and change
 the parameter to be a `float[][][]`, so if you have the source,
-you can add this yourself with a quick copy and paste.
+you can add this yourself with a quick copy and paste. Hasher
+allows you to specify the seed when you call `hash()` or
+`hash64()` (as static methods), but it also has a fairly-large
+array of `predefined` hash functions with instance methods for
+`hash()` and `hash64()`.
 Hasher also has a few unary hashes that can be used as quick and
 dirty random number generators when applied to numbers in a
 sequence. The unary hashes can output longs, bounded ints,
 floats, and doubles, so they may be useful in a lot of cases.
+They are named like `randomize1()`, `randomize2()`, `randomize3()`,
+and so on, with higher numbers being typically slightly slower but
+also higher-quality (and more permissive of sets of inputs with
+atypical patterns).
 
 AlternateRandom is a quick micro-port of a random number generator
 from the closely-related [juniper](https://github.com/tommyettinger/juniper)
@@ -106,14 +119,14 @@ With Gradle, add this to your dependencies (in your core module,
 for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.5"
+api "com.github.tommyettinger:digital:0.1.6"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.5:sources"
+api "com.github.tommyettinger:digital:0.1.6:sources"
 ```
 
 and this in your GdxDefinition.gwt.xml file:
