@@ -256,6 +256,109 @@ public class PrecisionTest {
         float applyAsFloat(float x);
     }
 
+    /**
+     * <pre>
+     * Running sinSmooth
+     * Mean absolute error:     0.0001498343
+     * Mean relative error:     0.0002476316
+     * Maximum abs. error:      0.0003549457
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -2.6179931164
+     * Best output (lo):       -0.5000006557 (0xBF00000B)
+     * Correct output (lo):    -0.5000006557 (0xBF00000B)
+     * Worst input (hi):       -3.1415927410
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):      -0.0000000000 (0x80000000)
+     * Correct output (hi):     0.0000000874 (0x33BBBD2E)
+     * Worst input (abs):       4.2052345276
+     * Worst output (abs):     -0.8737751842 (0xBF5FAFBB)
+     * Correct output (abs):   -0.8741301298 (0xBF5FC6FE)
+     * Running sinLeibovici
+     * Mean absolute error:     0.0001303235
+     * Mean relative error:     0.0096509145
+     * Maximum abs. error:      0.0017700721
+     * Maximum rel. error:  20240.3087794512
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -1.8461062908
+     * Best output (lo):       -0.9623410106 (0xBF765BFB)
+     * Correct output (lo):    -0.9623410106 (0xBF765BFB)
+     * Worst input (hi):       -3.1415927410
+     * Highest output rel:  20240.3066406250
+     * Worst output (hi):      -0.0017693766 (0xBAE7EA6D)
+     * Correct output (hi):     0.0000000874 (0x33BBBD2E)
+     * Worst input (abs):       3.1415922642
+     * Worst output (abs):      0.0017704616 (0x3AE80ED5)
+     * Correct output (abs):    0.0000003894 (0x34D110B4)
+     * Running sinNewTable
+     * Mean absolute error:     0.0001220726
+     * Mean relative error:     0.0019588592
+     * Maximum abs. error:      0.0003835472
+     * Maximum rel. error:   1268.8868846635
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -2.6154372692
+     * Best output (lo):       -0.5022124648 (0xBF0090FF)
+     * Correct output (lo):    -0.5022124648 (0xBF0090FF)
+     * Worst input (hi):        6.2831850052
+     * Highest output rel:   1268.8868408203
+     * Worst output (hi):      -0.0003834952 (0xB9C90FDA)
+     * Correct output (hi):    -0.0000003020 (0xB4A22169)
+     * Worst input (abs):       6.2820348740
+     * Worst output (abs):     -0.0015339801 (0xBAC90FD5)
+     * Correct output (abs):   -0.0011504330 (0xBA96CA20)
+     * Running sinOldTable
+     * Mean absolute error:     0.0001220989
+     * Mean relative error:     0.0017593629
+     * Maximum abs. error:      0.0005754773
+     * Maximum rel. error:    663.2313277982
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -1.5710399151
+     * Best output (lo):       -1.0000000000 (0xBF800000)
+     * Correct output (lo):    -1.0000000000 (0xBF800000)
+     * Worst input (hi):       -3.1415917873
+     * Highest output rel:    663.2312622070
+     * Worst output (hi):      -0.0005753914 (0xBA16D5DD)
+     * Correct output (hi):    -0.0000008663 (0xB568885A)
+     * Worst input (abs):      -0.0026843548
+     * Worst output (abs):     -0.0021088743 (0xBB0A350A)
+     * Correct output (abs):   -0.0026843515 (0xBB2FEBF2)
+     * Running sinSteadman
+     * Mean absolute error:     0.0001392407
+     * Mean relative error:     0.0007814450
+     * Maximum abs. error:      0.0004758835
+     * Maximum rel. error:      1.5369559959
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -3.0319983959
+     * Best output (lo):       -0.1093750000 (0xBDE00000)
+     * Correct output (lo):    -0.1093750000 (0xBDE00000)
+     * Worst input (hi):       -3.1414964199
+     * Highest output rel:      1.5369559526
+     * Worst output (hi):      -0.0002441406 (0xB9800000)
+     * Correct output (hi):    -0.0000962337 (0xB8C9D111)
+     * Worst input (abs):      -0.3867547512
+     * Worst output (abs):     -0.3767089844 (0xBEC0E000)
+     * Correct output (abs):   -0.3771848679 (0xBEC11E60)
+     * Running sinNick
+     * Mean absolute error:     0.0005051695
+     * Mean relative error:     0.0019535287
+     * Maximum abs. error:      0.0010906309
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -2.6180312634
+     * Best output (lo):       -0.4999676347 (0xBEFFFBC2)
+     * Correct output (lo):    -0.4999676347 (0xBEFFFBC2)
+     * Worst input (hi):       -3.1415927410
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):      -0.0000000000 (0x80000000)
+     * Correct output (hi):     0.0000000874 (0x33BBBD2E)
+     * Worst input (abs):       3.3347704411
+     * Worst output (abs):     -0.1908879131 (0xBE43781F)
+     * Correct output (abs):   -0.1919785440 (0xBE449606)
+     * -------
+     * Epsilon is:              0.0000000596
+     * -------
+     * </pre>
+     */
     @Test
     public void testSin() {
         HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
@@ -265,6 +368,7 @@ public class PrecisionTest {
         functions.put("sinNick", PrecisionTest::sinNick);
         functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
         functions.put("sinSteadman", PrecisionTest::sinSteadman);
+//        functions.put("sinBhaskara2", PrecisionTest::sinBhaskara2);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -291,10 +395,10 @@ public class PrecisionTest {
                 }
                 ++counter;
             }
-            double worstAbs = op.applyAsFloat(worstAbsX),
-                    worstTru = Math.sin(worstAbsX),
-                    highestTru = Math.sin(highestRelX),
-                    lowestTru = Math.sin(lowestRelX),
+            float worstAbs = op.applyAsFloat(worstAbsX),
+                    worstTru = (float) Math.sin(worstAbsX),
+                    highestTru = (float) Math.sin(highestRelX),
+                    lowestTru = (float) Math.sin(lowestRelX),
                     lowestErr = lowestTru - op.applyAsFloat(lowestRelX),
                     lowestRel = abs(lowestErr / Math.nextAfter(lowestTru, Math.copySign(Float.MAX_VALUE, lowestTru))),
                     highestErr = highestTru - op.applyAsFloat(highestRelX),
@@ -306,18 +410,22 @@ public class PrecisionTest {
                             "Maximum rel. error:  %16.10f\n" +
                             "Lowest output rel:   %16.10f\n" +
                             "Best input (lo):     %16.10f\n" +
-                            "Best output (lo):    %16.10f\n" +
-                            "Correct output (lo): %16.10f\n" +
+                            "Best output (lo):    %16.10f (0x%08X)\n" +
+                            "Correct output (lo): %16.10f (0x%08X)\n" +
                             "Worst input (hi):    %16.10f\n" +
                             "Highest output rel:  %16.10f\n" +
-                            "Worst output (hi):   %16.10f\n" +
-                            "Correct output (hi): %16.10f\n" +
+                            "Worst output (hi):   %16.10f (0x%08X)\n" +
+                            "Correct output (hi): %16.10f (0x%08X)\n" +
                             "Worst input (abs):   %16.10f\n" +
-                            "Worst output (abs):  %16.10f\n" +
-                            "Correct output (abs):%16.10f\n", absError / counter, relError / counter,
-                    maxAbsError, maxRelError, lowestRel, lowestRelX, op.applyAsFloat(lowestRelX), lowestTru,
-                    highestRelX, highestRel, op.applyAsFloat(highestRelX), highestTru, worstAbsX, worstAbs, worstTru);
+                            "Worst output (abs):  %16.10f (0x%08X)\n" +
+                            "Correct output (abs):%16.10f (0x%08X)\n", absError / counter, relError / counter,
+                    maxAbsError, maxRelError,
+                    lowestRel, lowestRelX, op.applyAsFloat(lowestRelX), Float.floatToIntBits(op.applyAsFloat(lowestRelX)), lowestTru, Float.floatToIntBits(lowestTru),
+                    highestRelX, highestRel, op.applyAsFloat(highestRelX), Float.floatToIntBits(op.applyAsFloat(highestRelX)), highestTru, Float.floatToIntBits(highestTru),
+                    worstAbsX, worstAbs, Float.floatToIntBits(worstAbs), worstTru, Float.floatToIntBits(worstTru));
         }
+        System.out.printf("-------\n" +
+                "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
 
     @Test
@@ -678,6 +786,19 @@ public class PrecisionTest {
         radians -= floor;
         radians *= 2f - radians;
         return radians * (-1f + alpha - alpha * radians) * ((floor & 2) - 1);
+    }
+    public static float sinBhaskara2(float radians) {
+        //Mean absolute error: 0.0001498343
+        //Mean relative error: 0.0002477639
+        //Maximum error:       0.00035501
+        //Worst input:         -4.20848227
+        //Worst approx output: 0.87534791
+        //Correct output:      0.87570292
+        radians *= (TrigTools.PI_INVERSE * 2f);
+        final int ceil = (int) Math.ceil(radians) & -2;
+        radians -= ceil;
+        final float x2 = radians * radians, x3 = radians * x2;
+        return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
     }
 
     /**
