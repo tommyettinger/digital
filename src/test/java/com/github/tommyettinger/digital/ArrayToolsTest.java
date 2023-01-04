@@ -145,5 +145,13 @@ public class ArrayToolsTest {
         for (int i = 0; i < letters.length; i++) {
             System.out.println(letters[i]);
         }
+        // This is just some quick code for testing where in the GOLDEN_LONGS array a particular constant is.
+//        for (int i = 0; i < 128; i++) {
+//            if(MathTools.GOLDEN_LONGS[i] == 0xAB273EB15C029011L)
+//            {
+//                System.out.printf("%d: %X", i, i);
+//                return;
+//            }
+//        }
     }
 }
