@@ -115,21 +115,30 @@ access to 3D models.
 
 ## How do I get it?
 
-With Gradle, add this to your dependencies (in your core module,
-for libGDX projects):
+With Gradle, add this to your dependencies (in your core module's
+`build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.6"
+api "com.github.tommyettinger:digital:0.1.7"
 ```
 
 If you target GWT using libGDX, you will also need this in your
-html module:
+html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.6:sources"
+api "com.github.tommyettinger:digital:0.1.7:sources"
 ```
 
-and this in your GdxDefinition.gwt.xml file:
+GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
+file. For digital 0.1.7 and later, use:
+
+```xml
+<inherits name="com.github.tommyettinger.digital" />
+```
+
+If you are using 0.1.6 or older, **there are probably some GWT
+compatibility issues**, but you can try using this, or preferably
+updating to 0.1.7 or later:
 
 ```xml
 <inherits name="digital" />
