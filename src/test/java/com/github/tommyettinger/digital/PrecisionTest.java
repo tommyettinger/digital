@@ -363,12 +363,12 @@ public class PrecisionTest {
     public void testSin() {
         HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
         functions.put("sinSmooth", TrigTools::sinSmooth);
-        functions.put("sinNewTable", TrigTools::sin);
-        functions.put("sinOldTable", OldTrigTools::sin);
-        functions.put("sinNick", PrecisionTest::sinNick);
-        functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
-        functions.put("sinSteadman", PrecisionTest::sinSteadman);
-//        functions.put("sinBhaskara2", PrecisionTest::sinBhaskara2);
+//        functions.put("sinNewTable", TrigTools::sin);
+//        functions.put("sinOldTable", OldTrigTools::sin);
+//        functions.put("sinNick", PrecisionTest::sinNick);
+//        functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
+//        functions.put("sinSteadman", PrecisionTest::sinSteadman);
+        functions.put("sinBhaskara2", PrecisionTest::sinBhaskaraI);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -409,14 +409,14 @@ public class PrecisionTest {
                             "Maximum abs. error:  %16.10f\n" +
                             "Maximum rel. error:  %16.10f\n" +
                             "Lowest output rel:   %16.10f\n" +
-                            "Best input (lo):     %16.10f\n" +
+                            "Best input (lo):     %30.24f\n" +
                             "Best output (lo):    %16.10f (0x%08X)\n" +
                             "Correct output (lo): %16.10f (0x%08X)\n" +
-                            "Worst input (hi):    %16.10f\n" +
+                            "Worst input (hi):    %30.24f\n" +
                             "Highest output rel:  %16.10f\n" +
                             "Worst output (hi):   %16.10f (0x%08X)\n" +
                             "Correct output (hi): %16.10f (0x%08X)\n" +
-                            "Worst input (abs):   %16.10f\n" +
+                            "Worst input (abs):   %30.24f\n" +
                             "Worst output (abs):  %16.10f (0x%08X)\n" +
                             "Correct output (abs):%16.10f (0x%08X)\n", absError / counter, relError / counter,
                     maxAbsError, maxRelError,
@@ -787,18 +787,35 @@ public class PrecisionTest {
         radians *= 2f - radians;
         return radians * (-1f + alpha - alpha * radians) * ((floor & 2) - 1);
     }
-    public static float sinBhaskara2(float radians) {
+
+    /**
+     * Eventually I am going to try the original Bhaskara I approximation. This doesn't do it yet.
+     * @param radians
+     * @return
+     */
+    public static float sinBhaskaraI(float radians) {
         //Mean absolute error: 0.0001498343
         //Mean relative error: 0.0002477639
         //Maximum error:       0.00035501
         //Worst input:         -4.20848227
         //Worst approx output: 0.87534791
         //Correct output:      0.87570292
-        radians *= (TrigTools.PI_INVERSE * 2f);
+        radians *= 0.63661975f;
         final int ceil = (int) Math.ceil(radians) & -2;
         radians -= ceil;
         final float x2 = radians * radians, x3 = radians * x2;
         return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+    }
+
+    public static void main(String[] args) {
+        /*
+Best input (lo):        -2.617993116378784000000000
+Worst input (hi):       -3.141592741012573200000000
+Worst input (abs):       4.205234527587891000000000
+         */
+        System.out.printf("%30.24f should be %30.24f\n", sinBhaskaraI(-2.617993116378784000000000f), (float)Math.sin(-2.617993116378784000000000));
+        System.out.printf("%30.24f should be %30.24f\n", sinBhaskaraI(-3.141592741012573200000000f), (float)Math.sin(-3.141592741012573200000000));
+        System.out.printf("%30.24f should be %30.24f\n", sinBhaskaraI( 4.205234527587891000000000f), (float)Math.sin( 4.205234527587891000000000));
     }
 
     /**

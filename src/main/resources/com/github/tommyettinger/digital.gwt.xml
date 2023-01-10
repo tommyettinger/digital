@@ -5,11 +5,11 @@
 <!-- To compile to Gwt, you need to reference this file in your master .gwt.xml
      file (usually called GdxDefinition.gwt.xml) as follows:
      
-     <inherits name="digital" />
+     <inherits name="com.github.tommyettinger.digital" />
   -->
 <module>
     <inherits name='com.google.gwt.core.Core'/>
     <inherits name="com.google.gwt.typedarrays.TypedArrays"/>
     <super-source path="emu" />
-    <source path="com/github/tommyettinger/digital" />
+    <source path="digital" />
 </module>
