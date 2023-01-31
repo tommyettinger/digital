@@ -606,6 +606,71 @@ public class PrecisionTest {
     }
 
     @Test
+    public void testTan() {
+        LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("tanLerp", PrecisionTest::tanLerp);
+        functions.put("tanNoTable", TrigTools::tan);
+        functions.put("tanTable", PrecisionTest::tanTable);
+
+        for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final FloatUnaryOperator op = ent.getValue();
+            float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
+            float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
+            long counter = 0L;
+            for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
+
+                float tru = (float) Math.tan(x),
+                        err = tru - op.applyAsFloat(x),
+                        ae = abs(err),
+                        re = Math.abs(err / Math.nextAfter(tru, Math.copySign(Float.MAX_VALUE, tru)));
+                relError += re;
+                if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                    highestRelX = x;
+                }
+                if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                    lowestRelX = x;
+                }
+                absError += ae;
+                if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
+                    worstAbsX = x;
+                }
+                ++counter;
+            }
+            float worstAbs = op.applyAsFloat(worstAbsX),
+                    worstTru = (float) Math.tan(worstAbsX),
+                    highestTru = (float) Math.tan(highestRelX),
+                    lowestTru = (float) Math.tan(lowestRelX),
+                    lowestErr = lowestTru - op.applyAsFloat(lowestRelX),
+                    lowestRel = abs(lowestErr / Math.nextAfter(lowestTru, Math.copySign(Float.MAX_VALUE, lowestTru))),
+                    highestErr = highestTru - op.applyAsFloat(highestRelX),
+                    highestRel = abs(highestErr / Math.nextAfter(highestTru, Math.copySign(Float.MAX_VALUE, highestTru)));
+            System.out.printf(
+                    "Mean absolute error: %16.10f\n" +
+                            "Mean relative error: %16.10f\n" +
+                            "Maximum abs. error:  %16.10f\n" +
+                            "Maximum rel. error:  %16.10f\n" +
+                            "Lowest output rel:   %16.10f\n" +
+                            "Best input (lo):     %30.24f\n" +
+                            "Best output (lo):    %16.10f (0x%08X)\n" +
+                            "Correct output (lo): %16.10f (0x%08X)\n" +
+                            "Worst input (hi):    %30.24f\n" +
+                            "Highest output rel:  %16.10f\n" +
+                            "Worst output (hi):   %16.10f (0x%08X)\n" +
+                            "Correct output (hi): %16.10f (0x%08X)\n" +
+                            "Worst input (abs):   %30.24f\n" +
+                            "Worst output (abs):  %16.10f (0x%08X)\n" +
+                            "Correct output (abs):%16.10f (0x%08X)\n", absError / counter, relError / counter,
+                    maxAbsError, maxRelError,
+                    lowestRel, lowestRelX, op.applyAsFloat(lowestRelX), Float.floatToIntBits(op.applyAsFloat(lowestRelX)), lowestTru, Float.floatToIntBits(lowestTru),
+                    highestRelX, highestRel, op.applyAsFloat(highestRelX), Float.floatToIntBits(op.applyAsFloat(highestRelX)), highestTru, Float.floatToIntBits(highestTru),
+                    worstAbsX, worstAbs, Float.floatToIntBits(worstAbs), worstTru, Float.floatToIntBits(worstTru));
+        }
+        System.out.printf("-------\n" +
+                "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
+    }
+
+    @Test
     public void testSinSquared() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinOldSmooth", PrecisionTest::sinOldSmooth);
@@ -677,33 +742,33 @@ public class PrecisionTest {
     }
 
 
-    @Test
-    public void testTan(){
-        double absError = 0.0, relError = 0.0, maxError = 0.0;
-        float worstX = 0;
-        long counter = 0L;
-        // 1.57 is just inside half-pi. This avoids testing the extremely large results at close to half-pi.
-        // near half-pi, the correct result becomes tremendously large, and this doesn't grow as quickly.
-        for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
-
-            double tru = (float) Math.tan(x),
-                    err = TrigTools.tan(x) - tru,
-                    ae = abs(err);
-            relError += Math.abs(ae / Math.nextAfter(tru, Math.copySign(Float.POSITIVE_INFINITY, tru)));
-            absError += ae;
-            if (maxError != (maxError = Math.max(maxError, ae))) {
-                worstX = x;
-            }
-            ++counter;
-        }
-        System.out.printf(
-                "Absolute error:   %3.8f\n" +
-                "Relative error:   %3.8f\n" +
-                "Maximum error:    %3.8f\n" +
-                "Worst input:      %3.8f\n" +
-                "Worst approx output: %3.8f\n" +
-                "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, TrigTools.tan(worstX), (float)Math.tan(worstX));
-    }
+//    @Test
+//    public void testTan(){
+//        double absError = 0.0, relError = 0.0, maxError = 0.0;
+//        float worstX = 0;
+//        long counter = 0L;
+//        // 1.57 is just inside half-pi. This avoids testing the extremely large results at close to half-pi.
+//        // near half-pi, the correct result becomes tremendously large, and this doesn't grow as quickly.
+//        for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
+//
+//            double tru = (float) Math.tan(x),
+//                    err = TrigTools.tan(x) - tru,
+//                    ae = abs(err);
+//            relError += Math.abs(ae / Math.nextAfter(tru, Math.copySign(Float.POSITIVE_INFINITY, tru)));
+//            absError += ae;
+//            if (maxError != (maxError = Math.max(maxError, ae))) {
+//                worstX = x;
+//            }
+//            ++counter;
+//        }
+//        System.out.printf(
+//                "Absolute error:   %3.8f\n" +
+//                "Relative error:   %3.8f\n" +
+//                "Maximum error:    %3.8f\n" +
+//                "Worst input:      %3.8f\n" +
+//                "Worst approx output: %3.8f\n" +
+//                "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, TrigTools.tan(worstX), (float)Math.tan(worstX));
+//    }
 
     @Test
     public void testTanNewTable(){
@@ -915,6 +980,36 @@ Worst input (abs):       4.205234527587891000000000
         final int masked = floor + SIN_TO_COS & TABLE_MASK;
         final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
         return from + (to - from) * (radians - floor);
+    }
+
+    //tanNoTable (Soonts)
+    //Mean absolute error:     0.0088905813
+    //Mean relative error:     0.0000341421
+    //Maximum abs. error:     17.9890136719
+    //Maximum rel. error:      0.0575221963
+
+
+    public static float tanLerp(float radians) {
+        //Mean absolute error:     0.0000502852
+        //Mean relative error:     0.0000002945
+        //Maximum abs. error:      0.1672363281
+        //Maximum rel. error:      0.0001353590
+        radians *= radToIndex;
+        final int floor = (int)(radians + 16384.0) - 16384;
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final float fromS = SIN_TABLE[maskedS], toS = SIN_TABLE[maskedS+1];
+        final float fromC = SIN_TABLE[maskedC], toC = SIN_TABLE[maskedC+1];
+        return (fromS + (toS - fromS) * (radians - floor))/(fromC + (toC - fromC) * (radians - floor));
+    }
+
+    public static float tanTable(float radians) {
+        //Mean absolute error:     0.1380470246
+        //Mean relative error:     0.0020219306
+        //Maximum abs. error:    386.6504516602
+        //Maximum rel. error:      0.9999999404
+        final int r = (int)(radians * radToIndex);
+        return SIN_TABLE[r & TABLE_MASK] / SIN_TABLE[r + SIN_TO_COS & TABLE_MASK];
     }
 
 
