@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 
+import static com.github.tommyettinger.digital.TrigTools.*;
 import static java.lang.Math.abs;
 
 // REMOVE the @Ignore if you want to run any tests! They take a while to run as a whole, though.
@@ -363,6 +364,7 @@ public class PrecisionTest {
     @Test
     public void testSin() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("sinLerp", PrecisionTest::sinLerp);
         functions.put("sinCurve", PrecisionTest::sinCurve);
         functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinNewTable", TrigTools::sin);
@@ -375,12 +377,12 @@ public class PrecisionTest {
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
             final FloatUnaryOperator op = ent.getValue();
-            double absError = 0.0, relError = 0.0, maxAbsError = 0.0, maxRelError = 0.0, minRelError = Double.MAX_VALUE;
+            float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
             float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
             long counter = 0L;
             for (float x = -TrigTools.PI; x <= TrigTools.PI2; x += 0x1p-20f) {
 
-                double tru = (float) Math.sin(x),
+                float tru = (float) Math.sin(x),
                         err = tru - op.applyAsFloat(x),
                         ae = abs(err),
                         re = Math.abs(err / Math.nextAfter(tru, Math.copySign(Float.MAX_VALUE, tru)));
@@ -735,7 +737,7 @@ public class PrecisionTest {
         //Worst input:      -6.28050089
         //Worst approx output: 0.00306796
         //Correct output:      0.00268442
-        return TrigTools.SIN_TABLE[(int) (radians * TrigTools.radToIndex) & TrigTools.TABLE_MASK];
+        return SIN_TABLE[(int) (radians * radToIndex) & TABLE_MASK];
     }
 
     public static float sinNewTable2(float radians) {
@@ -745,7 +747,7 @@ public class PrecisionTest {
         //Worst input:      -3.14101744
         //Worst approx output: -0.00115049
         //Correct output:      -0.00057522
-        return TrigTools.SIN_TABLE[(int) (radians * TrigTools.radToIndex + 0.5f) & TrigTools.TABLE_MASK];
+        return SIN_TABLE[(int) (radians * radToIndex + 0.5f) & TABLE_MASK];
     }
 
     public static float sinOldTable(float radians) {
@@ -866,7 +868,16 @@ Worst input (abs):       4.205234527587891000000000
         final float i = 1f - radians, ii = i * i;
         return (1.00005519f * i * ii + (3 * 0.99873585f) * ii * radians + (3 * 0.55342686f) * i * radians * radians)
                 * (1 - (floor & 2));
-=    }
+    }
+
+    public static float sinLerp(float radians) {
+        radians *= radToIndex;
+        final int floor = (int)(radians + 16384.0) - 16384;
+        final int masked = floor & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
 
     /**
      * The technique for sine approximation is mostly from
@@ -984,8 +995,8 @@ Worst input (abs):       4.205234527587891000000000
         //Worst input:      -1.57000005
         //Worst approx output: -869.19781494
         //Correct output:      -1255.84826660
-        final int idx = (int) (radians * TrigTools.TABLE_SIZE / TrigTools.PI2) & TrigTools.TABLE_MASK;
-        return TrigTools.SIN_TABLE[idx] / TrigTools.SIN_TABLE[idx + TrigTools.SIN_TO_COS & TrigTools.TABLE_MASK];
+        final int idx = (int) (radians * TrigTools.TABLE_SIZE / TrigTools.PI2) & TABLE_MASK;
+        return SIN_TABLE[idx] / SIN_TABLE[idx + TrigTools.SIN_TO_COS & TABLE_MASK];
     }
 
 

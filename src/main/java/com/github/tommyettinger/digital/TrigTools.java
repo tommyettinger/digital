@@ -179,7 +179,7 @@ public final class TrigTools {
     public static final double degreesToRadiansD = Math.PI / 180.0;
 
     /**
-     * A precalculated table of 16384 floats, corresponding to the y-value of points on the unit circle, ordered by
+     * A precalculated table of 16385 floats, corresponding to the y-value of points on the unit circle, ordered by
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
      * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
      * <br>
@@ -187,11 +187,12 @@ public final class TrigTools {
      * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get y, then look up
      * {@code (angle + TrigTools.SIN_TO_COS) & TrigTools.TABLE_MASK} (or {@code (angle + 4096) & 16383}) to get x.
      * Note that if {@link #SIN_BITS} changes, this table will be a different size, and so will {@link #SIN_TO_COS}.
+     * Elements 0 and 16384 are identical to allow wrapping.
      */
-    public static final float[] SIN_TABLE = new float[TABLE_SIZE];
+    public static final float[] SIN_TABLE = new float[TABLE_SIZE+1];
 
     /**
-     * A precalculated table of 16384 doubles, corresponding to the y-value of points on the unit circle, ordered by
+     * A precalculated table of 16385 doubles, corresponding to the y-value of points on the unit circle, ordered by
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
      * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
      * <br>
@@ -199,8 +200,9 @@ public final class TrigTools {
      * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get y, then look up
      * {@code (angle + TrigTools.SIN_TO_COS) & TrigTools.TABLE_MASK} (or {@code (angle + 4096) & 16383}) to get x.
      * Note that if {@link #SIN_BITS} changes, this table will be a different size, and so will {@link #SIN_TO_COS}.
+     * Elements 0 and 16384 are identical to allow wrapping.
      */
-    public static final double[] SIN_TABLE_D = new double[TABLE_SIZE];
+    public static final double[] SIN_TABLE_D = new double[TABLE_SIZE+1];
 
     static {
         for (int i = 0; i < TABLE_SIZE; i++)
