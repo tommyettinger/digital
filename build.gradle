@@ -13,8 +13,6 @@ buildscript {
 apply plugin: 'java-library'
 apply plugin: 'com.vanniktech.maven.publish'
 
-sourceCompatibility = 1.8
-
 def projectName = 'digital'
 
 group 'com.github.tommyettinger'
@@ -35,13 +33,22 @@ if (JavaVersion.current().isJava8Compatible()) {
     }
 }
 
-if(JavaVersion.current().isJava9Compatible()) {
-    allprojects {
-        tasks.withType(JavaCompile) {
-            options.release.set(8)
-        }
+compileJava {
+    sourceCompatibility = 7
+    targetCompatibility = 7
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.release.set(7)
     }
 }
+
+compileTestJava {
+    sourceCompatibility = 8
+    targetCompatibility = 8
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.release.set(8)
+    }
+}
+
 apply plugin: 'idea'
 idea.module.excludeDirs += [file("src/main/java/com/github/tommyettinger/emu/")]
 [compileJava, compileTestJava, javadoc]*.exclude("com/github/tommyettinger/emu")
