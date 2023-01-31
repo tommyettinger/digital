@@ -623,7 +623,7 @@ public final class MathTools {
      * @return a float between -1 and 1, inclusive
      */
     public static float noiseSpline(float x, final float shape, float turning) {
-        final float d = (turning += 0.5f) - (x = x * 0.5f + 0.5f);
+        final float d = (turning = turning * 0.5f + 0.5f) - (x = x * 0.5f + 0.5f);
         final int f = BitConversion.floatToIntBits(d) >> 31, n = f | 1;
         return (((turning * n - f) * (x + f)) / (Float.MIN_NORMAL - f + (x + shape * d) * n) - f - 0.5f) * 2f;
     }
@@ -647,7 +647,7 @@ public final class MathTools {
      * @return a double between -1 and 1, inclusive
      */
     public static double noiseSpline(double x, final double shape, double turning) {
-        final double d = (turning += 0.5) - (x = x * 0.5 + 0.5);
+        final double d = (turning = turning * 0.5 + 0.5) - (x = x * 0.5 + 0.5);
         final int f = BitConversion.doubleToHighIntBits(d) >> 31, n = f | 1;
         return (((turning * n - f) * (x + f)) / (Double.MIN_NORMAL - f + (x + shape * d) * n) - f - 0.5) * 2.0;
     }
