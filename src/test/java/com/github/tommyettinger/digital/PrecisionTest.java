@@ -506,6 +506,7 @@ public class PrecisionTest {
     @Test
     public void testSinD() {
         LinkedHashMap<String, DoubleUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("sinLerp", PrecisionTest::sinLerp);
         functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinNewTable", TrigTools::sin);
         functions.put("sinOldTable", OldTrigTools::sin);
@@ -513,28 +514,56 @@ public class PrecisionTest {
         for (Map.Entry<String, DoubleUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
             final DoubleUnaryOperator op = ent.getValue();
-            double absError = 0.0, relError = 0.0, maxError = 0.0;
-            float worstX = 0;
+            double absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
+            double worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
             long counter = 0L;
-            for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
+            for (double x = -PI_D; x <= PI2_D; x += 0x1p-20) {
 
                 double tru = Math.sin(x),
-                        err = op.applyAsDouble(x) - tru,
-                        ae = abs(err);
-                relError += Math.abs(ae / Math.nextAfter(tru, Math.copySign(Float.POSITIVE_INFINITY, tru)));
+                        err = tru - op.applyAsDouble(x),
+                        ae = abs(err),
+                        re = Math.abs(err / Math.nextAfter(tru, Math.copySign(Double.MAX_VALUE, tru)));
+                relError += re;
+                if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                    highestRelX = x;
+                }
+                if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                    lowestRelX = x;
+                }
                 absError += ae;
-                if (maxError != (maxError = Math.max(maxError, ae))) {
-                    worstX = x;
+                if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
+                    worstAbsX = x;
                 }
                 ++counter;
             }
+            double worstAbs = op.applyAsDouble(worstAbsX),
+                    worstTru = Math.sin(worstAbsX),
+                    highestTru = Math.sin(highestRelX),
+                    lowestTru = Math.sin(lowestRelX),
+                    lowestErr = lowestTru - op.applyAsDouble(lowestRelX),
+                    lowestRel = abs(lowestErr / Math.nextAfter(lowestTru, Math.copySign(Double.MAX_VALUE, lowestTru))),
+                    highestErr = highestTru - op.applyAsDouble(highestRelX),
+                    highestRel = abs(highestErr / Math.nextAfter(highestTru, Math.copySign(Double.MAX_VALUE, highestTru)));
             System.out.printf(
-                    "Absolute error:   %3.8f\n" +
-                            "Relative error:   %3.8f\n" +
-                            "Maximum error:    %3.8f\n" +
-                            "Worst input:      %3.8f\n" +
-                            "Worst approx output: %3.8f\n" +
-                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsDouble(worstX), Math.sin(worstX));
+                    "Mean absolute error: %16.10f\n" +
+                            "Mean relative error: %16.10f\n" +
+                            "Maximum abs. error:  %16.10f\n" +
+                            "Maximum rel. error:  %16.10f\n" +
+                            "Lowest output rel:   %16.10f\n" +
+                            "Best input (lo):     %30.24f\n" +
+                            "Best output (lo):    %16.10f (0x%016X)\n" +
+                            "Correct output (lo): %16.10f (0x%016X)\n" +
+                            "Worst input (hi):    %30.24f\n" +
+                            "Highest output rel:  %16.10f\n" +
+                            "Worst output (hi):   %16.10f (0x%016X)\n" +
+                            "Correct output (hi): %16.10f (0x%016X)\n" +
+                            "Worst input (abs):   %30.24f\n" +
+                            "Worst output (abs):  %16.10f (0x%016X)\n" +
+                            "Correct output (abs):%16.10f (0x%016X)\n", absError / counter, relError / counter,
+                    maxAbsError, maxRelError,
+                    lowestRel, lowestRelX, op.applyAsDouble(lowestRelX), Double.doubleToLongBits(op.applyAsDouble(lowestRelX)), lowestTru, Double.doubleToLongBits(lowestTru),
+                    highestRelX, highestRel, op.applyAsDouble(highestRelX), Double.doubleToLongBits(op.applyAsDouble(highestRelX)), highestTru, Double.doubleToLongBits(highestTru),
+                    worstAbsX, worstAbs, Double.doubleToLongBits(worstAbs), worstTru, Double.doubleToLongBits(worstTru));
         }
     }
 
@@ -967,10 +996,26 @@ Worst input (abs):       4.205234527587891000000000
     }
 
     public static float sinLerp(float radians) {
+        //Mean absolute error:     0.0000000698
+        //Mean relative error:     0.0000011298
+        //Maximum abs. error:      0.0000004470
+        //Maximum rel. error:      0.9999999404
         radians *= radToIndex;
         final int floor = (int)(radians + 16384.0) - 16384;
         final int masked = floor & TABLE_MASK;
         final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    public static double sinLerp(double radians) {
+        //Mean absolute error:     0.0000000078
+        //Mean relative error:     0.0000001134
+        //Maximum abs. error:      0.0000000184
+        //Maximum rel. error:      1.0000000000
+        radians *= radToIndexD;
+        final int floor = (int) Math.floor(radians);
+        final int masked = floor & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
         return from + (to - from) * (radians - floor);
     }
 
@@ -979,6 +1024,14 @@ Worst input (abs):       4.205234527587891000000000
         final int floor = (int)(radians + 16384.0) - 16384;
         final int masked = floor + SIN_TO_COS & TABLE_MASK;
         final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    public static double cosLerp(double radians) {
+        radians *= radToIndexD;
+        final int floor = (int) Math.floor(radians);
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
         return from + (to - from) * (radians - floor);
     }
 
@@ -1000,6 +1053,16 @@ Worst input (abs):       4.205234527587891000000000
         final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
         final float fromS = SIN_TABLE[maskedS], toS = SIN_TABLE[maskedS+1];
         final float fromC = SIN_TABLE[maskedC], toC = SIN_TABLE[maskedC+1];
+        return (fromS + (toS - fromS) * (radians - floor))/(fromC + (toC - fromC) * (radians - floor));
+    }
+
+    public static double tanLerp(double radians) {
+        radians *= radToIndexD;
+        final int floor = (int)Math.floor(radians);
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final double fromS = SIN_TABLE_D[maskedS], toS = SIN_TABLE_D[maskedS+1];
+        final double fromC = SIN_TABLE_D[maskedC], toC = SIN_TABLE_D[maskedC+1];
         return (fromS + (toS - fromS) * (radians - floor))/(fromC + (toC - fromC) * (radians - floor));
     }
 
