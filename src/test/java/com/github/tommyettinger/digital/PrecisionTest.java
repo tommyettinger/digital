@@ -4,6 +4,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 
@@ -361,14 +362,15 @@ public class PrecisionTest {
      */
     @Test
     public void testSin() {
-        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("sinCurve", PrecisionTest::sinCurve);
         functions.put("sinSmooth", TrigTools::sinSmooth);
-//        functions.put("sinNewTable", TrigTools::sin);
+        functions.put("sinNewTable", TrigTools::sin);
 //        functions.put("sinOldTable", OldTrigTools::sin);
 //        functions.put("sinNick", PrecisionTest::sinNick);
 //        functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
 //        functions.put("sinSteadman", PrecisionTest::sinSteadman);
-        functions.put("sinBhaskara2", PrecisionTest::sinBhaskaraI);
+//        functions.put("sinBhaskara2", PrecisionTest::sinBhaskaraI);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -842,6 +844,29 @@ Worst input (abs):       4.205234527587891000000000
         final float x2 = radians * radians, x3 = radians * x2;
         return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
     }
+
+    /**
+     * An attempt at using a four-piece cubic Bézier curve to implement sin().
+     * Based on <a href="https://spencermortensen.com/articles/bezier-circle/">this article</a>
+     * by Spencer Mortensen.
+     * @param radians angle
+     * @return between -1 and 1
+     */
+    public static float sinCurve(float radians) {
+        //Mean absolute error:     0.0031874795
+        //Mean relative error:     0.0117092488
+        //Maximum abs. error:      0.0074013174
+        //Maximum rel. error:      1.0000000000
+
+        //y=1.00005519 * i * ii + (3 * 0.99873585) * ii * t+ (3 * 0.55342686) * i * t * t;
+        radians = radians * (TrigTools.PI_INVERSE * 2f);
+        final int floor = (int) Math.floor(radians);
+        radians -= floor;
+        radians = Math.abs(radians - (~floor & 1));
+        final float i = 1f - radians, ii = i * i;
+        return (1.00005519f * i * ii + (3 * 0.99873585f) * ii * radians + (3 * 0.55342686f) * i * radians * radians)
+                * (1 - (floor & 2));
+=    }
 
     /**
      * The technique for sine approximation is mostly from
