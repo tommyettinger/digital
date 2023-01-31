@@ -3,7 +3,7 @@ package com.github.tommyettinger.digital;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
@@ -434,7 +434,7 @@ public class PrecisionTest {
 
     @Test
     public void testSinDeg() {
-        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinSmoothDeg", TrigTools::sinSmoothDeg);
         functions.put("sinDegNewTable", TrigTools::sinDeg);
         functions.put("sinDegOldTable", OldTrigTools::sinDeg);
@@ -469,7 +469,7 @@ public class PrecisionTest {
 
     @Test
     public void testSinTurns() {
-        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinSmoothTurns", TrigTools::sinSmoothTurns);
         functions.put("sinTurnsNewTable", TrigTools::sinTurns);
         functions.put("sinTurnsOldTable", OldTrigTools::sinTurns);
@@ -505,7 +505,7 @@ public class PrecisionTest {
 
     @Test
     public void testSinD() {
-        HashMap<String, DoubleUnaryOperator> functions = new HashMap<>(8);
+        LinkedHashMap<String, DoubleUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinNewTable", TrigTools::sin);
         functions.put("sinOldTable", OldTrigTools::sin);
@@ -541,7 +541,8 @@ public class PrecisionTest {
 
     @Test
     public void testCos() {
-        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("cosLerp", PrecisionTest::cosLerp);
         functions.put("cosSmooth", TrigTools::cosSmooth);
         functions.put("cosNewTable", TrigTools::cos);
         functions.put("cosOldTable", OldTrigTools::cos);
@@ -549,34 +550,64 @@ public class PrecisionTest {
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
             final FloatUnaryOperator op = ent.getValue();
-            double absError = 0.0, relError = 0.0, maxError = 0.0;
-            float worstX = 0;
+            float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
+            float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
             long counter = 0L;
-            for (float x = -TrigTools.PI2; x <= TrigTools.PI2; x += 0x1p-20f) {
+            for (float x = -TrigTools.PI; x <= TrigTools.PI2; x += 0x1p-20f) {
 
-                double tru =  (float) Math.cos(x),
-                        err = op.applyAsFloat(x) - tru,
-                        ae = abs(err);
-                relError += Math.abs(ae / Math.nextAfter(tru, Math.copySign(Float.POSITIVE_INFINITY, tru)));
+                float tru = (float) Math.cos(x),
+                        err = tru - op.applyAsFloat(x),
+                        ae = abs(err),
+                        re = Math.abs(err / Math.nextAfter(tru, Math.copySign(Float.MAX_VALUE, tru)));
+                relError += re;
+                if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                    highestRelX = x;
+                }
+                if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                    lowestRelX = x;
+                }
                 absError += ae;
-                if (maxError != (maxError = Math.max(maxError, ae))) {
-                    worstX = x;
+                if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
+                    worstAbsX = x;
                 }
                 ++counter;
             }
+            float worstAbs = op.applyAsFloat(worstAbsX),
+                    worstTru = (float) Math.cos(worstAbsX),
+                    highestTru = (float) Math.cos(highestRelX),
+                    lowestTru = (float) Math.cos(lowestRelX),
+                    lowestErr = lowestTru - op.applyAsFloat(lowestRelX),
+                    lowestRel = abs(lowestErr / Math.nextAfter(lowestTru, Math.copySign(Float.MAX_VALUE, lowestTru))),
+                    highestErr = highestTru - op.applyAsFloat(highestRelX),
+                    highestRel = abs(highestErr / Math.nextAfter(highestTru, Math.copySign(Float.MAX_VALUE, highestTru)));
             System.out.printf(
-                    "Absolute error:   %3.8f\n" +
-                            "Relative error:   %3.8f\n" +
-                            "Maximum error:    %3.8f\n" +
-                            "Worst input:      %3.8f\n" +
-                            "Worst approx output: %3.8f\n" +
-                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX), (float) Math.cos(worstX));
+                    "Mean absolute error: %16.10f\n" +
+                            "Mean relative error: %16.10f\n" +
+                            "Maximum abs. error:  %16.10f\n" +
+                            "Maximum rel. error:  %16.10f\n" +
+                            "Lowest output rel:   %16.10f\n" +
+                            "Best input (lo):     %30.24f\n" +
+                            "Best output (lo):    %16.10f (0x%08X)\n" +
+                            "Correct output (lo): %16.10f (0x%08X)\n" +
+                            "Worst input (hi):    %30.24f\n" +
+                            "Highest output rel:  %16.10f\n" +
+                            "Worst output (hi):   %16.10f (0x%08X)\n" +
+                            "Correct output (hi): %16.10f (0x%08X)\n" +
+                            "Worst input (abs):   %30.24f\n" +
+                            "Worst output (abs):  %16.10f (0x%08X)\n" +
+                            "Correct output (abs):%16.10f (0x%08X)\n", absError / counter, relError / counter,
+                    maxAbsError, maxRelError,
+                    lowestRel, lowestRelX, op.applyAsFloat(lowestRelX), Float.floatToIntBits(op.applyAsFloat(lowestRelX)), lowestTru, Float.floatToIntBits(lowestTru),
+                    highestRelX, highestRel, op.applyAsFloat(highestRelX), Float.floatToIntBits(op.applyAsFloat(highestRelX)), highestTru, Float.floatToIntBits(highestTru),
+                    worstAbsX, worstAbs, Float.floatToIntBits(worstAbs), worstTru, Float.floatToIntBits(worstTru));
         }
+        System.out.printf("-------\n" +
+                "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
 
     @Test
     public void testSinSquared() {
-        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinOldSmooth", PrecisionTest::sinOldSmooth);
         functions.put("sinBhaskaroid", TrigTools::sinSmooth);
         functions.put("sinNewTable", TrigTools::sin);
@@ -612,7 +643,7 @@ public class PrecisionTest {
 
     @Test
     public void testCosSquared() {
-        HashMap<String, FloatUnaryOperator> functions = new HashMap<>(8);
+        LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("cosSmooth", TrigTools::cosSmooth);
         functions.put("cosNewTable", TrigTools::cos);
         functions.put("cosOldTable", OldTrigTools::cos);
@@ -874,6 +905,14 @@ Worst input (abs):       4.205234527587891000000000
         radians *= radToIndex;
         final int floor = (int)(radians + 16384.0) - 16384;
         final int masked = floor & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    public static float cosLerp(float radians) {
+        radians *= radToIndex;
+        final int floor = (int)(radians + 16384.0) - 16384;
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
         final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
         return from + (to - from) * (radians - floor);
     }
