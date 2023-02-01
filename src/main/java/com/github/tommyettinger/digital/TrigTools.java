@@ -898,6 +898,122 @@ public final class TrigTools {
         return (fromS + (toS - fromS) * (radians - floor))/(fromC + (toC - fromC) * (radians - floor));
     }
 
+    /**
+     * Gets an approximation of the sine of {@code degrees} that is usually much more accurate than
+     * {@link #sinDeg(float)} or {@link #sinSmoothDeg(float)}, but that is somewhat slower. This still offers about 2x
+     * to 4x the throughput of {@link Math#sin(double)} (converted from degrees and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinDeg(float)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param degrees an angle in degrees; optimally between -360 and 360
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static float sinSmootherDeg(float degrees) {
+        degrees *= degToIndex;
+        final int floor = (int)(degrees + 16384.0) - 16384;
+        final int masked = floor & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (degrees - floor);
+    }
+
+    /**
+     * Gets an approximation of the sine of {@code degrees} that is usually much more accurate than
+     * {@link #sinDeg(double)} or {@link #sinSmoothDeg(double)}, but that is somewhat slower. This still offers better
+     * throughput than {@link Math#sin(double)} (converted from degrees).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinDeg(double)} uses, but interpolates between
+     * two adjacent entries in the table, rather than just using one entry unmodified.
+     * @param degrees an angle in degrees; optimally between -360 and 360
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static double sinSmootherDeg(double degrees) {
+        degrees *= degToIndexD;
+        final int floor = (int) Math.floor(degrees);
+        final int masked = floor & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (degrees - floor);
+    }
+
+    /**
+     * Gets an approximation of the cosine of {@code degrees} that is usually much more accurate than
+     * {@link #cosDeg(float)} or {@link #cosSmoothDeg(float)}, but that is somewhat slower. This still offers about 2x to
+     * 4x the throughput of {@link Math#cos(double)} (converted from degrees and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #cosDeg(float)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param degrees an angle in degrees; optimally between -360 and 360
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static float cosSmootherDeg(float degrees) {
+        degrees *= degToIndex;
+        final int floor = (int)(degrees + 16384.0) - 16384;
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (degrees - floor);
+    }
+
+    /**
+     * Gets an approximation of the cosine of {@code degrees} that is usually much more accurate than
+     * {@link #cosDeg(double)} or {@link #cosSmoothDeg(double)}, but that is somewhat slower. This still offers better
+     * throughput than {@link Math#cos(double)} (converted from degrees).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #cosDeg(double)} uses, but interpolates between
+     * two adjacent entries in the table, rather than just using one entry unmodified.
+     * @param degrees an angle in degrees; optimally between -360 and 360
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static double cosSmootherDeg(double degrees) {
+        degrees *= degToIndexD;
+        final int floor = (int) Math.floor(degrees);
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (degrees - floor);
+    }
+
+    /**
+     * Gets an approximation of the tangent of {@code degrees} that is usually much more accurate than
+     * {@link #tanDeg(float)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
+     * higher throughput than {@link Math#tan(double)} (converted from degrees and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinDeg(float)} and {@link #cosDeg(float)} use, but
+     * interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
+     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
+     * {@link #tanDeg(float)} works, and tends to be much more precise.
+     * @param degrees a float angle in degrees, where 0 to 360 is one rotation
+     * @return a float approximation of tan()
+     */
+    public static float tanSmootherDeg(float degrees) {
+        degrees *= degToIndex;
+        final int floor = (int)(degrees + 16384.0) - 16384;
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final float fromS = SIN_TABLE[maskedS], toS = SIN_TABLE[maskedS+1];
+        final float fromC = SIN_TABLE[maskedC], toC = SIN_TABLE[maskedC+1];
+        return (fromS + (toS - fromS) * (degrees - floor))/(fromC + (toC - fromC) * (degrees - floor));
+    }
+
+    /**
+     * Gets an approximation of the tangent of {@code degrees} that is usually much more accurate than
+     * {@link #tanDeg(double)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
+     * higher throughput than {@link Math#tan(double)} (converted from degrees).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinDeg(double)} and {@link #cosDeg(double)} use,
+     * but interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
+     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
+     * {@link #tanDeg(double)} works, and tends to be much more precise.
+     * @param degrees a double angle in degrees, where 0 to 360 is one rotation
+     * @return an approximation of tan()
+     */
+    public static double tanSmootherDeg(double degrees) {
+        degrees *= degToIndexD;
+        final int floor = (int)Math.floor(degrees);
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final double fromS = SIN_TABLE_D[maskedS], toS = SIN_TABLE_D[maskedS+1];
+        final double fromC = SIN_TABLE_D[maskedC], toC = SIN_TABLE_D[maskedC+1];
+        return (fromS + (toS - fromS) * (degrees - floor))/(fromC + (toC - fromC) * (degrees - floor));
+    }
+
     // ---
 
     /**
