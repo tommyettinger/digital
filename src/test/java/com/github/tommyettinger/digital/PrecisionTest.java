@@ -947,6 +947,38 @@ Worst input (abs):       4.205234527587891000000000
         System.out.printf("%30.24f should be %30.24f\n", sinBhaskaraI( 4.205234527587891000000000f), (float)Math.sin( 4.205234527587891000000000));
     }
 
+    //sinNewTable
+    // 15 bits
+    //Mean absolute error:     0.0000605661
+    //Mean relative error:     0.0009589014
+    //Maximum abs. error:      0.0001917998
+    //Maximum rel. error:    633.9434204102
+    // 14 bits
+    //Mean absolute error:     0.0001211311
+    //Mean relative error:     0.0019176021
+    //Maximum abs. error:      0.0003835472
+    //Maximum rel. error:   1268.8868408203
+    // 13 bits
+    //Mean absolute error:     0.0002422611
+    //Mean relative error:     0.0038344343
+    //Maximum abs. error:      0.0007669241
+    //Maximum rel. error:   2538.7734375000
+    // 12 bits
+    //Mean absolute error:     0.0004845174
+    //Mean relative error:     0.0076436219
+    //Maximum abs. error:      0.0015337468
+    //Maximum rel. error:   5078.5454101563
+    // 10 bits
+    //Mean absolute error:     0.0019380411
+    //Mean relative error:     0.0305681583
+    //Maximum abs. error:      0.0061356635
+    //Maximum rel. error:  20317.0605468750
+    // 8 bits
+    //Mean absolute error:     0.0077518616
+    //Mean relative error:     0.1222654060
+    //Maximum abs. error:      0.0245410595
+    //Maximum rel. error:  81263.6015625000
+
     /**
      * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
@@ -959,12 +991,17 @@ Worst input (abs):       4.205234527587891000000000
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinBhaskaroid(float radians) {
-        //Mean absolute error: 0.0001498343
-        //Mean relative error: 0.0002477639
-        //Maximum error:       0.00035501
-        //Worst input:         -4.20848227
-        //Worst approx output: 0.87534791
-        //Correct output:      0.87570292
+        //Mean absolute error:     0.0001500618
+        //Mean relative error:     0.0002456330
+        //Maximum abs. error:      0.0003549457
+        //Maximum rel. error:      0.9999999404
+        //Worst input (hi):       -3.141592741012573200000000
+        //Highest output rel:      0.9999999404
+        //Worst output (hi):      -0.0000000000 (0x80000000)
+        //Correct output (hi):     0.0000000874 (0x33BBBD2E)
+        //Worst input (abs):       4.205234527587891000000000
+        //Worst output (abs):     -0.8737751842 (0xBF5FAFBB)
+        //Correct output (abs):   -0.8741301298 (0xBF5FC6FE)
         radians = radians * (TrigTools.PI_INVERSE * 2f);
         final int ceil = (int) Math.ceil(radians) & -2;
         radians -= ceil;
@@ -980,10 +1017,10 @@ Worst input (abs):       4.205234527587891000000000
      * @return between -1 and 1
      */
     public static float sinCurve(float radians) {
-        //Mean absolute error:     0.0031874795
-        //Mean relative error:     0.0117092488
+        //Mean absolute error:     0.0031656511
+        //Mean relative error:     0.0113971122
         //Maximum abs. error:      0.0074013174
-        //Maximum rel. error:      1.0000000000
+        //Maximum rel. error:      0.9999999404
 
         //y=1.00005519 * i * ii + (3 * 0.99873585) * ii * t+ (3 * 0.55342686) * i * t * t;
         radians = radians * (TrigTools.PI_INVERSE * 2f);
@@ -996,10 +1033,37 @@ Worst input (abs):       4.205234527587891000000000
     }
 
     public static float sinLerp(float radians) {
+        // 15 bits
+        //Mean absolute error:     0.0000000692
+        //Mean relative error:     0.0000011315
+        //Maximum abs. error:      0.0000004470
+        //Maximum rel. error:      0.9999999404
+        // 14 bits
         //Mean absolute error:     0.0000000698
         //Mean relative error:     0.0000011298
         //Maximum abs. error:      0.0000004470
         //Maximum rel. error:      0.9999999404
+        // 13 bits
+        //Mean absolute error:     0.0000000783
+        //Mean relative error:     0.0000011377
+        //Maximum abs. error:      0.0000004470
+        //Maximum rel. error:      0.9999999404
+        // 12 bits
+        //Mean absolute error:     0.0000001439
+        //Mean relative error:     0.0000012020
+        //Maximum abs. error:      0.0000004768
+        //Maximum rel. error:      0.9999999404
+        // 10 bits
+        //Mean absolute error:     0.0000019551
+        //Mean relative error:     0.0000038662
+        //Maximum abs. error:      0.0000047684
+        //Maximum rel. error:      0.9999999404
+        // 8 bits
+        //Mean absolute error:     0.0000315707
+        //Mean relative error:     0.0000492464
+        //Maximum abs. error:      0.0000753403
+        //Maximum rel. error:      0.9999999404
+
         radians *= radToIndex;
         final int floor = (int)(radians + 16384.0) - 16384;
         final int masked = floor & TABLE_MASK;
@@ -1008,6 +1072,7 @@ Worst input (abs):       4.205234527587891000000000
     }
 
     public static double sinLerp(double radians) {
+        // 14 bits
         //Mean absolute error:     0.0000000078
         //Mean relative error:     0.0000001134
         //Maximum abs. error:      0.0000000184
