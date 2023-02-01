@@ -1546,6 +1546,58 @@ public final class MathTools {
     }
 
     /**
+     * Produces a float between 0 (exclusive) and 1 (exclusive), given a {@code long} to choose the value.
+     * This method is also more uniform than dividing a {@code int} or {@code long} by a power of two (which is roughly
+     * what {@link Random#nextFloat()} does), if you use the bit-patterns of the returned floats.
+     * This is a simplified version of
+     * <a href="https://allendowney.com/research/rand/">this algorithm by Allen Downey</a>. This version can
+     * return float values between 2.7105054E-20 to 0.99999994, or 0x1.0p-65 to 0x1.fffffep-1 in hex notation.
+     * It cannot return 0 or 1. To compare, {@link Random#nextFloat()} is less likely to produce a "1" bit for its
+     * lowest 5 bits of mantissa/significand (the least significant bits numerically, but potentially important
+     * for some uses), with the least significant bit produced half as often as the most significant bit in the
+     * mantissa. As for this method, it has approximately the same likelihood of producing a "1" bit for any
+     * position in the mantissa. This method can also return floats that are extremely close to 0, but can't return
+     * floats that are as close to 1, due to how floating-point numbers work.
+     * <br>
+     * The implementation may have different performance characteristics than {@link Random#nextFloat()},
+     * because this doesn't perform any floating-point multiplication or division, and instead assembles bits
+     * of a long. This uses {@link BitConversion#intBitsToFloat(int)} and
+     * {@link Long#numberOfLeadingZeros(long)}, both of which typically have optimized intrinsics on HotSpot,
+     * and this is branchless and loopless, unlike the original algorithm by Allen Downey.
+     * @param bits a {@code long} that will determine what this returns, but with little correlation between numeric values
+     * @return a float between 2.7105054E-20 and 0.99999994, exclusive (effectively 0 and 1, exclusive)
+     */
+    public static float exclusiveFloat(final long bits) {
+        return BitConversion.intBitsToFloat(126 - Long.numberOfLeadingZeros(bits) << 23 | ((int)bits & 0x7FFFFF));
+    }
+
+    /**
+     * Produces a double between 0 (exclusive) and 1 (exclusive), given a {@code long} to choose the value.
+     * This method is also more uniform than dividing a {@code long} by a power of two (which is roughly
+     * what {@link Random#nextDouble()} does), if you use the bit-patterns of the returned floats.
+     * This is a simplified version of
+     * <a href="https://allendowney.com/research/rand/">this algorithm by Allen Downey</a>. This version can
+     * return double values between 2.710505431213761E-20 and 0.9999999999999999, or 0x1.0p-65 and 0x1.fffffffffffffp-1
+     * in hex notation. It cannot return 0 or 1. To compare, {@link Random#nextDouble()} is less likely to produce a "1"
+     * bit for its lowest 5 bits of mantissa/significand (the least significant bits numerically, but potentially
+     * important for some uses), with the least significant bit produced half as often as the most significant bit in
+     * the mantissa. As for this method, it has approximately the same likelihood of producing a "1" bit for any
+     * position in the mantissa. This method can also return doubles that are extremely close to 0, but can't return
+     * doubles that are as close to 1, due to how floating-point numbers work.
+     * <br>
+     * The implementation may have different performance characteristics than {@link Random#nextDouble()},
+     * because this doesn't perform any floating-point multiplication or division, and instead assembles bits
+     * of a long. This uses {@link BitConversion#longBitsToDouble(long)} and
+     * {@link Long#numberOfLeadingZeros(long)}, both of which typically have optimized intrinsics on HotSpot,
+     * and this is branchless and loopless, unlike the original algorithm by Allen Downey.
+     * @param bits a {@code long} that will determine what this returns, but with little correlation between numeric values
+     * @return a float between 2.710505431213761E-20 and 0.9999999999999999, exclusive (effectively 0 and 1, exclusive)
+     */
+    public static double exclusiveDouble(final long bits) {
+        return BitConversion.longBitsToDouble(1022L - Long.numberOfLeadingZeros(bits) << 52 | (bits & 0xFFFFFFFFFFFFFL));
+    }
+
+    /**
      * 1275 negative, odd {@code long} values that are calculated using a generalization of the golden ratio and
      * exponents of those generalizations. Mostly, these are useful because they are all 64-bit constants that have an
      * irrational-number-like pattern to their bits, which makes them pretty much all useful as increments for large
