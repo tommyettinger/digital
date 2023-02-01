@@ -259,7 +259,12 @@ public final class TrigTools {
      * technique on the same range has a maximum error of 1.25724030 (about 50 times worse), as well as larger absolute
      * and relative errors. Casting the double result of {@link Math#tan(double)} to float will get the highest
      * precision, but can be anywhere from 2.5x to nearly 4x slower than this, depending on JVM.
-     * <br> Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer by Soonts</a>.
+     * <br>
+     * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer by Soonts</a>.
+     * <br>
+     * If you know you target newer JDK versions only, or you need higher precision, you should consider using
+     * {@link #tanSmoother(float)} instead. Compared to this method, tanSmoother() is slightly faster on recent
+     * JDKs, and is significantly more precise.
      *
      * @param radians a float angle in radians, where 0 to {@link #PI2} is one rotation
      * @return a float approximation of tan()
@@ -309,6 +314,10 @@ public final class TrigTools {
     /**
      * Returns the tangent in degrees, using a Padé approximant.
      * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
+     * <br>
+     * If you know you target newer JDK versions only, or you need higher precision, you should consider using
+     * {@link #tanSmootherDeg(float)} instead. Compared to this method, tanSmootherDeg() is slightly faster on recent
+     * JDKs, and is significantly more precise.
      *
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      * @return a float approximation of tan()
@@ -349,6 +358,10 @@ public final class TrigTools {
     /**
      * Returns the tangent in turns, using a Padé approximant.
      * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
+     * <br>
+     * If you know you target newer JDK versions only, or you need higher precision, you should consider using
+     * {@link #tanSmootherTurns(float)} instead. Compared to this method, tanSmootherTurns() is slightly faster on
+     * recent JDKs, and is significantly more precise.
      *
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return a float approximation of tan()
@@ -389,6 +402,11 @@ public final class TrigTools {
     /**
      * Returns the tangent in radians, using a Padé approximant.
      * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
+     * <br>
+     * If you know you target newer JDK versions only, or you need higher precision, you should consider using
+     * {@link #tanSmoother(double)} instead. Compared to this method, tanSmoother() is slightly faster on recent
+     * JDKs, and is significantly more precise.
+     *
      * @param radians a double angle in radians, where 0 to {@link #PI2} is one rotation
      * @return a double approximation of tan()
      */
@@ -430,6 +448,10 @@ public final class TrigTools {
     /**
      * Returns the tangent in degrees, using a Padé approximant.
      * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
+     * <br>
+     * If you know you target newer JDK versions only, or you need higher precision, you should consider using
+     * {@link #tanSmootherDeg(double)} instead. Compared to this method, tanSmootherDeg() is slightly faster on recent
+     * JDKs, and is significantly more precise.
      *
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      * @return a double approximation of tan()
@@ -470,6 +492,10 @@ public final class TrigTools {
     /**
      * Returns the tangent in turns, using a Padé approximant.
      * Based on <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer</a>.
+     * <br>
+     * If you know you target newer JDK versions only, or you need higher precision, you should consider using
+     * {@link #tanSmootherTurns(double)} instead. Compared to this method, tanSmootherTurns() is slightly faster on
+     * recent JDKs, and is significantly more precise.
      *
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return a double approximation of tan()
@@ -1012,6 +1038,122 @@ public final class TrigTools {
         final double fromS = SIN_TABLE_D[maskedS], toS = SIN_TABLE_D[maskedS+1];
         final double fromC = SIN_TABLE_D[maskedC], toC = SIN_TABLE_D[maskedC+1];
         return (fromS + (toS - fromS) * (degrees - floor))/(fromC + (toC - fromC) * (degrees - floor));
+    }
+
+    /**
+     * Gets an approximation of the sine of {@code turns} that is usually much more accurate than
+     * {@link #sinTurns(float)} or {@link #sinSmoothTurns(float)}, but that is somewhat slower. This still offers about 2x
+     * to 4x the throughput of {@link Math#sin(double)} (converted from turns and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinTurns(float)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param turns an angle in turns; optimally between -1 and 1
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static float sinSmootherTurns(float turns) {
+        turns *= turnToIndex;
+        final int floor = (int)(turns + 16384.0) - 16384;
+        final int masked = floor & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (turns - floor);
+    }
+
+    /**
+     * Gets an approximation of the sine of {@code turns} that is usually much more accurate than
+     * {@link #sinTurns(double)} or {@link #sinSmoothTurns(double)}, but that is somewhat slower. This still offers better
+     * throughput than {@link Math#sin(double)} (converted from turns).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinTurns(double)} uses, but interpolates between
+     * two adjacent entries in the table, rather than just using one entry unmodified.
+     * @param turns an angle in turns; optimally between -1 and 1
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static double sinSmootherTurns(double turns) {
+        turns *= turnToIndexD;
+        final int floor = (int) Math.floor(turns);
+        final int masked = floor & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (turns - floor);
+    }
+
+    /**
+     * Gets an approximation of the cosine of {@code turns} that is usually much more accurate than
+     * {@link #cosTurns(float)} or {@link #cosSmoothTurns(float)}, but that is somewhat slower. This still offers about 2x to
+     * 4x the throughput of {@link Math#cos(double)} (converted from turns and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #cosTurns(float)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param turns an angle in turns; optimally between -1 and 1
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static float cosSmootherTurns(float turns) {
+        turns *= turnToIndex;
+        final int floor = (int)(turns + 16384.0) - 16384;
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (turns - floor);
+    }
+
+    /**
+     * Gets an approximation of the cosine of {@code turns} that is usually much more accurate than
+     * {@link #cosTurns(double)} or {@link #cosSmoothTurns(double)}, but that is somewhat slower. This still offers better
+     * throughput than {@link Math#cos(double)} (converted from turns).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #cosTurns(double)} uses, but interpolates between
+     * two adjacent entries in the table, rather than just using one entry unmodified.
+     * @param turns an angle in turns; optimally between -1 and 1
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static double cosSmootherTurns(double turns) {
+        turns *= turnToIndexD;
+        final int floor = (int) Math.floor(turns);
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (turns - floor);
+    }
+
+    /**
+     * Gets an approximation of the tangent of {@code turns} that is usually much more accurate than
+     * {@link #tanTurns(float)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
+     * higher throughput than {@link Math#tan(double)} (converted from turns and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinTurns(float)} and {@link #cosTurns(float)} use, but
+     * interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
+     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
+     * {@link #tanTurns(float)} works, and tends to be much more precise.
+     * @param turns a float angle in turns, where 0 to 1 is one rotation
+     * @return a float approximation of tan()
+     */
+    public static float tanSmootherTurns(float turns) {
+        turns *= turnToIndex;
+        final int floor = (int)(turns + 16384.0) - 16384;
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final float fromS = SIN_TABLE[maskedS], toS = SIN_TABLE[maskedS+1];
+        final float fromC = SIN_TABLE[maskedC], toC = SIN_TABLE[maskedC+1];
+        return (fromS + (toS - fromS) * (turns - floor))/(fromC + (toC - fromC) * (turns - floor));
+    }
+
+    /**
+     * Gets an approximation of the tangent of {@code turns} that is usually much more accurate than
+     * {@link #tanTurns(double)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
+     * higher throughput than {@link Math#tan(double)} (converted from turns).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinTurns(double)} and {@link #cosTurns(double)} use,
+     * but interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
+     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
+     * {@link #tanTurns(double)} works, and tends to be much more precise.
+     * @param turns a double angle in turns, where 0 to 1 is one rotation
+     * @return an approximation of tan()
+     */
+    public static double tanSmootherTurns(double turns) {
+        turns *= turnToIndexD;
+        final int floor = (int)Math.floor(turns);
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final double fromS = SIN_TABLE_D[maskedS], toS = SIN_TABLE_D[maskedS+1];
+        final double fromC = SIN_TABLE_D[maskedC], toC = SIN_TABLE_D[maskedC+1];
+        return (fromS + (toS - fromS) * (turns - floor))/(fromC + (toC - fromC) * (turns - floor));
     }
 
     // ---
