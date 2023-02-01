@@ -364,7 +364,7 @@ public class PrecisionTest {
     @Test
     public void testSin() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("sinLerp", PrecisionTest::sinLerp);
+        functions.put("sinSmoother", PrecisionTest::sinSmoother);
         functions.put("sinCurve", PrecisionTest::sinCurve);
         functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinNewTable", TrigTools::sin);
@@ -506,7 +506,7 @@ public class PrecisionTest {
     @Test
     public void testSinD() {
         LinkedHashMap<String, DoubleUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("sinLerp", PrecisionTest::sinLerp);
+        functions.put("sinSmoother", PrecisionTest::sinSmoother);
         functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinNewTable", TrigTools::sin);
         functions.put("sinOldTable", OldTrigTools::sin);
@@ -571,7 +571,7 @@ public class PrecisionTest {
     @Test
     public void testCos() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("cosLerp", PrecisionTest::cosLerp);
+        functions.put("cosSmoother", PrecisionTest::cosSmoother);
         functions.put("cosSmooth", TrigTools::cosSmooth);
         functions.put("cosNewTable", TrigTools::cos);
         functions.put("cosOldTable", OldTrigTools::cos);
@@ -637,7 +637,7 @@ public class PrecisionTest {
     @Test
     public void testTan() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("tanLerp", PrecisionTest::tanLerp);
+        functions.put("tanSmoother", PrecisionTest::tanSmoother);
         functions.put("tanNoTable", TrigTools::tan);
         functions.put("tanTable", PrecisionTest::tanTable);
 
@@ -1032,7 +1032,7 @@ Worst input (abs):       4.205234527587891000000000
                 * (1 - (floor & 2));
     }
 
-    public static float sinLerp(float radians) {
+    public static float sinSmoother(float radians) {
         // 15 bits
         //Mean absolute error:     0.0000000692
         //Mean relative error:     0.0000011315
@@ -1071,7 +1071,7 @@ Worst input (abs):       4.205234527587891000000000
         return from + (to - from) * (radians - floor);
     }
 
-    public static double sinLerp(double radians) {
+    public static double sinSmoother(double radians) {
         // 14 bits
         //Mean absolute error:     0.0000000078
         //Mean relative error:     0.0000001134
@@ -1084,7 +1084,7 @@ Worst input (abs):       4.205234527587891000000000
         return from + (to - from) * (radians - floor);
     }
 
-    public static float cosLerp(float radians) {
+    public static float cosSmoother(float radians) {
         radians *= radToIndex;
         final int floor = (int)(radians + 16384.0) - 16384;
         final int masked = floor + SIN_TO_COS & TABLE_MASK;
@@ -1092,7 +1092,7 @@ Worst input (abs):       4.205234527587891000000000
         return from + (to - from) * (radians - floor);
     }
 
-    public static double cosLerp(double radians) {
+    public static double cosSmoother(double radians) {
         radians *= radToIndexD;
         final int floor = (int) Math.floor(radians);
         final int masked = floor + SIN_TO_COS & TABLE_MASK;
@@ -1107,7 +1107,7 @@ Worst input (abs):       4.205234527587891000000000
     //Maximum rel. error:      0.0575221963
 
 
-    public static float tanLerp(float radians) {
+    public static float tanSmoother(float radians) {
         //Mean absolute error:     0.0000502852
         //Mean relative error:     0.0000002945
         //Maximum abs. error:      0.1672363281
@@ -1121,7 +1121,7 @@ Worst input (abs):       4.205234527587891000000000
         return (fromS + (toS - fromS) * (radians - floor))/(fromC + (toC - fromC) * (radians - floor));
     }
 
-    public static double tanLerp(double radians) {
+    public static double tanSmoother(double radians) {
         radians *= radToIndexD;
         final int floor = (int)Math.floor(radians);
         final int maskedS = floor & TABLE_MASK;
