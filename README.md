@@ -43,7 +43,9 @@ TrigTools can be seen as similar to what libGDX's MathUtils
 class offers, but allowing access to the lookup table permits
 a few novel features (see its docs). It supports float and
 double arguments/returns for all functions. It also provides
-"smooth" sin and cos approximations that aren't table-based.
+"smooth" sin and cos approximations that aren't table-based,
+and "smoother" sin/cos/tan versions that interpolate between
+entries in the lookup table for very high precision.
 
 MathTools offers a wild grab bag of math functions and
 constants, from simple lerp, floor, ceil, and clamp methods to
@@ -119,14 +121,14 @@ With Gradle, add this to your dependencies (in your core module's
 `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.7"
+api "com.github.tommyettinger:digital:0.1.8"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.7:sources"
+api "com.github.tommyettinger:digital:0.1.8:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
