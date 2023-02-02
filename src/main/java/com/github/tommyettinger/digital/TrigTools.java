@@ -28,11 +28,30 @@ package com.github.tommyettinger.digital;
  * This is primarily derived from libGDX's MathUtils class. The main new functionalities are the variants that take or
  * return measurements in turns, the now-available {@link #SIN_TABLE} and {@link #SIN_TABLE_D}, and double variants in
  * general. Using the sin table directly has other uses mentioned in its docs (in particular, uniform random unit
- * vectors). Because using a lookup table for sine and cosine has very small "jumps" between what it returns for
- * smoothly increasing inputs, it may be unsuitable for some usage, such as calculating tan() or some statistical code.
- * TrigTools provides sinSmooth(), cosSmooth(), and degree/turn variants of those for when the precision should be high
- * but it is most important to have a smoothly-curving graph of returns. A different smooth approximation is used for
- * tan().
+ * vectors). Because using a lookup table for {@link #sin(float)} and {@link #cos(float)} very small "jumps" between
+ * what it returns for smoothly increasing inputs, it may be unsuitable for some usage, such as calculating tan(), or
+ * some statistical code. TrigTools provides sinSmooth(), cosSmooth(), and degree/turn variants of those for when the
+ * precision should be moderately high, but it is most important to have a smoothly-curving graph of returns. A
+ * different smooth approximation is used for tan(). In addition to the "xyzSmooth()" methods, there are also "smoother"
+ * variants: {@link #sinSmoother(float)}, {@link #cosSmoother(float)}, {@link #tanSmoother(float)}, degree/turn variants
+ * on those, and double variants on all of these. The smoother variants actually do use the same {@link #SIN_TABLE} that
+ * sin() and cos() use, but they perform tiny linear interpolations between what would otherwise be sudden jumps. The
+ * "smoother" methods are all very precise compared to the others here, and aren't necessarily slower than the "smooth"
+ * methods -- see below.
+ * <br>
+ * For sine and cosine, {@link #sin(float)} and {@link #cos(float)} are extremely fast in benchmarks, but benchmarks
+ * typically will have the {@link #SIN_TABLE} in cache; if that table is not in cache, then they probably don't perform
+ * as well. You can get improved accuracy at the cost of reduced speed ("reduced" assumes the table is in-cache) by
+ * using {@link #sinSmooth(float)} and {@link #cosSmooth(float)}; these should perform the same regardless of whether
+ * the table is in cache, so they may even have an edge over sin() and cos() if the table isn't. Accuracy improves even
+ * further if you use {@link #sinSmoother(float)} and {@link #cosSmoother(float)}, but these are definitely slower than
+ * sin() and cos(), since they do more work. Benchmarks gave conflicting information regarding whether sinSmooth() or
+ * sinSmoother() is faster; JMH benchmarks showed sinSmooth() as always being faster, while BumbleBench benchmarks
+ * showed sinSmoother() as always being faster. In both cases, the speed difference was small.
+ * <br>
+ * For calculating tangent, {@link #tan(float)} is somewhat faster on Java 8 (using HotSpot) and some OpenJ9 versions,
+ * but {@link #tanSmoother(float)} is faster on Java 11 and up, significantly so on Java 16 and up. However, tan() does
+ * not use {@link #SIN_TABLE}, while tanSmoother() does, and this may be relevant if the table is not in-cache.
  * <br>
  * MathUtils had its sin and cos methods created by Riven on JavaGaming.org . The asin(), acos(), and atan() methods all
  * use Taylor series approximations from the 1955 research study "Approximations for Digital Computers," by RAND
@@ -40,9 +59,10 @@ package com.github.tommyettinger.digital;
  * study seem to have higher accuracy and speed than most attempts in later decades, often those aimed at DSP usage.
  * Even older is the basis for sinSmooth() and cosSmooth(); the versions here are updated to be more precise, but are
  * closely related to a 7th-century sine approximation by Bhaskara I. The update was given in
- * <a href="https://math.stackexchange.com/a/3886664">this Stack Exchange answer by WimC</a>. Also from Stack Exchange,
+ * <a href="https://math.stackexchange.com/a/3886664">this Stack Exchange answer by WimC</a>. From the same site,
  * <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer by Soonts</a> provided the tan()
- * approximation used here.
+ * method used here. The technique in the "Smoother" methods is not much different from the typical lookup table used by
+ * sin() and cos(); it just linear-interpolates between two adjacent table entries.
  */
 public final class TrigTools {
 
@@ -163,20 +183,20 @@ public final class TrigTools {
     /**
      * Multiply by this to convert from radians to degrees.
      */
-    public static final float radiansToDegrees = 180f / PI;
-    /**
-     * Multiply by this to convert from degrees to radians.
-     */
-    public static final float degreesToRadians = PI / 180f;
-
-    /**
-     * Multiply by this to convert from radians to degrees.
-     */
     public static final double radiansToDegreesD = 180.0 / Math.PI;
     /**
      * Multiply by this to convert from degrees to radians.
      */
     public static final double degreesToRadiansD = Math.PI / 180.0;
+
+    /**
+     * Multiply by this to convert from radians to degrees.
+     */
+    public static final float radiansToDegrees = (float) radiansToDegreesD;
+    /**
+     * Multiply by this to convert from degrees to radians.
+     */
+    public static final float degreesToRadians = (float) degreesToRadiansD;
 
     /**
      * A precalculated table of 16385 floats, corresponding to the y-value of points on the unit circle, ordered by
@@ -214,9 +234,9 @@ public final class TrigTools {
         SIN_TABLE[(int) (180 * degToIndex) & TABLE_MASK] = 0f;
         SIN_TABLE[(int) (270 * degToIndex) & TABLE_MASK] = -1.0f;
         SIN_TABLE_D[0] = 0.0;
-        SIN_TABLE_D[(int) (90 * degToIndex) & TABLE_MASK] = 1.0;
-        SIN_TABLE_D[(int) (180 * degToIndex) & TABLE_MASK] = 0.0;
-        SIN_TABLE_D[(int) (270 * degToIndex) & TABLE_MASK] = -1.0;
+        SIN_TABLE_D[(int) (90 * degToIndexD) & TABLE_MASK] = 1.0;
+        SIN_TABLE_D[(int) (180 * degToIndexD) & TABLE_MASK] = 0.0;
+        SIN_TABLE_D[(int) (270 * degToIndexD) & TABLE_MASK] = -1.0;
     }
 
     /**

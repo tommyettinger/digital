@@ -20,18 +20,18 @@ import java.util.Random;
 import static com.github.tommyettinger.digital.TrigTools.PI;
 import static com.github.tommyettinger.digital.TrigTools.PI2;
 import static com.github.tommyettinger.digital.TrigTools.PI2_D;
+import static com.github.tommyettinger.digital.TrigTools.PI_D;
 
 /**
  * Mathematical operations not provided by {@link Math java.lang.Math}.
  * <br>
  * Includes code that was originally part of the
  * <a href="http://maths.uncommons.org/">Uncommon Maths software package</a> as Maths.
- * Also includes code adapted from libGDX as their MathUtils class. There's also
+ * Also includes code adapted from libGDX as their MathUtils class, which credits Nathan Sweet. There's also
  * {@link #cbrt(float)} by Marc B. Reynolds, building on the legendary fast inverse square root,
  * and a generalized bias/gain function, {@link #barronSpline(float, float, float)}, popularized by Jon Barron.
  * The {@link #fastFloor(float)} and {@link #fastCeil(float)} methods were devised by Riven on JavaGaming.org .
  * {@link #factorial(float)} and {@link #gamma(float)} are by T. J. Stieltjes.
- * The lerp methods that operate on angles are originally from MathUtils in libGDX, which credits Nathan Sweet.
  *
  * @author Daniel Dyer
  * @author Tommy Ettinger
@@ -1263,7 +1263,7 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, PI2)
      */
     public static double lerpAngle(double fromRadians, double toRadians, double progress) {
-        double delta = ((toRadians - fromRadians + PI2_D + Math.PI) % PI2_D) - Math.PI;
+        double delta = ((toRadians - fromRadians + PI2_D + PI_D) % PI2_D) - PI_D;
         return (fromRadians + delta * progress + PI2_D) % PI2_D;
     }
 
@@ -1508,7 +1508,9 @@ public final class MathTools {
 
     /**
      * Given a state that is typically random-seeming, this produces an int within a bounded range that is similarly
-     * random-seeming.
+     * random-seeming. This always has an inner bound of 0 (inclusive). The outer bound is exclusive, and can be
+     * positive or negative.
+     *
      * @param state can be a long or an int; typically produced by a random- or hash-like process
      * @param bound the outer exclusive bound, as an int; does not have to be positive
      * @return an int between 0 (inclusive) and bound (exclusive)
