@@ -15,7 +15,7 @@
  *
  */
 
-package info.adams.ryu;
+package com.github.tommyettinger.digital;
 
 import java.math.BigInteger;
 
@@ -48,8 +48,8 @@ public final class RyuDouble {
   private static final int[][] POW5_INV_SPLIT = new int[NEG_TABLE_SIZE][4];
 
   static {
-    BigInteger mask = BigInteger.valueOf(1).shiftLeft(POW5_QUARTER_BITCOUNT).subtract(BigInteger.ONE);
-    BigInteger invMask = BigInteger.valueOf(1).shiftLeft(POW5_INV_QUARTER_BITCOUNT).subtract(BigInteger.ONE);
+    BigInteger mask = BigInteger.ONE.shiftLeft(POW5_QUARTER_BITCOUNT).subtract(BigInteger.ONE);
+    BigInteger invMask = BigInteger.ONE.shiftLeft(POW5_INV_QUARTER_BITCOUNT).subtract(BigInteger.ONE);
     for (int i = 0; i < Math.max(POW5.length, POW5_INV.length); i++) {
       BigInteger pow = BigInteger.valueOf(5).pow(i);
       int pow5len = pow.bitLength();
@@ -93,10 +93,6 @@ public final class RyuDouble {
   }
 
   public static String doubleToString(double value) {
-    return doubleToString(value, RoundingMode.ROUND_EVEN);
-  }
-
-  public static String doubleToString(double value, RoundingMode roundingMode) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Double.isNaN(value)) return "NaN";
@@ -193,7 +189,7 @@ public final class RyuDouble {
       if (q <= 21) {
         if (mv % 5 == 0) {
           dvIsTrailingZeros = multipleOfPowerOf5(mv, q);
-        } else if (roundingMode.acceptUpperBound(even)) {
+        } else if (even) {
           dmIsTrailingZeros = multipleOfPowerOf5(mm, q);
         } else if (multipleOfPowerOf5(mp, q)) {
           dp--;
@@ -213,7 +209,7 @@ public final class RyuDouble {
       }
       if (q <= 1) {
         dvIsTrailingZeros = true;
-        if (roundingMode.acceptUpperBound(even)) {
+        if (even) {
           dmIsTrailingZeros = mmShift == 1;
         } else {
           dp--;
@@ -229,8 +225,8 @@ public final class RyuDouble {
       System.out.println("e10=" + e10);
       System.out.println("d-10=" + dmIsTrailingZeros);
       System.out.println("d   =" + dvIsTrailingZeros);
-      System.out.println("Accept upper=" + roundingMode.acceptUpperBound(even));
-      System.out.println("Accept lower=" + roundingMode.acceptLowerBound(even));
+      System.out.println("Accept upper=" + even);
+      System.out.println("Accept lower=" + even);
     }
 
     // Step 4: Find the shortest decimal representation in the interval of legal representations.
@@ -265,7 +261,7 @@ public final class RyuDouble {
         dm /= 10;
         removed++;
       }
-      if (dmIsTrailingZeros && roundingMode.acceptLowerBound(even)) {
+      if (dmIsTrailingZeros && even) {
         while (dm % 10 == 0) {
           if ((dp < 100) && scientificNotation) {
             // Double.toString semantics requires printing at least two digits.
@@ -284,7 +280,7 @@ public final class RyuDouble {
         lastRemovedDigit = 4;
       }
       output = dv +
-          ((dv == dm && !(dmIsTrailingZeros && roundingMode.acceptLowerBound(even))) || (lastRemovedDigit >= 5) ? 1 : 0);
+          ((dv == dm && !(dmIsTrailingZeros && even)) || (lastRemovedDigit >= 5) ? 1 : 0);
     } else {
       while (dp / 10 > dm / 10) {
         if ((dp < 100) && scientificNotation) {

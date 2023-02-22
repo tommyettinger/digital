@@ -15,7 +15,7 @@
  *
  */
 
-package info.adams.ryu;
+package com.github.tommyettinger.digital;
 
 import java.math.BigInteger;
 
@@ -57,8 +57,8 @@ public final class RyuFloat {
   private static final int[][] POW5_INV_SPLIT = new int[INV_TABLE_SIZE][2];
 
   static {
-    BigInteger mask = BigInteger.valueOf(1).shiftLeft(POW5_HALF_BITCOUNT).subtract(BigInteger.ONE);
-    BigInteger maskInv = BigInteger.valueOf(1).shiftLeft(POW5_INV_HALF_BITCOUNT).subtract(BigInteger.ONE);
+    BigInteger mask = BigInteger.ONE.shiftLeft(POW5_HALF_BITCOUNT).subtract(BigInteger.ONE);
+    BigInteger maskInv = BigInteger.ONE.shiftLeft(POW5_INV_HALF_BITCOUNT).subtract(BigInteger.ONE);
     for (int i = 0; i < Math.max(POW5.length, POW5_INV.length); i++) {
       BigInteger pow = BigInteger.valueOf(5).pow(i);
       int pow5len = pow.bitLength();
@@ -87,15 +87,11 @@ public final class RyuFloat {
   public static void main(String[] args) {
     DEBUG = true;
     float f = 0.33007812f;
-    String result = floatToString(f, RoundingMode.ROUND_EVEN);
+    String result = floatToString(f);
     System.out.println(result + " " + f);
   }
 
   public static String floatToString(float value) {
-    return floatToString(value, RoundingMode.ROUND_EVEN);
-  }
-
-  public static String floatToString(float value, RoundingMode roundingMode) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Float.isNaN(value)) return "NaN";
@@ -237,7 +233,7 @@ public final class RyuFloat {
     boolean scientificNotation = !((exp >= -3) && (exp < 7));
 
     int removed = 0;
-    if (dpIsTrailingZeros && !roundingMode.acceptUpperBound(even)) {
+    if (dpIsTrailingZeros && !even) {
       dp--;
     }
 
@@ -253,7 +249,7 @@ public final class RyuFloat {
       dm /= 10;
       removed++;
     }
-    if (dmIsTrailingZeros && roundingMode.acceptLowerBound(even)) {
+    if (dmIsTrailingZeros && even) {
       while (dm % 10 == 0) {
         if ((dp < 100) && scientificNotation) {
           // We print at least two digits, so we might as well stop now.
@@ -272,7 +268,7 @@ public final class RyuFloat {
       lastRemovedDigit = 4;
     }
     int output = dv +
-        ((dv == dm && !(dmIsTrailingZeros && roundingMode.acceptLowerBound(even))) || (lastRemovedDigit >= 5) ? 1 : 0);
+        ((dv == dm && !(dmIsTrailingZeros && even)) || (lastRemovedDigit >= 5) ? 1 : 0);
     int olength = dplength - removed;
 
     if (DEBUG) {
