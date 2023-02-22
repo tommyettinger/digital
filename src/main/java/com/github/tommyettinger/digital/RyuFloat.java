@@ -74,7 +74,7 @@ public final class RyuFloat {
     }
   }
 
-  public static String floatToString(float value) {
+  public static String signed(float value) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Float.isNaN(value)) return "NaN";
@@ -198,7 +198,7 @@ public final class RyuFloat {
       }
     }
 
-    if (dvIsTrailingZeros && (lastRemovedDigit == 5) && (dv % 2 == 0)) {
+    if (dvIsTrailingZeros && (lastRemovedDigit == 5) && ((dv & 1) == 0)) {
       // Round down not up if the number ends in X50000 and the number is even.
       lastRemovedDigit = 4;
     }
@@ -278,6 +278,339 @@ public final class RyuFloat {
         index += olength + 1;
       }
     }
+    return new String(result, 0, index);
+  }
+
+  public static String decimal(float value) {
+    // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
+    // First, handle all the trivial cases.
+    if (Float.isNaN(value)) return "NaN";
+    if (value == Float.POSITIVE_INFINITY) return "Infinity";
+    if (value == Float.NEGATIVE_INFINITY) return "-Infinity";
+    int bits = Float.floatToIntBits(value);
+    if (bits == 0) return "0.0";
+    if (bits == 0x80000000) return "-0.0";
+
+    // Otherwise extract the mantissa and exponent bits and run the full algorithm.
+    int ieeeExponent = (bits >> FLOAT_MANTISSA_BITS) & FLOAT_EXPONENT_MASK;
+    int ieeeMantissa = bits & FLOAT_MANTISSA_MASK;
+    // By default, the correct mantissa starts with a 1, except for denormal numbers.
+    int e2;
+    int m2;
+    if (ieeeExponent == 0) {
+      e2 = 1 - FLOAT_EXPONENT_BIAS - FLOAT_MANTISSA_BITS;
+      m2 = ieeeMantissa;
+    } else {
+      e2 = ieeeExponent - FLOAT_EXPONENT_BIAS - FLOAT_MANTISSA_BITS;
+      m2 = ieeeMantissa | (1 << FLOAT_MANTISSA_BITS);
+    }
+
+    boolean sign = bits < 0;
+
+    // Step 2: Determine the interval of legal decimal representations.
+    boolean even = (m2 & 1) == 0;
+    int mv = 4 * m2;
+    int mp = 4 * m2 + 2;
+    int mm = 4 * m2 - ((m2 != (1L << FLOAT_MANTISSA_BITS)) || (ieeeExponent == 1) ? 2 : 1);
+    e2 -= 2;
+
+    // Step 3: Convert to a decimal power base using 128-bit arithmetic.
+    // -151 = 1 - 127 - 23 - 2 <= e_2 - 2 <= 254 - 127 - 23 - 2 = 102
+    int dp, dv, dm;
+    int e10;
+    boolean dpIsTrailingZeros, dvIsTrailingZeros, dmIsTrailingZeros;
+    int lastRemovedDigit = 0;
+    if (e2 >= 0) {
+      // Compute m * 2^e_2 / 10^q = m * 2^(e_2 - q) / 5^q
+      int q = (int) (e2 * LOG10_2_NUMERATOR / LOG10_2_DENOMINATOR);
+      int k = POW5_INV_BITCOUNT + pow5bits(q) - 1;
+      int i = -e2 + q + k;
+      dv = (int) mulPow5InvDivPow2(mv, q, i);
+      dp = (int) mulPow5InvDivPow2(mp, q, i);
+      dm = (int) mulPow5InvDivPow2(mm, q, i);
+      if (q != 0 && ((dp - 1) / 10 <= dm / 10)) {
+        // We need to know one removed digit even if we are not going to loop below. We could use
+        // q = X - 1 above, except that would require 33 bits for the result, and we've found that
+        // 32-bit arithmetic is faster even on 64-bit machines.
+        int l = POW5_INV_BITCOUNT + pow5bits(q - 1) - 1;
+        lastRemovedDigit = (int) (mulPow5InvDivPow2(mv, q - 1, -e2 + q - 1 + l) % 10);
+      }
+      e10 = q;
+
+      dpIsTrailingZeros = pow5Factor(mp) >= q;
+      dvIsTrailingZeros = pow5Factor(mv) >= q;
+      dmIsTrailingZeros = pow5Factor(mm) >= q;
+    } else {
+      // Compute m * 5^(-e_2) / 10^q = m * 5^(-e_2 - q) / 2^q
+      int q = (int) (-e2 * LOG10_5_NUMERATOR / LOG10_5_DENOMINATOR);
+      int i = -e2 - q;
+      int k = pow5bits(i) - POW5_BITCOUNT;
+      int j = q - k;
+      dv = (int) mulPow5divPow2(mv, i, j);
+      dp = (int) mulPow5divPow2(mp, i, j);
+      dm = (int) mulPow5divPow2(mm, i, j);
+      if (q != 0 && ((dp - 1) / 10 <= dm / 10)) {
+        j = q - 1 - (pow5bits(i + 1) - POW5_BITCOUNT);
+        lastRemovedDigit = (int) (mulPow5divPow2(mv, i + 1, j) % 10);
+      }
+      e10 = q + e2; // Note: e2 and e10 are both negative here.
+
+      dpIsTrailingZeros = 1 >= q;
+      dvIsTrailingZeros = (q < FLOAT_MANTISSA_BITS) && (mv & ((1 << (q - 1)) - 1)) == 0;
+      dmIsTrailingZeros = (~mm & 1) >= q;
+    }
+
+    // Step 4: Find the shortest decimal representation in the interval of legal representations.
+    //
+    // We do some extra work here in order to follow Float/Double.toString semantics. In particular,
+    // that requires printing in scientific format if and only if the exponent is between -3 and 7,
+    // and it requires printing at least two decimal digits.
+    //
+    // Above, we moved the decimal dot all the way to the right, so now we need to count digits to
+    // figure out the correct exponent for scientific notation.
+    int dplength = decimalLength(dp);
+    int exp = e10 + dplength - 1;
+
+    int removed = 0;
+    if (dpIsTrailingZeros && !even) {
+      dp--;
+    }
+
+    while (dp / 10 > dm / 10) {
+      dmIsTrailingZeros &= dm % 10 == 0;
+      dp /= 10;
+      lastRemovedDigit = dv % 10;
+      dv /= 10;
+      dm /= 10;
+      removed++;
+    }
+    if (dmIsTrailingZeros && even) {
+      while (dm % 10 == 0) {
+        dp /= 10;
+        lastRemovedDigit = dv % 10;
+        dv /= 10;
+        dm /= 10;
+        removed++;
+      }
+    }
+
+    if (dvIsTrailingZeros && (lastRemovedDigit == 5) && ((dv & 1) == 0)) {
+      // Round down not up if the number ends in X50000 and the number is even.
+      lastRemovedDigit = 4;
+    }
+    int output = dv +
+        ((dv == dm && !(dmIsTrailingZeros && even)) || (lastRemovedDigit >= 5) ? 1 : 0);
+    int olength = dplength - removed;
+
+    // Step 5: Print the decimal representation.
+    // We follow Float.toString semantics here.
+    char[] result = new char[15];
+    int index = 0;
+    if (sign) {
+      result[index++] = '-';
+    }
+
+    // Otherwise follow the Java spec for values in the interval [1E-3, 1E7).
+    if (exp < 0) {
+      // Decimal dot is before any of the digits.
+      result[index++] = '0';
+      result[index++] = '.';
+      for (int i = -1; i > exp; i--) {
+        result[index++] = '0';
+      }
+      int current = index;
+      for (int i = 0; i < olength; i++) {
+        result[current + olength - i - 1] = (char) ('0' + output % 10);
+        output /= 10;
+        index++;
+      }
+    } else if (exp + 1 >= olength) {
+      // Decimal dot is after any of the digits.
+      for (int i = 0; i < olength; i++) {
+        result[index + olength - i - 1] = (char) ('0' + output % 10);
+        output /= 10;
+      }
+      index += olength;
+      for (int i = olength; i < exp + 1; i++) {
+        result[index++] = '0';
+      }
+      result[index++] = '.';
+      result[index++] = '0';
+    } else {
+      // Decimal dot is somewhere between the digits.
+      int current = index + 1;
+      for (int i = 0; i < olength; i++) {
+        if (olength - i - 1 == exp) {
+          result[current + olength - i - 1] = '.';
+          current--;
+        }
+        result[current + olength - i - 1] = (char) ('0' + output % 10);
+        output /= 10;
+      }
+      index += olength + 1;
+    }
+    return new String(result, 0, index);
+  }
+
+  public static String scientific(float value) {
+    // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
+    // First, handle all the trivial cases.
+    if (Float.isNaN(value)) return "NaN";
+    if (value == Float.POSITIVE_INFINITY) return "Infinity";
+    if (value == Float.NEGATIVE_INFINITY) return "-Infinity";
+    int bits = Float.floatToIntBits(value);
+    if (bits == 0) return "0.0";
+    if (bits == 0x80000000) return "-0.0";
+
+    // Otherwise extract the mantissa and exponent bits and run the full algorithm.
+    int ieeeExponent = (bits >> FLOAT_MANTISSA_BITS) & FLOAT_EXPONENT_MASK;
+    int ieeeMantissa = bits & FLOAT_MANTISSA_MASK;
+    // By default, the correct mantissa starts with a 1, except for denormal numbers.
+    int e2;
+    int m2;
+    if (ieeeExponent == 0) {
+      e2 = 1 - FLOAT_EXPONENT_BIAS - FLOAT_MANTISSA_BITS;
+      m2 = ieeeMantissa;
+    } else {
+      e2 = ieeeExponent - FLOAT_EXPONENT_BIAS - FLOAT_MANTISSA_BITS;
+      m2 = ieeeMantissa | (1 << FLOAT_MANTISSA_BITS);
+    }
+
+    boolean sign = bits < 0;
+
+    // Step 2: Determine the interval of legal decimal representations.
+    boolean even = (m2 & 1) == 0;
+    int mv = 4 * m2;
+    int mp = 4 * m2 + 2;
+    int mm = 4 * m2 - ((m2 != (1L << FLOAT_MANTISSA_BITS)) || (ieeeExponent == 1) ? 2 : 1);
+    e2 -= 2;
+
+    // Step 3: Convert to a decimal power base using 128-bit arithmetic.
+    // -151 = 1 - 127 - 23 - 2 <= e_2 - 2 <= 254 - 127 - 23 - 2 = 102
+    int dp, dv, dm;
+    int e10;
+    boolean dpIsTrailingZeros, dvIsTrailingZeros, dmIsTrailingZeros;
+    int lastRemovedDigit = 0;
+    if (e2 >= 0) {
+      // Compute m * 2^e_2 / 10^q = m * 2^(e_2 - q) / 5^q
+      int q = (int) (e2 * LOG10_2_NUMERATOR / LOG10_2_DENOMINATOR);
+      int k = POW5_INV_BITCOUNT + pow5bits(q) - 1;
+      int i = -e2 + q + k;
+      dv = (int) mulPow5InvDivPow2(mv, q, i);
+      dp = (int) mulPow5InvDivPow2(mp, q, i);
+      dm = (int) mulPow5InvDivPow2(mm, q, i);
+      if (q != 0 && ((dp - 1) / 10 <= dm / 10)) {
+        // We need to know one removed digit even if we are not going to loop below. We could use
+        // q = X - 1 above, except that would require 33 bits for the result, and we've found that
+        // 32-bit arithmetic is faster even on 64-bit machines.
+        int l = POW5_INV_BITCOUNT + pow5bits(q - 1) - 1;
+        lastRemovedDigit = (int) (mulPow5InvDivPow2(mv, q - 1, -e2 + q - 1 + l) % 10);
+      }
+      e10 = q;
+
+      dpIsTrailingZeros = pow5Factor(mp) >= q;
+      dvIsTrailingZeros = pow5Factor(mv) >= q;
+      dmIsTrailingZeros = pow5Factor(mm) >= q;
+    } else {
+      // Compute m * 5^(-e_2) / 10^q = m * 5^(-e_2 - q) / 2^q
+      int q = (int) (-e2 * LOG10_5_NUMERATOR / LOG10_5_DENOMINATOR);
+      int i = -e2 - q;
+      int k = pow5bits(i) - POW5_BITCOUNT;
+      int j = q - k;
+      dv = (int) mulPow5divPow2(mv, i, j);
+      dp = (int) mulPow5divPow2(mp, i, j);
+      dm = (int) mulPow5divPow2(mm, i, j);
+      if (q != 0 && ((dp - 1) / 10 <= dm / 10)) {
+        j = q - 1 - (pow5bits(i + 1) - POW5_BITCOUNT);
+        lastRemovedDigit = (int) (mulPow5divPow2(mv, i + 1, j) % 10);
+      }
+      e10 = q + e2; // Note: e2 and e10 are both negative here.
+
+      dpIsTrailingZeros = 1 >= q;
+      dvIsTrailingZeros = (q < FLOAT_MANTISSA_BITS) && (mv & ((1 << (q - 1)) - 1)) == 0;
+      dmIsTrailingZeros = (~mm & 1) >= q;
+    }
+
+    // Step 4: Find the shortest decimal representation in the interval of legal representations.
+    //
+    // We do some extra work here in order to follow Float/Double.toString semantics. In particular,
+    // that requires printing in scientific format if and only if the exponent is between -3 and 7,
+    // and it requires printing at least two decimal digits.
+    //
+    // Above, we moved the decimal dot all the way to the right, so now we need to count digits to
+    // figure out the correct exponent for scientific notation.
+    int dplength = decimalLength(dp);
+    int exp = e10 + dplength - 1;
+
+    int removed = 0;
+    if (dpIsTrailingZeros && !even) {
+      dp--;
+    }
+
+    while (dp / 10 > dm / 10) {
+      if (dp < 100) {
+        // We print at least two digits, so we might as well stop now.
+        break;
+      }
+      dmIsTrailingZeros &= dm % 10 == 0;
+      dp /= 10;
+      lastRemovedDigit = dv % 10;
+      dv /= 10;
+      dm /= 10;
+      removed++;
+    }
+    if (dmIsTrailingZeros && even) {
+      while (dm % 10 == 0) {
+        if (dp < 100) {
+          // We print at least two digits, so we might as well stop now.
+          break;
+        }
+        dp /= 10;
+        lastRemovedDigit = dv % 10;
+        dv /= 10;
+        dm /= 10;
+        removed++;
+      }
+    }
+
+    if (dvIsTrailingZeros && (lastRemovedDigit == 5) && ((dv & 1) == 0)) {
+      // Round down not up if the number ends in X50000 and the number is even.
+      lastRemovedDigit = 4;
+    }
+    int output = dv +
+        ((dv == dm && !(dmIsTrailingZeros && even)) || (lastRemovedDigit >= 5) ? 1 : 0);
+    int olength = dplength - removed;
+
+    // Step 5: Print the decimal representation.
+    // We follow Float.toString semantics here.
+    char[] result = new char[15];
+    int index = 0;
+    if (sign) {
+      result[index++] = '-';
+    }
+
+    // Print in the format x.xxxxxE-yy.
+    for (int i = 0; i < olength - 1; i++) {
+      int c = output % 10; output /= 10;
+      result[index + olength - i] = (char) ('0' + c);
+    }
+    result[index] = (char) ('0' + output % 10);
+    result[index + 1] = '.';
+    index += olength + 1;
+    if (olength == 1) {
+      result[index++] = '0';
+    }
+
+    // Print 'E', the exponent sign, and the exponent, which has at most two digits.
+    result[index++] = 'E';
+    if (exp < 0) {
+      result[index++] = '-';
+      exp = -exp;
+    }
+    if (exp >= 10) {
+      result[index++] = (char) ('0' + exp / 10);
+    }
+    result[index++] = (char) ('0' + exp % 10);
     return new String(result, 0, index);
   }
 

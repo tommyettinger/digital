@@ -199,7 +199,7 @@ public final class RyuDouble {
           removed++;
         }
       }
-      if (dvIsTrailingZeros && (lastRemovedDigit == 5) && (dv % 2 == 0)) {
+      if (dvIsTrailingZeros && (lastRemovedDigit == 5) && ((dv & 1) == 0)) {
         // Round even if the exact numbers is .....50..0.
         lastRemovedDigit = 4;
       }
@@ -393,9 +393,6 @@ public final class RyuDouble {
     final int vplength = decimalLength(dp);
     int exp = e10 + vplength - 1;
 
-    // Double.toString semantics requires using scientific notation if and only if outside this range.
-    final boolean scientificNotation = false;
-
     int removed = 0;
 
     int lastRemovedDigit = 0;
@@ -420,7 +417,7 @@ public final class RyuDouble {
           removed++;
         }
       }
-      if (dvIsTrailingZeros && (lastRemovedDigit == 5) && (dv % 2 == 0)) {
+      if (dvIsTrailingZeros && (lastRemovedDigit == 5) && ((dv & 1) == 0)) {
         // Round even if the exact numbers is .....50..0.
         lastRemovedDigit = 4;
       }
@@ -580,9 +577,6 @@ public final class RyuDouble {
     final int vplength = decimalLength(dp);
     int exp = e10 + vplength - 1;
 
-    // Double.toString semantics requires using scientific notation if and only if outside this range.
-    boolean scientificNotation = true;
-
     int removed = 0;
 
     int lastRemovedDigit = 0;
@@ -615,7 +609,7 @@ public final class RyuDouble {
           removed++;
         }
       }
-      if (dvIsTrailingZeros && (lastRemovedDigit == 5) && (dv % 2 == 0)) {
+      if (dvIsTrailingZeros && (lastRemovedDigit == 5) && ((dv & 1) == 0)) {
         // Round even if the exact numbers is .....50..0.
         lastRemovedDigit = 4;
       }

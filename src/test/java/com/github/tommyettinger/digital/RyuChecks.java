@@ -5,6 +5,10 @@ public class RyuChecks {
         final long bits = random.nextLong();
         return BitConversion.longBitsToDouble(1022L - Long.numberOfTrailingZeros(bits) << 52 | bits >>> 12);
     }
+    public static float nextExclusiveFloat (AlternateRandom random) {
+        final long bits = random.nextLong();
+        return BitConversion.intBitsToFloat(126 - Long.numberOfTrailingZeros(bits) << 23 | (int)(bits >>> 41));
+    }
 
     /**
      * Some interesting results:
@@ -17,9 +21,16 @@ public class RyuChecks {
     public static void main(String[] args) {
         AlternateRandom random = new AlternateRandom(1234567890L);
         for (int i = 0; i < 100; i++) {
-            double d = (nextExclusiveDouble(random) / nextExclusiveDouble(random)) * (nextExclusiveDouble(random) - 0.5f);
+            double d = (nextExclusiveDouble(random) / nextExclusiveDouble(random)) * (nextExclusiveDouble(random) - 0.5);
+            System.out.println(d);
             System.out.printf("Java general: %-20g, Java decimal: %-20f, Java scientific: %-20E\n", d, d, d);
             System.out.printf("Ryu general : %-20s, Ryu decimal : %-20s, Ryu scientific : %-20s\n", RyuDouble.signed(d), RyuDouble.decimal(d), RyuDouble.scientific(d));
+        }
+        for (int i = 0; i < 100; i++) {
+            float d = (nextExclusiveFloat(random) / nextExclusiveFloat(random)) * (nextExclusiveFloat(random) - 0.5f);
+            System.out.println(d);
+            System.out.printf("Java general: %-20g, Java decimal: %-20f, Java scientific: %-20E\n", d, d, d);
+            System.out.printf("Ryu general : %-20s, Ryu decimal : %-20s, Ryu scientific : %-20s\n", RyuFloat.signed(d), RyuFloat.decimal(d), RyuFloat.scientific(d));
         }
     }
 }
