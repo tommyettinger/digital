@@ -23,8 +23,6 @@ import java.math.BigInteger;
  * An implementation of Ryu for double.
  */
 public final class RyuDouble {
-  private static boolean DEBUG = false;
-
   private static final int DOUBLE_MANTISSA_BITS = 52;
   private static final long DOUBLE_MANTISSA_MASK = (1L << DOUBLE_MANTISSA_BITS) - 1;
 
@@ -34,10 +32,6 @@ public final class RyuDouble {
 
   private static final int POS_TABLE_SIZE = 326;
   private static final int NEG_TABLE_SIZE = 291;
-
-  // Only for debugging.
-  private static final BigInteger[] POW5 = new BigInteger[POS_TABLE_SIZE];
-  private static final BigInteger[] POW5_INV = new BigInteger[NEG_TABLE_SIZE];
 
   private static final int POW5_BITCOUNT = 121; // max 3*31 = 124
   private static final int POW5_QUARTER_BITCOUNT = 31;
@@ -50,30 +44,24 @@ public final class RyuDouble {
   static {
     BigInteger mask = BigInteger.ONE.shiftLeft(POW5_QUARTER_BITCOUNT).subtract(BigInteger.ONE);
     BigInteger invMask = BigInteger.ONE.shiftLeft(POW5_INV_QUARTER_BITCOUNT).subtract(BigInteger.ONE);
-    for (int i = 0; i < Math.max(POW5.length, POW5_INV.length); i++) {
+    for (int i = 0; i < POS_TABLE_SIZE; i++) {
       BigInteger pow = BigInteger.valueOf(5).pow(i);
       int pow5len = pow.bitLength();
       int expectedPow5Bits = pow5bits(i);
       if (expectedPow5Bits != pow5len) {
         throw new IllegalStateException(pow5len + " != " + expectedPow5Bits);
       }
-      if (i < POW5.length) {
-        POW5[i] = pow;
-      }
-      if (i < POW5_SPLIT.length) {
-        for (int j = 0; j < 4; j++) {
-          POW5_SPLIT[i][j] = pow
-              .shiftRight(pow5len - POW5_BITCOUNT + (3 - j) * POW5_QUARTER_BITCOUNT)
-              .and(mask)
-              .intValue();
-        }
+      for (int j = 0; j < 4; j++) {
+        POW5_SPLIT[i][j] = pow
+                .shiftRight(pow5len - POW5_BITCOUNT + (3 - j) * POW5_QUARTER_BITCOUNT)
+                .and(mask)
+                .intValue();
       }
 
       if (i < POW5_INV_SPLIT.length) {
         // We want floor(log_2 5^q) here, which is pow5len - 1.
         int j = pow5len - 1 + POW5_INV_BITCOUNT;
         BigInteger inv = BigInteger.ONE.shiftLeft(j).divide(pow).add(BigInteger.ONE);
-        POW5_INV[i] = inv;
         for (int k = 0; k < 4; k++) {
           if (k == 0) {
             POW5_INV_SPLIT[i][k] = inv.shiftRight((3 - k) * POW5_INV_QUARTER_BITCOUNT).intValue();
@@ -86,7 +74,6 @@ public final class RyuDouble {
   }
 
   public static void main(String[] args) {
-    DEBUG = true;
     double value = Double.longBitsToDouble(0x7fefffffffffffffL);
     String result = doubleToString(value);
     System.out.println(result + " " + value);
@@ -118,43 +105,14 @@ public final class RyuDouble {
     }
 
     boolean sign = bits < 0;
-    if (DEBUG) {
-      System.out.println("IN=" + Long.toBinaryString(bits));
-      System.out.println("   S=" + (sign ? "-" : "+") + " E=" + e2 + " M=" + m2);
-    }
 
     // Step 2: Determine the interval of legal decimal representations.
     boolean even = (m2 & 1) == 0;
     final long mv = 4 * m2;
     final long mp = 4 * m2 + 2;
-    final int mmShift = ((m2 != (1L << DOUBLE_MANTISSA_BITS)) || (ieeeExponent <= 1)) ? 1 : 0;
+    final int mmShift = ((m2 != (1L << DOUBLE_MANTISSA_BITS)) || (ieeeExponent == 1)) ? 1 : 0;
     final long mm = 4 * m2 - 1 - mmShift;
     e2 -= 2;
-
-    if (DEBUG) {
-      String sv, sp, sm;
-      int e10;
-      if (e2 >= 0) {
-        sv = BigInteger.valueOf(mv).shiftLeft(e2).toString();
-        sp = BigInteger.valueOf(mp).shiftLeft(e2).toString();
-        sm = BigInteger.valueOf(mm).shiftLeft(e2).toString();
-        e10 = 0;
-      } else {
-        BigInteger factor = BigInteger.valueOf(5).pow(-e2);
-        sv = BigInteger.valueOf(mv).multiply(factor).toString();
-        sp = BigInteger.valueOf(mp).multiply(factor).toString();
-        sm = BigInteger.valueOf(mm).multiply(factor).toString();
-        e10 = e2;
-      }
-
-      e10 += sp.length() - 1;
-
-      System.out.println("E =" + e10);
-      System.out.println("d+=" + sp);
-      System.out.println("d =" + sv);
-      System.out.println("d-=" + sm);
-      System.out.println("e2=" + e2);
-    }
 
     // Step 3: Convert to a decimal power base using 128-bit arithmetic.
     // -1077 = 1 - 1023 - 53 - 2 <= e_2 - 2 <= 2046 - 1023 - 53 - 2 = 968
@@ -170,21 +128,6 @@ public final class RyuDouble {
       dp = mulPow5InvDivPow2(mp, q, i);
       dm = mulPow5InvDivPow2(mm, q, i);
       e10 = q;
-      if (DEBUG) {
-        System.out.println(mv + " * 2^" + e2);
-        System.out.println("V+=" + dp);
-        System.out.println("V =" + dv);
-        System.out.println("V-=" + dm);
-      }
-      if (DEBUG) {
-        long exact = POW5_INV[q]
-            .multiply(BigInteger.valueOf(mv))
-            .shiftRight(-e2 + q + k).longValue();
-        System.out.println(exact + " " + POW5_INV[q].bitCount());
-        if (dv != exact) {
-          throw new IllegalStateException();
-        }
-      }
 
       if (q <= 21) {
         if (mv % 5 == 0) {
@@ -204,9 +147,6 @@ public final class RyuDouble {
       dp = mulPow5divPow2(mp, i, j);
       dm = mulPow5divPow2(mm, i, j);
       e10 = q + e2;
-      if (DEBUG) {
-        System.out.println(mv + " * 5^" + (-e2) + " / 10^" + q);
-      }
       if (q <= 1) {
         dvIsTrailingZeros = true;
         if (even) {
@@ -217,16 +157,6 @@ public final class RyuDouble {
       } else if (q < 63) {
         dvIsTrailingZeros = (mv & ((1L << (q - 1)) - 1)) == 0;
       }
-    }
-    if (DEBUG) {
-      System.out.println("d+=" + dp);
-      System.out.println("d =" + dv);
-      System.out.println("d-=" + dm);
-      System.out.println("e10=" + e10);
-      System.out.println("d-10=" + dmIsTrailingZeros);
-      System.out.println("d   =" + dvIsTrailingZeros);
-      System.out.println("Accept upper=" + even);
-      System.out.println("Accept lower=" + even);
     }
 
     // Step 4: Find the shortest decimal representation in the interval of legal representations.
@@ -261,7 +191,7 @@ public final class RyuDouble {
         dm /= 10;
         removed++;
       }
-      if (dmIsTrailingZeros && even) {
+      if (dmIsTrailingZeros) {
         while (dm % 10 == 0) {
           if ((dp < 100) && scientificNotation) {
             // Double.toString semantics requires printing at least two digits.
@@ -280,7 +210,7 @@ public final class RyuDouble {
         lastRemovedDigit = 4;
       }
       output = dv +
-          ((dv == dm && !(dmIsTrailingZeros && even)) || (lastRemovedDigit >= 5) ? 1 : 0);
+          (dv == dm && !dmIsTrailingZeros || lastRemovedDigit >= 5 ? 1 : 0);
     } else {
       while (dp / 10 > dm / 10) {
         if ((dp < 100) && scientificNotation) {
@@ -296,16 +226,6 @@ public final class RyuDouble {
       output = dv + ((dv == dm || (lastRemovedDigit >= 5)) ? 1 : 0);
     }
     int olength = vplength - removed;
-
-    if (DEBUG) {
-      System.out.println("LAST_REMOVED_DIGIT=" + lastRemovedDigit);
-      System.out.println("VP=" + dp);
-      System.out.println("VR=" + dv);
-      System.out.println("VM=" + dm);
-      System.out.println("O=" + output);
-      System.out.println("OLEN=" + olength);
-      System.out.println("EXP=" + exp);
-    }
 
     // Step 5: Print the decimal representation.
     // We follow Double.toString semantics here.
