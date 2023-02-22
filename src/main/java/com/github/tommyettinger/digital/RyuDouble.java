@@ -73,12 +73,6 @@ public final class RyuDouble {
     }
   }
 
-  public static void main(String[] args) {
-    double value = Double.longBitsToDouble(0x7fefffffffffffffL);
-    String result = doubleToString(value);
-    System.out.println(result + " " + value);
-  }
-
   public static String doubleToString(double value) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.

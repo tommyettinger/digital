@@ -23,8 +23,6 @@ import java.math.BigInteger;
  * An implementation of Ryu for float.
  */
 public final class RyuFloat {
-  private static boolean DEBUG = false;
-
   private static final int FLOAT_MANTISSA_BITS = 23;
   private static final int FLOAT_MANTISSA_MASK = (1 << FLOAT_MANTISSA_BITS) - 1;
 
@@ -45,8 +43,6 @@ public final class RyuFloat {
   private static final int INV_TABLE_SIZE = 31;
 
   // Only for debugging.
-  private static final BigInteger[] POW5 = new BigInteger[POS_TABLE_SIZE];
-  private static final BigInteger[] POW5_INV = new BigInteger[INV_TABLE_SIZE];
 
   private static final int POW5_BITCOUNT = 61;
   private static final int POW5_HALF_BITCOUNT = 31;
@@ -59,36 +55,23 @@ public final class RyuFloat {
   static {
     BigInteger mask = BigInteger.ONE.shiftLeft(POW5_HALF_BITCOUNT).subtract(BigInteger.ONE);
     BigInteger maskInv = BigInteger.ONE.shiftLeft(POW5_INV_HALF_BITCOUNT).subtract(BigInteger.ONE);
-    for (int i = 0; i < Math.max(POW5.length, POW5_INV.length); i++) {
+    for (int i = 0; i < POS_TABLE_SIZE; i++) {
       BigInteger pow = BigInteger.valueOf(5).pow(i);
       int pow5len = pow.bitLength();
       int expectedPow5Bits = pow5bits(i);
       if (expectedPow5Bits != pow5len) {
         throw new IllegalStateException(pow5len + " != " + expectedPow5Bits);
       }
-      if (i < POW5.length) {
-        POW5[i] = pow;
-      }
-      if (i < POW5_SPLIT.length) {
-        POW5_SPLIT[i][0] = pow.shiftRight(pow5len - POW5_BITCOUNT + POW5_HALF_BITCOUNT).intValue();
-        POW5_SPLIT[i][1] = pow.shiftRight(pow5len - POW5_BITCOUNT).and(mask).intValue();
-      }
+      POW5_SPLIT[i][0] = pow.shiftRight(pow5len - POW5_BITCOUNT + POW5_HALF_BITCOUNT).intValue();
+      POW5_SPLIT[i][1] = pow.shiftRight(pow5len - POW5_BITCOUNT).and(mask).intValue();
 
-      if (i < POW5_INV.length) {
+      if (i < INV_TABLE_SIZE) {
         int j = pow5len - 1 + POW5_INV_BITCOUNT;
         BigInteger inv = BigInteger.ONE.shiftLeft(j).divide(pow).add(BigInteger.ONE);
-        POW5_INV[i] = inv;
         POW5_INV_SPLIT[i][0] = inv.shiftRight(POW5_INV_HALF_BITCOUNT).intValue();
         POW5_INV_SPLIT[i][1] = inv.and(maskInv).intValue();
       }
     }
-  }
-
-  public static void main(String[] args) {
-    DEBUG = true;
-    float f = 0.33007812f;
-    String result = floatToString(f);
-    System.out.println(result + " " + f);
   }
 
   public static String floatToString(float value) {
@@ -116,44 +99,13 @@ public final class RyuFloat {
     }
 
     boolean sign = bits < 0;
-    if (DEBUG) {
-      System.out.println("IN=" + Long.toBinaryString(bits));
-      System.out.println("   S=" + (sign ? "-" : "+") + " E=" + e2 + " M=" + m2);
-    }
 
     // Step 2: Determine the interval of legal decimal representations.
     boolean even = (m2 & 1) == 0;
     int mv = 4 * m2;
     int mp = 4 * m2 + 2;
-    int mm = 4 * m2 - ((m2 != (1L << FLOAT_MANTISSA_BITS)) || (ieeeExponent <= 1) ? 2 : 1);
+    int mm = 4 * m2 - ((m2 != (1L << FLOAT_MANTISSA_BITS)) || (ieeeExponent == 1) ? 2 : 1);
     e2 -= 2;
-
-    if (DEBUG) {
-      String sv, sp, sm;
-      int e10;
-      if (e2 >= 0) {
-        sv = BigInteger.valueOf(mv).shiftLeft(e2).toString();
-        sp = BigInteger.valueOf(mp).shiftLeft(e2).toString();
-        sm = BigInteger.valueOf(mm).shiftLeft(e2).toString();
-        e10 = 0;
-      } else {
-        BigInteger factor = BigInteger.valueOf(5).pow(-e2);
-        sv = BigInteger.valueOf(mv).multiply(factor).toString();
-        sp = BigInteger.valueOf(mp).multiply(factor).toString();
-        sm = BigInteger.valueOf(mm).multiply(factor).toString();
-        e10 = e2;
-      }
-
-      e10 += sp.length() - 1;
-
-      System.out.println("Exact values");
-      System.out.println("  m =" + mv);
-      System.out.println("  E =" + e10);
-      System.out.println("  d+=" + sp);
-      System.out.println("  d =" + sv);
-      System.out.println("  d-=" + sm);
-      System.out.println("  e2=" + e2);
-    }
 
     // Step 3: Convert to a decimal power base using 128-bit arithmetic.
     // -151 = 1 - 127 - 23 - 2 <= e_2 - 2 <= 254 - 127 - 23 - 2 = 102
@@ -177,9 +129,6 @@ public final class RyuFloat {
         lastRemovedDigit = (int) (mulPow5InvDivPow2(mv, q - 1, -e2 + q - 1 + l) % 10);
       }
       e10 = q;
-      if (DEBUG) {
-        System.out.println(mv + " * 2^" + e2 + " / 10^" + q);
-      }
 
       dpIsTrailingZeros = pow5Factor(mp) >= q;
       dvIsTrailingZeros = pow5Factor(mv) >= q;
@@ -198,24 +147,10 @@ public final class RyuFloat {
         lastRemovedDigit = (int) (mulPow5divPow2(mv, i + 1, j) % 10);
       }
       e10 = q + e2; // Note: e2 and e10 are both negative here.
-      if (DEBUG) {
-        System.out.println(mv + " * 5^" + (-e2) + " / 10^" + q + " = " + mv + " * 5^" + (-e2 - q) + " / 2^" + q);
-      }
 
       dpIsTrailingZeros = 1 >= q;
       dvIsTrailingZeros = (q < FLOAT_MANTISSA_BITS) && (mv & ((1 << (q - 1)) - 1)) == 0;
-      dmIsTrailingZeros = (mm % 2 == 1 ? 0 : 1) >= q;
-    }
-    if (DEBUG) {
-      System.out.println("Actual values");
-      System.out.println("  d+=" + dp);
-      System.out.println("  d =" + dv);
-      System.out.println("  d-=" + dm);
-      System.out.println("  last removed=" + lastRemovedDigit);
-      System.out.println("  e10=" + e10);
-      System.out.println("  d+10=" + dpIsTrailingZeros);
-      System.out.println("  d   =" + dvIsTrailingZeros);
-      System.out.println("  d-10=" + dmIsTrailingZeros);
+      dmIsTrailingZeros = (~mm & 1) >= q;
     }
 
     // Step 4: Find the shortest decimal representation in the interval of legal representations.
@@ -270,20 +205,6 @@ public final class RyuFloat {
     int output = dv +
         ((dv == dm && !(dmIsTrailingZeros && even)) || (lastRemovedDigit >= 5) ? 1 : 0);
     int olength = dplength - removed;
-
-    if (DEBUG) {
-      System.out.println("Actual values after loop");
-      System.out.println("  d+=" + dp);
-      System.out.println("  d =" + dv);
-      System.out.println("  d-=" + dm);
-      System.out.println("  last removed=" + lastRemovedDigit);
-      System.out.println("  e10=" + e10);
-      System.out.println("  d+10=" + dpIsTrailingZeros);
-      System.out.println("  d-10=" + dmIsTrailingZeros);
-      System.out.println("  output=" + output);
-      System.out.println("  output_length=" + olength);
-      System.out.println("  output_exponent=" + exp);
-    }
 
     // Step 5: Print the decimal representation.
     // We follow Float.toString semantics here.
