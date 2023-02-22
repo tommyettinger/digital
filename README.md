@@ -157,6 +157,10 @@ This also has instructions for Maven and other build tools.
 [SquidLib](https://github.com/yellowstonegames/SquidLib),
 [SquidSquad](https://github.com/yellowstonegames/SquidSquad),
 [Uncommon Maths](https://maths.uncommons.org/), and
-[wyhash](https://github.com/wangyi-fudan/wyhash). More code
+[wyhash](https://github.com/wangyi-fudan/wyhash), and
+[Ryu](https://github.com/ulfjack/ryu). More code
 is not from a particular repository (for example, some is from
-Wikipedia); see each file for specific author credits.
+Wikipedia); see each file for specific author credits. The Ryu
+code is more substantial than the other projects, and even
+though its license is also Apache 2.0, I included its license
+here as [LICENSE-RYU.txt](LICENSE-RYU.txt).
