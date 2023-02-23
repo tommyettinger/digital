@@ -41,7 +41,7 @@ public final class RyuDouble {
   private static final int POW5_INV_QUARTER_BITCOUNT = 31;
   private static final int[][] POW5_INV_SPLIT = new int[NEG_TABLE_SIZE][4];
 
-  private static final char[] RESULT = new char[24];
+  private static final char[] result = new char[24];
 
   static {
     BigInteger mask = BigInteger.ONE.shiftLeft(POW5_QUARTER_BITCOUNT).subtract(BigInteger.ONE);
@@ -75,15 +75,58 @@ public final class RyuDouble {
     }
   }
 
-  public static String signed(double value) {
+  public static String general(double value) {
+    final int index = general(value, result);
+    return new String(result, 0, index);
+  }
+
+  public static StringBuilder appendGeneral(StringBuilder builder, double value) {
+    return appendGeneral(builder, value, result);
+  }
+  public static StringBuilder appendGeneral(StringBuilder builder, double value, char[] result) {
+    final int index = general(value, result);
+    return builder.append(result, 0, index);
+  }
+
+    public static int general(double value, char[] result) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
-    if (Double.isNaN(value)) return "NaN";
-    if (value == Double.POSITIVE_INFINITY) return "Infinity";
-    if (value == Double.NEGATIVE_INFINITY) return "-Infinity";
+    if (Double.isNaN(value)) {
+      result[0] = 'N';
+      result[1] = 'a';
+      result[2] = 'N';
+      return 3;
+    }
+    if (value == Double.POSITIVE_INFINITY || value == Double.NEGATIVE_INFINITY) {
+      int idx = 0;
+      if (value == Double.NEGATIVE_INFINITY) {
+        result[idx++] = '-';
+      }
+      result[idx++] = 'I';
+      result[idx++] = 'n';
+      result[idx++] = 'f';
+      result[idx++] = 'i';
+      result[idx++] = 'n';
+      result[idx++] = 'i';
+      result[idx++] = 't';
+      result[idx++] = 'y';
+      return idx;
+    }
     long bits = Double.doubleToLongBits(value);
-    if (bits == 0) return "0.0";
-    if (bits == 0x8000000000000000L) return "-0.0";
+    if (bits == 0) {
+      result[0] = '0';
+      result[1] = '.';
+      result[2] = '0';
+      return 3;
+    }
+    if (bits == 0x8000000000000000L){
+      result[0] = '-';
+      result[1] = '0';
+      result[2] = '.';
+      result[3] = '0';
+      return 4;
+    }
+
 
     // Otherwise extract the mantissa and exponent bits and run the full algorithm.
     int ieeeExponent = (int) ((bits >>> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK);
@@ -227,7 +270,7 @@ public final class RyuDouble {
     // We follow Double.toString semantics here.
     int index = 0;
     if (sign) {
-      RESULT[index++] = '-';
+      result[index++] = '-';
     }
 
     // Values in the interval [1E-3, 1E7) are special.
@@ -235,71 +278,71 @@ public final class RyuDouble {
       // Print in the format x.xxxxxE-yy.
       for (int i = 0; i < olength - 1; i++) {
         int c = (int) (output % 10); output /= 10;
-        RESULT[index + olength - i] = (char) ('0' + c);
+        result[index + olength - i] = (char) ('0' + c);
       }
-      RESULT[index] = (char) ('0' + output % 10);
-      RESULT[index + 1] = '.';
+      result[index] = (char) ('0' + output % 10);
+      result[index + 1] = '.';
       index += olength + 1;
       if (olength == 1) {
-        RESULT[index++] = '0';
+        result[index++] = '0';
       }
 
       // Print 'E', the exponent sign, and the exponent, which has at most three digits.
-      RESULT[index++] = 'E';
+      result[index++] = 'E';
       if (exp < 0) {
-        RESULT[index++] = '-';
+        result[index++] = '-';
         exp = -exp;
       }
       if (exp >= 100) {
-        RESULT[index++] = (char) ('0' + exp / 100);
+        result[index++] = (char) ('0' + exp / 100);
         exp %= 100;
-        RESULT[index++] = (char) ('0' + exp / 10);
+        result[index++] = (char) ('0' + exp / 10);
       } else if (exp >= 10) {
-        RESULT[index++] = (char) ('0' + exp / 10);
+        result[index++] = (char) ('0' + exp / 10);
       }
-      RESULT[index++] = (char) ('0' + exp % 10);
-      return new String(RESULT, 0, index);
+      result[index++] = (char) ('0' + exp % 10);
+      return index;
     } else {
       // Otherwise follow the Java spec for values in the interval [1E-3, 1E7).
       if (exp < 0) {
         // Decimal dot is before any of the digits.
-        RESULT[index++] = '0';
-        RESULT[index++] = '.';
+        result[index++] = '0';
+        result[index++] = '.';
         for (int i = -1; i > exp; i--) {
-          RESULT[index++] = '0';
+          result[index++] = '0';
         }
         int current = index;
         for (int i = 0; i < olength; i++) {
-          RESULT[current + olength - i - 1] = (char) ('0' + output % 10);
+          result[current + olength - i - 1] = (char) ('0' + output % 10);
           output /= 10;
           index++;
         }
       } else if (exp + 1 >= olength) {
         // Decimal dot is after any of the digits.
         for (int i = 0; i < olength; i++) {
-          RESULT[index + olength - i - 1] = (char) ('0' + output % 10);
+          result[index + olength - i - 1] = (char) ('0' + output % 10);
           output /= 10;
         }
         index += olength;
         for (int i = olength; i < exp + 1; i++) {
-          RESULT[index++] = '0';
+          result[index++] = '0';
         }
-        RESULT[index++] = '.';
-        RESULT[index++] = '0';
+        result[index++] = '.';
+        result[index++] = '0';
       } else {
         // Decimal dot is somewhere between the digits.
         int current = index + 1;
         for (int i = 0; i < olength; i++) {
           if (olength - i - 1 == exp) {
-            RESULT[current + olength - i - 1] = '.';
+            result[current + olength - i - 1] = '.';
             current--;
           }
-          RESULT[current + olength - i - 1] = (char) ('0' + output % 10);
+          result[current + olength - i - 1] = (char) ('0' + output % 10);
           output /= 10;
         }
         index += olength + 1;
       }
-      return new String(RESULT, 0, index);
+      return index;
     }
   }
 
@@ -440,50 +483,50 @@ public final class RyuDouble {
     // We follow Double.toString semantics here.
     int index = 0;
     if (sign) {
-      RESULT[index++] = '-';
+      result[index++] = '-';
     }
 
     // Values in the interval [1E-3, 1E7) are special.
     // Otherwise, follow the Java spec for values in the interval [1E-3, 1E7).
     if (exp < 0) {
       // Decimal dot is before any of the digits.
-      RESULT[index++] = '0';
-      RESULT[index++] = '.';
+      result[index++] = '0';
+      result[index++] = '.';
       for (int i = -1; i > exp; i--) {
-        RESULT[index++] = '0';
+        result[index++] = '0';
       }
       int current = index;
       for (int i = 0; i < olength; i++) {
-        RESULT[current + olength - i - 1] = (char) ('0' + output % 10);
+        result[current + olength - i - 1] = (char) ('0' + output % 10);
         output /= 10;
         index++;
       }
     } else if (exp + 1 >= olength) {
       // Decimal dot is after any of the digits.
       for (int i = 0; i < olength; i++) {
-        RESULT[index + olength - i - 1] = (char) ('0' + output % 10);
+        result[index + olength - i - 1] = (char) ('0' + output % 10);
         output /= 10;
       }
       index += olength;
       for (int i = olength; i < exp + 1; i++) {
-        RESULT[index++] = '0';
+        result[index++] = '0';
       }
-      RESULT[index++] = '.';
-      RESULT[index++] = '0';
+      result[index++] = '.';
+      result[index++] = '0';
     } else {
       // Decimal dot is somewhere between the digits.
       int current = index + 1;
       for (int i = 0; i < olength; i++) {
         if (olength - i - 1 == exp) {
-          RESULT[current + olength - i - 1] = '.';
+          result[current + olength - i - 1] = '.';
           current--;
         }
-        RESULT[current + olength - i - 1] = (char) ('0' + output % 10);
+        result[current + olength - i - 1] = (char) ('0' + output % 10);
         output /= 10;
       }
       index += olength + 1;
     }
-    return new String(RESULT, 0, index);
+    return new String(result, 0, index);
   }
 
   public static String scientific(double value) {
@@ -635,37 +678,37 @@ public final class RyuDouble {
     // We follow Double.toString semantics here.
     int index = 0;
     if (sign) {
-      RESULT[index++] = '-';
+      result[index++] = '-';
     }
 
     // Values in the interval [1E-3, 1E7) are special.
     // Print in the format x.xxxxxE-yy.
     for (int i = 0; i < olength - 1; i++) {
       int c = (int) (output % 10); output /= 10;
-      RESULT[index + olength - i] = (char) ('0' + c);
+      result[index + olength - i] = (char) ('0' + c);
     }
-    RESULT[index] = (char) ('0' + output % 10);
-    RESULT[index + 1] = '.';
+    result[index] = (char) ('0' + output % 10);
+    result[index + 1] = '.';
     index += olength + 1;
     if (olength == 1) {
-      RESULT[index++] = '0';
+      result[index++] = '0';
     }
 
     // Print 'E', the exponent sign, and the exponent, which has at most three digits.
-    RESULT[index++] = 'E';
+    result[index++] = 'E';
     if (exp < 0) {
-      RESULT[index++] = '-';
+      result[index++] = '-';
       exp = -exp;
     }
     if (exp >= 100) {
-      RESULT[index++] = (char) ('0' + exp / 100);
+      result[index++] = (char) ('0' + exp / 100);
       exp %= 100;
-      RESULT[index++] = (char) ('0' + exp / 10);
+      result[index++] = (char) ('0' + exp / 10);
     } else if (exp >= 10) {
-      RESULT[index++] = (char) ('0' + exp / 10);
+      result[index++] = (char) ('0' + exp / 10);
     }
-    RESULT[index++] = (char) ('0' + exp % 10);
-    return new String(RESULT, 0, index);
+    result[index++] = (char) ('0' + exp % 10);
+    return new String(result, 0, index);
   }
 
   private static int pow5bits(int e) {
