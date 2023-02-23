@@ -300,7 +300,6 @@ public final class RyuDouble {
         result[index++] = (char) ('0' + exp / 10);
       }
       result[index++] = (char) ('0' + exp % 10);
-      return index;
     } else {
       // Otherwise follow the Java spec for values in the interval [1E-3, 1E7).
       if (exp < 0) {
@@ -341,8 +340,8 @@ public final class RyuDouble {
         }
         index += olength + 1;
       }
-      return index;
     }
+    return index;
   }
 
   public static String decimal(double value) {

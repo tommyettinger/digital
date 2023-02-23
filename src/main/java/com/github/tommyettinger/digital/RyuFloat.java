@@ -74,15 +74,58 @@ public final class RyuFloat {
     }
   }
 
-  public static String signed(float value) {
+
+  public static String general(float value) {
+    final int index = general(value, result);
+    return new String(result, 0, index);
+  }
+
+  public static StringBuilder appendGeneral(StringBuilder builder, float value) {
+    return appendGeneral(builder, value, result);
+  }
+  public static StringBuilder appendGeneral(StringBuilder builder, float value, char[] result) {
+    final int index = general(value, result);
+    return builder.append(result, 0, index);
+  }
+
+  public static int general(float value, char[] result) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
-    if (Float.isNaN(value)) return "NaN";
-    if (value == Float.POSITIVE_INFINITY) return "Infinity";
-    if (value == Float.NEGATIVE_INFINITY) return "-Infinity";
+    if (Float.isNaN(value)) {
+      result[0] = 'N';
+      result[1] = 'a';
+      result[2] = 'N';
+      return 3;
+    }
+    if (value == Float.POSITIVE_INFINITY || value == Float.NEGATIVE_INFINITY) {
+      int idx = 0;
+      if (value == Float.NEGATIVE_INFINITY) {
+        result[idx++] = '-';
+      }
+      result[idx++] = 'I';
+      result[idx++] = 'n';
+      result[idx++] = 'f';
+      result[idx++] = 'i';
+      result[idx++] = 'n';
+      result[idx++] = 'i';
+      result[idx++] = 't';
+      result[idx++] = 'y';
+      return idx;
+    }
     int bits = Float.floatToIntBits(value);
-    if (bits == 0) return "0.0";
-    if (bits == 0x80000000) return "-0.0";
+    if (bits == 0) {
+      result[0] = '0';
+      result[1] = '.';
+      result[2] = '0';
+      return 3;
+    }
+    if (bits == 0x80000000){
+      result[0] = '-';
+      result[1] = '0';
+      result[2] = '.';
+      result[3] = '0';
+      return 4;
+    }
 
     // Otherwise extract the mantissa and exponent bits and run the full algorithm.
     int ieeeExponent = (bits >> FLOAT_MANTISSA_BITS) & FLOAT_EXPONENT_MASK;
@@ -277,7 +320,7 @@ public final class RyuFloat {
         index += olength + 1;
       }
     }
-    return new String(result, 0, index);
+    return index;
   }
 
   public static String decimal(float value) {
