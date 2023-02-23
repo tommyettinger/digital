@@ -88,7 +88,7 @@ public final class RyuDouble {
     return builder.append(result, 0, index);
   }
 
-    public static int general(double value, char[] result) {
+  public static int general(double value, char[] result) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Double.isNaN(value)) {
@@ -126,7 +126,6 @@ public final class RyuDouble {
       result[3] = '0';
       return 4;
     }
-
 
     // Otherwise extract the mantissa and exponent bits and run the full algorithm.
     int ieeeExponent = (int) ((bits >>> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK);
@@ -347,14 +346,56 @@ public final class RyuDouble {
   }
 
   public static String decimal(double value) {
+    final int index = decimal(value, result);
+    return new String(result, 0, index);
+  }
+
+  public static StringBuilder appendDecimal(StringBuilder builder, double value) {
+    return appendDecimal(builder, value, result);
+  }
+  public static StringBuilder appendDecimal(StringBuilder builder, double value, char[] result) {
+    final int index = decimal(value, result);
+    return builder.append(result, 0, index);
+  }
+
+  public static int decimal(double value, char[] result) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
-    if (Double.isNaN(value)) return "NaN";
-    if (value == Double.POSITIVE_INFINITY) return "Infinity";
-    if (value == Double.NEGATIVE_INFINITY) return "-Infinity";
+    if (Double.isNaN(value)) {
+      result[0] = 'N';
+      result[1] = 'a';
+      result[2] = 'N';
+      return 3;
+    }
+    if (value == Double.POSITIVE_INFINITY || value == Double.NEGATIVE_INFINITY) {
+      int idx = 0;
+      if (value == Double.NEGATIVE_INFINITY) {
+        result[idx++] = '-';
+      }
+      result[idx++] = 'I';
+      result[idx++] = 'n';
+      result[idx++] = 'f';
+      result[idx++] = 'i';
+      result[idx++] = 'n';
+      result[idx++] = 'i';
+      result[idx++] = 't';
+      result[idx++] = 'y';
+      return idx;
+    }
     long bits = Double.doubleToLongBits(value);
-    if (bits == 0) return "0.0";
-    if (bits == 0x8000000000000000L) return "-0.0";
+    if (bits == 0) {
+      result[0] = '0';
+      result[1] = '.';
+      result[2] = '0';
+      return 3;
+    }
+    if (bits == 0x8000000000000000L){
+      result[0] = '-';
+      result[1] = '0';
+      result[2] = '.';
+      result[3] = '0';
+      return 4;
+    }
 
     // Otherwise extract the mantissa and exponent bits and run the full algorithm.
     int ieeeExponent = (int) ((bits >>> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK);
@@ -526,7 +567,7 @@ public final class RyuDouble {
       }
       index += olength + 1;
     }
-    return new String(result, 0, index);
+    return index;
   }
 
   public static String scientific(double value) {
