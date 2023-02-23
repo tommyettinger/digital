@@ -83,6 +83,7 @@ public final class RyuDouble {
   public static StringBuilder appendGeneral(StringBuilder builder, double value) {
     return appendGeneral(builder, value, result);
   }
+
   public static StringBuilder appendGeneral(StringBuilder builder, double value, char[] result) {
     final int index = general(value, result);
     return builder.append(result, 0, index);
@@ -352,6 +353,7 @@ public final class RyuDouble {
   public static StringBuilder appendDecimal(StringBuilder builder, double value) {
     return appendDecimal(builder, value, result);
   }
+
   public static StringBuilder appendDecimal(StringBuilder builder, double value, char[] result) {
     final int index = decimal(value, result);
     return builder.append(result, 0, index);
@@ -577,6 +579,7 @@ public final class RyuDouble {
   public static StringBuilder appendScientific(StringBuilder builder, double value) {
     return appendScientific(builder, value, result);
   }
+
   public static StringBuilder appendScientific(StringBuilder builder, double value, char[] result) {
     final int index = scientific(value, result);
     return builder.append(result, 0, index);
