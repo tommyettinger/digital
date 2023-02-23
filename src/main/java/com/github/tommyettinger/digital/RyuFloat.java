@@ -324,56 +324,27 @@ public final class RyuFloat {
   }
 
   public static String decimal(float value) {
-    final int index = decimal(value, result);
-    return new String(result, 0, index);
+    return appendDecimal(new StringBuilder(), value).toString();
   }
 
   public static StringBuilder appendDecimal(StringBuilder builder, float value) {
-    return appendDecimal(builder, value, result);
-  }
-
-  public static StringBuilder appendDecimal(StringBuilder builder, float value, char[] result) {
-    final int index = decimal(value, result);
-    return builder.append(result, 0, index);
-  }
-
-  public static int decimal(float value, char[] result) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Float.isNaN(value)) {
-      result[0] = 'N';
-      result[1] = 'a';
-      result[2] = 'N';
-      return 3;
+      return builder.append("NaN");
     }
     if (value == Float.POSITIVE_INFINITY || value == Float.NEGATIVE_INFINITY) {
-      int idx = 0;
       if (value == Float.NEGATIVE_INFINITY) {
-        result[idx++] = '-';
+        builder.append('-');
       }
-      result[idx++] = 'I';
-      result[idx++] = 'n';
-      result[idx++] = 'f';
-      result[idx++] = 'i';
-      result[idx++] = 'n';
-      result[idx++] = 'i';
-      result[idx++] = 't';
-      result[idx++] = 'y';
-      return idx;
+      return builder.append("Infinity");
     }
-    int bits = Float.floatToIntBits(value);
+    int bits = BitConversion.floatToIntBits(value);
     if (bits == 0) {
-      result[0] = '0';
-      result[1] = '.';
-      result[2] = '0';
-      return 3;
+      return builder.append("0.0");
     }
     if (bits == 0x80000000){
-      result[0] = '-';
-      result[1] = '0';
-      result[2] = '.';
-      result[3] = '0';
-      return 4;
+      return builder.append("-0.0");
     }
 
     // Otherwise extract the mantissa and exponent bits and run the full algorithm.
@@ -489,51 +460,47 @@ public final class RyuFloat {
 
     // Step 5: Print the decimal representation.
     // We follow Float.toString semantics here.
-    int index = 0;
+    int index = builder.length();
     if (sign) {
-      result[index++] = '-';
+      builder.append('-');
     }
 
     // Otherwise follow the Java spec for values in the interval [1E-3, 1E7).
     if (exp < 0) {
       // Decimal dot is before any of the digits.
-      result[index++] = '0';
-      result[index++] = '.';
+      builder.append("0.");
       for (int i = -1; i > exp; i--) {
-        result[index++] = '0';
+        builder.append('0');
       }
-      int current = index;
+      int current = builder.length();
       for (int i = 0; i < olength; i++) {
-        result[current + olength - i - 1] = (char) ('0' + output % 10);
+        builder.insert(current, (char) ('0' + output % 10));
         output /= 10;
         index++;
       }
     } else if (exp + 1 >= olength) {
+      index = builder.length();
       // Decimal dot is after any of the digits.
       for (int i = 0; i < olength; i++) {
-        result[index + olength - i - 1] = (char) ('0' + output % 10);
+        builder.insert(index, (char) ('0' + output % 10));
         output /= 10;
       }
-      index += olength;
       for (int i = olength; i < exp + 1; i++) {
-        result[index++] = '0';
+        builder.append('0');
       }
-      result[index++] = '.';
-      result[index++] = '0';
+      builder.append(".0");
     } else {
       // Decimal dot is somewhere between the digits.
-      int current = index + 1;
+      int current = builder.length();
       for (int i = 0; i < olength; i++) {
         if (olength - i - 1 == exp) {
-          result[current + olength - i - 1] = '.';
-          current--;
+          builder.insert(current, '.');
         }
-        result[current + olength - i - 1] = (char) ('0' + output % 10);
+        builder.insert(current, (char) ('0' + output % 10));
         output /= 10;
       }
-      index += olength + 1;
     }
-    return index;
+    return builder;
   }
 
   public static String scientific(float value) {

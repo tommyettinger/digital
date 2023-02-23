@@ -34,12 +34,20 @@ public class RyuChecks {
             System.out.printf("Ryu general : %-20s, Ryu decimal : %-20s, Ryu scientific : %-20s\n", RyuFloat.general(d), RyuFloat.decimal(d), RyuFloat.scientific(d));
         }
 
-        System.out.println("\nSPECIALS:\n");
+        System.out.println("\nDOUBLE SPECIALS:\n");
         for (double d : new double[]{Double.MIN_VALUE, Double.MIN_NORMAL, Double.MAX_VALUE, Double.POSITIVE_INFINITY,
                 Double.NEGATIVE_INFINITY, Double.NaN, 0.0, -0.0}) {
             System.out.println(d);
             System.out.printf("Java general: %-20g, Java decimal: %-20f, Java scientific: %-20E\n", d, d, d);
             System.out.printf("Ryu general : %-20s, Ryu decimal : %-20s, Ryu scientific : %-20s\n", RyuDouble.general(d), RyuDouble.decimal(d), RyuDouble.scientific(d));
+        }
+
+        System.out.println("\nFLOAT SPECIALS:\n");
+        for (float d : new float[]{Float.MIN_VALUE, Float.MIN_NORMAL, Float.MAX_VALUE, Float.POSITIVE_INFINITY,
+                Float.NEGATIVE_INFINITY, Float.NaN, 0.0f, -0.0f}) {
+            System.out.println(d);
+            System.out.printf("Java general: %-20g, Java decimal: %-20f, Java scientific: %-20E\n", d, d, d);
+            System.out.printf("Ryu general : %-20s, Ryu decimal : %-20s, Ryu scientific : %-20s\n", RyuFloat.general(d), RyuFloat.decimal(d), RyuFloat.scientific(d));
         }
 //Well, now you know why we use scientific notation -- so we don't print Double.MIN_NORMAL as 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000022250738585072014
     }
