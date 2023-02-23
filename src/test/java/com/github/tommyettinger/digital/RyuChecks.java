@@ -26,6 +26,7 @@ public class RyuChecks {
             System.out.printf("Java general: %-20g, Java decimal: %-20f, Java scientific: %-20E\n", d, d, d);
             System.out.printf("Ryu general : %-20s, Ryu decimal : %-20s, Ryu scientific : %-20s\n", RyuDouble.signed(d), RyuDouble.decimal(d), RyuDouble.scientific(d));
         }
+        random.setSeed(1234567890L);
         for (int i = 0; i < 100; i++) {
             float d = (nextExclusiveFloat(random) / nextExclusiveFloat(random)) * (nextExclusiveFloat(random) - 0.5f);
             System.out.println(d);
