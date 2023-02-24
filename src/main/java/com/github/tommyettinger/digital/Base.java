@@ -2733,7 +2733,7 @@ public class Base {
      * <p>{@code null} and empty/blank {@link String} will return
      * {@code false}.</p>
      * <br>
-     * This is copied nearly-verbatim from Apache Commons Lang method NumberUtils.isCreatable(String),
+     * This is copied nearly-verbatim from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
      * Some changes were made to avoid depending on the rest of Apache Commons.
      * <br>
@@ -2860,6 +2860,18 @@ public class Base {
         return !allowSigns && foundDigit;
     }
 
+    /**
+     * Validates if the given {@code str} can be parsed as a valid float or double. If {@code str} is null
+     * or empty, this returns {@code false} rather than throwing an exception. This only correctly handles decimal or
+     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
+     * <br>
+     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
+     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
+     * Changes were made so that it doesn't try to parse hexadecimal numbers (including hex floats) or octal numbers.
+     *
+     * @param str a CharSequence, such as a String, that may contain a valid float or double that can be parsed
+     * @return true if a valid float or double can be parsed from the requested str, or false otherwise
+     */
     public static boolean isValidFloatingPoint(final CharSequence str) {
         return isValidFloatingPoint(str, 0, Integer.MAX_VALUE);
     }
@@ -2868,8 +2880,13 @@ public class Base {
      * Validates if a range of the given {@code str} can be parsed as a valid float or double. Here, {@code begin} and
      * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If end is greater
      * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
-     * or empty, this returns {@code false} rather than throwing an exception.
-     * 
+     * or empty, this returns {@code false} rather than throwing an exception. This only correctly handles decimal or
+     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
+     * <br>
+     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
+     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
+     * Changes were made so that it doesn't try to parse hexadecimal numbers (including hex floats) or octal numbers.
+     *
      * @param str a CharSequence, such as a String, that may contain a valid float or double that can be parsed
      * @param begin the inclusive index to start reading at
      * @param end the exclusive index to stop reading before
@@ -3129,11 +3146,10 @@ public class Base {
 
     @Override
     public int hashCode() {
-        int result = Arrays.hashCode(toEncoded);
-        result = 31 * result + (caseInsensitive ? 1 : 0);
-        result = 31 * result + (int) paddingChar;
-        result = 31 * result + (int) positiveSign;
-        result = 31 * result + (int) negativeSign;
-        return result;
+        return Hasher.barium.hash(toEncoded)
+                + (caseInsensitive ? 107 * 107 * 107 : -8)
+                + paddingChar * 107 * 107
+                + positiveSign * 107
+                + negativeSign;
     }
 }
