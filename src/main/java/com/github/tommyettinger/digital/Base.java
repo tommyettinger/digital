@@ -2861,33 +2861,49 @@ public class Base {
     }
 
     public static boolean isValidFloatingPoint(final CharSequence str) {
-        if (str == null || str.length() == 0) {
+        return isValidFloatingPoint(str, 0, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Validates if a range of the given {@code str} can be parsed as a valid float or double. Here, {@code begin} and
+     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If end is greater
+     * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
+     * or empty, this returns {@code false} rather than throwing an exception.
+     * 
+     * @param str a CharSequence, such as a String, that may contain a valid float or double that can be parsed
+     * @param begin the inclusive index to start reading at
+     * @param end the exclusive index to stop reading before
+     * @return true if a valid float or double can be parsed from the requested range, or false otherwise
+     */
+    public static boolean isValidFloatingPoint(final CharSequence str, int begin, int end) {
+        if (str == null || begin >= end || str.length() < (end = Math.min(str.length(), end)) - begin) {
             return false;
         }
-        int sz = str.length();
         boolean hasExp = false;
         boolean hasDecPoint = false;
         boolean allowSigns = false;
         boolean foundDigit = false;
         // deal with any possible sign up front
-        char first = str.charAt(0);
-        final int start = first == '-' || first == '+' ? 1 : 0;
-        sz--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        char first = str.charAt(begin);
+        final int start = first == '-' || first == '+' ? begin + 1 : begin;
+        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
         int i = start;
         // loop to the next to last char or to the last char if we need another digit to
         // make a valid number (e.g. chars[0..5] = "1234E")
-        while (i < sz) {
-            if (str.charAt(i) >= '0' && str.charAt(i) <= '9') {
+        while (i < end) {
+            char ith = str.charAt(i);
+
+            if (ith >= '0' && ith <= '9') {
                 foundDigit = true;
                 allowSigns = false;
 
-            } else if (str.charAt(i) == '.') {
+            } else if (ith == '.') {
                 if (hasDecPoint || hasExp) {
                     // two decimal points or dec in exponent
                     return false;
                 }
                 hasDecPoint = true;
-            } else if (str.charAt(i) == 'e' || str.charAt(i) == 'E') {
+            } else if (ith == 'e' || ith == 'E') {
                 if (hasExp) {
                     // two E's
                     return false;
@@ -2897,7 +2913,7 @@ public class Base {
                 }
                 hasExp = true;
                 allowSigns = true;
-            } else if (str.charAt(i) == '+' || str.charAt(i) == '-') {
+            } else if (ith == '+' || ith == '-') {
                 if (!allowSigns) {
                     return false;
                 }
@@ -2908,16 +2924,17 @@ public class Base {
             }
             i++;
         }
-        if (i < str.length()) {
-            if (str.charAt(i) >= '0' && str.charAt(i) <= '9') {
+        if (i <= end) {
+            char ith = str.charAt(i);
+            if (ith >= '0' && ith <= '9') {
                 // no type qualifier, OK
                 return true;
             }
-            if (str.charAt(i) == 'e' || str.charAt(i) == 'E') {
+            if (ith == 'e' || ith == 'E') {
                 // can't have an E at the last char
                 return false;
             }
-            if (str.charAt(i) == '.') {
+            if (ith == '.') {
                 if (hasDecPoint || hasExp) {
                     // two decimal points or dec in exponent
                     return false;
@@ -2926,10 +2943,10 @@ public class Base {
                 return foundDigit;
             }
             if (!allowSigns
-                    && (str.charAt(i) == 'd'
-                    || str.charAt(i) == 'D'
-                    || str.charAt(i) == 'f'
-                    || str.charAt(i) == 'F')) {
+                    && (ith == 'd'
+                    || ith == 'D'
+                    || ith == 'f'
+                    || ith == 'F')) {
                 return foundDigit;
             }
             // last character is illegal
