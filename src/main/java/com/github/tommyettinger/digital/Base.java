@@ -203,7 +203,7 @@ public class Base {
         length2Byte = (int) Math.ceil(Math.log(0x1p16) * logBase);
         length4Byte = (int) Math.ceil(Math.log(0x1p32) * logBase);
         length8Byte = (int) Math.ceil(Math.log(0x1p64) * logBase);
-        progress = new char[length8Byte + 1];
+        progress = new char[Math.max(length8Byte + 1, 24)];
     }
 
     /**
@@ -226,7 +226,7 @@ public class Base {
         length2Byte = other.length2Byte;
         length4Byte = other.length4Byte;
         length8Byte = other.length8Byte;
-        progress = new char[length8Byte + 1];
+        progress = new char[Math.max(length8Byte + 1, 24)];
     }
 
     /**
@@ -1296,6 +1296,10 @@ public class Base {
     /**
      * Converts the bits of the given {@code number} to this Base as unsigned, returning a new String.
      * This always uses the same number of chars in any String it returns, as long as the Base is the same.
+     * The digits this outputs can be read back with {@link #readFloatExact}, but not {@link #readFloat}.
+     * Because this writes the bits of its float input (where the bits are an int), it can use the code that
+     * write an int in this Base, and it doesn't involve any rounding to a String representation. That is
+     * why the reader for this format is called "Exact."
      *
      * @param number any float
      * @return a new String containing the bits of {@code number} in the radix this specifies.
@@ -1307,6 +1311,10 @@ public class Base {
     /**
      * Converts the bits of the given {@code number} to this Base as unsigned, appending the result to
      * {@code builder}.
+     * The digits this outputs can be read back with {@link #readFloatExact}, but not {@link #readFloat}.
+     * Because this writes the bits of its float input (where the bits are an int), it can use the code that
+     * write an int in this Base, and it doesn't involve any rounding to a String representation. That is
+     * why the reader for this format is called "Exact."
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any float
@@ -1319,6 +1327,10 @@ public class Base {
     /**
      * Converts the bits of the given {@code number} to this Base as signed, returning a new String.
      * This can vary in how many chars it uses, since it does not show leading zeroes and may use a {@code -} sign.
+     * The digits this outputs can be read back with {@link #readFloatExact}, but not {@link #readFloat}.
+     * Because this writes the bits of its float input (where the bits are an int), it can use the code that
+     * write an int in this Base, and it doesn't involve any rounding to a String representation. That is
+     * why the reader for this format is called "Exact."
      *
      * @param number any float
      * @return a new String containing {@code number} in the radix this specifies.
@@ -1331,6 +1343,10 @@ public class Base {
      * Converts the bits of the given {@code number} to this Base as signed, appending the result to
      * {@code builder}. This can vary in how many chars it uses, since it does not show leading zeroes and may use a
      * {@code -} sign.
+     * The digits this outputs can be read back with {@link #readFloatExact}, but not {@link #readFloat}.
+     * Because this writes the bits of its float input (where the bits are an int), it can use the code that
+     * write an int in this Base, and it doesn't involve any rounding to a String representation. That is
+     * why the reader for this format is called "Exact."
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any float
@@ -1341,11 +1357,94 @@ public class Base {
     }
 
     /**
+     * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation.
+     * Returns a new String.
+     * This can vary in how many chars it uses, but won't use more than 15.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param number any float
+     * @return a new String containing {@code number} in either decimal or scientific notation, always base-10
+     */
+    public String general(float number) {
+        int i = RyuFloat.general(number, progress);
+        return String.valueOf(progress, 0, i);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation,
+     * appending the result to {@code builder}. This can vary in how many chars it uses, but won't use more than 15.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any float
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendGeneral(StringBuilder builder, float number) {
+        return RyuFloat.appendGeneral(builder, number, progress);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that uses scientific notation.
+     * Returns a new String.
+     * This can vary in how many chars it uses, but won't use more than 15.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param number any float
+     * @return a new String containing {@code number} in scientific notation, always base-10
+     */
+    public String scientific(float number) {
+        int i = RyuFloat.scientific(number, progress);
+        return String.valueOf(progress, 0, i);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that uses scientific notation,
+     * appending the result to {@code builder}. This can vary in how many chars it uses, but won't use more than 15.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any float
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendScientific(StringBuilder builder, float number) {
+        return RyuFloat.appendScientific(builder, number, progress);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that uses decimal notation.
+     * Returns a new String. This allocates a temporary StringBuilder internally, and you may instead want to reuse a
+     * StringBuilder with {@link #appendDecimal(StringBuilder, float)}.
+     * This can vary in how many chars it uses, and can rarely use hundreds.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param number any float
+     * @return a new String containing {@code number} in decimal notation, always base-10
+     */
+    public String decimal(float number) {
+        return RyuFloat.decimal(number);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that uses decimal notation,
+     * appending the result to {@code builder}. This can vary in how many chars it uses, and can rarely use hundreds.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any float
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendDecimal(StringBuilder builder, float number) {
+        return RyuFloat.appendDecimal(builder, number);
+    }
+
+    /**
      * Reads in a CharSequence containing only the digits present in this Base, with an optional sign at the
      * start, and returns the float those bits represent, or 0.0 if nothing could be read.  The leading sign can be
      * {@link #positiveSign} or {@link #negativeSign} if present, and is almost always '+' or '-'.
      * This is meant entirely for non-human-editable content, and the digit strings this can read
      * will almost always be produced by {@link #signed(float)}, {@link #unsigned(float)}, or their append versions.
+     * This cannot read the base-10 strings produced by {@link #general(float)}, {@link #scientific(float)},
+     * {@link #decimal(float)}, or their append versions; use {@link #readFloat(CharSequence)} for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -1364,6 +1463,8 @@ public class Base {
      * {@link #positiveSign} or {@link #negativeSign} if present, and is almost always '+' or '-'.
      * This is meant entirely for non-human-editable content, and the digit strings this can read
      * will almost always be produced by {@link #signed(float)}, {@link #unsigned(float)}, or their append versions.
+     * This cannot read the base-10 strings produced by {@link #general(float)}, {@link #scientific(float)},
+     * {@link #decimal(float)}, or their append versions; use {@link #readFloat(CharSequence)} for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -1386,6 +1487,8 @@ public class Base {
      * {@link #positiveSign} or {@link #negativeSign} if present, and is almost always '+' or '-'.
      * This is meant entirely for non-human-editable content, and the digit strings this can read
      * will almost always be produced by {@link #signed(float)}, {@link #unsigned(float)}, or their append versions.
+     * This cannot read the base-10 strings produced by {@link #general(float)}, {@link #scientific(float)},
+     * {@link #decimal(float)}, or their append versions; use {@link #readFloat(CharSequence)} for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -1400,6 +1503,315 @@ public class Base {
         if(cs.length == 0) return 0f;
         if(cs[start] == '.') return BitConversion.intBitsToFloat(readInt(cs, start+1, end));
         return BitConversion.reversedIntBitsToFloat(readInt(cs, start, end));
+    }
+
+    /**
+     * Validates if the given {@code str} can be parsed as a valid float. If {@code str} is null
+     * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
+     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
+     * <br>
+     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
+     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
+     * This does more by validating the range that a float may be in and returning that float.
+     *
+     * @param str a CharSequence, such as a String, that may contain a valid float that can be parsed
+     * @return the float parsed from as much of str this could read from, or 0.0f if no valid float could be read
+     */
+    public float readFloat(final CharSequence str) {
+        return readFloat(str, 0, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Validates if a range of the given {@code str} can be parsed as a valid float. Here, {@code begin} and
+     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If begin is
+     * negative, it will be clamped to be treated as {@code 0}. If end is greater
+     * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
+     * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
+     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
+     * <br>
+     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
+     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
+     * This does more by validating the range that a float may be in and returning that float.
+     *
+     * @param str a CharSequence, such as a String, that may contain a valid float that can be parsed
+     * @param begin the inclusive index to start reading at
+     * @param end the exclusive index to stop reading before
+     * @return the float parsed from as much of str this could read from, or 0.0f if no valid float could be read
+     */
+    public float readFloat(final CharSequence str, int begin, int end) {
+        if (str == null || (begin = Math.max(begin, 0)) >= end || str.length() < (end = Math.min(str.length(), end)) - begin) {
+            return 0f;
+        }
+        boolean hasExp = false;
+        boolean hasDecPoint = false;
+        boolean allowSigns = false;
+        boolean foundDigit = false;
+
+        while (str.charAt(begin) <= ' ') {
+            ++begin;
+        }
+        if(begin >= end) return 0f;
+
+        // deal with any possible sign up front
+        char first = str.charAt(begin);
+        final int start = first == '-' || first == '+' ? begin + 1 : begin;
+        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        int i = start;
+        // loop to the next to last char or to the last char if we need another digit to
+        // make a valid number (e.g. chars[0..5] = "1234E")
+        while (i < end) {
+            char ith = str.charAt(i);
+
+            if (ith >= '0' && ith <= '9') {
+                foundDigit = true;
+                allowSigns = false;
+
+            } else if (ith == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent, strips off second point and later
+                    try {
+                        return Float.parseFloat(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                hasDecPoint = true;
+            } else if (ith == 'e' || ith == 'E') {
+                if (hasExp) {
+                    // two E's, strips off the second E and later
+                    try {
+                        return Float.parseFloat(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                if (!foundDigit) {
+                    // strips off E and later
+                    try {
+                        return Float.parseFloat(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                hasExp = true;
+                allowSigns = true;
+            } else if (ith == '+' || ith == '-') {
+                if (!allowSigns) {
+                    try {
+                        return Float.parseFloat(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                allowSigns = false;
+                foundDigit = false; // we need a digit after the E
+            } else {
+                try {
+                    return Float.parseFloat(str.toString().substring(begin, i));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+            }
+            i++;
+        }
+        if (i <= end) {
+            char ith = str.charAt(i);
+            if (ith >= '0' && ith <= '9') {
+                // no type qualifier, OK, use this last char
+                try {
+                    return Float.parseFloat(str.toString().substring(begin, i+1));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+            }
+            if (ith == 'e' || ith == 'E') {
+                // can't have an E at the last char, strip it off (and later)
+                try {
+                    return Float.parseFloat(str.toString().substring(begin, i));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+            }
+            if (ith == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent, strip off second point and later
+                    try {
+                        return Float.parseFloat(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                // single trailing decimal point after non-exponent is ok
+                try {
+                    return Float.parseFloat(str.toString().substring(begin, foundDigit ? i + 1 : i));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+            }
+            // last character is out of usable area
+            try {
+                return Float.parseFloat(str.toString().substring(begin, i));
+            } catch (Exception ignored){
+                return 0f;
+            }
+        }
+        // allowSigns is true iff the val ends in 'E'
+        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
+        if(!allowSigns && foundDigit){
+            try {
+                return Float.parseFloat(str.toString().substring(begin, i));
+            } catch (Exception ignored){
+                return 0f;
+            }
+        }
+        return 0f;
+    }
+
+    /**
+     * Validates if a range of the given {@code str} can be parsed as a valid float. Here, {@code begin} and
+     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If begin is
+     * negative, it will be clamped to be treated as {@code 0}. If end is greater
+     * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
+     * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
+     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
+     * <br>
+     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
+     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
+     * This does more by validating the range that a float may be in and returning that float.
+     *
+     * @param str a CharSequence, such as a String, that may contain a valid float that can be parsed
+     * @param begin the inclusive index to start reading at
+     * @param end the exclusive index to stop reading before
+     * @return the float parsed from as much of str this could read from, or 0.0f if no valid float could be read
+     */
+    public float readFloat(final char[] str, int begin, int end) {
+        if (str == null || (begin = Math.max(begin, 0)) >= end || str.length < (end = Math.min(str.length, end)) - begin) {
+            return 0f;
+        }
+        boolean hasExp = false;
+        boolean hasDecPoint = false;
+        boolean allowSigns = false;
+        boolean foundDigit = false;
+
+        while (str[begin] <= ' ') {
+            ++begin;
+        }
+        if(begin >= end) return 0f;
+
+        // deal with any possible sign up front
+        char first = str[begin];
+        final int start = first == '-' || first == '+' ? begin + 1 : begin;
+        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        int i = start;
+        // loop to the next to last char or to the last char if we need another digit to
+        // make a valid number (e.g. chars[0..5] = "1234E")
+        while (i < end) {
+            char ith = str[i];
+
+            if (ith >= '0' && ith <= '9') {
+                foundDigit = true;
+                allowSigns = false;
+
+            } else if (ith == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent, strips off second point and later
+                    try {
+                        return Float.parseFloat(String.valueOf(str, begin, i - begin));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                hasDecPoint = true;
+            } else if (ith == 'e' || ith == 'E') {
+                if (hasExp) {
+                    // two E's, strips off the second E and later
+                    try {
+                        return Float.parseFloat(String.valueOf(str, begin, i - begin));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                if (!foundDigit) {
+                    // strips off E and later
+                    try {
+                        return Float.parseFloat(String.valueOf(str, begin, i - begin));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                hasExp = true;
+                allowSigns = true;
+            } else if (ith == '+' || ith == '-') {
+                if (!allowSigns) {
+                    try {
+                        return Float.parseFloat(String.valueOf(str, begin, i - begin));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                allowSigns = false;
+                foundDigit = false; // we need a digit after the E
+            } else {
+                try {
+                    return Float.parseFloat(String.valueOf(str, begin, i - begin));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+            }
+            i++;
+        }
+        if (i <= end) {
+            char ith = str[i];
+            if (ith >= '0' && ith <= '9') {
+                // no type qualifier, OK, use this last char
+                try {
+                    return Float.parseFloat(
+                            String.valueOf(str, begin, i + 1 - begin));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+            }
+            if (ith == 'e' || ith == 'E') {
+                // can't have an E at the last char, strip it off (and later)
+                try {
+                    return Float.parseFloat(String.valueOf(str, begin, i - begin));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+            }
+            if (ith == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent, strip off second point and later
+                    try {
+                        return Float.parseFloat(String.valueOf(str, begin, i - begin));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                // single trailing decimal point after non-exponent is ok
+                try {
+                    return Float.parseFloat(String.valueOf(str, begin, (foundDigit ? i + 1 : i) - begin));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+            }
+            // last character is out of usable area
+            try {
+                return Float.parseFloat(String.valueOf(str, begin, i - begin));
+            } catch (Exception ignored){
+                return 0f;
+            }
+        }
+        // allowSigns is true iff the val ends in 'E'
+        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
+        if(!allowSigns && foundDigit){
+            try {
+                return Float.parseFloat(String.valueOf(str, begin, i - begin));
+            } catch (Exception ignored){
+                return 0f;
+            }
+        }
+        return 0f;
     }
 
     /**
@@ -2982,316 +3394,6 @@ public class Base {
     }
 
     /**
-     * Validates if the given {@code str} can be parsed as a valid float. If {@code str} is null
-     * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
-     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
-     * <br>
-     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
-     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
-     * This does more by validating the range that a float may be in and returning that float.
-     *
-     * @param str a CharSequence, such as a String, that may contain a valid float that can be parsed
-     * @return the float parsed from as much of str this could read from, or 0.0f if no valid float could be read
-     */
-    public static float readFloat(final CharSequence str) {
-        return readFloat(str, 0, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Validates if a range of the given {@code str} can be parsed as a valid float. Here, {@code begin} and
-     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If begin is
-     * negative, it will be clamped to be treated as {@code 0}. If end is greater
-     * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
-     * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
-     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
-     * <br>
-     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
-     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
-     * This does more by validating the range that a float may be in and returning that float.
-     *
-     * @param str a CharSequence, such as a String, that may contain a valid float that can be parsed
-     * @param begin the inclusive index to start reading at
-     * @param end the exclusive index to stop reading before
-     * @return the float parsed from as much of str this could read from, or 0.0f if no valid float could be read
-     */
-    public static float readFloat(final CharSequence str, int begin, int end) {
-        if (str == null || (begin = Math.max(begin, 0)) >= end || str.length() < (end = Math.min(str.length(), end)) - begin) {
-            return 0f;
-        }
-        boolean hasExp = false;
-        boolean hasDecPoint = false;
-        boolean allowSigns = false;
-        boolean foundDigit = false;
-
-        while (str.charAt(begin) <= ' ') {
-            ++begin;
-        }
-        if(begin >= end) return 0f;
-
-        // deal with any possible sign up front
-        char first = str.charAt(begin);
-        final int start = first == '-' || first == '+' ? begin + 1 : begin;
-        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
-        int i = start;
-        // loop to the next to last char or to the last char if we need another digit to
-        // make a valid number (e.g. chars[0..5] = "1234E")
-        while (i < end) {
-            char ith = str.charAt(i);
-
-            if (ith >= '0' && ith <= '9') {
-                foundDigit = true;
-                allowSigns = false;
-
-            } else if (ith == '.') {
-                if (hasDecPoint || hasExp) {
-                    // two decimal points or dec in exponent, strips off second point and later
-                    try {
-                        return Float.parseFloat(str.toString().substring(begin, i));
-                    } catch (Exception ignored){
-                        return 0f;
-                    }
-                }
-                hasDecPoint = true;
-            } else if (ith == 'e' || ith == 'E') {
-                if (hasExp) {
-                    // two E's, strips off the second E and later
-                    try {
-                        return Float.parseFloat(str.toString().substring(begin, i));
-                    } catch (Exception ignored){
-                        return 0f;
-                    }
-                }
-                if (!foundDigit) {
-                    // strips off E and later
-                    try {
-                        return Float.parseFloat(str.toString().substring(begin, i));
-                    } catch (Exception ignored){
-                        return 0f;
-                    }
-                }
-                hasExp = true;
-                allowSigns = true;
-            } else if (ith == '+' || ith == '-') {
-                if (!allowSigns) {
-                    try {
-                        return Float.parseFloat(str.toString().substring(begin, i));
-                    } catch (Exception ignored){
-                        return 0f;
-                    }
-                }
-                allowSigns = false;
-                foundDigit = false; // we need a digit after the E
-            } else {
-                try {
-                    return Float.parseFloat(str.toString().substring(begin, i));
-                } catch (Exception ignored){
-                    return 0f;
-                }
-            }
-            i++;
-        }
-        if (i <= end) {
-            char ith = str.charAt(i);
-            if (ith >= '0' && ith <= '9') {
-                // no type qualifier, OK, use this last char
-                try {
-                    return Float.parseFloat(str.toString().substring(begin, i+1));
-                } catch (Exception ignored){
-                    return 0f;
-                }
-            }
-            if (ith == 'e' || ith == 'E') {
-                // can't have an E at the last char, strip it off (and later)
-                try {
-                    return Float.parseFloat(str.toString().substring(begin, i));
-                } catch (Exception ignored){
-                    return 0f;
-                }
-            }
-            if (ith == '.') {
-                if (hasDecPoint || hasExp) {
-                    // two decimal points or dec in exponent, strip off second point and later
-                    try {
-                        return Float.parseFloat(str.toString().substring(begin, i));
-                    } catch (Exception ignored){
-                        return 0f;
-                    }
-                }
-                // single trailing decimal point after non-exponent is ok
-                try {
-                    return Float.parseFloat(str.toString().substring(begin, foundDigit ? i + 1 : i));
-                } catch (Exception ignored){
-                    return 0f;
-                }
-            }
-            // last character is out of usable area
-            try {
-                return Float.parseFloat(str.toString().substring(begin, i));
-            } catch (Exception ignored){
-                return 0f;
-            }
-        }
-        // allowSigns is true iff the val ends in 'E'
-        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
-        if(!allowSigns && foundDigit){
-            try {
-                return Float.parseFloat(str.toString().substring(begin, i));
-            } catch (Exception ignored){
-                return 0f;
-            }
-        }
-        return 0f;
-    }
-
-
-    /**
-     * Validates if a range of the given {@code str} can be parsed as a valid float. Here, {@code begin} and
-     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If begin is
-     * negative, it will be clamped to be treated as {@code 0}. If end is greater
-     * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
-     * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
-     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
-     * <br>
-     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
-     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
-     * This does more by validating the range that a float may be in and returning that float.
-     *
-     * @param str a CharSequence, such as a String, that may contain a valid float that can be parsed
-     * @param begin the inclusive index to start reading at
-     * @param end the exclusive index to stop reading before
-     * @return the float parsed from as much of str this could read from, or 0.0f if no valid float could be read
-     */
-    public static float readFloat(final char[] str, int begin, int end) {
-        if (str == null || (begin = Math.max(begin, 0)) >= end || str.length < (end = Math.min(str.length, end)) - begin) {
-            return 0f;
-        }
-        boolean hasExp = false;
-        boolean hasDecPoint = false;
-        boolean allowSigns = false;
-        boolean foundDigit = false;
-
-        while (str[begin] <= ' ') {
-            ++begin;
-        }
-        if(begin >= end) return 0f;
-
-        // deal with any possible sign up front
-        char first = str[begin];
-        final int start = first == '-' || first == '+' ? begin + 1 : begin;
-        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
-        int i = start;
-        // loop to the next to last char or to the last char if we need another digit to
-        // make a valid number (e.g. chars[0..5] = "1234E")
-        while (i < end) {
-            char ith = str[i];
-
-            if (ith >= '0' && ith <= '9') {
-                foundDigit = true;
-                allowSigns = false;
-
-            } else if (ith == '.') {
-                if (hasDecPoint || hasExp) {
-                    // two decimal points or dec in exponent, strips off second point and later
-                    try {
-                        return Float.parseFloat(String.valueOf(str, begin, i - begin));
-                    } catch (Exception ignored){
-                        return 0f;
-                    }
-                }
-                hasDecPoint = true;
-            } else if (ith == 'e' || ith == 'E') {
-                if (hasExp) {
-                    // two E's, strips off the second E and later
-                    try {
-                        return Float.parseFloat(String.valueOf(str, begin, i - begin));
-                    } catch (Exception ignored){
-                        return 0f;
-                    }
-                }
-                if (!foundDigit) {
-                    // strips off E and later
-                    try {
-                        return Float.parseFloat(String.valueOf(str, begin, i - begin));
-                    } catch (Exception ignored){
-                        return 0f;
-                    }
-                }
-                hasExp = true;
-                allowSigns = true;
-            } else if (ith == '+' || ith == '-') {
-                if (!allowSigns) {
-                    try {
-                        return Float.parseFloat(String.valueOf(str, begin, i - begin));
-                    } catch (Exception ignored){
-                        return 0f;
-                    }
-                }
-                allowSigns = false;
-                foundDigit = false; // we need a digit after the E
-            } else {
-                try {
-                    return Float.parseFloat(String.valueOf(str, begin, i - begin));
-                } catch (Exception ignored){
-                    return 0f;
-                }
-            }
-            i++;
-        }
-        if (i <= end) {
-            char ith = str[i];
-            if (ith >= '0' && ith <= '9') {
-                // no type qualifier, OK, use this last char
-                try {
-                    return Float.parseFloat(
-                            String.valueOf(str, begin, i + 1 - begin));
-                } catch (Exception ignored){
-                    return 0f;
-                }
-            }
-            if (ith == 'e' || ith == 'E') {
-                // can't have an E at the last char, strip it off (and later)
-                try {
-                    return Float.parseFloat(String.valueOf(str, begin, i - begin));
-                } catch (Exception ignored){
-                    return 0f;
-                }
-            }
-            if (ith == '.') {
-                if (hasDecPoint || hasExp) {
-                    // two decimal points or dec in exponent, strip off second point and later
-                    try {
-                        return Float.parseFloat(String.valueOf(str, begin, i - begin));
-                    } catch (Exception ignored){
-                        return 0f;
-                    }
-                }
-                // single trailing decimal point after non-exponent is ok
-                try {
-                    return Float.parseFloat(String.valueOf(str, begin, (foundDigit ? i + 1 : i) - begin));
-                } catch (Exception ignored){
-                    return 0f;
-                }
-            }
-            // last character is out of usable area
-            try {
-                return Float.parseFloat(String.valueOf(str, begin, i - begin));
-            } catch (Exception ignored){
-                return 0f;
-            }
-        }
-        // allowSigns is true iff the val ends in 'E'
-        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
-        if(!allowSigns && foundDigit){
-            try {
-                return Float.parseFloat(String.valueOf(str, begin, i - begin));
-            } catch (Exception ignored){
-                return 0f;
-            }
-        }
-        return 0f;
-    }
-    
-    /**
      * Validates if the given {@code str} can be parsed as a valid double. If {@code str} is null
      * or empty, this returns {@code 0.0} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
@@ -3303,7 +3405,7 @@ public class Base {
      * @param str a CharSequence, such as a String, that may contain a valid double that can be parsed
      * @return the double parsed from as much of str this could read from, or 0.0 if no valid double could be read
      */
-    public static double readDouble(final CharSequence str) {
+    public double readDouble(final CharSequence str) {
         return readDouble(str, 0, Integer.MAX_VALUE);
     }
 
@@ -3324,7 +3426,7 @@ public class Base {
      * @param end the exclusive index to stop reading before
      * @return the double parsed from as much of str this could read from, or 0.0 if no valid double could be read
      */
-    public static double readDouble(final CharSequence str, int begin, int end) {
+    public double readDouble(final CharSequence str, int begin, int end) {
         if (str == null || (begin = Math.max(begin, 0)) >= end || str.length() < (end = Math.min(str.length(), end)) - begin) {
             return 0.0;
         }
@@ -3453,7 +3555,6 @@ public class Base {
         return 0.0;
     }
 
-
     /**
      * Validates if a range of the given {@code str} can be parsed as a valid double. Here, {@code begin} and
      * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If begin is
@@ -3471,7 +3572,7 @@ public class Base {
      * @param end the exclusive index to stop reading before
      * @return the double parsed from as much of str this could read from, or 0.0 if no valid double could be read
      */
-    public static double readDouble(final char[] str, int begin, int end) {
+    public double readDouble(final char[] str, int begin, int end) {
         if (str == null || (begin = Math.max(begin, 0)) >= end || str.length < (end = Math.min(str.length, end)) - begin) {
             return 0.0;
         }

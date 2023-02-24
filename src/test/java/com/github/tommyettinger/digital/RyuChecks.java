@@ -51,7 +51,7 @@ public class RyuChecks {
         }
         {
             String sb = RyuDouble.appendDecimal(new StringBuilder("junk: "), Double.MIN_NORMAL).append(", and more").toString();
-            double parsed = Base.readDouble(sb, 5, Integer.MAX_VALUE);
+            double parsed = Base.BASE10.readDouble(sb, 5, Integer.MAX_VALUE);
             System.out.println(sb);
             System.out.println(parsed);
             System.out.println(parsed == Double.MIN_NORMAL);
@@ -59,7 +59,55 @@ public class RyuChecks {
         System.out.println();
         {
             String sb = RyuFloat.appendDecimal(new StringBuilder("junk: "), Float.MIN_NORMAL).append(", and more").toString();
-            float parsed = Base.readFloat(sb, 5, Integer.MAX_VALUE);
+            float parsed = Base.BASE10.readFloat(sb, 5, Integer.MAX_VALUE);
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == Float.MIN_NORMAL);
+        }
+        System.out.println();
+        {
+            String sb = RyuDouble.appendScientific(new StringBuilder("junk: "), Double.MIN_NORMAL).append(", and more").toString();
+            double parsed = Base.BASE10.readDouble(sb, 5, Integer.MAX_VALUE);
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == Double.MIN_NORMAL);
+        }
+        System.out.println();
+        {
+            String sb = RyuFloat.appendScientific(new StringBuilder("junk: "), Float.MIN_NORMAL).append(", and more").toString();
+            float parsed = Base.BASE10.readFloat(sb, 5, Integer.MAX_VALUE);
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == Float.MIN_NORMAL);
+        }
+        System.out.println();
+        {
+            char[] sb = RyuDouble.appendDecimal(new StringBuilder("junk: "), Double.MIN_NORMAL).append(", and more").toString().toCharArray();
+            double parsed = Base.BASE10.readDouble(sb, 5, Integer.MAX_VALUE);
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == Double.MIN_NORMAL);
+        }
+        System.out.println();
+        {
+            char[] sb = RyuFloat.appendDecimal(new StringBuilder("junk: "), Float.MIN_NORMAL).append(", and more").toString().toCharArray();
+            float parsed = Base.BASE10.readFloat(sb, 5, Integer.MAX_VALUE);
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == Float.MIN_NORMAL);
+        }
+        System.out.println();
+        {
+            char[] sb = RyuDouble.appendScientific(new StringBuilder("junk: "), Double.MIN_NORMAL).append(", and more").toString().toCharArray();
+            double parsed = Base.BASE10.readDouble(sb, 5, Integer.MAX_VALUE);
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == Double.MIN_NORMAL);
+        }
+        System.out.println();
+        {
+            char[] sb = RyuFloat.appendScientific(new StringBuilder("junk: "), Float.MIN_NORMAL).append(", and more").toString().toCharArray();
+            float parsed = Base.BASE10.readFloat(sb, 5, Integer.MAX_VALUE);
             System.out.println(sb);
             System.out.println(parsed);
             System.out.println(parsed == Float.MIN_NORMAL);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 See AUTHORS file.
+ * Copyright 2018 Ulf Adams
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,12 @@ package com.github.tommyettinger.digital;
 import java.math.BigInteger;
 
 /**
- * An implementation of Ryu for float.
+ * An implementation of the Ryu float-to-String algorithm.
+ * See <a href="https://github.com/ulfjack/ryu">Ryu's GitHub repo</a> for more info.
+ * <br>
+ * Ryu is licensed under Apache 2.0, the same as digital. It was written by Ulf Adams and contributors.
  */
-public final class RyuFloat {
+final class RyuFloat {
   private static final int FLOAT_MANTISSA_BITS = 23;
   private static final int FLOAT_MANTISSA_MASK = (1 << FLOAT_MANTISSA_BITS) - 1;
 
