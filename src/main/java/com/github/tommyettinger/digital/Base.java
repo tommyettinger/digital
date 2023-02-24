@@ -2736,6 +2736,12 @@ public class Base {
      * This is copied nearly-verbatim from Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
      * Some changes were made to avoid depending on the rest of Apache Commons.
+     * <br>
+     * This method isn't able to check for some valid Java numbers. Floats
+     * and doubles formatted as hex floats won't be parsed at all, such as
+     * {@code 0x1.FEp-1}. Floats and doubles that have leading zeroes but
+     * do not have a decimal point in them will try to be parsed as octal
+     * integers, which can yield erroneous results.
      *
      * @param str the {@link String} to check
      * @return {@code true} if the string is a correctly formatted number
@@ -2845,6 +2851,86 @@ public class Base {
                     || chars[i] == 'L') {
                 // not allowing L with an exponent or decimal point
                 return foundDigit && !hasExp && !hasDecPoint;
+            }
+            // last character is illegal
+            return false;
+        }
+        // allowSigns is true iff the val ends in 'E'
+        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
+        return !allowSigns && foundDigit;
+    }
+
+    public static boolean isValidFloatingPoint(final CharSequence str) {
+        if (str == null || str.length() == 0) {
+            return false;
+        }
+        int sz = str.length();
+        boolean hasExp = false;
+        boolean hasDecPoint = false;
+        boolean allowSigns = false;
+        boolean foundDigit = false;
+        // deal with any possible sign up front
+        char first = str.charAt(0);
+        final int start = first == '-' || first == '+' ? 1 : 0;
+        sz--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        int i = start;
+        // loop to the next to last char or to the last char if we need another digit to
+        // make a valid number (e.g. chars[0..5] = "1234E")
+        while (i < sz) {
+            if (str.charAt(i) >= '0' && str.charAt(i) <= '9') {
+                foundDigit = true;
+                allowSigns = false;
+
+            } else if (str.charAt(i) == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent
+                    return false;
+                }
+                hasDecPoint = true;
+            } else if (str.charAt(i) == 'e' || str.charAt(i) == 'E') {
+                if (hasExp) {
+                    // two E's
+                    return false;
+                }
+                if (!foundDigit) {
+                    return false;
+                }
+                hasExp = true;
+                allowSigns = true;
+            } else if (str.charAt(i) == '+' || str.charAt(i) == '-') {
+                if (!allowSigns) {
+                    return false;
+                }
+                allowSigns = false;
+                foundDigit = false; // we need a digit after the E
+            } else {
+                return false;
+            }
+            i++;
+        }
+        if (i < str.length()) {
+            if (str.charAt(i) >= '0' && str.charAt(i) <= '9') {
+                // no type qualifier, OK
+                return true;
+            }
+            if (str.charAt(i) == 'e' || str.charAt(i) == 'E') {
+                // can't have an E at the last char
+                return false;
+            }
+            if (str.charAt(i) == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent
+                    return false;
+                }
+                // single trailing decimal point after non-exponent is ok
+                return foundDigit;
+            }
+            if (!allowSigns
+                    && (str.charAt(i) == 'd'
+                    || str.charAt(i) == 'D'
+                    || str.charAt(i) == 'f'
+                    || str.charAt(i) == 'F')) {
+                return foundDigit;
             }
             // last character is illegal
             return false;

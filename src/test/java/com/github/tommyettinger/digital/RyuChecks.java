@@ -54,6 +54,12 @@ public class RyuChecks {
         System.out.println(sb);
         System.out.println(parsed);
         System.out.println(parsed == Double.MIN_NORMAL);
+
+        System.out.println();
+
+        System.out.println(Base.isJavaNumber("0009E0")); // incorrect
+        System.out.println(Base.isValidFloatingPoint("0009E0")); // correct!
+
 //Well, now you know why we use scientific notation -- so we don't print Double.MIN_NORMAL as 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000022250738585072014
     }
 }
