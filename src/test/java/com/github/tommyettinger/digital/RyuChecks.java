@@ -49,6 +49,11 @@ public class RyuChecks {
             System.out.printf("Java general: %-20g, Java decimal: %-20f, Java scientific: %-20E\n", d, d, d);
             System.out.printf("Ryu general : %-20s, Ryu decimal : %-20s, Ryu scientific : %-20s\n", RyuFloat.general(d), RyuFloat.decimal(d), RyuFloat.scientific(d));
         }
+        String sb = RyuDouble.appendDecimal(new StringBuilder("junk: "), Double.MIN_NORMAL).append(", and more").toString();
+        double parsed = Double.parseDouble(sb.substring(5, sb.indexOf(",")));
+        System.out.println(sb);
+        System.out.println(parsed);
+        System.out.println(parsed == Double.MIN_NORMAL);
 //Well, now you know why we use scientific notation -- so we don't print Double.MIN_NORMAL as 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000022250738585072014
     }
 }
