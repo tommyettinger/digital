@@ -49,12 +49,21 @@ public class RyuChecks {
             System.out.printf("Java general: %-20g, Java decimal: %-20f, Java scientific: %-20E\n", d, d, d);
             System.out.printf("Ryu general : %-20s, Ryu decimal : %-20s, Ryu scientific : %-20s\n", RyuFloat.general(d), RyuFloat.decimal(d), RyuFloat.scientific(d));
         }
-        String sb = RyuDouble.appendDecimal(new StringBuilder("junk: "), Double.MIN_NORMAL).append(", and more").toString();
-        double parsed = Double.parseDouble(sb.substring(5, sb.indexOf(",")));
-        System.out.println(sb);
-        System.out.println(parsed);
-        System.out.println(parsed == Double.MIN_NORMAL);
-
+        {
+            String sb = RyuDouble.appendDecimal(new StringBuilder("junk: "), Double.MIN_NORMAL).append(", and more").toString();
+            double parsed = Double.parseDouble(sb.substring(5, sb.indexOf(",")));
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == Double.MIN_NORMAL);
+        }
+        System.out.println();
+        {
+            String sb = RyuFloat.appendDecimal(new StringBuilder("junk: "), Float.MIN_NORMAL).append(", and more").toString();
+            float parsed = Base.readFloat(sb, 5, Integer.MAX_VALUE);
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == Float.MIN_NORMAL);
+        }
         System.out.println();
 
         System.out.println(Base.isJavaNumber("0009E0")); // incorrect

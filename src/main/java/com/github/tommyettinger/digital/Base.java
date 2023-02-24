@@ -1245,8 +1245,8 @@ public class Base {
      * @param cs a CharSequence, such as a String, containing only the digits in this Base and/or an optional initial sign (usually + or -)
      * @return the double that cs represents
      */
-    public double readDouble(final CharSequence cs) {
-        return readDouble(cs, 0, cs.length());
+    public double readDoubleExact(final CharSequence cs) {
+        return readDoubleExact(cs, 0, cs.length());
     }
 
     /**
@@ -1265,7 +1265,7 @@ public class Base {
      * @param end   the (exclusive) last character position in cs to read (this after reading enough chars to represent the largest possible value)
      * @return the double that cs represents
      */
-    public double readDouble(final CharSequence cs, final int start, int end) {
+    public double readDoubleExact(final CharSequence cs, final int start, int end) {
         if(cs.length() == 0) return 0.0;
         if(cs.charAt(start) == '.') return BitConversion.longBitsToDouble(readLong(cs, start+1, end));
         return BitConversion.reversedLongBitsToDouble(readLong(cs, start, end));
@@ -1287,7 +1287,7 @@ public class Base {
      * @param end   the (exclusive) last character position in cs to read (this after reading enough chars to represent the largest possible value)
      * @return the double that cs represents
      */
-    public double readDouble(final char[] cs, final int start, int end) {
+    public double readDoubleExact(final char[] cs, final int start, int end) {
         if(cs.length == 0) return 0.0;
         if(cs[start] == '.') return BitConversion.longBitsToDouble(readLong(cs, start+1, end));
         return BitConversion.reversedLongBitsToDouble(readLong(cs, start, end));
@@ -1354,8 +1354,8 @@ public class Base {
      * @param cs a CharSequence, such as a String, containing only the digits in this Base and/or an optional initial sign (usually + or -)
      * @return the float that cs represents
      */
-    public float readFloat(final CharSequence cs) {
-        return readFloat(cs, 0, cs.length());
+    public float readFloatExact(final CharSequence cs) {
+        return readFloatExact(cs, 0, cs.length());
     }
 
     /**
@@ -1374,7 +1374,7 @@ public class Base {
      * @param end   the (exclusive) last character position in cs to read (this after reading enough chars to represent the largest possible value)
      * @return the float that cs represents
      */
-    public float readFloat(final CharSequence cs, final int start, int end) {
+    public float readFloatExact(final CharSequence cs, final int start, int end) {
         if(cs.length() == 0) return 0f;
         if(cs.charAt(start) == '.') return BitConversion.intBitsToFloat(readInt(cs, start+1, end));
         return BitConversion.reversedIntBitsToFloat(readInt(cs, start, end));
@@ -1396,7 +1396,7 @@ public class Base {
      * @param end   the (exclusive) last character position in cs to read (this after reading enough chars to represent the largest possible value)
      * @return the float that cs represents
      */
-    public float readFloat(final char[] cs, final int start, int end) {
+    public float readFloatExact(final char[] cs, final int start, int end) {
         if(cs.length == 0) return 0f;
         if(cs[start] == '.') return BitConversion.intBitsToFloat(readInt(cs, start+1, end));
         return BitConversion.reversedIntBitsToFloat(readInt(cs, start, end));
@@ -1805,21 +1805,21 @@ public class Base {
      * @param endIndex   the last index, exclusive, in source to split from
      * @return a double array of the numbers found in source
      */
-    public double[] doubleSplit(String source, String delimiter, int startIndex, int endIndex) {
+    public double[] doubleSplitExact(String source, String delimiter, int startIndex, int endIndex) {
         if (delimiter.length() == 0 || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return new double[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
-            return new double[]{readDouble(source, startIndex, endIndex)};
+            return new double[]{readDoubleExact(source, startIndex, endIndex)};
         double[] splat = new double[amount + 1];
         int dl = delimiter.length(), idx = startIndex - dl, idx2;
         for (int i = 0; i < amount; i++) {
-            splat[i] = readDouble(source, idx + dl, idx = source.indexOf(delimiter, idx + dl));
+            splat[i] = readDoubleExact(source, idx + dl, idx = source.indexOf(delimiter, idx + dl));
         }
         if ((idx2 = source.indexOf(delimiter, idx + dl)) < 0 || idx2 >= endIndex) {
-            splat[amount] = readDouble(source, idx + dl, Math.min(source.length(), endIndex));
+            splat[amount] = readDoubleExact(source, idx + dl, Math.min(source.length(), endIndex));
         } else {
-            splat[amount] = readDouble(source, idx + dl, idx2);
+            splat[amount] = readDoubleExact(source, idx + dl, idx2);
         }
         return splat;
     }
@@ -1832,8 +1832,8 @@ public class Base {
      * @param delimiter the String that separates numbers in the source
      * @return a double array of the numbers found in source
      */
-    public double[] doubleSplit(String source, String delimiter) {
-        return doubleSplit(source, delimiter, 0, source.length());
+    public double[] doubleSplitExact(String source, String delimiter) {
+        return doubleSplitExact(source, delimiter, 0, source.length());
     }
 
     /**
@@ -1846,21 +1846,21 @@ public class Base {
      * @param endIndex   the last index, exclusive, in source to split from
      * @return a float array of the numbers found in source
      */
-    public float[] floatSplit(String source, String delimiter, int startIndex, int endIndex) {
+    public float[] floatSplitExact(String source, String delimiter, int startIndex, int endIndex) {
         if (delimiter.length() == 0 || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return new float[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
-            return new float[]{readFloat(source, startIndex, endIndex)};
+            return new float[]{readFloatExact(source, startIndex, endIndex)};
         float[] splat = new float[amount + 1];
         int dl = delimiter.length(), idx = startIndex - dl, idx2;
         for (int i = 0; i < amount; i++) {
-            splat[i] = readFloat(source, idx + dl, idx = source.indexOf(delimiter, idx + dl));
+            splat[i] = readFloatExact(source, idx + dl, idx = source.indexOf(delimiter, idx + dl));
         }
         if ((idx2 = source.indexOf(delimiter, idx + dl)) < 0 || idx2 >= endIndex) {
-            splat[amount] = readFloat(source, idx + dl, Math.min(source.length(), endIndex));
+            splat[amount] = readFloatExact(source, idx + dl, Math.min(source.length(), endIndex));
         } else {
-            splat[amount] = readFloat(source, idx + dl, idx2);
+            splat[amount] = readFloatExact(source, idx + dl, idx2);
         }
         return splat;
     }
@@ -1873,8 +1873,8 @@ public class Base {
      * @param delimiter the String that separates numbers in the source
      * @return a float array of the numbers found in source
      */
-    public float[] floatSplit(String source, String delimiter) {
-        return floatSplit(source, delimiter, 0, source.length());
+    public float[] floatSplitExact(String source, String delimiter) {
+        return floatSplitExact(source, delimiter, 0, source.length());
     }
 
     /**
@@ -2615,12 +2615,12 @@ public class Base {
         double[][] splat = Arrays.copyOf(double2D, amount);
         int dl = majorDelimiter.length(), idx = startIndex, idx2;
         for (int i = 0; i < amount - 1; i++) {
-            splat[i] = doubleSplit(source, minorDelimiter, idx + dl, idx = source.indexOf(majorDelimiter, idx + dl));
+            splat[i] = doubleSplitExact(source, minorDelimiter, idx + dl, idx = source.indexOf(majorDelimiter, idx + dl));
         }
         if ((idx2 = source.indexOf(majorDelimiter, idx + dl)) < 0 || idx2 >= endIndex) {
-            splat[amount - 1] = doubleSplit(source, minorDelimiter, idx + dl, Math.min(source.length(), endIndex));
+            splat[amount - 1] = doubleSplitExact(source, minorDelimiter, idx + dl, Math.min(source.length(), endIndex));
         } else {
-            splat[amount - 1] = doubleSplit(source, minorDelimiter, idx + dl, idx2);
+            splat[amount - 1] = doubleSplitExact(source, minorDelimiter, idx + dl, idx2);
         }
         return splat;
 
@@ -2667,12 +2667,12 @@ public class Base {
         float[][] splat = Arrays.copyOf(float2D, amount);
         int dl = majorDelimiter.length(), idx = startIndex, idx2;
         for (int i = 0; i < amount - 1; i++) {
-            splat[i] = floatSplit(source, minorDelimiter, idx + dl, idx = source.indexOf(majorDelimiter, idx + dl));
+            splat[i] = floatSplitExact(source, minorDelimiter, idx + dl, idx = source.indexOf(majorDelimiter, idx + dl));
         }
         if ((idx2 = source.indexOf(majorDelimiter, idx + dl)) < 0 || idx2 >= endIndex) {
-            splat[amount - 1] = floatSplit(source, minorDelimiter, idx + dl, Math.min(source.length(), endIndex));
+            splat[amount - 1] = floatSplitExact(source, minorDelimiter, idx + dl, Math.min(source.length(), endIndex));
         } else {
-            splat[amount - 1] = floatSplit(source, minorDelimiter, idx + dl, idx2);
+            splat[amount - 1] = floatSplitExact(source, minorDelimiter, idx + dl, idx2);
         }
         return splat;
 
@@ -2955,6 +2955,156 @@ public class Base {
         // allowSigns is true iff the val ends in 'E'
         // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
         return !allowSigns && foundDigit;
+    }
+
+    /**
+     * Validates if a range of the given {@code str} can be parsed as a valid float. Here, {@code begin} and
+     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If end is greater
+     * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
+     * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
+     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
+     * <br>
+     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
+     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
+     * This does more by validating the range that a float may be in and returning that float.
+     *
+     * @param str a CharSequence, such as a String, that may contain a valid float that can be parsed
+     * @param begin the inclusive index to start reading at
+     * @param end the exclusive index to stop reading before
+     * @return the float parsed from as much of str this could read from, or 0.0f if no valid float could be read
+     */
+    public static float readFloat(final CharSequence str, int begin, int end) {
+        if (str == null || begin >= end || str.length() < (end = Math.min(str.length(), end)) - begin) {
+            return 0f;
+        }
+        boolean hasExp = false;
+        boolean hasDecPoint = false;
+        boolean allowSigns = false;
+        boolean foundDigit = false;
+
+        while (str.charAt(begin) <= ' ') {
+            ++begin;
+        }
+        if(begin >= end) return 0f;
+
+        // deal with any possible sign up front
+        char first = str.charAt(begin);
+        final int start = first == '-' || first == '+' ? begin + 1 : begin;
+        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        int i = start;
+        // loop to the next to last char or to the last char if we need another digit to
+        // make a valid number (e.g. chars[0..5] = "1234E")
+        while (i < end) {
+            char ith = str.charAt(i);
+
+            if (ith >= '0' && ith <= '9') {
+                foundDigit = true;
+                allowSigns = false;
+
+            } else if (ith == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent, strips off second point and later
+                    try {
+                        return Float.parseFloat(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                hasDecPoint = true;
+            } else if (ith == 'e' || ith == 'E') {
+                if (hasExp) {
+                    // two E's, strips off the second E and later
+                    try {
+                        return Float.parseFloat(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                if (!foundDigit) {
+                    // strips off E and later
+                    try {
+                        return Float.parseFloat(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+
+                }
+                hasExp = true;
+                allowSigns = true;
+            } else if (ith == '+' || ith == '-') {
+                if (!allowSigns) {
+                    try {
+                        return Float.parseFloat(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+
+                }
+                allowSigns = false;
+                foundDigit = false; // we need a digit after the E
+            } else {
+                try {
+                    return Float.parseFloat(str.toString().substring(begin, i));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+            }
+            i++;
+        }
+        if (i <= end) {
+            char ith = str.charAt(i);
+            if (ith >= '0' && ith <= '9') {
+                // no type qualifier, OK, use this last char
+                try {
+                    return Float.parseFloat(str.toString().substring(begin, i+1));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+
+            }
+            if (ith == 'e' || ith == 'E') {
+                // can't have an E at the last char, strip it off (and later)
+                try {
+                    return Float.parseFloat(str.toString().substring(begin, i));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+            }
+            if (ith == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent, strip off second point and later
+                    try {
+                        return Float.parseFloat(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0f;
+                    }
+                }
+                // single trailing decimal point after non-exponent is ok
+                try {
+                    return Float.parseFloat(str.toString().substring(begin, foundDigit ? i + 1 : i));
+                } catch (Exception ignored){
+                    return 0f;
+                }
+
+            }
+            // last character is out of usable area
+            try {
+                return Float.parseFloat(str.toString().substring(begin, i));
+            } catch (Exception ignored){
+                return 0f;
+            }
+        }
+        // allowSigns is true iff the val ends in 'E'
+        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
+        if(!allowSigns && foundDigit){
+            try {
+                return Float.parseFloat(str.toString().substring(begin, i));
+            } catch (Exception ignored){
+                return 0f;
+            }
+        }
+        return 0f;
+
     }
 
     @Override

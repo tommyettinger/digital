@@ -374,13 +374,13 @@ public class BaseTest {
 		for(Base enc : BASES)
 		{
 			for(double in : inputs){
-				Assert.assertEquals(in, enc.readDouble(enc.signed(in)), Double.MIN_VALUE);
-				Assert.assertEquals(in, enc.readDouble(enc.unsigned(in)), Double.MIN_VALUE);
+				Assert.assertEquals(in, enc.readDoubleExact(enc.signed(in)), Double.MIN_VALUE);
+				Assert.assertEquals(in, enc.readDoubleExact(enc.unsigned(in)), Double.MIN_VALUE);
 			}
-			Assert.assertTrue(Double.isNaN(enc.readDouble(enc.signed(Double.NaN))));
-			Assert.assertTrue(Double.isNaN(enc.readDouble(enc.unsigned(Double.NaN))));
-			Assert.assertArrayEquals(enc.doubleSplit(enc.join(" ", inputs), " "), inputs, 0.00001);
-			Assert.assertArrayEquals(enc.doubleSplit(" " + enc.join(" ", inputs), " ", 1, Integer.MAX_VALUE), inputs, 0.00001);
+			Assert.assertTrue(Double.isNaN(enc.readDoubleExact(enc.signed(Double.NaN))));
+			Assert.assertTrue(Double.isNaN(enc.readDoubleExact(enc.unsigned(Double.NaN))));
+			Assert.assertArrayEquals(enc.doubleSplitExact(enc.join(" ", inputs), " "), inputs, 0.00001);
+			Assert.assertArrayEquals(enc.doubleSplitExact(" " + enc.join(" ", inputs), " ", 1, Integer.MAX_VALUE), inputs, 0.00001);
 			Assert.assertArrayEquals(enc.doubleSplit2D(enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D).toString(), "`", ","), inputs2D);
 			Assert.assertArrayEquals(enc.doubleSplit2D(" " + enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D), "`", ",", 1, Integer.MAX_VALUE), inputs2D);
 		}
@@ -401,13 +401,13 @@ public class BaseTest {
 		for(Base enc : BASES)
 		{
 			for(float in : inputs){
-				Assert.assertEquals(in, enc.readFloat(enc.signed(in)), Float.MIN_VALUE);
-				Assert.assertEquals(in, enc.readFloat(enc.unsigned(in)), Float.MIN_VALUE);
+				Assert.assertEquals(in, enc.readFloatExact(enc.signed(in)), Float.MIN_VALUE);
+				Assert.assertEquals(in, enc.readFloatExact(enc.unsigned(in)), Float.MIN_VALUE);
 			}
-			Assert.assertTrue(Float.isNaN(enc.readFloat(enc.signed(Float.NaN))));
-			Assert.assertTrue(Float.isNaN(enc.readFloat(enc.unsigned(Float.NaN))));
-			Assert.assertArrayEquals(enc.floatSplit(enc.join(" ", inputs), " "), inputs, 0.00001f);
-			Assert.assertArrayEquals(enc.floatSplit(" " + enc.join(" ", inputs), " ", 1, Integer.MAX_VALUE), inputs, 0.00001f);
+			Assert.assertTrue(Float.isNaN(enc.readFloatExact(enc.signed(Float.NaN))));
+			Assert.assertTrue(Float.isNaN(enc.readFloatExact(enc.unsigned(Float.NaN))));
+			Assert.assertArrayEquals(enc.floatSplitExact(enc.join(" ", inputs), " "), inputs, 0.00001f);
+			Assert.assertArrayEquals(enc.floatSplitExact(" " + enc.join(" ", inputs), " ", 1, Integer.MAX_VALUE), inputs, 0.00001f);
 			Assert.assertArrayEquals(enc.floatSplit2D(enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D).toString(), "`", ","), inputs2D);
 			Assert.assertArrayEquals(enc.floatSplit2D(" " + enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D), "`", ",", 1, Integer.MAX_VALUE), inputs2D);
 		}
