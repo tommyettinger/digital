@@ -51,7 +51,7 @@ public class RyuChecks {
         }
         {
             String sb = RyuDouble.appendDecimal(new StringBuilder("junk: "), Double.MIN_NORMAL).append(", and more").toString();
-            double parsed = Double.parseDouble(sb.substring(5, sb.indexOf(",")));
+            double parsed = Base.readDouble(sb, 5, Integer.MAX_VALUE);
             System.out.println(sb);
             System.out.println(parsed);
             System.out.println(parsed == Double.MIN_NORMAL);

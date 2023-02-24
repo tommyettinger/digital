@@ -3290,6 +3290,316 @@ public class Base {
         }
         return 0f;
     }
+    
+    /**
+     * Validates if the given {@code str} can be parsed as a valid double. If {@code str} is null
+     * or empty, this returns {@code 0.0} rather than throwing an exception. This only correctly handles decimal or
+     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
+     * <br>
+     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
+     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
+     * This does more by validating the range that a double may be in and returning that double.
+     *
+     * @param str a CharSequence, such as a String, that may contain a valid double that can be parsed
+     * @return the double parsed from as much of str this could read from, or 0.0 if no valid double could be read
+     */
+    public static double readDouble(final CharSequence str) {
+        return readDouble(str, 0, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Validates if a range of the given {@code str} can be parsed as a valid double. Here, {@code begin} and
+     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If begin is
+     * negative, it will be clamped to be treated as {@code 0}. If end is greater
+     * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
+     * or empty, this returns {@code 0.0} rather than throwing an exception. This only correctly handles decimal or
+     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
+     * <br>
+     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
+     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
+     * This does more by validating the range that a double may be in and returning that double.
+     *
+     * @param str a CharSequence, such as a String, that may contain a valid double that can be parsed
+     * @param begin the inclusive index to start reading at
+     * @param end the exclusive index to stop reading before
+     * @return the double parsed from as much of str this could read from, or 0.0 if no valid double could be read
+     */
+    public static double readDouble(final CharSequence str, int begin, int end) {
+        if (str == null || (begin = Math.max(begin, 0)) >= end || str.length() < (end = Math.min(str.length(), end)) - begin) {
+            return 0.0;
+        }
+        boolean hasExp = false;
+        boolean hasDecPoint = false;
+        boolean allowSigns = false;
+        boolean foundDigit = false;
+
+        while (str.charAt(begin) <= ' ') {
+            ++begin;
+        }
+        if(begin >= end) return 0.0;
+
+        // deal with any possible sign up front
+        char first = str.charAt(begin);
+        final int start = first == '-' || first == '+' ? begin + 1 : begin;
+        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        int i = start;
+        // loop to the next to last char or to the last char if we need another digit to
+        // make a valid number (e.g. chars[0..5] = "1234E")
+        while (i < end) {
+            char ith = str.charAt(i);
+
+            if (ith >= '0' && ith <= '9') {
+                foundDigit = true;
+                allowSigns = false;
+
+            } else if (ith == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent, strips off second point and later
+                    try {
+                        return Double.parseDouble(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0.0;
+                    }
+                }
+                hasDecPoint = true;
+            } else if (ith == 'e' || ith == 'E') {
+                if (hasExp) {
+                    // two E's, strips off the second E and later
+                    try {
+                        return Double.parseDouble(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0.0;
+                    }
+                }
+                if (!foundDigit) {
+                    // strips off E and later
+                    try {
+                        return Double.parseDouble(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0.0;
+                    }
+                }
+                hasExp = true;
+                allowSigns = true;
+            } else if (ith == '+' || ith == '-') {
+                if (!allowSigns) {
+                    try {
+                        return Double.parseDouble(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0.0;
+                    }
+                }
+                allowSigns = false;
+                foundDigit = false; // we need a digit after the E
+            } else {
+                try {
+                    return Double.parseDouble(str.toString().substring(begin, i));
+                } catch (Exception ignored){
+                    return 0.0;
+                }
+            }
+            i++;
+        }
+        if (i <= end) {
+            char ith = str.charAt(i);
+            if (ith >= '0' && ith <= '9') {
+                // no type qualifier, OK, use this last char
+                try {
+                    return Double.parseDouble(str.toString().substring(begin, i+1));
+                } catch (Exception ignored){
+                    return 0.0;
+                }
+            }
+            if (ith == 'e' || ith == 'E') {
+                // can't have an E at the last char, strip it off (and later)
+                try {
+                    return Double.parseDouble(str.toString().substring(begin, i));
+                } catch (Exception ignored){
+                    return 0.0;
+                }
+            }
+            if (ith == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent, strip off second point and later
+                    try {
+                        return Double.parseDouble(str.toString().substring(begin, i));
+                    } catch (Exception ignored){
+                        return 0.0;
+                    }
+                }
+                // single trailing decimal point after non-exponent is ok
+                try {
+                    return Double.parseDouble(str.toString().substring(begin, foundDigit ? i + 1 : i));
+                } catch (Exception ignored){
+                    return 0.0;
+                }
+            }
+            // last character is out of usable area
+            try {
+                return Double.parseDouble(str.toString().substring(begin, i));
+            } catch (Exception ignored){
+                return 0.0;
+            }
+        }
+        // allowSigns is true iff the val ends in 'E'
+        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
+        if(!allowSigns && foundDigit){
+            try {
+                return Double.parseDouble(str.toString().substring(begin, i));
+            } catch (Exception ignored){
+                return 0.0;
+            }
+        }
+        return 0.0;
+    }
+
+
+    /**
+     * Validates if a range of the given {@code str} can be parsed as a valid double. Here, {@code begin} and
+     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If begin is
+     * negative, it will be clamped to be treated as {@code 0}. If end is greater
+     * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
+     * or empty, this returns {@code 0.0} rather than throwing an exception. This only correctly handles decimal or
+     * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
+     * <br>
+     * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
+     * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
+     * This does more by validating the range that a double may be in and returning that double.
+     *
+     * @param str a CharSequence, such as a String, that may contain a valid double that can be parsed
+     * @param begin the inclusive index to start reading at
+     * @param end the exclusive index to stop reading before
+     * @return the double parsed from as much of str this could read from, or 0.0 if no valid double could be read
+     */
+    public static double readDouble(final char[] str, int begin, int end) {
+        if (str == null || (begin = Math.max(begin, 0)) >= end || str.length < (end = Math.min(str.length, end)) - begin) {
+            return 0.0;
+        }
+        boolean hasExp = false;
+        boolean hasDecPoint = false;
+        boolean allowSigns = false;
+        boolean foundDigit = false;
+
+        while (str[begin] <= ' ') {
+            ++begin;
+        }
+        if(begin >= end) return 0.0;
+
+        // deal with any possible sign up front
+        char first = str[begin];
+        final int start = first == '-' || first == '+' ? begin + 1 : begin;
+        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        int i = start;
+        // loop to the next to last char or to the last char if we need another digit to
+        // make a valid number (e.g. chars[0..5] = "1234E")
+        while (i < end) {
+            char ith = str[i];
+
+            if (ith >= '0' && ith <= '9') {
+                foundDigit = true;
+                allowSigns = false;
+
+            } else if (ith == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent, strips off second point and later
+                    try {
+                        return Double.parseDouble(String.valueOf(str, begin, i - begin));
+                    } catch (Exception ignored){
+                        return 0.0;
+                    }
+                }
+                hasDecPoint = true;
+            } else if (ith == 'e' || ith == 'E') {
+                if (hasExp) {
+                    // two E's, strips off the second E and later
+                    try {
+                        return Double.parseDouble(String.valueOf(str, begin, i - begin));
+                    } catch (Exception ignored){
+                        return 0.0;
+                    }
+                }
+                if (!foundDigit) {
+                    // strips off E and later
+                    try {
+                        return Double.parseDouble(String.valueOf(str, begin, i - begin));
+                    } catch (Exception ignored){
+                        return 0.0;
+                    }
+                }
+                hasExp = true;
+                allowSigns = true;
+            } else if (ith == '+' || ith == '-') {
+                if (!allowSigns) {
+                    try {
+                        return Double.parseDouble(String.valueOf(str, begin, i - begin));
+                    } catch (Exception ignored){
+                        return 0.0;
+                    }
+                }
+                allowSigns = false;
+                foundDigit = false; // we need a digit after the E
+            } else {
+                try {
+                    return Double.parseDouble(String.valueOf(str, begin, i - begin));
+                } catch (Exception ignored){
+                    return 0.0;
+                }
+            }
+            i++;
+        }
+        if (i <= end) {
+            char ith = str[i];
+            if (ith >= '0' && ith <= '9') {
+                // no type qualifier, OK, use this last char
+                try {
+                    return Double.parseDouble(
+                            String.valueOf(str, begin, i + 1 - begin));
+                } catch (Exception ignored){
+                    return 0.0;
+                }
+            }
+            if (ith == 'e' || ith == 'E') {
+                // can't have an E at the last char, strip it off (and later)
+                try {
+                    return Double.parseDouble(String.valueOf(str, begin, i - begin));
+                } catch (Exception ignored){
+                    return 0.0;
+                }
+            }
+            if (ith == '.') {
+                if (hasDecPoint || hasExp) {
+                    // two decimal points or dec in exponent, strip off second point and later
+                    try {
+                        return Double.parseDouble(String.valueOf(str, begin, i - begin));
+                    } catch (Exception ignored){
+                        return 0.0;
+                    }
+                }
+                // single trailing decimal point after non-exponent is ok
+                try {
+                    return Double.parseDouble(String.valueOf(str, begin, (foundDigit ? i + 1 : i) - begin));
+                } catch (Exception ignored){
+                    return 0.0;
+                }
+            }
+            // last character is out of usable area
+            try {
+                return Double.parseDouble(String.valueOf(str, begin, i - begin));
+            } catch (Exception ignored){
+                return 0.0;
+            }
+        }
+        // allowSigns is true iff the val ends in 'E'
+        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
+        if(!allowSigns && foundDigit){
+            try {
+                return Double.parseDouble(String.valueOf(str, begin, i - begin));
+            } catch (Exception ignored){
+                return 0.0;
+            }
+        }
+        return 0.0;
+    }
 
     @Override
     public boolean equals(Object o) {
