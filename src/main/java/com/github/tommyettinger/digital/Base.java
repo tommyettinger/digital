@@ -203,7 +203,7 @@ public class Base {
         length2Byte = (int) Math.ceil(Math.log(0x1p16) * logBase);
         length4Byte = (int) Math.ceil(Math.log(0x1p32) * logBase);
         length8Byte = (int) Math.ceil(Math.log(0x1p64) * logBase);
-        progress = new char[Math.max(length8Byte + 1, 24)];
+        progress = new char[Math.max(length8Byte + 1, 32)];
     }
 
     /**
@@ -226,7 +226,7 @@ public class Base {
         length2Byte = other.length2Byte;
         length4Byte = other.length4Byte;
         length8Byte = other.length8Byte;
-        progress = new char[Math.max(length8Byte + 1, 24)];
+        progress = new char[Math.max(length8Byte + 1, 32)];
     }
 
     /**
@@ -1265,7 +1265,7 @@ public class Base {
     /**
      * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation,
      * appending the result to {@code builder}. This switches to scientific notation when a value would use a base-10
-     * exponent smaller than -3 or larger than 7.This can vary in how many chars it uses, but won't use more than 24.
+     * exponent smaller than -3 or larger than 7. This can vary in how many chars it uses, but won't use more than 24.
      * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
@@ -1274,6 +1274,40 @@ public class Base {
      */
     public StringBuilder appendGeneral(StringBuilder builder, double number) {
         return RyuDouble.appendGeneral(builder, number, progress);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation.
+     * This switches to scientific notation when a value would use a base-10 exponent smaller than -10 or larger than
+     * 10; because this prints a much wider range with decimal format than {@link #general(double)}, this is more
+     * "friendly" to humans.
+     * Returns a new String.
+     * This can vary in how many chars it uses, but won't use more than 32.
+     * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
+     *
+     * @param number any double
+     * @return a new String containing {@code number} in either decimal or scientific notation, always base-10
+     */
+    public String friendly(double number) {
+        int i = RyuDouble.friendly(number, progress);
+        return String.valueOf(progress, 0, i);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation,
+     * appending the result to {@code builder}.
+     * This switches to scientific notation when a value would use a base-10 exponent smaller than -10 or larger than
+     * 10; because this prints a much wider range with decimal format than {@link #general(double)}, this is more
+     * "friendly" to humans.
+     * This can vary in how many chars it uses, but won't use more than 32.
+     * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any double
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendFriendly(StringBuilder builder, double number) {
+        return RyuDouble.appendFriendly(builder, number, progress);
     }
 
     /**
@@ -1396,9 +1430,9 @@ public class Base {
      * Validates if the given {@code str} can be parsed as a valid double. If {@code str} is null
      * or empty, this returns {@code 0.0} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
-     * This can read in the format produced by {@link #decimal(double)}, {@link #scientific(double)}, or
-     * {@link #general(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}. Use
-     * {@link #readDoubleExact} to read in signed() or unsigned() output.
+     * This can read in the format produced by {@link #decimal(double)}, {@link #scientific(double)},
+     * {@link #friendly(double)}, or {@link #general(double)}, but not {@link #signed(double)} or
+     * {@link #unsigned(double)}. Use {@link #readDoubleExact} to read in signed() or unsigned() output.
      * <br>
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
@@ -1418,9 +1452,9 @@ public class Base {
      * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
      * or empty, this returns {@code 0.0} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
-     * This can read in the format produced by {@link #decimal(double)}, {@link #scientific(double)}, or
-     * {@link #general(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}. Use
-     * {@link #readDoubleExact} to read in signed() or unsigned() output.
+     * This can read in the format produced by {@link #decimal(double)}, {@link #scientific(double)},
+     * {@link #friendly(double)}, or {@link #general(double)}, but not {@link #signed(double)} or
+     * {@link #unsigned(double)}. Use {@link #readDoubleExact} to read in signed() or unsigned() output.
      * <br>
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
@@ -1567,9 +1601,9 @@ public class Base {
      * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
      * or empty, this returns {@code 0.0} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
-     * This can read in the format produced by {@link #decimal(double)}, {@link #scientific(double)}, or
-     * {@link #general(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}. Use
-     * {@link #readDoubleExact} to read in signed() or unsigned() output.
+     * This can read in the format produced by {@link #decimal(double)}, {@link #scientific(double)},
+     * {@link #friendly(double)}, or {@link #general(double)}, but not {@link #signed(double)} or
+     * {@link #unsigned(double)}. Use {@link #readDoubleExact} to read in signed() or unsigned() output.
      * <br>
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
@@ -1803,6 +1837,40 @@ public class Base {
     }
 
     /**
+     * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation.
+     * This switches to scientific notation when a value would use a base-10 exponent smaller than -10 or larger than
+     * 10; because this prints a much wider range with decimal format than {@link #general(float)}, this is more
+     * "friendly" to humans.
+     * Returns a new String.
+     * This can vary in how many chars it uses, but won't use more than 32.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param number any float
+     * @return a new String containing {@code number} in either decimal or scientific notation, always base-10
+     */
+    public String friendly(float number) {
+        int i = RyuFloat.friendly(number, progress);
+        return String.valueOf(progress, 0, i);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation,
+     * appending the result to {@code builder}.
+     * This switches to scientific notation when a value would use a base-10 exponent smaller than -10 or larger than
+     * 10; because this prints a much wider range with decimal format than {@link #general(float)}, this is more
+     * "friendly" to humans.
+     * This can vary in how many chars it uses, but won't use more than 32.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any float
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendFriendly(StringBuilder builder, float number) {
+        return RyuFloat.appendFriendly(builder, number, progress);
+    }
+
+    /**
      * Converts the given {@code number} to a base-10 representation that uses scientific notation.
      * Returns a new String.
      * This can vary in how many chars it uses, but won't use more than 15.
@@ -1928,9 +1996,9 @@ public class Base {
      * Validates if the given {@code str} can be parsed as a valid float. If {@code str} is null
      * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
-     * This can read in the format produced by {@link #decimal(float)}, {@link #scientific(float)}, or
-     * {@link #general(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}. Use {@link #readFloatExact}
-     * to read in signed() or unsigned() output.
+     * This can read in the format produced by {@link #decimal(float)}, {@link #scientific(float)},
+     * {@link #friendly(float)}, or {@link #general(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
+     * Use {@link #readFloatExact} to read in signed() or unsigned() output.
      * <br>
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
@@ -1950,9 +2018,9 @@ public class Base {
      * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
      * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
-     * This can read in the format produced by {@link #decimal(float)}, {@link #scientific(float)}, or
-     * {@link #general(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}. Use {@link #readFloatExact}
-     * to read in signed() or unsigned() output.
+     * This can read in the format produced by {@link #decimal(float)}, {@link #scientific(float)},
+     * {@link #friendly(float)}, or {@link #general(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
+     * Use {@link #readFloatExact} to read in signed() or unsigned() output.
      * <br>
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
@@ -2099,9 +2167,9 @@ public class Base {
      * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
      * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
-     * This can read in the format produced by {@link #decimal(float)}, {@link #scientific(float)}, or
-     * {@link #general(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}. Use {@link #readFloatExact}
-     * to read in signed() or unsigned() output.
+     * This can read in the format produced by {@link #decimal(float)}, {@link #scientific(float)},
+     * {@link #friendly(float)}, or {@link #general(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
+     * Use {@link #readFloatExact} to read in signed() or unsigned() output.
      * <br>
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.

@@ -44,7 +44,7 @@ final class RyuDouble {
   private static final int POW5_INV_QUARTER_BITCOUNT = 31;
   private static final int[][] POW5_INV_SPLIT = new int[NEG_TABLE_SIZE][4];
 
-  private static final char[] result = new char[24];
+  private static final char[] result = new char[32];
 
   static {
     BigInteger mask = BigInteger.ONE.shiftLeft(POW5_QUARTER_BITCOUNT).subtract(BigInteger.ONE);
@@ -78,6 +78,10 @@ final class RyuDouble {
     }
   }
 
+  public static int general(double value, char[] result) {
+    return general(value, result, -3, 7);
+  }
+
   public static String general(double value) {
     final int index = general(value, result, -3, 7);
     return new String(result, 0, index);
@@ -90,14 +94,27 @@ final class RyuDouble {
   public static StringBuilder appendGeneral(StringBuilder builder, double value, char[] result) {
     return appendGeneral(builder, value, result, -3, 7);
   }
-  
+
+  public static int friendly(double value, char[] result) {
+    return general(value, result, -10, 10);
+  }
+
+  public static String friendly(double value) {
+    final int index = general(value, result, -10, 10);
+    return new String(result, 0, index);
+  }
+
+  public static StringBuilder appendFriendly(StringBuilder builder, double value) {
+    return appendGeneral(builder, value, result, -10, 10);
+  }
+
+  public static StringBuilder appendFriendly(StringBuilder builder, double value, char[] result) {
+    return appendGeneral(builder, value, result, -10, 10);
+  }
+
   public static StringBuilder appendGeneral(StringBuilder builder, double value, char[] result, int low, int high) {
     final int index = general(value, result, low, high);
     return builder.append(result, 0, index);
-  }
-
-  public static int general(double value, char[] result) {
-    return general(value, result, -3, 7);
   }
 
   public static int general(double value, char[] result, int low, int high) {

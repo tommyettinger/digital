@@ -45,7 +45,7 @@ final class RyuFloat {
   private static final int POS_TABLE_SIZE = 47;
   private static final int INV_TABLE_SIZE = 31;
 
-  private static final char[] result = new char[15];
+  private static final char[] result = new char[32];
 
   private static final int POW5_BITCOUNT = 61;
   private static final int POW5_HALF_BITCOUNT = 31;
@@ -90,13 +90,30 @@ final class RyuFloat {
     return appendGeneral(builder, value, result, -3, 7);
   }
 
+  public static int general(float value, char[] result) {
+    return general(value, result, -3, 7);
+  }
+
+  public static int friendly(float value, char[] result) {
+    return general(value, result, -10, 10);
+  }
+
+  public static String friendly(float value) {
+    final int index = general(value, result, -10, 10);
+    return new String(result, 0, index);
+  }
+
+  public static StringBuilder appendFriendly(StringBuilder builder, float value) {
+    return appendGeneral(builder, value, result, -10, 10);
+  }
+
+  public static StringBuilder appendFriendly(StringBuilder builder, float value, char[] result) {
+    return appendGeneral(builder, value, result, -10, 10);
+  }
+
   public static StringBuilder appendGeneral(StringBuilder builder, float value, char[] result, int low, int high) {
     final int index = general(value, result, low, high);
     return builder.append(result, 0, index);
-  }
-
-  public static int general(float value, char[] result) {
-    return general(value, result, -3, 7);
   }
 
   public static int general(float value, char[] result, int low, int high) {
