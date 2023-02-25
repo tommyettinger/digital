@@ -3479,7 +3479,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * long array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, long[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, long[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3514,7 +3514,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * long array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, long[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, long[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3531,7 +3531,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * int array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, int[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, int[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3566,7 +3566,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * int array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, int[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, int[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3583,7 +3583,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * short array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, short[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, short[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3618,7 +3618,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * short array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, short[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, short[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3635,7 +3635,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * byte array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, byte[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, byte[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3670,7 +3670,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * byte array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, byte[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, byte[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3687,7 +3687,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * char array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, char[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, char[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3722,7 +3722,8 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * char array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, char[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, char[][])}, including the initial majorDelimiter before
+     * each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3739,7 +3740,10 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, double[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoinedExact2D(StringBuilder, String, String, double[][])}, including the initial majorDelimiter
+     * before each sequence.
+     * This can read in doubles produced by this Base using {@link #signed(double)} or {@link #unsigned(double)}, but
+     * not {@link #decimal(double)}, {@link #scientific(double)}, {@link #general(double)}, or {@link #friendly(double)}.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3748,7 +3752,7 @@ public class Base {
      * @param endIndex       the last index, exclusive, in source to split from
      * @return a 2D double array of the numbers found in source
      */
-    public double[][] doubleSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
+    public double[][] doubleSplitExact2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
         if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() == 0 || minorDelimiter.length() == 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
@@ -3774,7 +3778,66 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, double[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoinedExact2D(StringBuilder, String, String, double[][])}, including the initial majorDelimiter
+     * before each sequence.
+     * This can read in doubles produced by this Base using {@link #signed(double)} or {@link #unsigned(double)}, but
+     * not {@link #decimal(double)}, {@link #scientific(double)}, {@link #general(double)}, or {@link #friendly(double)}.
+     *
+     * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param majorDelimiter the separator between sequences
+     * @param minorDelimiter the separator between numbers
+     * @return a 2D double array of the numbers found in source
+     */
+    public double[][] doubleSplitExact2D(String source, String majorDelimiter, String minorDelimiter) {
+        return doubleSplitExact2D(source, majorDelimiter, minorDelimiter, 0, source.length());
+    }
+
+    /**
+     * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * double array. This is specifically meant to read the format produced by
+     * {@link #appendJoined2D(StringBuilder, String, String, double[][])}, including the initial majorDelimiter
+     * before each sequence.
+     * This can read in doubles produced by any Base using {@link #decimal(double)}, {@link #scientific(double)},
+     * {@link #general(double)}, or {@link #friendly(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}.
+     *
+     * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param majorDelimiter the separator between sequences
+     * @param minorDelimiter the separator between numbers
+     * @param startIndex     the first index, inclusive, in source to split from
+     * @param endIndex       the last index, exclusive, in source to split from
+     * @return a 2D double array of the numbers found in source
+     */
+    public double[][] doubleSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
+        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() == 0 || minorDelimiter.length() == 0)
+            throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
+        if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+            return double2D;
+        int amount = count(source, majorDelimiter, startIndex, endIndex);
+        if (amount <= 0)
+            return Arrays.copyOf(double2D, 0);
+        double[][] splat = Arrays.copyOf(double2D, amount);
+        int dl = majorDelimiter.length(), idx = startIndex, idx2;
+        for (int i = 0; i < amount - 1; i++) {
+            splat[i] = doubleSplit(source, minorDelimiter, idx + dl, idx = source.indexOf(majorDelimiter, idx + dl));
+        }
+        if ((idx2 = source.indexOf(majorDelimiter, idx + dl)) < 0 || idx2 >= endIndex) {
+            splat[amount - 1] = doubleSplit(source, minorDelimiter, idx + dl, Math.min(source.length(), endIndex));
+        } else {
+            splat[amount - 1] = doubleSplit(source, minorDelimiter, idx + dl, idx2);
+        }
+        return splat;
+
+    }
+
+    /**
+     * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * double array. This is specifically meant to read the format produced by
+     * {@link #appendJoined2D(StringBuilder, String, String, double[][])}, including the initial majorDelimiter before
+     * each sequence.
+     * This can read in doubles produced by any Base using {@link #decimal(double)}, {@link #scientific(double)},
+     * {@link #general(double)}, or {@link #friendly(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3791,7 +3854,10 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, float[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoinedExact2D(StringBuilder, String, String, float[][])}, including the initial majorDelimiter
+     * before each sequence.
+     * This can read in floats produced by this Base using {@link #signed(float)} or {@link #unsigned(float)}, but
+     * not {@link #decimal(float)}, {@link #scientific(float)}, {@link #general(float)}, or {@link #friendly(float)}.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -3800,7 +3866,7 @@ public class Base {
      * @param endIndex       the last index, exclusive, in source to split from
      * @return a 2D float array of the numbers found in source
      */
-    public float[][] floatSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
+    public float[][] floatSplitExact2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
         if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() == 0 || minorDelimiter.length() == 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
@@ -3826,7 +3892,66 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoined(StringBuilder, String, float[])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoinedExact2D(StringBuilder, String, String, float[][])}, including the initial majorDelimiter
+     * before each sequence.
+     * This can read in floats produced by this Base using {@link #signed(float)} or {@link #unsigned(float)}, but
+     * not {@link #decimal(float)}, {@link #scientific(float)}, {@link #general(float)}, or {@link #friendly(float)}.
+     *
+     * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param majorDelimiter the separator between sequences
+     * @param minorDelimiter the separator between numbers
+     * @return a 2D float array of the numbers found in source
+     */
+    public float[][] floatSplitExact2D(String source, String majorDelimiter, String minorDelimiter) {
+        return floatSplitExact2D(source, majorDelimiter, minorDelimiter, 0, source.length());
+    }
+
+    /**
+     * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * float array. This is specifically meant to read the format produced by
+     * {@link #appendJoined2D(StringBuilder, String, String, float[][])}, including the initial majorDelimiter
+     * before each sequence.
+     * This can read in floats produced by any Base using {@link #decimal(float)}, {@link #scientific(float)},
+     * {@link #general(float)}, or {@link #friendly(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
+     *
+     * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param majorDelimiter the separator between sequences
+     * @param minorDelimiter the separator between numbers
+     * @param startIndex     the first index, inclusive, in source to split from
+     * @param endIndex       the last index, exclusive, in source to split from
+     * @return a 2D float array of the numbers found in source
+     */
+    public float[][] floatSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
+        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() == 0 || minorDelimiter.length() == 0)
+            throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
+        if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+            return float2D;
+        int amount = count(source, majorDelimiter, startIndex, endIndex);
+        if (amount <= 0)
+            return Arrays.copyOf(float2D, 0);
+        float[][] splat = Arrays.copyOf(float2D, amount);
+        int dl = majorDelimiter.length(), idx = startIndex, idx2;
+        for (int i = 0; i < amount - 1; i++) {
+            splat[i] = floatSplit(source, minorDelimiter, idx + dl, idx = source.indexOf(majorDelimiter, idx + dl));
+        }
+        if ((idx2 = source.indexOf(majorDelimiter, idx + dl)) < 0 || idx2 >= endIndex) {
+            splat[amount - 1] = floatSplit(source, minorDelimiter, idx + dl, Math.min(source.length(), endIndex));
+        } else {
+            splat[amount - 1] = floatSplit(source, minorDelimiter, idx + dl, idx2);
+        }
+        return splat;
+
+    }
+
+    /**
+     * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * float array. This is specifically meant to read the format produced by
+     * {@link #appendJoined2D(StringBuilder, String, String, float[][])}, including the initial majorDelimiter
+     * before each sequence.
+     * This can read in floats produced by any Base using {@link #decimal(float)}, {@link #scientific(float)},
+     * {@link #general(float)}, or {@link #friendly(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
