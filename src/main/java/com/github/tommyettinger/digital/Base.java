@@ -2706,6 +2706,8 @@ public class Base {
     /**
      * Given a String containing numbers in this Base, separated by instances of delimiter, returns those numbers as a
      * double array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This can read in doubles produced by this Base using {@link #signed(double)} or {@link #unsigned(double)}, but
+     * not {@link #decimal(double)}, {@link #scientific(double)}, {@link #general(double)}, or {@link #friendly(double)}.
      *
      * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param delimiter  the String that separates numbers in the source
@@ -2735,6 +2737,8 @@ public class Base {
     /**
      * Given a String containing numbers in this Base, separated by instances of delimiter, returns those numbers as a
      * double array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This can read in doubles produced by this Base using {@link #signed(double)} or {@link #unsigned(double)}, but
+     * not {@link #decimal(double)}, {@link #scientific(double)}, {@link #general(double)}, or {@link #friendly(double)}.
      *
      * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param delimiter the String that separates numbers in the source
@@ -2746,7 +2750,54 @@ public class Base {
 
     /**
      * Given a String containing numbers in this Base, separated by instances of delimiter, returns those numbers as a
+     * double array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This can read in doubles produced by any Base using {@link #decimal(double)}, {@link #scientific(double)},
+     * {@link #general(double)}, or {@link #friendly(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}.
+     *
+     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter  the String that separates numbers in the source
+     * @param startIndex the first index, inclusive, in source to split from
+     * @param endIndex   the last index, exclusive, in source to split from
+     * @return a double array of the numbers found in source
+     */
+    public double[] doubleSplit(String source, String delimiter, int startIndex, int endIndex) {
+        if (delimiter.length() == 0 || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+            return new double[0];
+        int amount = count(source, delimiter, startIndex, endIndex);
+        if (amount <= 0)
+            return new double[]{readDouble(source, startIndex, endIndex)};
+        double[] splat = new double[amount + 1];
+        int dl = delimiter.length(), idx = startIndex - dl, idx2;
+        for (int i = 0; i < amount; i++) {
+            splat[i] = readDouble(source, idx + dl, idx = source.indexOf(delimiter, idx + dl));
+        }
+        if ((idx2 = source.indexOf(delimiter, idx + dl)) < 0 || idx2 >= endIndex) {
+            splat[amount] = readDouble(source, idx + dl, Math.min(source.length(), endIndex));
+        } else {
+            splat[amount] = readDouble(source, idx + dl, idx2);
+        }
+        return splat;
+    }
+
+    /**
+     * Given a String containing numbers in this Base, separated by instances of delimiter, returns those numbers as a
+     * double array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This can read in doubles produced by any Base using {@link #decimal(double)}, {@link #scientific(double)},
+     * {@link #general(double)}, or {@link #friendly(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}.
+     *
+     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter the String that separates numbers in the source
+     * @return a double array of the numbers found in source
+     */
+    public double[] doubleSplit(String source, String delimiter) {
+        return doubleSplit(source, delimiter, 0, source.length());
+    }
+
+    /**
+     * Given a String containing numbers in this Base, separated by instances of delimiter, returns those numbers as a
      * float array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This can read in floats produced by this Base using {@link #signed(float)} or {@link #unsigned(float)}, but
+     * not {@link #decimal(float)}, {@link #scientific(float)}, {@link #general(float)}, or {@link #friendly(float)}.
      *
      * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param delimiter  the String that separates numbers in the source
@@ -2776,6 +2827,8 @@ public class Base {
     /**
      * Given a String containing numbers in this Base, separated by instances of delimiter, returns those numbers as a
      * float array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This can read in floats produced by this Base using {@link #signed(float)} or {@link #unsigned(float)}, but
+     * not {@link #decimal(float)}, {@link #scientific(float)}, {@link #general(float)}, or {@link #friendly(float)}.
      *
      * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param delimiter the String that separates numbers in the source
@@ -2783,6 +2836,51 @@ public class Base {
      */
     public float[] floatSplitExact(String source, String delimiter) {
         return floatSplitExact(source, delimiter, 0, source.length());
+    }
+
+    /**
+     * Given a String containing numbers in this Base, separated by instances of delimiter, returns those numbers as a
+     * float array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This can read in floats produced by any Base using {@link #decimal(float)}, {@link #scientific(float)},
+     * {@link #general(float)}, or {@link #friendly(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
+     *
+     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter  the String that separates numbers in the source
+     * @param startIndex the first index, inclusive, in source to split from
+     * @param endIndex   the last index, exclusive, in source to split from
+     * @return a float array of the numbers found in source
+     */
+    public float[] floatSplit(String source, String delimiter, int startIndex, int endIndex) {
+        if (delimiter.length() == 0 || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+            return new float[0];
+        int amount = count(source, delimiter, startIndex, endIndex);
+        if (amount <= 0)
+            return new float[]{readFloat(source, startIndex, endIndex)};
+        float[] splat = new float[amount + 1];
+        int dl = delimiter.length(), idx = startIndex - dl, idx2;
+        for (int i = 0; i < amount; i++) {
+            splat[i] = readFloat(source, idx + dl, idx = source.indexOf(delimiter, idx + dl));
+        }
+        if ((idx2 = source.indexOf(delimiter, idx + dl)) < 0 || idx2 >= endIndex) {
+            splat[amount] = readFloat(source, idx + dl, Math.min(source.length(), endIndex));
+        } else {
+            splat[amount] = readFloat(source, idx + dl, idx2);
+        }
+        return splat;
+    }
+
+    /**
+     * Given a String containing numbers in this Base, separated by instances of delimiter, returns those numbers as a
+     * float array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This can read in floats produced by any Base using {@link #decimal(float)}, {@link #scientific(float)},
+     * {@link #general(float)}, or {@link #friendly(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
+     *
+     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter the String that separates numbers in the source
+     * @return a float array of the numbers found in source
+     */
+    public float[] floatSplit(String source, String delimiter) {
+        return floatSplit(source, delimiter, 0, source.length());
     }
 
     /**
