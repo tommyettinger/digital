@@ -1482,6 +1482,14 @@ public class Base {
         // deal with any possible sign up front
         char first = str.charAt(begin);
         final int start = first == '-' || first == '+' ? begin + 1 : begin;
+
+        if(end - start >= 3 && str.charAt(start) == 'N' && str.charAt(start+1) == 'a' && str.charAt(start+2) == 'N')
+            return Double.NaN;
+        if(end - start >= 8 && str.charAt(start) == 'I' && str.charAt(start+1) == 'n' && str.charAt(start+2) == 'f'
+                && str.charAt(start+3) == 'i' && str.charAt(start+4) == 'n' && str.charAt(start+5) == 'i'
+                && str.charAt(start+6) == 't' && str.charAt(start+7) == 'y')
+            return first == '-' ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+
         end--; // don't want to loop to the last char, check it afterwards for type qualifiers
         int i = start;
         // loop to the next to last char or to the last char if we need another digit to
@@ -1631,6 +1639,14 @@ public class Base {
         // deal with any possible sign up front
         char first = str[begin];
         final int start = first == '-' || first == '+' ? begin + 1 : begin;
+
+        if(end - start >= 3 && str[start] == 'N' && str[start+1] == 'a' && str[start+2] == 'N')
+            return Double.NaN;
+        if(end - start >= 8 && str[start] == 'I' && str[start+1] == 'n' && str[start+2] == 'f'
+                && str[start+3] == 'i' && str[start+4] == 'n' && str[start+5] == 'i'
+                && str[start+6] == 't' && str[start+7] == 'y')
+            return first == '-' ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+
         end--; // don't want to loop to the last char, check it afterwards for type qualifiers
         int i = start;
         // loop to the next to last char or to the last char if we need another digit to
