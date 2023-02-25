@@ -3278,8 +3278,34 @@ public class Base {
     /**
      * Given a double 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all doubles from elements, in this
-     * Base, separated by minor delimiter and then by major delimiter. For any non-null, non-empty elements, this will
-     * append at least one major delimiter before it appends any items.
+     * Base using {@link #appendJoinedExact(StringBuilder, String, double[])}, separated by minor delimiter and then by
+     * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
+     * appends any items. Like appendJoinedExact(), this does not produce human-readable numbers.
+     *
+     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param majorDelimiter the separator to put between arrays
+     * @param minorDelimiter the separator to put between numbers
+     * @param elements       a double 2D array; if null or empty, this returns sb without changes
+     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     */
+    public StringBuilder appendJoinedExact2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, double[][] elements) {
+        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() == 0 || minorDelimiter.length() == 0)
+            throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
+        if (elements.length == 0)
+            return sb;
+        for (int i = 0; i < elements.length; i++) {
+            sb.append(majorDelimiter);
+            appendJoinedExact(sb, minorDelimiter, elements[i]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a double 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
+     * each inner array, and a StringBuilder to append to, appends to the StringBuilder all doubles from elements, in this
+     * Base using {@link #appendJoined(StringBuilder, String, double[])}, separated by minor delimiter and then by
+     * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
+     * appends any items. Like appendJoined(), this produces human-readable numbers using {@link #general(double)}.
      *
      * @param sb             the StringBuilder to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
@@ -3302,8 +3328,34 @@ public class Base {
     /**
      * Given a float 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all floats from elements, in this
-     * Base, separated by minor delimiter and then by major delimiter. For any non-null, non-empty elements, this will
-     * append at least one major delimiter before it appends any items.
+     * Base using {@link #appendJoinedExact(StringBuilder, String, float[])}, separated by minor delimiter and then by
+     * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
+     * appends any items. Like appendJoinedExact(), this does not produce human-readable numbers.
+     *
+     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param majorDelimiter the separator to put between arrays
+     * @param minorDelimiter the separator to put between numbers
+     * @param elements       a float 2D array; if null or empty, this returns sb without changes
+     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     */
+    public StringBuilder appendJoinedExact2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, float[][] elements) {
+        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() == 0 || minorDelimiter.length() == 0)
+            throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
+        if (elements.length == 0)
+            return sb;
+        for (int i = 0; i < elements.length; i++) {
+            sb.append(majorDelimiter);
+            appendJoinedExact(sb, minorDelimiter, elements[i]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a float 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
+     * each inner array, and a StringBuilder to append to, appends to the StringBuilder all floats from elements, in this
+     * Base using {@link #appendJoined(StringBuilder, String, float[])}, separated by minor delimiter and then by
+     * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
+     * appends any items. Like appendJoined(), this produces human-readable numbers using {@link #general(float)}.
      *
      * @param sb             the StringBuilder to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
