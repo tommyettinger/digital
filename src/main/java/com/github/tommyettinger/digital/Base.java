@@ -2926,7 +2926,7 @@ public class Base {
      * @param elements  a double array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, double[] elements) {
+    public String joinExact(String delimiter, double[] elements) {
         if (elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -2948,7 +2948,7 @@ public class Base {
      * @param elements  a double array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, double[] elements) {
+    public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, double[] elements) {
         if (elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
@@ -2968,7 +2968,7 @@ public class Base {
      * @param elements  a float array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, float[] elements) {
+    public String joinExact(String delimiter, float[] elements) {
         if (elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -2990,13 +2990,99 @@ public class Base {
      * @param elements  a float array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, float[] elements) {
+    public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, float[] elements) {
         if (elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
         for (int i = 1; i < elements.length; i++) {
             sb.append(delimiter);
             appendSigned(sb, elements[i]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a double array and a delimiter to separate the items of that array, produces a String containing all doubles
+     * from elements, in this Base, separated by delimiter. This uses {@link #appendGeneral(StringBuilder, double)},
+     * which means this always uses base-10, and may use decimal or scientific notation.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a double array; if null, this returns an empty String
+     * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
+     */
+    public String join(String delimiter, double[] elements) {
+        if (elements.length == 0)
+            return "";
+        StringBuilder sb = new StringBuilder(elements.length << 3);
+        appendGeneral(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendGeneral(sb, elements[i]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all doubles from elements, in this Base, separated by delimiter. This uses
+     * {@link #appendGeneral(StringBuilder, double)}, which means this always uses base-10, and may use decimal or
+     * scientific notation.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a double array; if null, this returns sb without changes
+     * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
+     */
+    public StringBuilder appendJoined(StringBuilder sb, String delimiter, double[] elements) {
+        if (elements.length == 0)
+            return sb;
+        appendGeneral(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendGeneral(sb, elements[i]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a float array and a delimiter to separate the items of that array, produces a String containing all floats
+     * from elements, in this Base, separated by delimiter. This uses {@link #appendGeneral(StringBuilder, float)},
+     * which means this always uses base-10, and may use decimal or scientific notation.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a float array; if null, this returns an empty String
+     * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
+     */
+    public String join(String delimiter, float[] elements) {
+        if (elements.length == 0)
+            return "";
+        StringBuilder sb = new StringBuilder(elements.length << 3);
+        appendGeneral(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendGeneral(sb, elements[i]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all floats from elements, in this Base, separated by delimiter. This uses
+     * {@link #appendGeneral(StringBuilder, float)}, which means this always uses base-10, and may use decimal or
+     * scientific notation.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a float array; if null, this returns sb without changes
+     * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
+     */
+    public StringBuilder appendJoined(StringBuilder sb, String delimiter, float[] elements) {
+        if (elements.length == 0)
+            return sb;
+        appendGeneral(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendGeneral(sb, elements[i]);
         }
         return sb;
     }
