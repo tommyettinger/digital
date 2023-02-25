@@ -10,6 +10,27 @@ public class RyuChecks {
         return BitConversion.intBitsToFloat(126 - Long.numberOfTrailingZeros(bits) << 23 | (int)(bits >>> 41));
     }
 
+    public static void main(String[] args) {
+        char[] buffer = new char[100];
+        for (int low = -3; low >= -32; low--) {
+            int limit = 0;
+            double d = -Math.pow(10.0, low);
+            for (int i = 0; i < 0x800000; i++) {
+                limit = Math.max(limit, RyuDouble.general(d, buffer, low, 7));
+                d = Math.nextDown(d);
+            }
+            System.out.println("With lower exponent bound " + low + ", this needs " + limit + " chars");
+        }
+        for (int high = 7; high <= 64; high++) {
+            int limit = 0;
+            double d = -Math.pow(10.0, high);
+            for (int i = 0; i < 0x800000; i++) {
+                limit = Math.max(limit, RyuDouble.general(d, buffer, -3, high));
+                d = Math.nextUp(d);
+            }
+            System.out.println("With upper exponent bound " + high + ", this needs " + limit + " chars");
+        }
+    }
     /**
      * Some interesting results:
      * It should be obvious when you run this that Ryu prints a lot more digits. I'm not sure why this is.
@@ -18,7 +39,7 @@ public class RyuChecks {
      * the latter.
      * @param args unused
      */
-    public static void main(String[] args) {
+    public static void mainOld(String[] args) {
         AlternateRandom random = new AlternateRandom(1234567890L);
         for (int i = 0; i < 100; i++) {
             double d = (nextExclusiveDouble(random) / nextExclusiveDouble(random)) * (nextExclusiveDouble(random) - 0.5);

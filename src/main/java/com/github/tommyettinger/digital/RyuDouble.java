@@ -79,20 +79,28 @@ final class RyuDouble {
   }
 
   public static String general(double value) {
-    final int index = general(value, result);
+    final int index = general(value, result, -3, 7);
     return new String(result, 0, index);
   }
 
   public static StringBuilder appendGeneral(StringBuilder builder, double value) {
-    return appendGeneral(builder, value, result);
+    return appendGeneral(builder, value, result, -3, 7);
   }
 
   public static StringBuilder appendGeneral(StringBuilder builder, double value, char[] result) {
-    final int index = general(value, result);
+    return appendGeneral(builder, value, result, -3, 7);
+  }
+  
+  public static StringBuilder appendGeneral(StringBuilder builder, double value, char[] result, int low, int high) {
+    final int index = general(value, result, low, high);
     return builder.append(result, 0, index);
   }
 
   public static int general(double value, char[] result) {
+    return general(value, result, -3, 7);
+  }
+
+  public static int general(double value, char[] result, int low, int high) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Double.isNaN(value)) {
@@ -213,7 +221,7 @@ final class RyuDouble {
     int exp = e10 + vplength - 1;
 
     // Double.toString semantics requires using scientific notation if and only if outside this range.
-    boolean scientificNotation = !((exp >= -3) && (exp < 7));
+    boolean scientificNotation = !((exp >= low) && (exp < high));
 
     int removed = 0;
 
