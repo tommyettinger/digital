@@ -1370,6 +1370,9 @@ public class Base {
      * {@link #positiveSign} or {@link #negativeSign} if present, and is almost always '+' or '-'.
      * This is meant entirely for non-human-editable content, and the digit strings this can read
      * will almost always be produced by {@link #signed(double)}, {@link #unsigned(double)}, or their append versions.
+     * This cannot read the base-10 strings produced by {@link #general(double)}, {@link #scientific(double)},
+     * {@link #decimal(double)}, {@link #friendly(double)}, or their append versions; use
+     * {@link #readDouble(CharSequence)} for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -1388,6 +1391,9 @@ public class Base {
      * {@link #positiveSign} or {@link #negativeSign} if present, and is almost always '+' or '-'.
      * This is meant entirely for non-human-editable content, and the digit strings this can read
      * will almost always be produced by {@link #signed(double)}, {@link #unsigned(double)}, or their append versions.
+     * This cannot read the base-10 strings produced by {@link #general(double)}, {@link #scientific(double)},
+     * {@link #decimal(double)}, {@link #friendly(double)}, or their append versions; use
+     * {@link #readDouble(CharSequence)} for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -1410,6 +1416,9 @@ public class Base {
      * {@link #positiveSign} or {@link #negativeSign} if present, and is almost always '+' or '-'.
      * This is meant entirely for non-human-editable content, and the digit strings this can read
      * will almost always be produced by {@link #signed(double)}, {@link #unsigned(double)}, or their append versions.
+     * This cannot read the base-10 strings produced by {@link #general(double)}, {@link #scientific(double)},
+     * {@link #decimal(double)}, {@link #friendly(double)}, or their append versions; use
+     * {@link #readDouble(CharSequence)} for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -1437,6 +1446,9 @@ public class Base {
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
      * This does more by validating the range that a double may be in and returning that double.
+     * This may allocate in several places, such as to create a substring so that {@link Double#parseDouble(String)} can
+     * run on it. Reading in floating-point numbers without ever allocating seems to be a tremendous challenge, and this
+     * library only does so with the (non-human-readable) {@link #readDoubleExact} methods.
      *
      * @param str a CharSequence, such as a String, that may contain a valid double that can be parsed
      * @return the double parsed from as much of str this could read from, or 0.0 if no valid double could be read
@@ -1459,6 +1471,9 @@ public class Base {
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
      * This does more by validating the range that a double may be in and returning that double.
+     * This may allocate in several places, such as to create a substring so that {@link Double#parseDouble(String)} can
+     * run on it. Reading in floating-point numbers without ever allocating seems to be a tremendous challenge, and this
+     * library only does so with the (non-human-readable) {@link #readDoubleExact} methods.
      *
      * @param str a CharSequence, such as a String, that may contain a valid double that can be parsed
      * @param begin the inclusive index to start reading at
@@ -1616,6 +1631,9 @@ public class Base {
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
      * This does more by validating the range that a double may be in and returning that double.
+     * This may allocate in several places, such as to create a substring so that {@link Double#parseDouble(String)} can
+     * run on it. Reading in floating-point numbers without ever allocating seems to be a tremendous challenge, and this
+     * library only does so with the (non-human-readable) {@link #readDoubleExact} methods.
      *
      * @param str a CharSequence, such as a String, that may contain a valid double that can be parsed
      * @param begin the inclusive index to start reading at
@@ -1947,7 +1965,8 @@ public class Base {
      * This is meant entirely for non-human-editable content, and the digit strings this can read
      * will almost always be produced by {@link #signed(float)}, {@link #unsigned(float)}, or their append versions.
      * This cannot read the base-10 strings produced by {@link #general(float)}, {@link #scientific(float)},
-     * {@link #decimal(float)}, or their append versions; use {@link #readFloat(CharSequence)} for that.
+     * {@link #decimal(float)}, {@link #friendly(float)}, or their append versions; use {@link #readFloat(CharSequence)}
+     * for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -1967,7 +1986,8 @@ public class Base {
      * This is meant entirely for non-human-editable content, and the digit strings this can read
      * will almost always be produced by {@link #signed(float)}, {@link #unsigned(float)}, or their append versions.
      * This cannot read the base-10 strings produced by {@link #general(float)}, {@link #scientific(float)},
-     * {@link #decimal(float)}, or their append versions; use {@link #readFloat(CharSequence)} for that.
+     * {@link #decimal(float)}, {@link #friendly(float)}, or their append versions; use {@link #readFloat(CharSequence)}
+     * for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -1991,7 +2011,8 @@ public class Base {
      * This is meant entirely for non-human-editable content, and the digit strings this can read
      * will almost always be produced by {@link #signed(float)}, {@link #unsigned(float)}, or their append versions.
      * This cannot read the base-10 strings produced by {@link #general(float)}, {@link #scientific(float)},
-     * {@link #decimal(float)}, or their append versions; use {@link #readFloat(CharSequence)} for that.
+     * {@link #decimal(float)}, {@link #friendly(float)}, or their append versions; use {@link #readFloat(CharSequence)}
+     * for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -2019,6 +2040,9 @@ public class Base {
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
      * This does more by validating the range that a float may be in and returning that float.
+     * This may allocate in several places, such as to create a substring so that {@link Float#parseFloat(String)} can
+     * run on it. Reading in floating-point numbers without ever allocating seems to be a tremendous challenge, and this
+     * library only does so with the (non-human-readable) {@link #readFloatExact} methods.
      *
      * @param str a CharSequence, such as a String, that may contain a valid float that can be parsed
      * @return the float parsed from as much of str this could read from, or 0.0f if no valid float could be read
@@ -2041,6 +2065,9 @@ public class Base {
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
      * This does more by validating the range that a float may be in and returning that float.
+     * This may allocate in several places, such as to create a substring so that {@link Float#parseFloat(String)} can
+     * run on it. Reading in floating-point numbers without ever allocating seems to be a tremendous challenge, and this
+     * library only does so with the (non-human-readable) {@link #readFloatExact} methods.
      *
      * @param str a CharSequence, such as a String, that may contain a valid float that can be parsed
      * @param begin the inclusive index to start reading at
@@ -2198,6 +2225,9 @@ public class Base {
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
      * This does more by validating the range that a float may be in and returning that float.
+     * This may allocate in several places, such as to create a substring so that {@link Float#parseFloat(String)} can
+     * run on it. Reading in floating-point numbers without ever allocating seems to be a tremendous challenge, and this
+     * library only does so with the (non-human-readable) {@link #readFloatExact} methods.
      *
      * @param str a CharSequence, such as a String, that may contain a valid float that can be parsed
      * @param begin the inclusive index to start reading at

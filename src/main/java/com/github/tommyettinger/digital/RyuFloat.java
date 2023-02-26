@@ -140,7 +140,7 @@ final class RyuFloat {
       result[idx++] = 'y';
       return idx;
     }
-    int bits = Float.floatToIntBits(value);
+    int bits = BitConversion.floatToIntBits(value);
     if (bits == 0) {
       result[0] = '0';
       result[1] = '.';
@@ -173,9 +173,9 @@ final class RyuFloat {
 
     // Step 2: Determine the interval of legal decimal representations.
     boolean even = (m2 & 1) == 0;
-    int mv = 4 * m2;
-    int mp = 4 * m2 + 2;
-    int mm = 4 * m2 - ((m2 != (1L << FLOAT_MANTISSA_BITS)) || (ieeeExponent == 1) ? 2 : 1);
+    int mv = (m2 << 2);
+    int mp = (m2 << 2) + 2;
+    int mm = (m2 << 2) - ((m2 != (1L << FLOAT_MANTISSA_BITS)) || (ieeeExponent == 1) ? 2 : 1);
     e2 -= 2;
 
     // Step 3: Convert to a decimal power base using 128-bit arithmetic.
@@ -393,9 +393,9 @@ final class RyuFloat {
 
     // Step 2: Determine the interval of legal decimal representations.
     boolean even = (m2 & 1) == 0;
-    int mv = 4 * m2;
-    int mp = 4 * m2 + 2;
-    int mm = 4 * m2 - ((m2 != (1L << FLOAT_MANTISSA_BITS)) || (ieeeExponent == 1) ? 2 : 1);
+    int mv = (m2 << 2);
+    int mp = (m2 << 2) + 2;
+    int mm = (m2 << 2) - ((m2 != (1L << FLOAT_MANTISSA_BITS)) || (ieeeExponent == 1) ? 2 : 1);
     e2 -= 2;
 
     // Step 3: Convert to a decimal power base using 128-bit arithmetic.
@@ -569,7 +569,7 @@ final class RyuFloat {
       result[idx++] = 'y';
       return idx;
     }
-    int bits = Float.floatToIntBits(value);
+    int bits = BitConversion.floatToIntBits(value);
     if (bits == 0) {
       result[0] = '0';
       result[1] = '.';
@@ -606,9 +606,9 @@ final class RyuFloat {
 
     // Step 2: Determine the interval of legal decimal representations.
     boolean even = (m2 & 1) == 0;
-    int mv = 4 * m2;
-    int mp = 4 * m2 + 2;
-    int mm = 4 * m2 - ((m2 != (1L << FLOAT_MANTISSA_BITS)) || (ieeeExponent == 1) ? 2 : 1);
+    int mv = (m2 << 2);
+    int mp = (m2 << 2) + 2;
+    int mm = (m2 << 2) - ((m2 != (1L << FLOAT_MANTISSA_BITS)) || (ieeeExponent == 1) ? 2 : 1);
     e2 -= 2;
 
     // Step 3: Convert to a decimal power base using 128-bit arithmetic.

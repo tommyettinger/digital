@@ -141,7 +141,7 @@ final class RyuDouble {
       result[idx++] = 'y';
       return idx;
     }
-    long bits = Double.doubleToLongBits(value);
+    long bits = BitConversion.doubleToLongBits(value);
     if (bits == 0) {
       result[0] = '0';
       result[1] = '.';
@@ -389,7 +389,7 @@ final class RyuDouble {
       }
       return builder.append("Infinity");
     }
-    long bits = Double.doubleToLongBits(value);
+    long bits = BitConversion.doubleToLongBits(value);
     if (bits == 0) {
       return builder.append("0.0");
     }
@@ -604,7 +604,7 @@ final class RyuDouble {
       result[idx++] = 'y';
       return idx;
     }
-    long bits = Double.doubleToLongBits(value);
+    long bits = BitConversion.doubleToLongBits(value);
     if (bits == 0) {
       result[0] = '0';
       result[1] = '.';
@@ -796,7 +796,7 @@ final class RyuDouble {
   }
 
   private static int pow5bits(int e) {
-    return ((e * 1217359) >>> 19) + 1;
+    return (BitConversion.imul(e, 1217359) >>> 19) + 1;
   }
 
   private static int decimalLength(long v) {
