@@ -33,7 +33,20 @@ Each one can write numbers as signed (variable-length) or
 unsigned (fixed-length), as well as read back either type from
 one method. Parsing is significantly more relaxed than in the
 JDK, and invalid numbers tend to be returned as 0 rather than
-requiring an Exception to be caught.
+requiring an Exception to be caught. Base has some options
+when writing (or reading) a `float` or `double`. Like other
+numeric types, you can use `signed()` or `unsigned()` to write
+using the digits the Base usually uses, though here it writes
+the bits that compose the float or double for higher accuracy.
+Unlike other numeric types, there are base-10 `decimal()`,
+`scientific()`, `general()`, and `friendly()` methods to write
+floats/doubles with different rules for when to switch to
+scientific notation, if at all. These can be read back with
+`readFloat()` and `readDouble()`, while the signed/unsigned
+output needs `readFloatExact()` or `readDoubleExact()`. If you
+use a scrambled base (a random one, as mentioned before), then
+you need to use `signed()`/`unsigned()`/`readFloatExact()`/
+`readDoubleExact()` to use the right scrambled digits.
 
 TrigTools tries to be as complete as possible at covering
 trigonometric functions, offering sin, cos, tan, asin, acos,
@@ -121,14 +134,14 @@ With Gradle, add this to your dependencies (in your core module's
 `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.8"
+api "com.github.tommyettinger:digital:0.2.0"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.1.8:sources"
+api "com.github.tommyettinger:digital:0.2.0:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
