@@ -365,10 +365,10 @@ public class PrecisionTest {
     public void testSin() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinSmoother", PrecisionTest::sinSmoother);
-        functions.put("sinCurve", PrecisionTest::sinCurve);
         functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinNewTable", TrigTools::sin);
-//        functions.put("sinOldTable", OldTrigTools::sin);
+        functions.put("sinOldTable", OldTrigTools::sin);
+//        functions.put("sinCurve", PrecisionTest::sinCurve);
 //        functions.put("sinNick", PrecisionTest::sinNick);
 //        functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
 //        functions.put("sinSteadman", PrecisionTest::sinSteadman);
@@ -435,6 +435,7 @@ public class PrecisionTest {
     @Test
     public void testSinDeg() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("sinSmootherDeg", TrigTools::sinSmootherDeg);
         functions.put("sinSmoothDeg", TrigTools::sinSmoothDeg);
         functions.put("sinDegNewTable", TrigTools::sinDeg);
         functions.put("sinDegOldTable", OldTrigTools::sinDeg);
@@ -470,6 +471,7 @@ public class PrecisionTest {
     @Test
     public void testSinTurns() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("sinSmootherTurns", TrigTools::sinSmootherTurns);
         functions.put("sinSmoothTurns", TrigTools::sinSmoothTurns);
         functions.put("sinTurnsNewTable", TrigTools::sinTurns);
         functions.put("sinTurnsOldTable", OldTrigTools::sinTurns);
@@ -1508,4 +1510,34 @@ Worst input (abs):       4.205234527587891000000000
         System.out.printf("Found alpha = %22.20f, gets best max error = %22.20f\n", bestAlpha, bestMax);
         //Got up to index 77 with phi = 1.61803398874989500000, root = 2.23606797749979500000
     }
+
+
+    @Test
+    public void testSinExactMatch() {
+        LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("sinSmoother", PrecisionTest::sinSmoother);
+        functions.put("sinSmooth", TrigTools::sinSmooth);
+        functions.put("sinNewTable", TrigTools::sin);
+        functions.put("sinOldTable", OldTrigTools::sin);
+//        functions.put("sinCurve", PrecisionTest::sinCurve);
+//        functions.put("sinNick", PrecisionTest::sinNick);
+//        functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
+//        functions.put("sinSteadman", PrecisionTest::sinSteadman);
+//        functions.put("sinBhaskara2", PrecisionTest::sinBhaskaraI);
+
+        final int pi2bits = Float.floatToIntBits(TrigTools.PI2);
+        for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final FloatUnaryOperator op = ent.getValue();
+            long counter = 0L;
+            for (int i = pi2bits; i >= 0; i--) {
+                float x = Float.intBitsToFloat(i);
+                float tru = (float) Math.sin(x);
+                if(op.applyAsFloat(x) == tru)
+                    ++counter;
+            }
+            System.out.printf("%d/%d possible floats between 0 and PI2 were correct, a success rate of %10.8f.\n", counter, pi2bits, (double)counter/(double)pi2bits);
+        }
+    }
+
 }
