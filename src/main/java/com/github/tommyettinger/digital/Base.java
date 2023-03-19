@@ -38,7 +38,7 @@ import java.util.Random;
  * and unsigned results, and never throws an Exception (it just returns 0 if no number could be read). Each base system
  * can also read and write floats and doubles, but only using their bit representation, treated as an int or long.
  */
-@SuppressWarnings("ShiftOutOfRange")
+@SuppressWarnings({"ShiftOutOfRange", "PointlessBitwiseExpression"})
 public class Base {
     /**
      * Binary, using the digits 0 and 1.
@@ -548,7 +548,7 @@ public class Base {
         final int halfBase = base >>> 1;
         for (int i = 0; i <= len; i++) {
             int quotient = (number >>> 1) / halfBase;
-            progress[len - i] = toEncoded[number - quotient * base];
+            progress[len - i] = toEncoded[number - quotient * base | 0]; // | 0 is needed for GWT.
             number = quotient;
         }
         return String.valueOf(progress, 0, length4Byte);
@@ -567,7 +567,7 @@ public class Base {
         final int halfBase = base >>> 1;
         for (int i = 0; i <= len; i++) {
             int quotient = (number >>> 1) / halfBase;
-            progress[len - i] = toEncoded[number - quotient * base];
+            progress[len - i] = toEncoded[number - quotient * base | 0]; // | 0 is needed for GWT.
             number = quotient;
         }
         return builder.append(progress, 0, length4Byte);
