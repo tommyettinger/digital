@@ -230,10 +230,12 @@ public final class TrigTools {
         // The four right angles get extra-precise values, because they are
         // the most likely to need to be correct.
         SIN_TABLE[0] = 0f;
+        SIN_TABLE[TABLE_SIZE] = 0f;
         SIN_TABLE[(int) (90 * degToIndex) & TABLE_MASK] = 1f;
         SIN_TABLE[(int) (180 * degToIndex) & TABLE_MASK] = 0f;
         SIN_TABLE[(int) (270 * degToIndex) & TABLE_MASK] = -1.0f;
         SIN_TABLE_D[0] = 0.0;
+        SIN_TABLE_D[TABLE_SIZE] = 0.0;
         SIN_TABLE_D[(int) (90 * degToIndexD) & TABLE_MASK] = 1.0;
         SIN_TABLE_D[(int) (180 * degToIndexD) & TABLE_MASK] = 0.0;
         SIN_TABLE_D[(int) (270 * degToIndexD) & TABLE_MASK] = -1.0;
