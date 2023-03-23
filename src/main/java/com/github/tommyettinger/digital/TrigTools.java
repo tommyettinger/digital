@@ -225,8 +225,9 @@ public final class TrigTools {
     public static final double[] SIN_TABLE_D = new double[TABLE_SIZE+1];
 
     static {
-        for (int i = 0; i < TABLE_SIZE; i++)
+        for (int i = 0; i < TABLE_SIZE; i++) {
             SIN_TABLE[i] = (float) (SIN_TABLE_D[i] = Math.sin(((double)i) / TABLE_SIZE * PI2_D));
+        }
         // The four right angles get extra-precise values, because they are
         // the most likely to need to be correct.
         SIN_TABLE[0] = 0f;
