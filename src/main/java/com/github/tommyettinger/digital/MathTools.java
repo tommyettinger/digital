@@ -1220,8 +1220,8 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, PI2)
      */
     public static float lerpAngle(float fromRadians, float toRadians, float progress) {
-        float delta = ((toRadians - fromRadians + PI2 + PI) % PI2) - PI;
-        return (fromRadians + delta * progress + PI2) % PI2;
+        float delta = (((toRadians - fromRadians) % PI2 + PI2 + PI) % PI2) - PI;
+        return ((fromRadians + delta * progress) % PI2 + PI2) % PI2;
     }
 
     /**
@@ -1234,14 +1234,14 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, 360)
      */
     public static float lerpAngleDeg(float fromDegrees, float toDegrees, float progress) {
-        float delta = ((toDegrees - fromDegrees + 360f + 180f) % 360f) - 180f;
-        return (fromDegrees + delta * progress + 360f) % 360f;
+        float delta = (((toDegrees - fromDegrees) % 360f + 360f + 180f) % 360f) - 180f;
+        return ((fromDegrees + delta * progress) % 360f + 360f) % 360f;
     }
 
     /**
      * Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
      * the direction with the smallest delta angle. This version, unlike the versions for radians and degrees, avoids
-     * any modulus operation (instead calling {@link #fastFloor(float)} twice).
+     * all but one modulus operation (instead calling {@link #fastFloor(float)} three times).
      *
      * @param fromTurns start angle in turns
      * @param toTurns   target angle in turns
@@ -1249,9 +1249,10 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, 1)
      */
     public static float lerpAngleTurns(float fromTurns, float toTurns, float progress) {
-        float d = toTurns - fromTurns + 0.5f;
+        float d = toTurns - fromTurns;
+        d -= fastFloor(d) - 0.5f;
         d = fromTurns + progress * (d - fastFloor(d) - 0.5f);
-        return d - fastFloor(d);
+        return (d - fastFloor(d)) % 1f;
     }
 
     /**
@@ -1264,8 +1265,8 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, PI2)
      */
     public static double lerpAngle(double fromRadians, double toRadians, double progress) {
-        double delta = ((toRadians - fromRadians + PI2_D + PI_D) % PI2_D) - PI_D;
-        return (fromRadians + delta * progress + PI2_D) % PI2_D;
+        double delta = (((toRadians - fromRadians) % PI2_D + PI2_D + PI_D) % PI2_D) - PI_D;
+        return ((fromRadians + delta * progress) % PI2_D + PI2_D) % PI2_D;
     }
 
     /**
@@ -1278,14 +1279,14 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, 360)
      */
     public static double lerpAngleDeg(double fromDegrees, double toDegrees, double progress) {
-        double delta = ((toDegrees - fromDegrees + 360.0 + 180.0) % 360.0) - 180.0;
-        return (fromDegrees + delta * progress + 360.0) % 360.0;
+        double delta = (((toDegrees - fromDegrees) % 360.0 + 360.0 + 180.0) % 360.0) - 180.0;
+        return ((fromDegrees + delta * progress) % 360.0 + 360.0) % 360.0;
     }
 
     /**
      * Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
      * the direction with the smallest delta angle. This version, unlike the versions for radians and degrees, avoids
-     * any modulus operation (instead calling {@link #floor(double)} twice).
+     * alll but one modulus operation (instead calling {@link #floor(double)} three times).
      *
      * @param fromTurns start angle in turns
      * @param toTurns   target angle in turns
@@ -1293,9 +1294,10 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, 1)
      */
     public static double lerpAngleTurns(double fromTurns, double toTurns, double progress) {
-        double d = toTurns - fromTurns + 0.5;
-        d = fromTurns + progress * (d - floor(d) - 0.5);
-        return d - floor(d);
+        double d = toTurns - fromTurns;
+        d -= Math.floor(d) - 0.5;
+        d = fromTurns + progress * (d - Math.floor(d) - 0.5);
+        return (d - Math.floor(d)) % 1.0;
     }
 
     /**
