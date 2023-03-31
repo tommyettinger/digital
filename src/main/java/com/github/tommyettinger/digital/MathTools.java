@@ -1241,7 +1241,7 @@ public final class MathTools {
     /**
      * Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
      * the direction with the smallest delta angle. This version, unlike the versions for radians and degrees, avoids
-     * all but one modulus operation (instead calling {@link #fastFloor(float)} three times).
+     * all modulus operations (instead casting floats to int four times).
      *
      * @param fromTurns start angle in turns
      * @param toTurns   target angle in turns
@@ -1250,9 +1250,10 @@ public final class MathTools {
      */
     public static float lerpAngleTurns(float fromTurns, float toTurns, float progress) {
         float d = toTurns - fromTurns;
-        d -= fastFloor(d) - 0.5f;
-        d = fromTurns + progress * (d - fastFloor(d) - 0.5f);
-        return (d - fastFloor(d)) % 1f;
+        d -= (int)d - 1.5f;
+        d = fromTurns + progress * (d - (int)d - 0.5f);
+        d -= (int)d - 1f;
+        return d - (int)d;
     }
 
     /**
@@ -1286,18 +1287,19 @@ public final class MathTools {
     /**
      * Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
      * the direction with the smallest delta angle. This version, unlike the versions for radians and degrees, avoids
-     * alll but one modulus operation (instead calling {@link #floor(double)} three times).
+     * all modulus operations (instead casting doubles to ints four times).
      *
-     * @param fromTurns start angle in turns
-     * @param toTurns   target angle in turns
+     * @param fromTurns start angle in turns; should be no more significant than 2147483647.0
+     * @param toTurns   target angle in turns; should be no more significant than 2147483647.0
      * @param progress  interpolation value in the range [0, 1]
      * @return the interpolated angle in the range [0, 1)
      */
     public static double lerpAngleTurns(double fromTurns, double toTurns, double progress) {
         double d = toTurns - fromTurns;
-        d -= Math.floor(d) - 0.5;
-        d = fromTurns + progress * (d - Math.floor(d) - 0.5);
-        return (d - Math.floor(d)) % 1.0;
+        d -= (int)d - 1.5;
+        d = fromTurns + progress * (d - (int)d - 0.5);
+        d -= (int)d - 1.0;
+        return d - (int)d;
     }
 
     /**
