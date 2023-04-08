@@ -694,7 +694,7 @@ public class Hasher {
                 seed = mum(seed ^ (data[len - 3] ? 0x9E3779B9L : 0x7F4A7C15L), b2 ^ (data[len - 2] ? 0x9E3779B9L : 0x7F4A7C15L)) ^ mum(seed ^ (data[len - 1] ? 0x9E3779B9 : 0x7F4A7C15), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -726,7 +726,7 @@ public class Hasher {
                 seed = mum(seed ^ data[start + len - 3], data[start + len - 2] ^ b2) ^ mum(seed ^ data[start + len - 1], b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -758,7 +758,7 @@ public class Hasher {
                 seed = mum(seed ^ data[start + len - 3], data[start + len - 2] ^ b2) ^ mum(seed ^ data[start + len - 1], b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -790,7 +790,7 @@ public class Hasher {
                 seed = mum(seed ^ data[start + len - 3], data[start + len - 2] ^ b2) ^ mum(seed ^ data[start + len - 1], b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -831,7 +831,7 @@ public class Hasher {
                 seed = mum(seed ^ data.charAt(len - 3), data.charAt(len - 2) ^ b2) ^ mum(seed ^ data.charAt(len - 1), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -863,7 +863,7 @@ public class Hasher {
                 seed = mum(seed ^ data[start + len - 3], b2 ^ data[start + len - 2]) ^ mum(seed ^ data[start + len - 1], b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -903,7 +903,7 @@ public class Hasher {
                 seed = wow(seed + data[start + len - 3], b2 + data[start + len - 2]) + wow(seed + data[start + len - 1], seed ^ b3);
                 break;
         }
-        seed = (seed ^ seed >>> 16 ^ start) * (b0 ^ (len + seed) << 4);
+        seed = (seed ^ seed >>> 16) * (b0 ^ (len + seed) << 4);
         return seed ^ seed >>> 23 ^ seed >>> 42;
     }
 
@@ -935,7 +935,7 @@ public class Hasher {
                 seed = mum(seed ^ floatToRawIntBits(data[start + len - 3]), b2 ^ floatToRawIntBits(data[start + len - 2])) ^ mum(seed ^ floatToRawIntBits(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -1004,7 +1004,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -1037,7 +1037,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -1070,7 +1070,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -1103,7 +1103,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -1136,7 +1136,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -1169,7 +1169,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -1202,7 +1202,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -1235,7 +1235,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -1283,7 +1283,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data.get(len - 3)), b2 ^ hash(data.get(len - 2))) ^ mum(seed ^ hash(data.get(len - 1)), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
 
     }
@@ -1317,7 +1317,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return seed - (seed >>> 31) + (seed << 33);
     }
 
@@ -1356,7 +1356,7 @@ public class Hasher {
                 seed = mum(seed ^ (data[len - 3] ? 0x9E3779B9L : 0x7F4A7C15L), b2 ^ (data[len - 2] ? 0x9E3779B9L : 0x7F4A7C15L)) ^ mum(seed ^ (data[len - 1] ? 0x9E3779B9 : 0x7F4A7C15), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1388,7 +1388,7 @@ public class Hasher {
                 seed = mum(seed ^ data[start + len - 3], data[start + len - 2] ^ b2) ^ mum(seed ^ data[start + len - 1], b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1420,7 +1420,7 @@ public class Hasher {
                 seed = mum(seed ^ data[start + len - 3], data[start + len - 2] ^ b2) ^ mum(seed ^ data[start + len - 1], b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1452,7 +1452,7 @@ public class Hasher {
                 seed = mum(seed ^ data[start + len - 3], data[start + len - 2] ^ b2) ^ mum(seed ^ data[start + len - 1], b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1493,7 +1493,7 @@ public class Hasher {
                 seed = mum(seed ^ data.charAt(len - 3), data.charAt(len - 2) ^ b2) ^ mum(seed ^ data.charAt(len - 1), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1525,7 +1525,7 @@ public class Hasher {
                 seed = mum(seed ^ data[start + len - 3], b2 ^ data[start + len - 2]) ^ mum(seed ^ data[start + len - 1], b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1565,7 +1565,7 @@ public class Hasher {
                 seed = wow(seed + data[start + len - 3], b2 + data[start + len - 2]) + wow(seed + data[start + len - 1], seed ^ b3);
                 break;
         }
-        seed = (seed ^ seed >>> 16 ^ start) * (b0 ^ (len + seed) << 4);
+        seed = (seed ^ seed >>> 16) * (b0 ^ (len + seed) << 4);
         return (int) (seed ^ seed >>> 23 ^ seed >>> 42);
     }
 
@@ -1597,7 +1597,7 @@ public class Hasher {
                 seed = mum(seed ^ floatToRawIntBits(data[start + len - 3]), b2 ^ floatToRawIntBits(data[start + len - 2])) ^ mum(seed ^ floatToRawIntBits(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1666,7 +1666,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1699,7 +1699,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1732,7 +1732,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1765,7 +1765,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1798,7 +1798,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1831,7 +1831,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1864,7 +1864,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1897,7 +1897,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
@@ -1945,7 +1945,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data.get(len - 3)), b2 ^ hash(data.get(len - 2))) ^ mum(seed ^ hash(data.get(len - 1)), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
 
     }
@@ -1979,7 +1979,7 @@ public class Hasher {
                 seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
                 break;
         }
-        seed = (seed ^ seed << 16 ^ start) * (len ^ b0);
+        seed = (seed ^ seed << 16) * (len ^ b0);
         return (int) (seed - (seed >>> 32));
     }
 
