@@ -766,6 +766,15 @@ public class Hasher {
         if (data == null) return 0;
         return hash64(data, 0, data.length);
     }
+
+    /**
+     * This method changed in 0.2.1, from taking a start index and end index, to taking a start index and length.
+     * Taking the length matches the behavior of more methods in the JVM.
+     * @param data a char array
+     * @param start the start index
+     * @param length how many items to hash (this will hash fewer if there aren't enough items in the array)
+     * @return a 64-bit hash of data
+     */
     public long hash64(final char[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
@@ -800,18 +809,18 @@ public class Hasher {
     }
 
     /**
-     * Hashes only a subsection of the given data, starting at start (inclusive) and ending before end (exclusive).
-     *
+     * This method changed in 0.2.1, from taking a start index and end index, to taking a start index and length.
+     * Taking the length matches the behavior of more methods in the JVM.
      * @param data  the String or other CharSequence to hash
-     * @param start the start of the section to hash (inclusive)
-     * @param end   the end of the section to hash (exclusive)
-     * @return a 64-bit hash code for the requested section of data
+     * @param start the start index
+     * @param length how many items to hash (this will hash fewer if there aren't enough items in the CharSequence)
+     * @return a 64-bit hash of data
      */
-    public long hash64(final CharSequence data, final int start, final int end) {
-        if (data == null || start >= end)
+    public long hash64(final CharSequence data, final int start, final int length) {
+        if (data == null || start < 0 || length < 0 || start >= length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(end, data.length());
+        final int len = Math.min(length, data.length());
         for (int i = start + 3; i < len; i += 4) {
             seed = mum(
                     mum(data.charAt(i - 3) ^ b1, data.charAt(i - 2) ^ b2) + seed,
@@ -1428,6 +1437,14 @@ public class Hasher {
         if (data == null) return 0;
         return hash(data, 0, data.length);
     }
+    /**
+     * This method changed in 0.2.1, from taking a start index and end index, to taking a start index and length.
+     * Taking the length matches the behavior of more methods in the JVM.
+     * @param data a char array
+     * @param start the start index
+     * @param length how many items to hash (this will hash fewer if there aren't enough items in the array)
+     * @return a 32-bit hash of data
+     */
     public int hash(final char[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
@@ -1462,18 +1479,18 @@ public class Hasher {
     }
 
     /**
-     * Hashes only a subsection of the given data, starting at start (inclusive) and ending before end (exclusive).
-     *
+     * This method changed in 0.2.1, from taking a start index and end index, to taking a start index and length.
+     * Taking the length matches the behavior of more methods in the JVM.
      * @param data  the String or other CharSequence to hash
-     * @param start the start of the section to hash (inclusive)
-     * @param end   the end of the section to hash (exclusive)
-     * @return a 64-bit hash code for the requested section of data
+     * @param start the start index
+     * @param length how many items to hash (this will hash fewer if there aren't enough items in the CharSequence)
+     * @return a 32-bit hash of data
      */
-    public int hash(final CharSequence data, final int start, final int end) {
-        if (data == null || start >= end)
+    public int hash(final CharSequence data, final int start, final int length) {
+        if (data == null || start < 0 || length < 0 || start >= length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(end, data.length());
+        final int len = Math.min(length, data.length());
         for (int i = start + 3; i < len; i += 4) {
             seed = mum(
                     mum(data.charAt(i - 3) ^ b1, data.charAt(i - 2) ^ b2) + seed,
@@ -2089,6 +2106,16 @@ public class Hasher {
         if (data == null) return 0;
         return hash64(seed, data, 0, data.length);
     }
+
+    /**
+     * This method changed in 0.2.1, from taking a start index and end index, to taking a start index and length.
+     * Taking the length matches the behavior of more methods in the JVM.
+     * @param seed the seed to use for this hash, as a long
+     * @param data a char array
+     * @param start the start index
+     * @param length how many items to hash (this will hash fewer if there aren't enough items in the array)
+     * @return a 64-bit hash of data
+     */
     public static long hash64(long seed, final char[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
@@ -2123,18 +2150,19 @@ public class Hasher {
     }
 
     /**
-     * Hashes only a subsection of the given data, starting at start (inclusive) and ending before end (exclusive).
-     *
+     * This method changed in 0.2.1, from taking a start index and end index, to taking a start index and length.
+     * Taking the length matches the behavior of more methods in the JVM.
+     * @param seed the seed to use for this hash, as a long
      * @param data  the String or other CharSequence to hash
-     * @param start the start of the section to hash (inclusive)
-     * @param end   the end of the section to hash (exclusive)
-     * @return a 64-bit hash code for the requested section of data
+     * @param start the start index
+     * @param length how many items to hash (this will hash fewer if there aren't enough items in the array)
+     * @return a 64-bit hash of data
      */
-    public static long hash64(long seed, final CharSequence data, final int start, final int end) {
-        if (data == null || start >= end)
+    public static long hash64(long seed, final CharSequence data, final int start, final int length) {
+        if (data == null || start < 0 || length < 0 || start >= length)
             return 0;
         seed += b1; seed ^= seed >>> 23 ^ seed >>> 48 ^ seed << 7 ^ seed << 53;
-        final int len = Math.min(end, data.length());
+        final int len = Math.min(length, data.length());
         for (int i = start + 3; i < len; i += 4) {
             seed = mum(
                     mum(data.charAt(i - 3) ^ b1, data.charAt(i - 2) ^ b2) + seed,
@@ -2787,18 +2815,18 @@ public class Hasher {
     }
 
     /**
-     * Hashes only a subsection of the given data, starting at start (inclusive) and ending before end (exclusive).
-     *
+     * This method changed in 0.2.1, from taking a start index and end index, to taking a start index and length.
+     * Taking the length matches the behavior of more methods in the JVM.
      * @param data  the String or other CharSequence to hash
-     * @param start the start of the section to hash (inclusive)
-     * @param end   the end of the section to hash (exclusive)
-     * @return a 64-bit hash code for the requested section of data
+     * @param start the start index
+     * @param length how many items to hash (this will hash fewer if there aren't enough items in the CharSequence)
+     * @return a 32-bit hash of data
      */
-    public static int hash(long seed, final CharSequence data, final int start, final int end) {
-        if (data == null || start >= end)
+    public static int hash(long seed, final CharSequence data, final int start, final int length) {
+        if (data == null || start < 0 || length < 0 || start >= length)
             return 0;
         seed += b1; seed ^= seed >>> 23 ^ seed >>> 48 ^ seed << 7 ^ seed << 53;
-        final int len = Math.min(end, data.length());
+        final int len = Math.min(length, data.length());
         for (int i = start + 3; i < len; i += 4) {
             seed = mum(
                     mum(data.charAt(i - 3) ^ b1, data.charAt(i - 2) ^ b2) + seed,
