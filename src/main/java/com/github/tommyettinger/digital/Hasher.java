@@ -680,7 +680,7 @@ public class Hasher {
                     mum((data[i - 3] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b1, (data[i - 2] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b2) + seed,
                     mum((data[i - 1] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b3, (data[i] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -712,7 +712,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -744,7 +744,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -785,7 +785,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -826,7 +826,7 @@ public class Hasher {
                     mum(data.charAt(i - 3) ^ b1, data.charAt(i - 2) ^ b2) + seed,
                     mum(data.charAt(i - 1) ^ b3, data.charAt(i) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -858,7 +858,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -901,7 +901,7 @@ public class Hasher {
             seed += a + b + c + d;
         }
         seed += b5;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 1:
                 seed = wow(seed, b1 ^ data[start + len - 1]);
                 break;
@@ -930,7 +930,7 @@ public class Hasher {
                     mum(floatToRawIntBits(data[i - 3]) ^ b1, floatToRawIntBits(data[i - 2]) ^ b2) + seed,
                     mum(floatToRawIntBits(data[i - 1]) ^ b3, floatToRawIntBits(data[i]) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -969,7 +969,7 @@ public class Hasher {
             seed += a + b + c + d;
         }
         seed += b5;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 1:
                 seed = wow(seed, b1 ^ doubleToRawLongBits(data[start + len - 1]));
                 break;
@@ -999,7 +999,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1032,7 +1032,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1065,7 +1065,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1098,7 +1098,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1131,7 +1131,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1164,7 +1164,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1197,7 +1197,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1230,7 +1230,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1278,7 +1278,7 @@ public class Hasher {
                     mum(hash(data.get(i - 1)) ^ b3, hash(data.get(i)) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1312,7 +1312,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1351,7 +1351,7 @@ public class Hasher {
                     mum((data[i - 3] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b1, (data[i - 2] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b2) + seed,
                     mum((data[i - 1] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b3, (data[i] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1383,7 +1383,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1415,7 +1415,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1455,7 +1455,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1496,7 +1496,7 @@ public class Hasher {
                     mum(data.charAt(i - 3) ^ b1, data.charAt(i - 2) ^ b2) + seed,
                     mum(data.charAt(i - 1) ^ b3, data.charAt(i) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1528,7 +1528,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1571,7 +1571,7 @@ public class Hasher {
             seed += a + b + c + d;
         }
         seed += b5;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 1:
                 seed = wow(seed, b1 ^ data[start + len - 1]);
                 break;
@@ -1600,7 +1600,7 @@ public class Hasher {
                     mum(floatToRawIntBits(data[i - 3]) ^ b1, floatToRawIntBits(data[i - 2]) ^ b2) + seed,
                     mum(floatToRawIntBits(data[i - 1]) ^ b3, floatToRawIntBits(data[i]) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1639,7 +1639,7 @@ public class Hasher {
             seed += a + b + c + d;
         }
         seed += b5;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 1:
                 seed = wow(seed, b1 ^ doubleToRawLongBits(data[start + len - 1]));
                 break;
@@ -1669,7 +1669,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1702,7 +1702,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1735,7 +1735,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1768,7 +1768,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1801,7 +1801,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1834,7 +1834,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1867,7 +1867,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1900,7 +1900,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1948,7 +1948,7 @@ public class Hasher {
                     mum(hash(data.get(i - 1)) ^ b3, hash(data.get(i)) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -1982,7 +1982,7 @@ public class Hasher {
                     mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2020,7 +2020,7 @@ public class Hasher {
                     mum((data[i - 3] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b1, (data[i - 2] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b2) + seed,
                     mum((data[i - 1] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b3, (data[i] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2052,7 +2052,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2084,7 +2084,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2126,7 +2126,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2168,7 +2168,7 @@ public class Hasher {
                     mum(data.charAt(i - 3) ^ b1, data.charAt(i - 2) ^ b2) + seed,
                     mum(data.charAt(i - 1) ^ b3, data.charAt(i) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2200,7 +2200,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2244,7 +2244,7 @@ public class Hasher {
             seed += a + b + c + d;
         }
         seed += b5;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 1:
                 seed = wow(seed, b1 ^ data[start + len - 1]);
                 break;
@@ -2273,7 +2273,7 @@ public class Hasher {
                     mum(floatToRawIntBits(data[i - 3]) ^ b1, floatToRawIntBits(data[i - 2]) ^ b2) + seed,
                     mum(floatToRawIntBits(data[i - 1]) ^ b3, floatToRawIntBits(data[i]) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2313,7 +2313,7 @@ public class Hasher {
             seed += a + b + c + d;
         }
         seed += b5;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 1:
                 seed = wow(seed, b1 ^ doubleToRawLongBits(data[start + len - 1]));
                 break;
@@ -2343,7 +2343,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2376,7 +2376,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2409,7 +2409,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2442,7 +2442,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2475,7 +2475,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2508,7 +2508,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2541,7 +2541,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2574,7 +2574,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2622,7 +2622,7 @@ public class Hasher {
                     mum(hash(seed, data.get(i - 1)) ^ b3, hash(seed, data.get(i)) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2656,7 +2656,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2695,7 +2695,7 @@ public class Hasher {
                     mum((data[i - 3] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b1, (data[i - 2] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b2) + seed,
                     mum((data[i - 1] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b3, (data[i] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2727,7 +2727,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2759,7 +2759,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2791,7 +2791,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2832,7 +2832,7 @@ public class Hasher {
                     mum(data.charAt(i - 3) ^ b1, data.charAt(i - 2) ^ b2) + seed,
                     mum(data.charAt(i - 1) ^ b3, data.charAt(i) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2864,7 +2864,7 @@ public class Hasher {
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) + seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2908,7 +2908,7 @@ public class Hasher {
             seed += a + b + c + d;
         }
         seed += b5;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 1:
                 seed = wow(seed, b1 ^ data[start + len - 1]);
                 break;
@@ -2937,7 +2937,7 @@ public class Hasher {
                     mum(floatToRawIntBits(data[i - 3]) ^ b1, floatToRawIntBits(data[i - 2]) ^ b2) + seed,
                     mum(floatToRawIntBits(data[i - 1]) ^ b3, floatToRawIntBits(data[i]) ^ b4));
         }
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -2977,7 +2977,7 @@ public class Hasher {
             seed += a + b + c + d;
         }
         seed += b5;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 1:
                 seed = wow(seed, b1 ^ doubleToRawLongBits(data[start + len - 1]));
                 break;
@@ -3007,7 +3007,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -3040,7 +3040,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -3073,7 +3073,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -3106,7 +3106,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -3139,7 +3139,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -3172,7 +3172,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -3205,7 +3205,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -3238,7 +3238,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -3286,7 +3286,7 @@ public class Hasher {
                     mum(hash(seed, data.get(i - 1)) ^ b3, hash(seed, data.get(i)) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
@@ -3320,7 +3320,7 @@ public class Hasher {
                     mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
         }
         int t;
-        switch (len - start & 3) {
+        switch (len & 3) {
             case 0:
                 seed = mum(b1 ^ seed, b4 + seed);
                 break;
