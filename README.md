@@ -100,15 +100,16 @@ you can add this yourself with a quick copy and paste. Hasher
 allows you to specify the seed when you call `hash()` or
 `hash64()` (as static methods), but it also has a fairly-large
 array of `predefined` hash functions with instance methods for
-`hash()` and `hash64()`.
-Hasher also has a few unary hashes that can be used as quick and
-dirty random number generators when applied to numbers in a
-sequence. The unary hashes can output longs, bounded ints,
-floats, and doubles, so they may be useful in a lot of cases.
-They are named like `randomize1()`, `randomize2()`, `randomize3()`,
-and so on, with higher numbers being typically slightly slower but
-also higher-quality (and more permissive of sets of inputs with
-atypical patterns).
+`hash()` and `hash64()`. Starting in 0.3.0, Hasher can either
+process a whole input array or part of one, specified by a start
+index and a length. Hasher also has a few unary hashes that
+can be used as quick and dirty random number generators when
+applied to numbers in a sequence. The unary hashes can output
+longs, bounded ints, floats, and doubles, so they may be useful in
+a lot of cases. They are named like `randomize1()`, `randomize2()`,
+`randomize3()`, and so on, with higher numbers being typically
+slightly slower but also higher-quality (and more permissive of
+sets of inputs with atypical patterns).
 
 AlternateRandom is a quick micro-port of a random number generator
 from the closely-related [juniper](https://github.com/tommyettinger/juniper)
@@ -134,14 +135,14 @@ With Gradle, add this to your dependencies (in your core module's
 `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.2.0"
+api "com.github.tommyettinger:digital:0.3.0"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.2.0:sources"
+api "com.github.tommyettinger:digital:0.3.0:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
