@@ -112,4 +112,15 @@ public final class BitConversion {
 	public static native int imul(int left, int right)/*-{
 	    return Math.imul(left, right);
 	}-*/;
+
+	public static int getExponent(float num) {
+		wfa.set(0, value);
+		return (wia.get(0) >>> 23 & 0xFF) - 0x7F;
+	}
+
+	public static int getExponent(double num) {
+		wda.set(0, value);
+		return (wia.get(1) >>> 52 & 0x7FF) - 0x3FF;
+	}
+
 }

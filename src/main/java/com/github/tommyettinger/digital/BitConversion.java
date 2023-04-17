@@ -272,4 +272,24 @@ public final class BitConversion {
     public static int imul(int left, int right) {
         return left * right;
     }
+
+    /**
+     * Returns the unbiased exponent used in the representation of a float. This delegates to
+     * {@link Math#getExponent(float)} on most platforms, but on GWT it uses a super-sourced implementation.
+     * @param num any float
+     * @return the unbiased exponent of num, from {@link Float#MIN_EXPONENT} - 1 to {@link Float#MAX_EXPONENT} + 1
+     */
+    public static int getExponent(float num) {
+        return Math.getExponent(num);
+    }
+
+    /**
+     * Returns the unbiased exponent used in the representation of a double. This delegates to
+     * {@link Math#getExponent(double)} on most platforms, but on GWT it uses a super-sourced implementation.
+     * @param num any double
+     * @return the unbiased exponent of num, from {@link Double#MIN_EXPONENT} - 1 to {@link Double#MAX_EXPONENT} + 1
+     */
+    public static int getExponent(double num) {
+        return Math.getExponent(num);
+    }
 }
