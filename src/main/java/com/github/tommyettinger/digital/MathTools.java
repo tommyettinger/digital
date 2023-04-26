@@ -493,7 +493,7 @@ public final class MathTools {
      * @return an approximation of the cube root for the given double
      */
     public static double cbrt(double x) {
-        double a, y, r, r2_h, r2_l, y_a2y4, ayy, diff, diff3;
+        double a, y, r, r2_h, y_a2y4, ayy, diff;
         long ai, ai23, aim23;
         boolean small;
 
@@ -511,25 +511,26 @@ public final class MathTools {
             y = BitConversion.longBitsToDouble(aim23);   // y is an approximation of a^(-2/3)
 
             ayy = a * y * y;                          // First Newton iteration for f(y)=a^2-y^-3 to calculate a better approximation y=a^(-2/3)
-            y_a2y4 = ayy * -ayy + y;
+            y_a2y4 = y - ayy * ayy;
             y = y_a2y4 * 0.33333333333333333333 + y;
 
             ayy = a * y * y;                          // Second Newton iteration
-            y_a2y4 = ayy * -ayy + y;
+            y_a2y4 = y - ayy * ayy;
             y = y_a2y4 * 0.33523333333 + y;           // This is a small modification to the exact Newton parameter 1/3 which gives slightly better results
 
             ayy = a * y * y;                          // Third Newton iteration
-            y_a2y4 = ayy * -ayy + y;
+            y_a2y4 = y - ayy * ayy;
             y = y_a2y4 * 0.33333333333333333333 + y;
 
             r = y * a;                                // Now r = y * a is an approximation of a^(1/3), because y approximates a^(-2/3).
+
             r2_h = r * r;                             // Compute one pseudo Newton step with g(r)=a-r^3, but instead of dividing by f'(r)=3r^2 we multiply with
                                                       // the approximation 0.3333...*y (division is usually a relatively expensive operation)
-            r2_l = r * r + -r2_h;                     // For better accuracy we split r*r=r^2 as r^2=r2_h+r2_l exactly.
-            diff = r2_h * -r + a;                     // Compute diff=a-r^3 accurately: diff=(a-r*r2_h)-r*r2_l with two fma instructions
-            diff = r2_l * -r + diff;
-            diff3 = diff * 0.33333333333333333333;
-            r = diff3 * y + r;                        // Now r approximates a^(1/3) within about 0.50002 ulp
+//            double r2_l = r * r + -r2_h;              // For better accuracy we could split r*r=r^2 as r^2=r2_h+r2_l exactly, but don't now.
+            diff = a - r2_h * r;
+//            diff = r2_l * -r + diff;                  // Compute diff=a-r^3 accurately: diff=(a-r*r2_h)-r*r2_l with two fma instructions
+            diff *= 0.33333333333333333333;
+            r = diff * y + r;                        // Now r approximates a^(1/3) well enough
 /*
             r2_h = r * r;                             // One final Halley iteration (omitted for now)
             r2_l = r * r + -r2_h;
