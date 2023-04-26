@@ -103,7 +103,7 @@ public final class MathTools {
      * {@code 1.0 / Math.sqrt(2.0)}, the inverse of the square
      * root of 2.
      */
-    public static final double ROOT2_INVERSE_D = (1.0 / ROOT2_D);
+    public static final double ROOT2_INVERSE_D = 1.0 / ROOT2_D;
 
     /**
      * The {@code float} value that is closer than any other to
@@ -477,7 +477,7 @@ public final class MathTools {
         ix &= 0x7FFFFFFF;
         final float x0 = x;
         ix = (ix >>> 2) + (ix >>> 4);
-        ix += (ix >>> 4);
+        ix += ix >>> 4;
         ix = ix + (ix >>> 8) + 0x2A5137A0 | sign;
         x = BitConversion.intBitsToFloat(ix);
         x = 0.33333334f * (2f * x + x0 / (x * x));
@@ -485,6 +485,64 @@ public final class MathTools {
         return x;
     }
 
+    /**
+     * Double-precision cube root.
+     * <br>
+     * <a href="https://stackoverflow.com/a/73354137">Credit to StackOverflow user wim</a>.
+     * @param x any double
+     * @return an approximation of the cube root for the given double
+     */
+    public static double cbrt(double x) {
+        double a, y, r, r2_h, r2_l, y_a2y4, ayy, diff, diff3;
+        long ai, ai23, aim23;
+        boolean small;
+
+        a = Math.abs(x);
+        small = a <  0.015625;                         // Scale large, small and/or subnormal numbers to avoid underflow, overflow or subnormal numbers
+        a = small ? a * 0x1.0p+210 : a * 0.125;
+        ai = BitConversion.doubleToLongBits(a);
+        if (ai >= 0x7FF0000000000000L || x == 0.0){    // Inf, 0.0 and NaN
+            r = x + x;
+        }
+        else
+        {
+            ai23 = 2 * (ai/3);                           // Integer division. The compiler, with suitable optimization level, should generate a much more efficient multiplication by 0xAAAAAAAAAAAAAAAB
+            aim23 = 0x6A8EB53800000000L - ai23;          // This uses a similar idea as the "fast inverse square root" approximation, see https://en.wikipedia.org/wiki/Fast_inverse_square_root
+            y = BitConversion.longBitsToDouble(aim23);   // y is an approximation of a^(-2/3)
+
+            ayy = a * y * y;                          // First Newton iteration for f(y)=a^2-y^-3 to calculate a better approximation y=a^(-2/3)
+            y_a2y4 = ayy * -ayy + y;
+            y = y_a2y4 * 0.33333333333333333333 + y;
+
+            ayy = a * y * y;                          // Second Newton iteration
+            y_a2y4 = ayy * -ayy + y;
+            y = y_a2y4 * 0.33523333333 + y;           // This is a small modification to the exact Newton parameter 1/3 which gives slightly better results
+
+            ayy = a * y * y;                          // Third Newton iteration
+            y_a2y4 = ayy * -ayy + y;
+            y = y_a2y4 * 0.33333333333333333333 + y;
+
+            r = y * a;                                // Now r = y * a is an approximation of a^(1/3), because y approximates a^(-2/3).
+            r2_h = r * r;                             // Compute one pseudo Newton step with g(r)=a-r^3, but instead of dividing by f'(r)=3r^2 we multiply with
+                                                      // the approximation 0.3333...*y (division is usually a relatively expensive operation)
+            r2_l = r * r + -r2_h;                     // For better accuracy we split r*r=r^2 as r^2=r2_h+r2_l exactly.
+            diff = r2_h * -r + a;                     // Compute diff=a-r^3 accurately: diff=(a-r*r2_h)-r*r2_l with two fma instructions
+            diff = r2_l * -r + diff;
+            diff3 = diff * 0.33333333333333333333;
+            r = diff3 * y + r;                        // Now r approximates a^(1/3) within about 0.50002 ulp
+/*
+            r2_h = r * r;                             // One final Halley iteration (omitted for now)
+            r2_l = r * r + -r2_h;
+            diff = r2_h * -r + a;
+            diff = r2_l * -r + diff;
+            double denom = a * 3.0 - 2.0 * diff;
+            r = (diff/denom) * r + r;
+*/
+            r = small ? r * 0x1.0p-70 : r * 2.0;   // Undo scaling
+            r = Math.copySign(r, x);
+        }
+        return r;
+    }
     /**
      * Returns the nth root of x. Any values within {@link #FLOAT_ROUNDING_ERROR} of an int are rounded to that int to
      * reduce the likelihood of floating-point error adversely affecting the result.
@@ -579,7 +637,7 @@ public final class MathTools {
     public static float barronSpline(final float x, final float shape, final float turning) {
         final float d = turning - x;
         final int f = BitConversion.floatToIntBits(d) >> 31, n = f | 1;
-        return ((turning * n - f) * (x + f)) / (Float.MIN_NORMAL - f + (x + shape * d) * n) - f;
+        return (turning * n - f) * (x + f) / (Float.MIN_NORMAL - f + (x + shape * d) * n) - f;
     }
 
     /**
@@ -602,7 +660,7 @@ public final class MathTools {
     public static double barronSpline(final double x, final double shape, final double turning) {
         final double d = turning - x;
         final int f = BitConversion.doubleToHighIntBits(d) >> 31, n = f | 1;
-        return ((turning * n - f) * (x + f)) / (Double.MIN_NORMAL - f + (x + shape * d) * n) - f;
+        return (turning * n - f) * (x + f) / (Double.MIN_NORMAL - f + (x + shape * d) * n) - f;
     }
     
     /**
@@ -626,7 +684,7 @@ public final class MathTools {
     public static float noiseSpline(float x, final float shape, float turning) {
         final float d = (turning = turning * 0.5f + 0.5f) - (x = x * 0.5f + 0.5f);
         final int f = BitConversion.floatToIntBits(d) >> 31, n = f | 1;
-        return (((turning * n - f) * (x + f)) / (Float.MIN_NORMAL - f + (x + shape * d) * n) - f - 0.5f) * 2f;
+        return ((turning * n - f) * (x + f) / (Float.MIN_NORMAL - f + (x + shape * d) * n) - f - 0.5f) * 2f;
     }
     
     /**
@@ -650,7 +708,7 @@ public final class MathTools {
     public static double noiseSpline(double x, final double shape, double turning) {
         final double d = (turning = turning * 0.5 + 0.5) - (x = x * 0.5 + 0.5);
         final int f = BitConversion.doubleToHighIntBits(d) >> 31, n = f | 1;
-        return (((turning * n - f) * (x + f)) / (Double.MIN_NORMAL - f + (x + shape * d) * n) - f - 0.5) * 2.0;
+        return ((turning * n - f) * (x + f) / (Double.MIN_NORMAL - f + (x + shape * d) * n) - f - 0.5) * 2.0;
     }
     
     /**
@@ -899,7 +957,7 @@ public final class MathTools {
      * @return the Fibonacci number at index n, as an int
      */
     public static int fibonacci(int n) {
-        return (int) ((Math.pow(1.618033988749895, n)) / 2.236067977499795 + 0.49999999999999917);
+        return (int) (Math.pow(1.618033988749895, n) / 2.236067977499795 + 0.49999999999999917);
     }
 
     /**
@@ -922,7 +980,7 @@ public final class MathTools {
      * @return the Fibonacci number at index n, as a long
      */
     public static long fibonacci(long n) {
-        return (long) ((Math.pow(1.618033988749895, n)) / 2.236067977499795 + 0.49999999999999917);
+        return (long) (Math.pow(1.618033988749895, n) / 2.236067977499795 + 0.49999999999999917);
     }
 
     /**
@@ -1013,7 +1071,7 @@ public final class MathTools {
      * @return the floor of t, as an int
      */
     public static int fastFloor(final float t) {
-        return ((int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT);
+        return (int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
     }
 
     /**
@@ -1220,7 +1278,7 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, PI2)
      */
     public static float lerpAngle(float fromRadians, float toRadians, float progress) {
-        float delta = (((toRadians - fromRadians) % PI2 + PI2 + PI) % PI2) - PI;
+        float delta = ((toRadians - fromRadians) % PI2 + PI2 + PI) % PI2 - PI;
         return ((fromRadians + delta * progress) % PI2 + PI2) % PI2;
     }
 
@@ -1234,7 +1292,7 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, 360)
      */
     public static float lerpAngleDeg(float fromDegrees, float toDegrees, float progress) {
-        float delta = (((toDegrees - fromDegrees) % 360f + 360f + 180f) % 360f) - 180f;
+        float delta = ((toDegrees - fromDegrees) % 360f + 360f + 180f) % 360f - 180f;
         return ((fromDegrees + delta * progress) % 360f + 360f) % 360f;
     }
 
@@ -1266,7 +1324,7 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, PI2)
      */
     public static double lerpAngle(double fromRadians, double toRadians, double progress) {
-        double delta = (((toRadians - fromRadians) % PI2_D + PI2_D + PI_D) % PI2_D) - PI_D;
+        double delta = ((toRadians - fromRadians) % PI2_D + PI2_D + PI_D) % PI2_D - PI_D;
         return ((fromRadians + delta * progress) % PI2_D + PI2_D) % PI2_D;
     }
 
@@ -1280,7 +1338,7 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, 360)
      */
     public static double lerpAngleDeg(double fromDegrees, double toDegrees, double progress) {
-        double delta = (((toDegrees - fromDegrees) % 360.0 + 360.0 + 180.0) % 360.0) - 180.0;
+        double delta = ((toDegrees - fromDegrees) % 360.0 + 360.0 + 180.0) % 360.0 - 180.0;
         return ((fromDegrees + delta * progress) % 360.0 + 360.0) % 360.0;
     }
 
@@ -1346,9 +1404,9 @@ public final class MathTools {
      * @return a float from -1f (inclusive) to 1f (inclusive)
      */
     public static float zigzag(float value) {
-        int floor = (value >= 0f ? (int) value : (int) value - 1);
+        int floor = value >= 0f ? (int) value : (int) value - 1;
         value -= floor;
-        floor = (-(floor & 1) | 1);
+        floor = -(floor & 1) | 1;
         return value * (floor << 1) - floor;
     }
 
@@ -1369,9 +1427,9 @@ public final class MathTools {
      * @return a float from -1f (inclusive) to 1f (inclusive)
      */
     public static float sway(float value) {
-        int floor = (value >= 0f ? (int) value : (int) value - 1);
+        int floor = value >= 0f ? (int) value : (int) value - 1;
         value -= floor;
-        floor = (-(floor & 1) | 1);
+        floor = -(floor & 1) | 1;
         return value * value * value * (value * (value * 6f - 15f) + 10f) * (floor << 1) - floor;
     }
 
@@ -1391,9 +1449,9 @@ public final class MathTools {
      * @return a float from -1f (inclusive) to 1f (inclusive)
      */
     public static float swayCubic(float value) {
-        int floor = (value >= 0f ? (int) value : (int) value - 1);
+        int floor = value >= 0f ? (int) value : (int) value - 1;
         value -= floor;
-        floor = (-(floor & 1) | 1);
+        floor = -(floor & 1) | 1;
         return value * value * (3f - value * 2f) * (floor << 1) - floor;
     }
 
@@ -1416,7 +1474,7 @@ public final class MathTools {
      * @return a float from 0f (inclusive) to 1f (inclusive)
      */
     public static float swayTight(float value) {
-        int floor = (value >= 0f ? (int) value : (int) value - 1);
+        int floor = value >= 0f ? (int) value : (int) value - 1;
         value -= floor;
         floor &= 1;
         return value * value * value * (value * (value * 6f - 15f) + 10f) * (-floor | 1) + floor;
@@ -1435,9 +1493,9 @@ public final class MathTools {
      * @return a double from -1.0 (inclusive) to 1.0 (inclusive)
      */
     public static double zigzag(double value) {
-        int floor = (value >= 0.0 ? (int) value : (int) value - 1);
+        int floor = value >= 0.0 ? (int) value : (int) value - 1;
         value -= floor;
-        floor = (-(floor & 1) | 1);
+        floor = -(floor & 1) | 1;
         return value * (floor << 1) - floor;
     }
 
@@ -1458,9 +1516,9 @@ public final class MathTools {
      * @return a double from -1.0 (inclusive) to 1.0 (inclusive)
      */
     public static double sway(double value) {
-        int floor = (value >= 0.0 ? (int) value : (int) value - 1);
+        int floor = value >= 0.0 ? (int) value : (int) value - 1;
         value -= floor;
-        floor = (-(floor & 1) | 1);
+        floor = -(floor & 1) | 1;
         return value * value * value * (value * (value * 6.0 - 15.0) + 10.0) * (floor << 1) - floor;
     }
 
@@ -1480,9 +1538,9 @@ public final class MathTools {
      * @return a double from -1.0 (inclusive) to 1.0 (inclusive)
      */
     public static double swayCubic(double value) {
-        int floor = (value >= 0.0 ? (int) value : (int) value - 1);
+        int floor = value >= 0.0 ? (int) value : (int) value - 1;
         value -= floor;
-        floor = (-(floor & 1) | 1);
+        floor = -(floor & 1) | 1;
         return value * value * (3.0 - value * 2.0) * (floor << 1) - floor;
     }
 
@@ -1505,7 +1563,7 @@ public final class MathTools {
      * @return a double from 0.0 (inclusive) to 1.0 (inclusive)
      */
     public static double swayTight(double value) {
-        int floor = (value >= 0.0 ? (int) value : (int) value - 1);
+        int floor = value >= 0.0 ? (int) value : (int) value - 1;
         value -= floor;
         floor &= 1;
         return value * value * value * (value * (value * 6.0 - 15.0) + 10.0) * (-floor | 1) + floor;
@@ -1521,7 +1579,7 @@ public final class MathTools {
      * @return an int between 0 (inclusive) and bound (exclusive)
      */
     public static int boundedInt(long state, int bound) {
-         final int res = (int)((bound * (state & 0xFFFFFFFFL)) >> 32);
+         final int res = (int)(bound * (state & 0xFFFFFFFFL) >> 32);
          return res + (res >>> 31);
     }
 
@@ -1547,8 +1605,8 @@ public final class MathTools {
         final long bound = outerBound - innerBound;
         final long randLow = state & 0xFFFFFFFFL;
         final long boundLow = bound & 0xFFFFFFFFL;
-        final long randHigh = (state >>> 32);
-        final long boundHigh = (bound >>> 32);
+        final long randHigh = state >>> 32;
+        final long boundHigh = bound >>> 32;
         return innerBound + (randHigh * boundLow >>> 32) + (randLow * boundHigh >>> 32) + randHigh * boundHigh;
     }
 
@@ -1575,7 +1633,7 @@ public final class MathTools {
      * @return a float between 2.7105054E-20 and 0.99999994, exclusive (effectively 0 and 1, exclusive)
      */
     public static float exclusiveFloat(final long bits) {
-        return BitConversion.intBitsToFloat(126 - Long.numberOfLeadingZeros(bits) << 23 | ((int)bits & 0x7FFFFF));
+        return BitConversion.intBitsToFloat(126 - Long.numberOfLeadingZeros(bits) << 23 | (int)bits & 0x7FFFFF);
     }
 
     /**
@@ -1601,7 +1659,7 @@ public final class MathTools {
      * @return a float between 2.710505431213761E-20 and 0.9999999999999999, exclusive (effectively 0 and 1, exclusive)
      */
     public static double exclusiveDouble(final long bits) {
-        return BitConversion.longBitsToDouble(1022L - Long.numberOfLeadingZeros(bits) << 52 | (bits & 0xFFFFFFFFFFFFFL));
+        return BitConversion.longBitsToDouble(1022L - Long.numberOfLeadingZeros(bits) << 52 | bits & 0xFFFFFFFFFFFFFL);
     }
 
     /**
