@@ -92,4 +92,13 @@ public class MathToolsTest {
         assertEquals(300f, MathTools.map(10f, 20f, 100f, 200f, 30f), 0.01f);
     }
 
+    @Test
+    public void testCbrt() {
+        for (float i = -256f; i < 256f; i+= 0x1p-8f) {
+            assertEquals(i + " failed", Math.cbrt(i), MathTools.cbrt(i), 1.0E-05f);
+        }
+        for (double i = -256.0; i < 256.0; i+= 0x1p-8) {
+            assertEquals(i + " failed", Math.cbrt(i), MathTools.cbrt(i), 1.0E-15);
+        }
+    }
 }
