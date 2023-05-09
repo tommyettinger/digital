@@ -4025,13 +4025,409 @@ public class Base {
     }
 
     /**
+     * Given a long array and a delimiter to separate the items of that array, produces a String containing all longs
+     * from elements, in this Base, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a long array; if null, this returns an empty String
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public String join(String delimiter, long[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return "";
+        StringBuilder sb = new StringBuilder(length << 3);
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a long array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all longs from elements, in this Base, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a long array; if null, this returns sb without changes
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public StringBuilder appendJoined(StringBuilder sb, String delimiter, long[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return sb;
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a int array and a delimiter to separate the items of that array, produces a String containing all ints
+     * from elements, in this Base, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a int array; if null, this returns an empty String
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public String join(String delimiter, int[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return "";
+        StringBuilder sb = new StringBuilder(length << 3);
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a int array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all ints from elements, in this Base, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a int array; if null, this returns sb without changes
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public StringBuilder appendJoined(StringBuilder sb, String delimiter, int[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return sb;
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a short array and a delimiter to separate the items of that array, produces a String containing all shorts
+     * from elements, in this Base, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a short array; if null, this returns an empty String
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public String join(String delimiter, short[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return "";
+        StringBuilder sb = new StringBuilder(length << 3);
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a short array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all shorts from elements, in this Base, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a short array; if null, this returns sb without changes
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public StringBuilder appendJoined(StringBuilder sb, String delimiter, short[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return sb;
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a char array and a delimiter to separate the items of that array, produces a String containing all chars
+     * from elements, in this Base, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a char array; if null, this returns an empty String
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public String join(String delimiter, char[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return "";
+        StringBuilder sb = new StringBuilder(length << 3);
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a char array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all chars from elements, in this Base, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a char array; if null, this returns sb without changes
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public StringBuilder appendJoined(StringBuilder sb, String delimiter, char[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return sb;
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a byte array and a delimiter to separate the items of that array, produces a String containing all bytes
+     * from elements, in this Base, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a byte array; if null, this returns an empty String
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public String join(String delimiter, byte[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return "";
+        StringBuilder sb = new StringBuilder(length << 3);
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a byte array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all bytes from elements, in this Base, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a byte array; if null, this returns sb without changes
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public StringBuilder appendJoined(StringBuilder sb, String delimiter, byte[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return sb;
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a float array and a delimiter to separate the items of that array, produces a String containing all floats
+     * from elements, in this Base, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a float array; if null, this returns an empty String
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public String join(String delimiter, float[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return "";
+        StringBuilder sb = new StringBuilder(length << 3);
+        appendGeneral(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendGeneral(sb, elements[start]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all floats from elements, in this Base, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a float array; if null, this returns sb without changes
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public StringBuilder appendJoined(StringBuilder sb, String delimiter, float[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return sb;
+        appendGeneral(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendGeneral(sb, elements[start]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a double array and a delimiter to separate the items of that array, produces a String containing all doubles
+     * from elements, in this Base, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a double array; if null, this returns an empty String
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public String join(String delimiter, double[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return "";
+        StringBuilder sb = new StringBuilder(length << 3);
+        appendGeneral(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendGeneral(sb, elements[start]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all doubles from elements, in this Base, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a double array; if null, this returns sb without changes
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public StringBuilder appendJoined(StringBuilder sb, String delimiter, double[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return sb;
+        appendGeneral(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendGeneral(sb, elements[start]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a float array and a delimiter to separate the items of that array, produces a String containing all floats
+     * from elements, in this Base, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a float array; if null, this returns an empty String
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public String joinExact(String delimiter, float[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return "";
+        StringBuilder sb = new StringBuilder(length << 3);
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all floats from elements, in this Base, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a float array; if null, this returns sb without changes
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, float[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return sb;
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a double array and a delimiter to separate the items of that array, produces a String containing all doubles
+     * from elements, in this Base, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a double array; if null, this returns an empty String
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public String joinExact(String delimiter, double[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return "";
+        StringBuilder sb = new StringBuilder(length << 3);
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all doubles from elements, in this Base, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a double array; if null, this returns sb without changes
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, double[] elements, int start, int length) {
+        if (elements.length <= start || length <= 0)
+            return sb;
+        appendSigned(sb, elements[start]);
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter);
+            appendSigned(sb, elements[start]);
+        }
+        return sb;
+    }
+
+    /**
      * Scans repeatedly in {@code source} (only using the area from startIndex, inclusive, to endIndex, exclusive) for
      * the String {@code search}, not scanning the same char twice except as part of a larger String, and returns the
      * number of instances of search that were found, or 0 if source or search is null or if the searched area is empty.
      * If endIndex is negative, this will search from startIndex until the end of the source.
      * <br>
      * This really belongs in a different class with String operations, but it's the only method of its type we're using
-     * here, so it can be in Base.
+     * here, so it can be in Base. It is public so that user code can have it for special-case split operations.
      *
      * @param source     a String to look through
      * @param search     a String to look for
@@ -4039,7 +4435,7 @@ public class Base {
      * @param endIndex   the last index to search through, exclusive; if negative this will search the rest of source
      * @return the number of times search was found in source
      */
-    protected static int count(final String source, final String search, final int startIndex, int endIndex) {
+    public static int count(final String source, final String search, final int startIndex, int endIndex) {
         if (endIndex < 0)
             endIndex = 0x7fffffff;
         if (source.isEmpty() || search.isEmpty() || startIndex < 0 || startIndex >= endIndex)
