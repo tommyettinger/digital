@@ -46,7 +46,12 @@ scientific notation, if at all. These can be read back with
 output needs `readFloatExact()` or `readDoubleExact()`. If you
 use a scrambled base (a random one, as mentioned before), then
 you need to use `signed()`/`unsigned()`/`readFloatExact()`/
-`readDoubleExact()` to use the right scrambled digits.
+`readDoubleExact()` to use the right scrambled digits. Base
+can also combine the String representations of an array of
+primitives (or part of such an array, since 0.3.1) using
+`join()` or `appendJoined()`, and split apart Strings into 
+arrays of primitives with methods like `longSplit()`,
+`intSplit()`, and `floatSplit()`.
 
 TrigTools tries to be as complete as possible at covering
 trigonometric functions, offering sin, cos, tan, asin, acos,
@@ -135,14 +140,14 @@ With Gradle, add this to your dependencies (in your core module's
 `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.0"
+api "com.github.tommyettinger:digital:0.3.1"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.0:sources"
+api "com.github.tommyettinger:digital:0.3.1:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
