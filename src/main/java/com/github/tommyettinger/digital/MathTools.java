@@ -544,6 +544,7 @@ public final class MathTools {
         }
         return r;
     }
+
     /**
      * Returns the nth root of x. Any values within {@link #FLOAT_ROUNDING_ERROR} of an int are rounded to that int to
      * reduce the likelihood of floating-point error adversely affecting the result.
@@ -582,15 +583,16 @@ public final class MathTools {
      * For example, it can be used to compute angles of incidence and reflection for
      * lighting and shading.
      * <br>
-     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>
+     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>.
+     * This uses Jan Kadlec's adjustments on the "magic number" and Newton's method section.
      *
      * @param x a non-negative finite float to find the inverse square root of
      * @return the inverse square root of x, approximated
      */
     public static float invSqrt(float x) {
-        int i = 0x5F3759DF - (BitConversion.floatToIntBits(x) >> 1);
+        int i = 0x5F1FFFF9 - (BitConversion.floatToIntBits(x) >> 1);
         float y = BitConversion.intBitsToFloat(i);
-        return y * (1.5f - 0.5f * x * y * y);
+        return y * (0.703952253f * (2.38924456f - x * y * y));
     }
 
     /**
@@ -608,13 +610,16 @@ public final class MathTools {
      * For example, it can be used to compute angles of incidence and reflection for
      * lighting and shading.
      * <br>
-     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>
+     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>.
+     * This uses a "magic number" found exactly by Matthew Robertson. The relative error of this
+     * double-based overload is actually worse than the float-based overload because of how
+     * the last step (Newton's method) was adjusted to fit the float-based version.
      *
      * @param x a non-negative finite double to find the inverse square root of
      * @return the inverse square root of x, approximated
      */
     public static double invSqrt(double x) {
-        long i = 0x5FE6EC85E7DE30DAL - (BitConversion.doubleToLongBits(x) >> 1);
+        long i = 0x5FE6EB50C7B537A9L - (BitConversion.doubleToLongBits(x) >> 1);
         double y = BitConversion.longBitsToDouble(i);
         return y * (1.5 - 0.5 * x * y * y);
     }

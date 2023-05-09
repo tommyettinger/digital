@@ -1965,5 +1965,27 @@ Worst input (abs):       4.205234527587891000000000
         return SIN_TABLE_D[(int) (radians * radToIndexD) + SIN_TO_COS & TABLE_MASK];
     }
 
+    // These don't use BitConversion to make copying them into a jshell session easier.
+
+    public static float invSqrt(float x) {
+        int i = 0x5F1FFFF9 - (Float.floatToIntBits(x) >> 1);
+        float y = Float.intBitsToFloat(i);
+        return y * (0.703952253f * (2.38924456f - x * y * y));
+    }
+    public static float invSqrtOld(float x) {
+        int i = 0x5F3759DF - (Float.floatToIntBits(x) >> 1);
+        float y = Float.intBitsToFloat(i);
+        return y * (1.5f - 0.5f * x * y * y);
+    }
+    public static double invSqrt(double x) {
+        long i = 0x5FE6EB50C7B537A9L - (Double.doubleToLongBits(x) >> 1);
+        double y = Double.longBitsToDouble(i);
+        return y * (1.5 - 0.5 * x * y * y);
+    }
+    public static double invSqrtOld(double x) {
+        long i = 0x5FE6EC85E7DE30DAL - (Double.doubleToLongBits(x) >> 1);
+        double y = Double.longBitsToDouble(i);
+        return y * (1.5 - 0.5 * x * y * y);
+    }
 
 }
