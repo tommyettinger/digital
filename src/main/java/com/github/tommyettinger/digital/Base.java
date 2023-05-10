@@ -4041,7 +4041,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb.toString();
     }
@@ -4063,7 +4063,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb;
     }
@@ -4085,7 +4085,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb.toString();
     }
@@ -4107,7 +4107,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb;
     }
@@ -4129,7 +4129,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb.toString();
     }
@@ -4151,7 +4151,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb;
     }
@@ -4173,7 +4173,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb.toString();
     }
@@ -4195,7 +4195,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb;
     }
@@ -4217,7 +4217,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb.toString();
     }
@@ -4239,7 +4239,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb;
     }
@@ -4261,7 +4261,7 @@ public class Base {
         appendGeneral(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendGeneral(sb, elements[start]);
+            appendGeneral(sb, elements[++start]);
         }
         return sb.toString();
     }
@@ -4283,7 +4283,7 @@ public class Base {
         appendGeneral(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendGeneral(sb, elements[start]);
+            appendGeneral(sb, elements[++start]);
         }
         return sb;
     }
@@ -4305,7 +4305,7 @@ public class Base {
         appendGeneral(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendGeneral(sb, elements[start]);
+            appendGeneral(sb, elements[++start]);
         }
         return sb.toString();
     }
@@ -4327,7 +4327,7 @@ public class Base {
         appendGeneral(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendGeneral(sb, elements[start]);
+            appendGeneral(sb, elements[++start]);
         }
         return sb;
     }
@@ -4349,7 +4349,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb.toString();
     }
@@ -4371,7 +4371,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb;
     }
@@ -4393,7 +4393,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb.toString();
     }
@@ -4415,7 +4415,7 @@ public class Base {
         appendSigned(sb, elements[start]);
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+            appendSigned(sb, elements[++start]);
         }
         return sb;
     }

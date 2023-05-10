@@ -277,6 +277,9 @@ public class BaseTest {
 				String joined = enc.appendJoined(new StringBuilder(), " ", inp).toString();
 				System.out.println(joined);
 				Assert.assertArrayEquals(enc.longSplit(joined, " "), inp);
+				joined = enc.appendJoined(new StringBuilder(), " ", inp, 0, 4).toString();
+				System.out.println(joined);
+				Assert.assertEquals(3, Base.count(joined, " ", 0, -1));
 				joined = enc.appendJoined(new StringBuilder(), " ", inp, 2, 4).toString();
 				System.out.println(joined);
 				Assert.assertEquals(3, Base.count(joined, " ", 0, -1));
