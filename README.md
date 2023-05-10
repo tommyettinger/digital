@@ -140,14 +140,14 @@ With Gradle, add this to your dependencies (in your core module's
 `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.1"
+api "com.github.tommyettinger:digital:0.3.2"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.1:sources"
+api "com.github.tommyettinger:digital:0.3.2:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
