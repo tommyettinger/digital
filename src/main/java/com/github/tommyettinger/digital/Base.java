@@ -4039,9 +4039,10 @@ public class Base {
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb.toString();
     }
@@ -4061,9 +4062,10 @@ public class Base {
         if (elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb;
     }
@@ -4083,9 +4085,10 @@ public class Base {
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb.toString();
     }
@@ -4105,9 +4108,10 @@ public class Base {
         if (elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb;
     }
@@ -4127,9 +4131,10 @@ public class Base {
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb.toString();
     }
@@ -4149,9 +4154,10 @@ public class Base {
         if (elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb;
     }
@@ -4171,9 +4177,10 @@ public class Base {
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb.toString();
     }
@@ -4193,9 +4200,10 @@ public class Base {
         if (elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb;
     }
@@ -4215,9 +4223,10 @@ public class Base {
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb.toString();
     }
@@ -4237,9 +4246,10 @@ public class Base {
         if (elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb;
     }
@@ -4259,9 +4269,10 @@ public class Base {
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendGeneral(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendGeneral(sb, elements[++start]);
+            appendGeneral(sb, elements[start]);
         }
         return sb.toString();
     }
@@ -4281,9 +4292,10 @@ public class Base {
         if (elements.length <= start || length <= 0)
             return sb;
         appendGeneral(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendGeneral(sb, elements[++start]);
+            appendGeneral(sb, elements[start]);
         }
         return sb;
     }
@@ -4303,9 +4315,10 @@ public class Base {
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendGeneral(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendGeneral(sb, elements[++start]);
+            appendGeneral(sb, elements[start]);
         }
         return sb.toString();
     }
@@ -4325,9 +4338,10 @@ public class Base {
         if (elements.length <= start || length <= 0)
             return sb;
         appendGeneral(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendGeneral(sb, elements[++start]);
+            appendGeneral(sb, elements[start]);
         }
         return sb;
     }
@@ -4347,9 +4361,10 @@ public class Base {
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb.toString();
     }
@@ -4369,9 +4384,10 @@ public class Base {
         if (elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb;
     }
@@ -4391,9 +4407,10 @@ public class Base {
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb.toString();
     }
@@ -4413,9 +4430,10 @@ public class Base {
         if (elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
+        ++start;
         for (int c = 1; c < length && start < elements.length; start++, c++) {
             sb.append(delimiter);
-            appendSigned(sb, elements[++start]);
+            appendSigned(sb, elements[start]);
         }
         return sb;
     }
