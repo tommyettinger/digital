@@ -114,12 +114,12 @@ public final class BitConversion {
 	}-*/;
 
 	public static int getExponent(float num) {
-		wfa.set(0, value);
+		wfa.set(0, num);
 		return (wia.get(0) >>> 23 & 0xFF) - 0x7F;
 	}
 
 	public static int getExponent(double num) {
-		wda.set(0, value);
+		wda.set(0, num);
 		return (wia.get(1) >>> 52 & 0x7FF) - 0x3FF;
 	}
 
