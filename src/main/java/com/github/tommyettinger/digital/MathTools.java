@@ -618,11 +618,78 @@ public final class MathTools {
      * @param x a non-negative finite double to find the inverse square root of
      * @return the inverse square root of x, approximated
      */
-    public static double invSqrt(double x) {
+    public static double invSqrt(final double x) {
         long i = 0x5FE6EB50C7B537A9L - (BitConversion.doubleToLongBits(x) >> 1);
         double y = BitConversion.longBitsToDouble(i);
         return y * (1.5 - 0.5 * x * y * y);
     }
+
+    /**
+     * A variant on {@link Math#sqrt(double)} that is defined for negative inputs in the same way that
+     * {@link #cbrt(float)} is: the signPreservingSqrt of x is equivalent to {@code (float)sqrt(abs(x))} with its sign
+     * changed if necessary to match the sign of x (using {@link Math#copySign(float, float)}). This returns
+     * {@code -0.0} if given {@code -0.0} as an input. Sign-preserving square roots show up not-infrequently in math
+     * formulas, so this may be useful to have.
+     * <br>
+     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
+     * {@code x} is the input: {@code Math.copySign((float)Math.sqrt(Math.abs(x)), x)}
+     * @param x any finite float
+     * @return the sign-preserving square root of x
+     */
+    public static float signPreservingSqrt(final float x) {
+        return Math.copySign((float)Math.sqrt(Math.abs(x)), x);
+    }
+
+    /**
+     * A variant on {@link Math#pow(double, double)} that is always defined for negative inputs in the same way that
+     * {@link #cbrt(float)} is: the signPreservingPow of x and any power is equivalent to
+     * {@code (float)pow(abs(x), power)} with its sign changed if necessary to match the sign of x (using
+     * {@link Math#copySign(float, float)}). If given {@code 0.0} or {@code -0.0} as the power, this returns
+     * {@code 1.0} for positive x (including {@code 0.0}) and {@code -1.0} for negative x (including {@code -0.0}).
+     * <br>
+     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
+     * {@code x} and {@code power} are the inputs: {@code Math.copySign((float)Math.pow(Math.abs(x), power), x)}
+     * @param x any finite float
+     * @param power any finite float, within a reasonable size
+     * @return x raised to power, preserving the sign of x
+     */
+    public static float signPreservingPow(final float x, final float power) {
+        return Math.copySign((float)Math.pow(Math.abs(x), power), x);
+    }
+
+    /**
+     * A variant on {@link Math#sqrt(double)} that is defined for negative inputs in the same way that
+     * {@link Math#cbrt(double)} is: the signPreservingSqrt of x is equivalent to {@code sqrt(abs(x))} with its sign
+     * changed if necessary to match the sign of x (using {@link Math#copySign(double, double)}). This returns
+     * {@code -0.0} if given {@code -0.0} as an input. Sign-preserving square roots show up not-infrequently in math
+     * formulas, so this may be useful to have.
+     * <br>
+     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
+     * {@code x} is the input: {@code Math.copySign(Math.sqrt(Math.abs(x)), x)}
+     * @param x any finite double
+     * @return the sign-preserving square root of x
+     */
+    public static double signPreservingSqrt(final double x) {
+        return Math.copySign(Math.sqrt(Math.abs(x)), x);
+    }
+
+    /**
+     * A variant on {@link Math#pow(double, double)} that is always defined for negative inputs in the same way that
+     * {@link Math#cbrt(double)} is: the signPreservingPow of x and any power is equivalent to
+     * {@code pow(abs(x), power)} with its sign changed if necessary to match the sign of x (using
+     * {@link Math#copySign(double, double)}). If given {@code 0.0} or {@code -0.0} as the power, this returns
+     * {@code 1.0} for positive x (including {@code 0.0}) and {@code -1.0} for negative x (including {@code -0.0}).
+     * <br>
+     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
+     * {@code x} and {@code power} are the inputs: {@code Math.copySign(Math.pow(Math.abs(x), power), x)}
+     * @param x any finite double
+     * @param power any finite double, within a reasonable size
+     * @return x raised to power, preserving the sign of x
+     */
+    public static double signPreservingPow(final double x, final double power) {
+        return Math.copySign(Math.pow(Math.abs(x), power), x);
+    }
+
     /**
      * A generalization on bias and gain functions that can represent both; this version is branch-less.
      * This is based on <a href="https://arxiv.org/abs/2010.09714">this micro-paper</a> by Jon Barron, which
