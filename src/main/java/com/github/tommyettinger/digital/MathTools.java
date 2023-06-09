@@ -1736,6 +1736,27 @@ public final class MathTools {
     }
 
     /**
+     * Gets the triangular number at a particular non-negative index. This returns 0 for index 0, 1 for index 1, 3 for
+     * index 2, 6 for index 3, and so on according to
+     * <a href="https://en.wikipedia.org/wiki/Triangular_number">Wikipedia's page on triangular numbers</a>.
+     * @param index a non-negative int; this is accurate for ints between 0 and 65535, inclusive
+     * @return the triangular number at the given index
+     */
+    public static int triangularNumber(int index) {
+        return (index + 1) * index >>> 1;
+    }
+
+    /**
+     * Gets the offset needed to look up a group of values in {@link #GOLDEN_LONGS} for a given dimension.
+     * This is equivalent to calling {@link #triangularNumber(int)} with an index that is 1 lower.
+     * @param dimension should be an int between 1 and 99, inclusive
+     * @return an offset into {@link #GOLDEN_LONGS} that allows looking up {@code dimension} decreasing long items
+     */
+    public static int goldenLongsOffset(int dimension) {
+        return (dimension - 1) * dimension >>> 1;
+    }
+
+    /**
      * 1275 negative, odd {@code long} values that are calculated using a generalization of the golden ratio and
      * exponents of those generalizations. Mostly, these are useful because they are all 64-bit constants that have an
      * irrational-number-like pattern to their bits, which makes them pretty much all useful as increments for large
@@ -1743,8 +1764,10 @@ public final class MathTools {
      * The earlier numbers in the array are closer to the bit patterns of irrational numbers. Note that these are not at
      * all uniformly-distributed, and should not be used for tasks where random negative longs must be uniform.
      * See <a href="http://extremelearning.com.au/unreasonable-effectiveness-of-quasirandom-sequences/#GeneralizingGoldenRatio">Martin Roberts' blog post</a>
-     * for more information on how these were constructed. This can be organized into groups of increasing size -- 1
+     * for more information on how these were constructed. This can be organized into 99 groups of increasing size -- 1
      * number from the 1D sequence in that post, 2 numbers from the 2D sequence, 3 numbers from the 3D sequence, etc.
+     * You can access the group of N numbers for the N-dimensional sequence by looking up N consecutive items starting
+     * at {@link #goldenLongsOffset(int)}, passing it N.
      */
     public static final long[] GOLDEN_LONGS = {
             0x9E3779B97F4A7C15L,
