@@ -1477,7 +1477,7 @@ public final class MathTools {
      * @return a float from -1f (inclusive) to 1f (inclusive)
      */
     public static float zigzag(float value) {
-        int floor = value >= 0f ? (int) value : (int) value - 1;
+        int floor = (int) (value + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;//inlined fastFloor(value);
         value -= floor;
         floor = -(floor & 1) | 1;
         return value * (floor << 1) - floor;
@@ -1500,7 +1500,7 @@ public final class MathTools {
      * @return a float from -1f (inclusive) to 1f (inclusive)
      */
     public static float sway(float value) {
-        int floor = value >= 0f ? (int) value : (int) value - 1;
+        int floor = (int) (value + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;//inlined fastFloor(value);
         value -= floor;
         floor = -(floor & 1) | 1;
         return value * value * value * (value * (value * 6f - 15f) + 10f) * (floor << 1) - floor;
@@ -1522,7 +1522,7 @@ public final class MathTools {
      * @return a float from -1f (inclusive) to 1f (inclusive)
      */
     public static float swayCubic(float value) {
-        int floor = value >= 0f ? (int) value : (int) value - 1;
+        int floor = (int) (value + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;//inlined fastFloor(value);
         value -= floor;
         floor = -(floor & 1) | 1;
         return value * value * (3f - value * 2f) * (floor << 1) - floor;
@@ -1547,7 +1547,7 @@ public final class MathTools {
      * @return a float from 0f (inclusive) to 1f (inclusive)
      */
     public static float swayTight(float value) {
-        int floor = value >= 0f ? (int) value : (int) value - 1;
+        int floor = (int) (value + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;//inlined fastFloor(value);
         value -= floor;
         floor &= 1;
         return value * value * value * (value * (value * 6f - 15f) + 10f) * (-floor | 1) + floor;
@@ -1566,7 +1566,7 @@ public final class MathTools {
      * @return a double from -1.0 (inclusive) to 1.0 (inclusive)
      */
     public static double zigzag(double value) {
-        int floor = value >= 0.0 ? (int) value : (int) value - 1;
+        int floor = (int)Math.floor(value);
         value -= floor;
         floor = -(floor & 1) | 1;
         return value * (floor << 1) - floor;
@@ -1589,7 +1589,7 @@ public final class MathTools {
      * @return a double from -1.0 (inclusive) to 1.0 (inclusive)
      */
     public static double sway(double value) {
-        int floor = value >= 0.0 ? (int) value : (int) value - 1;
+        int floor = (int)Math.floor(value);
         value -= floor;
         floor = -(floor & 1) | 1;
         return value * value * value * (value * (value * 6.0 - 15.0) + 10.0) * (floor << 1) - floor;
@@ -1611,7 +1611,7 @@ public final class MathTools {
      * @return a double from -1.0 (inclusive) to 1.0 (inclusive)
      */
     public static double swayCubic(double value) {
-        int floor = value >= 0.0 ? (int) value : (int) value - 1;
+        int floor = (int)Math.floor(value);
         value -= floor;
         floor = -(floor & 1) | 1;
         return value * value * (3.0 - value * 2.0) * (floor << 1) - floor;
@@ -1636,7 +1636,7 @@ public final class MathTools {
      * @return a double from 0.0 (inclusive) to 1.0 (inclusive)
      */
     public static double swayTight(double value) {
-        int floor = value >= 0.0 ? (int) value : (int) value - 1;
+        int floor = (int)Math.floor(value);
         value -= floor;
         floor &= 1;
         return value * value * value * (value * (value * 6.0 - 15.0) + 10.0) * (-floor | 1) + floor;
