@@ -455,6 +455,22 @@ public class PrecisionTest {
      * Worst input (abs):       6.156139850616455000000000
      * Worst output (abs):     -0.1267044097 (0xBE01BECD)
      * Correct output (abs):   -0.1267039627 (0xBE01BEAF)
+     * Running sinGreen
+     * Mean absolute error:     0.0000003039
+     * Mean relative error:     0.0000004692
+     * Maximum abs. error:      0.0000721812
+     * Maximum rel. error:      0.9999999404
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         5.057551383972168000000000
+     * Best output (lo):       -0.9410204887 (0xBF70E6B8)
+     * Correct output (lo):    -0.9410204887 (0xBF70E6B8)
+     * Worst input (hi):        6.283185482025146500000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000001748 (0x343BBD2E)
+     * Worst input (abs):       3.927059888839721700000000
+     * Worst output (abs):     -0.7070834637 (0xBF35036C)
+     * Correct output (abs):   -0.7071556449 (0xBF350827)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -471,6 +487,7 @@ public class PrecisionTest {
 //        float[] table065625 = makeTableFloat(0.65625);
 //        float[] table075 = makeTableFloat(0.75);
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("sinGreen", PrecisionTest::sinGreen);
         functions.put("sinNewTable", TrigTools::sin);
         functions.put("sinOldTable", OldTrigTools::sin);
 //        functions.put("sin00Prior", (f) -> sin(prior00, f));
@@ -489,7 +506,6 @@ public class PrecisionTest {
 //        functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
 //        functions.put("sinSteadman", PrecisionTest::sinSteadman);
 //        functions.put("sinBhaskara2", PrecisionTest::sinBhaskaraI);
-        functions.put("sinGreen", PrecisionTest::sinGreen);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -1290,39 +1306,49 @@ public class PrecisionTest {
                 return (float)Math.sqrt(1f - x * x);
             }
             case 2: {
-                x = 0.7853981633974483f + radians - floor * 0.7853981633974483f;
+                x = radians - floor * 0.7853981633974483f;
                 final float x2 = x * x;
                 x *= (1f + x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
                 return (float)Math.sqrt(1f - x * x);
             }
             case 3: {
-                x = floor * 0.7853981633974483f - radians;
+                x = 0.7853981633974483f - radians + floor * 0.7853981633974483f;
                 final float x2 = x * x;
                 return x * (1f + x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
             }
             case 4: {
                 x = floor * 0.7853981633974483f - radians;
                 final float x2 = x * x;
-                return x * (-1f - x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
+                return x * (1f + x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
             }
             case 5: {
-                x = 0.7853981633974483f + radians - floor * 0.7853981633974483f;
-                final float x2 = x * x;
-                x *= (-1f - x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
-                return (float)Math.sqrt(1f - x * x);
-            }
-            case 6: {
                 x = 0.7853981633974483f - radians + floor * 0.7853981633974483f;
                 final float x2 = x * x;
+                x *= (1f + x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
+                return -(float)Math.sqrt(1f - x * x);
+            }
+            case 6: {
+                x = radians - floor * 0.7853981633974483f;
+                final float x2 = x * x;
                 x *= (-1f - x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
-                return (float)Math.sqrt(1f - x * x);
+                return -(float)Math.sqrt(1f - x * x);
             }
 //            case 7:
             default: {
-                x = radians - floor * 0.7853981633974483f;
+                x = 0.7853981633974483f - radians + floor * 0.7853981633974483f;
                 final float x2 = x * x;
                 return x * (-1f - x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
             }
+        }
+    }
+
+    @Test
+    @Ignore
+    public void basicSinGreenTest() {
+        float in = 0.125f;
+        for (int i = 0; i < 64; i++) {
+            System.out.printf("%11.9f => %11.9f and should be %11.9f\n", in, sinGreen(in), Math.sin(in));
+            in += 0.125f;
         }
     }
 
