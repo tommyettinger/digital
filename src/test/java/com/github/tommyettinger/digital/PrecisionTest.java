@@ -462,25 +462,25 @@ public class PrecisionTest {
      */
     @Test
     public void testSin() {
-        float[] prior00 = makeTableFloatPrior(0.0);
-        float[] prior05 = makeTableFloatPrior(0.5);
-        float[] table05 = makeTableFloat(0.5);
-        float[] table025 = makeTableFloat(0.25);
-        float[] tablePhi = makeTableFloat(MathTools.GOLDEN_RATIO_INVERSE_D);
-        float[] table0625 = makeTableFloat(0.625);
-        float[] table065625 = makeTableFloat(0.65625);
-        float[] table075 = makeTableFloat(0.75);
+//        float[] prior00 = makeTableFloatPrior(0.0);
+//        float[] prior05 = makeTableFloatPrior(0.5);
+//        float[] table05 = makeTableFloat(0.5);
+//        float[] table025 = makeTableFloat(0.25);
+//        float[] tablePhi = makeTableFloat(MathTools.GOLDEN_RATIO_INVERSE_D);
+//        float[] table0625 = makeTableFloat(0.625);
+//        float[] table065625 = makeTableFloat(0.65625);
+//        float[] table075 = makeTableFloat(0.75);
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinNewTable", TrigTools::sin);
         functions.put("sinOldTable", OldTrigTools::sin);
-        functions.put("sin00Prior", (f) -> sin(prior00, f));
-        functions.put("sin05Prior", (f) -> sin(prior05, f));
-        functions.put("sin05", (f) -> sin(table05, f));
-        functions.put("sin025", (f) -> sin(table025, f));
-        functions.put("sinPhi", (f) -> sin(tablePhi, f));
-        functions.put("sin0625", (f) -> sin(table0625, f));
-        functions.put("sin065625", (f) -> sin(table065625, f));
-        functions.put("sin075", (f) -> sin(table075, f));
+//        functions.put("sin00Prior", (f) -> sin(prior00, f));
+//        functions.put("sin05Prior", (f) -> sin(prior05, f));
+//        functions.put("sin05", (f) -> sin(table05, f));
+//        functions.put("sin025", (f) -> sin(table025, f));
+//        functions.put("sinPhi", (f) -> sin(tablePhi, f));
+//        functions.put("sin0625", (f) -> sin(table0625, f));
+//        functions.put("sin065625", (f) -> sin(table065625, f));
+//        functions.put("sin075", (f) -> sin(table075, f));
         functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinSmoother", TrigTools::sinSmoother);
 
@@ -489,6 +489,7 @@ public class PrecisionTest {
 //        functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
 //        functions.put("sinSteadman", PrecisionTest::sinSteadman);
 //        functions.put("sinBhaskara2", PrecisionTest::sinBhaskaraI);
+        functions.put("sinGreen", PrecisionTest::sinBhaskaraI);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -1265,6 +1266,43 @@ public class PrecisionTest {
         radians -= ceil;
         final float x2 = radians * radians, x3 = radians * x2;
         return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+    }
+
+    /**
+     * From <a href="https://basesandframes.files.wordpress.com/2016/05/rgreenfastermath_gdc02.pdf">Robin Green</a>.
+     * @param radians
+     * @return
+     */
+    public static float sinGreen(float radians) {
+        float x = radians * 1.2732395447351628f;
+        final int floor = (int)(x + 16384.0) - 16384;
+        final int oct = floor & 7;
+        switch (oct){
+            case 0: {
+                x = radians - floor * 0.7853981633974483f;
+                final float x2 = x * x;
+                return x * (1f + x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
+            }
+            case 1: {
+                x = 0.7853981633974483f - radians - floor * 0.7853981633974483f;
+                final float x2 = x * x;
+                x *= (1f + x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
+                return (float)Math.sqrt(1f - x * x);
+            }
+            case 6: {
+                x = 0.7853981633974483f - radians - floor * 0.7853981633974483f;
+                final float x2 = x * x;
+                x *= (-1f - x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
+                return (float)Math.sqrt(1f - x * x);
+            }
+            case 7: {
+                x = radians - floor * 0.7853981633974483f;
+                final float x2 = x * x;
+                return x * (-1f - x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
+            }
+            default:
+                throw new UnsupportedOperationException("AAA NOT DONE YET!!!");
+        }
     }
 
     public static void main(String[] args) {
