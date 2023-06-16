@@ -489,7 +489,7 @@ public class PrecisionTest {
 //        functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
 //        functions.put("sinSteadman", PrecisionTest::sinSteadman);
 //        functions.put("sinBhaskara2", PrecisionTest::sinBhaskaraI);
-        functions.put("sinGreen", PrecisionTest::sinBhaskaraI);
+        functions.put("sinGreen", PrecisionTest::sinGreen);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -1284,24 +1284,45 @@ public class PrecisionTest {
                 return x * (1f + x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
             }
             case 1: {
-                x = 0.7853981633974483f - radians - floor * 0.7853981633974483f;
+                x = 0.7853981633974483f - radians + floor * 0.7853981633974483f;
                 final float x2 = x * x;
                 x *= (1f + x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
                 return (float)Math.sqrt(1f - x * x);
             }
-            case 6: {
-                x = 0.7853981633974483f - radians - floor * 0.7853981633974483f;
+            case 2: {
+                x = 0.7853981633974483f + radians - floor * 0.7853981633974483f;
+                final float x2 = x * x;
+                x *= (1f + x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
+                return (float)Math.sqrt(1f - x * x);
+            }
+            case 3: {
+                x = floor * 0.7853981633974483f - radians;
+                final float x2 = x * x;
+                return x * (1f + x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
+            }
+            case 4: {
+                x = floor * 0.7853981633974483f - radians;
+                final float x2 = x * x;
+                return x * (-1f - x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
+            }
+            case 5: {
+                x = 0.7853981633974483f + radians - floor * 0.7853981633974483f;
                 final float x2 = x * x;
                 x *= (-1f - x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
                 return (float)Math.sqrt(1f - x * x);
             }
-            case 7: {
+            case 6: {
+                x = 0.7853981633974483f - radians + floor * 0.7853981633974483f;
+                final float x2 = x * x;
+                x *= (-1f - x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
+                return (float)Math.sqrt(1f - x * x);
+            }
+//            case 7:
+            default: {
                 x = radians - floor * 0.7853981633974483f;
                 final float x2 = x * x;
                 return x * (-1f - x2 * (-0x2aaaa9p-24f + x2 * (0.00833220803f + x2 * 0.000195168955f)));
             }
-            default:
-                throw new UnsupportedOperationException("AAA NOT DONE YET!!!");
         }
     }
 
