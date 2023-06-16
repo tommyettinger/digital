@@ -472,21 +472,21 @@ public class PrecisionTest {
      * Worst output (abs):     -0.7070834637 (0xBF35036C)
      * Correct output (abs):   -0.7071556449 (0xBF350827)
      * Running sinSmootherMixed
-     * Mean absolute error:     0.0000075369
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0007666883
-     * Maximum rel. error:   2538.7734375000
+     * Mean absolute error:     0.0000000017
+     * Mean relative error:     0.0000000233
+     * Maximum abs. error:      0.0000004470
+     * Maximum rel. error:      0.9999999404
      * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.233331680297852000000000
-     * Best output (lo):       -0.0498329774 (0xBD4C1DAA)
-     * Correct output (lo):    -0.0498329774 (0xBD4C1DAA)
-     * Worst input (hi):        6.283185005187988000000000
-     * Highest output rel:   2538.7734375000
-     * Worst output (hi):      -0.0007669903 (0xBA490FD9)
-     * Correct output (hi):    -0.0000003020 (0xB4A22169)
-     * Worst input (abs):       6.283185005187988000000000
-     * Worst output (abs):     -0.0007669903 (0xBA490FD9)
-     * Correct output (abs):   -0.0000003020 (0xB4A22169)
+     * Best input (lo):         6.019046306610107000000000
+     * Best output (lo):       -0.2610782385 (0xBE85AC0C)
+     * Correct output (lo):    -0.2610782385 (0xBE85AC0C)
+     * Worst input (hi):        6.283185482025146500000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000001748 (0x343BBD2E)
+     * Worst input (abs):       6.149707317352295000000000
+     * Worst output (abs):     -0.1330824345 (0xBE0846C3)
+     * Correct output (abs):   -0.1330819875 (0xBE0846A5)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -535,7 +535,8 @@ public class PrecisionTest {
             for (int i = PI2BITS; i >= 0; i--) {
                 float x = Float.intBitsToFloat(i);
                 float tru = (float) Math.sin(x),
-                        err = tru - op.applyAsFloat(x),
+                        approx = op.applyAsFloat(x),
+                        err = tru - approx,
                         ae = abs(err),
                         re = Math.abs(err / Math.nextAfter(tru, Math.copySign(Float.MAX_VALUE, tru)));
                 relError += re;
@@ -1997,21 +1998,25 @@ Worst input (abs):       4.205234527587891000000000
     }
 
     public static float[] makeTableFloatMixed() {
-        float[] SIN_TABLE = new float[TABLE_SIZE+1];
-        for (int i = 2; i < TABLE_SIZE; i+=2)
+        float[] SIN_TABLE = new float[0x4000];
+        for (int i = 1; i < 0x2000; i++)
         {
-            float later = (float) (Math.sin((double) i / TABLE_SIZE * PI2_D));
+            float later = (float) (Math.sin((double) i * 0x1p-13 * PI2_D));
             SIN_TABLE[i] = later;
-            SIN_TABLE[i-1] = later - SIN_TABLE[i-2];
+            SIN_TABLE[i-1|0x2000] = later - SIN_TABLE[i-1];
         }
-        SIN_TABLE[1] = SIN_TABLE[2];
         // The four right angles get extra-precise values, because they are
         // the most likely to need to be correct.
         SIN_TABLE[0] = 0f;
-        SIN_TABLE[TABLE_SIZE] = 0f;
-        SIN_TABLE[(int) (90 * degToIndex) &  0x3ffe] = 1f;
-        SIN_TABLE[(int) (180 * degToIndex) & 0x3ffe] = 0f;
-        SIN_TABLE[(int) (270 * degToIndex) & 0x3ffe] = -1.0f;
+        SIN_TABLE[(int) (90  * 0x1p13 / 360.0)] = 1f;
+        SIN_TABLE[(int) (180 * 0x1p13 / 360.0)] = 0f;
+        SIN_TABLE[(int) (270 * 0x1p13 / 360.0)] = -1.0f;
+
+        for (int i = 0; i <= 270; i+= 90) {
+            int idx = (int) (i * 0x1p13 / 360.0);
+            SIN_TABLE[(idx - 1 & 0x1FFF) | 0x2000] = SIN_TABLE[idx] - SIN_TABLE[idx-1 & 0x1FFF];
+            SIN_TABLE[idx | 0x2000] = SIN_TABLE[idx+1] - SIN_TABLE[idx];
+        }
         return SIN_TABLE;
     }
 
@@ -2075,10 +2080,10 @@ Worst input (abs):       4.205234527587891000000000
     }
 
     public static float sinMixed(float[] SIN_TABLE, float radians) {
-        radians *= radToIndex;
+        radians *= 1303.7972f;
         final int floor = (int)(radians + 16384.0) - 16384;
-        final int masked = floor & 0x3FFE;
-        final float from = SIN_TABLE[masked], grad = SIN_TABLE[masked+1];
+        final int masked = floor & 0x1FFF;
+        final float from = SIN_TABLE[masked], grad = SIN_TABLE[masked|0x2000];
         return from + grad * (radians - floor);
     }
 
