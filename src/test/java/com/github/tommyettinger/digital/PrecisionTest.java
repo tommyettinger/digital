@@ -471,6 +471,22 @@ public class PrecisionTest {
      * Worst input (abs):       3.927059888839721700000000
      * Worst output (abs):     -0.7070834637 (0xBF35036C)
      * Correct output (abs):   -0.7071556449 (0xBF350827)
+     * Running sinSmootherMixed
+     * Mean absolute error:     0.0000075369
+     * Mean relative error:     0.0154355764
+     * Maximum abs. error:      0.0007666883
+     * Maximum rel. error:   2538.7734375000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.233331680297852000000000
+     * Best output (lo):       -0.0498329774 (0xBD4C1DAA)
+     * Correct output (lo):    -0.0498329774 (0xBD4C1DAA)
+     * Worst input (hi):        6.283185005187988000000000
+     * Highest output rel:   2538.7734375000
+     * Worst output (hi):      -0.0007669903 (0xBA490FD9)
+     * Correct output (hi):    -0.0000003020 (0xB4A22169)
+     * Worst input (abs):       6.283185005187988000000000
+     * Worst output (abs):     -0.0007669903 (0xBA490FD9)
+     * Correct output (abs):   -0.0000003020 (0xB4A22169)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -486,10 +502,15 @@ public class PrecisionTest {
 //        float[] table0625 = makeTableFloat(0.625);
 //        float[] table065625 = makeTableFloat(0.65625);
 //        float[] table075 = makeTableFloat(0.75);
+        float[] tableMixed = makeTableFloatMixed();
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("sinGreen", PrecisionTest::sinGreen);
-        functions.put("sinNewTable", TrigTools::sin);
-        functions.put("sinOldTable", OldTrigTools::sin);
+//        functions.put("sinGreen", PrecisionTest::sinGreen);
+//        functions.put("sinNewTable", TrigTools::sin);
+//        functions.put("sinOldTable", OldTrigTools::sin);
+        functions.put("sinSmootherMixed", (f) -> sinMixed(tableMixed, f));
+//        functions.put("sinSmooth", TrigTools::sinSmooth);
+//        functions.put("sinSmoother", TrigTools::sinSmoother);
+
 //        functions.put("sin00Prior", (f) -> sin(prior00, f));
 //        functions.put("sin05Prior", (f) -> sin(prior05, f));
 //        functions.put("sin05", (f) -> sin(table05, f));
@@ -498,8 +519,6 @@ public class PrecisionTest {
 //        functions.put("sin0625", (f) -> sin(table0625, f));
 //        functions.put("sin065625", (f) -> sin(table065625, f));
 //        functions.put("sin075", (f) -> sin(table075, f));
-        functions.put("sinSmooth", TrigTools::sinSmooth);
-        functions.put("sinSmoother", TrigTools::sinSmoother);
 
 //        functions.put("sinCurve", PrecisionTest::sinCurve);
 //        functions.put("sinNick", PrecisionTest::sinNick);
@@ -1977,6 +1996,26 @@ Worst input (abs):       4.205234527587891000000000
         }
     }
 
+    public static float[] makeTableFloatMixed() {
+        float[] SIN_TABLE = new float[TABLE_SIZE+1];
+        for (int i = 2; i < TABLE_SIZE; i+=2)
+        {
+            float later = (float) (Math.sin((double) i / TABLE_SIZE * PI2_D));
+            SIN_TABLE[i] = later;
+            SIN_TABLE[i-1] = later - SIN_TABLE[i-2];
+        }
+        SIN_TABLE[1] = SIN_TABLE[2];
+        // The four right angles get extra-precise values, because they are
+        // the most likely to need to be correct.
+        SIN_TABLE[0] = 0f;
+        SIN_TABLE[TABLE_SIZE] = 0f;
+        SIN_TABLE[(int) (90 * degToIndex) &  0x3ffe] = 1f;
+        SIN_TABLE[(int) (180 * degToIndex) & 0x3ffe] = 0f;
+        SIN_TABLE[(int) (270 * degToIndex) & 0x3ffe] = -1.0f;
+        return SIN_TABLE;
+    }
+
+
     public static float[] makeTableFloat(final double offset) {
         float[] SIN_TABLE = new float[TABLE_SIZE+1];
         final float off = (float) offset;
@@ -2033,6 +2072,14 @@ Worst input (abs):       4.205234527587891000000000
         SIN_TABLE_D[(int) (180 * degToIndexD) & TABLE_MASK] = 0.0;
         SIN_TABLE_D[(int) (270 * degToIndexD) & TABLE_MASK] = -1.0;
         return SIN_TABLE_D;
+    }
+
+    public static float sinMixed(float[] SIN_TABLE, float radians) {
+        radians *= radToIndex;
+        final int floor = (int)(radians + 16384.0) - 16384;
+        final int masked = floor & 0x3FFE;
+        final float from = SIN_TABLE[masked], grad = SIN_TABLE[masked+1];
+        return from + grad * (radians - floor);
     }
 
     public static float sin(float[] SIN_TABLE, float radians) {
