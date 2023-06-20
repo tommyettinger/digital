@@ -4,16 +4,16 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class QuaternionDoubleTest {
-	private static final double epsilon = 0x1p-17f;
+public class QuaternionMixedTest {
+	private static final float epsilon = 0x1p-15f;
 
 	@Test
 	public void testRoundTrip () {
-		double yaw = -5;
-		double pitch = 42.00055;
-		double roll = 164.32;
+		float yaw = -5f;
+		float pitch = 42.00055f;
+		float roll = 164.32f;
 
-		QuaternionDouble q = new QuaternionDouble().setEulerAngles(yaw, pitch, roll);
+		QuaternionMixed q = new QuaternionMixed().setEulerAngles(yaw, pitch, roll);
 
 		assertEquals(yaw, q.getYaw(), epsilon);
 		assertEquals(pitch, q.getPitch(), epsilon);
@@ -22,14 +22,14 @@ public class QuaternionDoubleTest {
 
 	@Test
 	public void testMultipleRotations () {
-		QuaternionDouble q = new QuaternionDouble();
-		QuaternionDouble rot = new QuaternionDouble().setEulerAngles(4.0, 0, 0);
+		QuaternionMixed q = new QuaternionMixed();
+		QuaternionMixed rot = new QuaternionMixed().setEulerAngles(4f, 0, 0);
 
 		for (int i = 0; i < 90; i++) {
 			q.mul(rot);
 			q.setEulerAngles(q.getYaw(), q.getPitch(), q.getRoll());
 		}
 
-		assertEquals(0.0, q.getYaw(), epsilon);
+		assertEquals(0f, q.getYaw(), epsilon);
 	}
 }
