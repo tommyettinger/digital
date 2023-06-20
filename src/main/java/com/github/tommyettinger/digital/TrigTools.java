@@ -250,6 +250,10 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static float sin(float radians) {
+        //Mean absolute error:     0.0000075369
+        //Mean relative error:     0.0154355764
+        //Maximum abs. error:      0.0003835472
+        //Maximum rel. error:   2538.7736816406
         return SIN_TABLE[(int) (radians * radToIndex) & TABLE_MASK];
     }
 
@@ -320,6 +324,10 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static float sinDeg(float degrees) {
+        //Mean absolute error:     0.0001201583
+        //Mean relative error:     0.0018105424
+        //Maximum abs. error:      0.0003834828
+        //Maximum rel. error:    719.0000000000
         return SIN_TABLE[(int) (degrees * degToIndex) & TABLE_MASK];
     }
 
@@ -547,12 +555,10 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmooth(float radians) {
-        //Absolute error:      0.0001498343
-        //Relative error:      0.0000000000
-        //Maximum error:       0.0003550053
-        //Worst input:         -4.2084822655
-        //Worst approx output: 0.8753479123
-        //Correct output:      0.8757029176
+        //Mean absolute error:     0.0000037685
+        //Mean relative error:     0.0000075369
+        //Maximum abs. error:      0.0003550053
+        //Maximum rel. error:      1.0000000000
         radians = radians * (TrigTools.PI_INVERSE * 2f);
         final int ceil = (int) Math.ceil(radians) & -2;
         radians -= ceil;
@@ -646,12 +652,10 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoothDeg(float degrees) {
-        //Absolute error:   0.00014982
-        //Relative error:   0.00000000
-        //Maximum error:    0.00035495
-        //Worst input:      -299.00579834
-        //Worst approx output: 0.87421572
-        //Correct output:      0.87457067
+        //Mean absolute error:     0.0001496345
+        //Mean relative error:     0.0002429262
+        //Maximum abs. error:      0.0003549457
+        //Maximum rel. error:      0.2965919971
         degrees = degrees * (1f / 90f);
         final int ceil = (int) Math.ceil(degrees) & -2;
         degrees -= ceil;
@@ -823,10 +827,10 @@ public final class TrigTools {
      */
     public static float sinSmoother(float radians) {
         // 14 bits
-        //Mean absolute error:     0.0000000698
-        //Mean relative error:     0.0000011298
+        //Mean absolute error:     0.0000000013
+        //Mean relative error:     0.0000000233
         //Maximum abs. error:      0.0000004470
-        //Maximum rel. error:      0.9999999404
+        //Maximum rel. error:      1.0000000000
         radians *= radToIndex;
         final int floor = (int)(radians + 16384.0) - 16384;
         final int masked = floor & TABLE_MASK;
@@ -958,6 +962,10 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmootherDeg(float degrees) {
+        //Mean absolute error:     0.0000000590
+        //Mean relative error:     0.0000008347
+        //Maximum abs. error:      0.0000003576
+        //Maximum rel. error:      0.2968730032
         degrees *= degToIndex;
         final int floor = (int)(degrees + 16384.0) - 16384;
         final int masked = floor & TABLE_MASK;

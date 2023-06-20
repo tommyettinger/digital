@@ -504,12 +504,12 @@ public class PrecisionTest {
 //        float[] table075 = makeTableFloat(0.75);
         float[] tableMixed = makeTableFloatMixed();
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
-//        functions.put("sinGreen", PrecisionTest::sinGreen);
-//        functions.put("sinNewTable", TrigTools::sin);
-//        functions.put("sinOldTable", OldTrigTools::sin);
+        functions.put("sinNewTable", TrigTools::sin);
+        functions.put("sinOldTable", OldTrigTools::sin);
+        functions.put("sinSmooth", TrigTools::sinSmooth);
+        functions.put("sinSmoother", TrigTools::sinSmoother);
         functions.put("sinSmootherMixed", (f) -> sinMixed(tableMixed, f));
-//        functions.put("sinSmooth", TrigTools::sinSmooth);
-//        functions.put("sinSmoother", TrigTools::sinSmoother);
+        functions.put("sinGreen", PrecisionTest::sinGreen);
 
 //        functions.put("sin00Prior", (f) -> sin(prior00, f));
 //        functions.put("sin05Prior", (f) -> sin(prior05, f));
@@ -538,13 +538,15 @@ public class PrecisionTest {
                         approx = op.applyAsFloat(x),
                         err = tru - approx,
                         ae = abs(err),
-                        re = Math.abs(err / Math.nextAfter(tru, Math.copySign(Float.MAX_VALUE, tru)));
-                relError += re;
-                if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
-                    highestRelX = x;
-                }
-                if (minRelError != (minRelError = Math.min(minRelError, re))) {
-                    lowestRelX = x;
+                        re = MathTools.isZero(tru, 1E-10) ? 0f : Math.abs(err / tru);
+                if(!MathTools.isZero(tru, 1E-10)) {
+                    relError += re;
+                    if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                        highestRelX = x;
+                    }
+                    if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                        lowestRelX = x;
+                    }
                 }
                 absError += ae;
                 if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
@@ -592,33 +594,64 @@ public class PrecisionTest {
         functions.put("sinSmoothDeg", TrigTools::sinSmoothDeg);
         functions.put("sinDegNewTable", TrigTools::sinDeg);
         functions.put("sinDegOldTable", OldTrigTools::sinDeg);
-
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
             final FloatUnaryOperator op = ent.getValue();
-            double absError = 0.0, relError = 0.0, maxError = 0.0;
-            float worstX = 0;
+            float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
+            float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
             long counter = 0L;
-            for (float x = -360; x <= 360; x += 0x1p-14f) {
-
-                double tru = (float) Math.sin(Math.toRadians(x)),
-                        err = op.applyAsFloat(x) - tru,
-                        ae = abs(err);
-                relError += Math.abs(ae / Math.nextAfter(tru, Math.copySign(Float.POSITIVE_INFINITY, tru)));
+            for (float x = -360; x <= 360; x += 1E-4f) {
+                float tru = (float) Math.sin(Math.toRadians(x)),
+                        approx = op.applyAsFloat(x),
+                        err = tru - approx,
+                        ae = abs(err),
+                        re = MathTools.isZero(tru, 1E-10) ? 0f : Math.abs(err / tru);
+                if(!MathTools.isZero(tru, 1E-10)) {
+                    relError += re;
+                    if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                        highestRelX = x;
+                    }
+                    if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                        lowestRelX = x;
+                    }
+                }
                 absError += ae;
-                if (maxError != (maxError = Math.max(maxError, ae))) {
-                    worstX = x;
+                if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
+                    worstAbsX = x;
                 }
                 ++counter;
             }
+            float worstAbs = op.applyAsFloat(worstAbsX),
+                    worstTru = (float) Math.sin(Math.toRadians(worstAbsX)),
+                    highestTru = (float) Math.sin(Math.toRadians(highestRelX)),
+                    lowestTru = (float) Math.sin(Math.toRadians(lowestRelX)),
+                    lowestErr = lowestTru - op.applyAsFloat(lowestRelX),
+                    lowestRel = abs(lowestErr / Math.nextAfter(lowestTru, Math.copySign(Float.MAX_VALUE, lowestTru))),
+                    highestErr = highestTru - op.applyAsFloat(highestRelX),
+                    highestRel = abs(highestErr / Math.nextAfter(highestTru, Math.copySign(Float.MAX_VALUE, highestTru)));
             System.out.printf(
-                    "Absolute error:   %3.8f\n" +
-                            "Relative error:   %3.8f\n" +
-                            "Maximum error:    %3.8f\n" +
-                            "Worst input:      %3.8f\n" +
-                            "Worst approx output: %3.8f\n" +
-                            "Correct output:      %3.8f\n", absError / counter, relError / counter, maxError, worstX, op.applyAsFloat(worstX), (float) Math.sin(Math.toRadians(worstX)));
+                    "Mean absolute error: %16.10f\n" +
+                            "Mean relative error: %16.10f\n" +
+                            "Maximum abs. error:  %16.10f\n" +
+                            "Maximum rel. error:  %16.10f\n" +
+                            "Lowest output rel:   %16.10f\n" +
+                            "Best input (lo):     %30.24f\n" +
+                            "Best output (lo):    %16.10f (0x%08X)\n" +
+                            "Correct output (lo): %16.10f (0x%08X)\n" +
+                            "Worst input (hi):    %30.24f\n" +
+                            "Highest output rel:  %16.10f\n" +
+                            "Worst output (hi):   %16.10f (0x%08X)\n" +
+                            "Correct output (hi): %16.10f (0x%08X)\n" +
+                            "Worst input (abs):   %30.24f\n" +
+                            "Worst output (abs):  %16.10f (0x%08X)\n" +
+                            "Correct output (abs):%16.10f (0x%08X)\n", absError / counter, relError / counter,
+                    maxAbsError, maxRelError,
+                    lowestRel, lowestRelX, op.applyAsFloat(lowestRelX), Float.floatToIntBits(op.applyAsFloat(lowestRelX)), lowestTru, Float.floatToIntBits(lowestTru),
+                    highestRelX, highestRel, op.applyAsFloat(highestRelX), Float.floatToIntBits(op.applyAsFloat(highestRelX)), highestTru, Float.floatToIntBits(highestTru),
+                    worstAbsX, worstAbs, Float.floatToIntBits(worstAbs), worstTru, Float.floatToIntBits(worstTru));
         }
+        System.out.printf("-------\n" +
+                "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
 
     @Test
