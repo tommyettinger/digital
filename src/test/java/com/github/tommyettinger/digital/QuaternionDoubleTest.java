@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class QuaternionDoubleTest {
-	private static final double epsilon = 0x1p-17f;
+	private static final double epsilon = 0x1p-32;
 
 	@Test
 	public void testRoundTrip () {
@@ -25,7 +25,7 @@ public class QuaternionDoubleTest {
 		QuaternionDouble q = new QuaternionDouble();
 		QuaternionDouble rot = new QuaternionDouble().setEulerAngles(4.0, 0, 0);
 
-		for (int i = 0; i < 90; i++) {
+		for (int i = 0; i < 9000; i++) {
 			q.mul(rot);
 			q.setEulerAngles(q.getYaw(), q.getPitch(), q.getRoll());
 		}

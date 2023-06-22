@@ -118,8 +118,8 @@ public class QuaternionDouble {
 	 * @param roll the rotation around the z axis degrees
 	 * @return this quaternion */
 	public QuaternionDouble setEulerAngles (double yaw, double pitch, double roll) {
-		return setEulerAnglesRad(yaw * TrigTools.degreesToRadians, pitch * TrigTools.degreesToRadians,
-			roll * TrigTools.degreesToRadians);
+		return setEulerAnglesRad(yaw * TrigTools.degreesToRadiansD, pitch * TrigTools.degreesToRadiansD,
+			roll * TrigTools.degreesToRadiansD);
 	}
 
 	/** Sets the quaternion to the given euler angles in radians.
@@ -157,7 +157,7 @@ public class QuaternionDouble {
 	 * @return positive (+1) for north pole, negative (-1) for south pole, zero (0) when no gimbal lock */
 	public int getGimbalPole () {
 		final double t = y * x + z * w;
-		return t > 0.499f ? 1 : (t < -0.499f ? -1 : 0);
+		return t > 0.499 ? 1 : (t < -0.499 ? -1 : 0);
 	}
 
 	/** Get the roll euler angle in radians, which is the rotation around the z axis. Requires that this quaternion is normalized.
@@ -411,7 +411,7 @@ public class QuaternionDouble {
 	 * @param degrees The angle in degrees
 	 * @return This quaternion for chaining. */
 	public QuaternionDouble setFromAxis (final double x, final double y, final double z, final double degrees) {
-		return setFromAxisRad(x, y, z, degrees * TrigTools.degreesToRadians);
+		return setFromAxisRad(x, y, z, degrees * TrigTools.degreesToRadiansD);
 	}
 
 	/** Sets the quaternion components from the given axis and angle around that axis.
@@ -520,29 +520,29 @@ public class QuaternionDouble {
 		// we protect the division by s by ensuring that s>=1
 		if (t >= 0) { // |w| >= .5
 			double s = Math.sqrt(t + 1); // |s|>=1 ...
-			w = 0.5f * s;
-			s = 0.5f / s; // so this division isn't bad
+			w = 0.5 * s;
+			s = 0.5 / s; // so this division isn't bad
 			x = (zy - yz) * s;
 			y = (xz - zx) * s;
 			z = (yx - xy) * s;
 		} else if ((xx > yy) && (xx > zz)) {
 			double s = Math.sqrt(1.0 + xx - yy - zz); // |s|>=1
-			x = s * 0.5f; // |x| >= .5
-			s = 0.5f / s;
+			x = s * 0.5; // |x| >= .5
+			s = 0.5 / s;
 			y = (yx + xy) * s;
 			z = (xz + zx) * s;
 			w = (zy - yz) * s;
 		} else if (yy > zz) {
 			double s = Math.sqrt(1.0 + yy - xx - zz); // |s|>=1
-			y = s * 0.5f; // |y| >= .5
-			s = 0.5f / s;
+			y = s * 0.5; // |y| >= .5
+			s = 0.5 / s;
 			x = (yx + xy) * s;
 			z = (zy + yz) * s;
 			w = (xz - zx) * s;
 		} else {
 			double s = Math.sqrt(1.0 + zz - xx - yy); // |s|>=1
-			z = s * 0.5f; // |z| >= .5
-			s = 0.5f / s;
+			z = s * 0.5; // |z| >= .5
+			s = 0.5 / s;
 			x = (xz + zx) * s;
 			y = (zy + yz) * s;
 			w = (yx - xy) * s;
@@ -763,7 +763,7 @@ public class QuaternionDouble {
 	 * @see <a href="http://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation">wikipedia</a>
 	 * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle">calculation</a> */
 	public double getAxisAngle (Vector3 axis) {
-		return getAxisAngleRad(axis) * TrigTools.radiansToDegrees;
+		return getAxisAngleRad(axis) * TrigTools.radiansToDegreesD;
 	}
 
 	/** Get the axis-angle representation of the rotation in radians. The supplied vector will receive the axis (x, y and z values)
@@ -807,7 +807,7 @@ public class QuaternionDouble {
 	 * axis and the angle of this rotation. Use {@link #getAngleAround(Vector3)} to get the angle around a specific axis.
 	 * @return the angle in degrees of the rotation */
 	public double getAngle () {
-		return getAngleRad() * TrigTools.radiansToDegrees;
+		return getAngleRad() * TrigTools.radiansToDegreesD;
 	}
 
 	/** Get the swing rotation and twist rotation for the specified axis. The twist rotation represents the rotation around the
@@ -869,7 +869,7 @@ public class QuaternionDouble {
 	 * @param axisZ the z component of the normalized axis for which to get the angle
 	 * @return the angle in degrees of the rotation around the specified axis */
 	public double getAngleAround (final double axisX, final double axisY, final double axisZ) {
-		return getAngleAroundRad(axisX, axisY, axisZ) * TrigTools.radiansToDegrees;
+		return getAngleAroundRad(axisX, axisY, axisZ) * TrigTools.radiansToDegreesD;
 	}
 
 	/** Get the angle in degrees of the rotation around the specified axis. The axis must be normalized.
