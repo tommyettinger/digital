@@ -14,17 +14,18 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.github.tommyettinger.digital;
+package com.badlogic.gdx.math;
 
-import com.badlogic.gdx.math.Matrix3;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.NumberUtils;
 
-/** A simple quaternion class.
+import java.util.Random;
+
+/** A simple quaternion class using double precision.
  * @see <a href="http://en.wikipedia.org/wiki/Quaternion">http://en.wikipedia.org/wiki/Quaternion</a>
  * @author badlogicgames@gmail.com
  * @author vesuvio
- * @author xoppa */
+ * @author xoppa
+ * @author Tommy Ettinger */
 public class QuaternionDouble {
 	private static final QuaternionDouble tmp1 = new QuaternionDouble(0, 0, 0, 0);
 	private static final QuaternionDouble tmp2 = new QuaternionDouble(0, 0, 0, 0);
@@ -51,7 +52,7 @@ public class QuaternionDouble {
 	 * 
 	 * @param quaternion The quaternion to copy. */
 	public QuaternionDouble(QuaternionDouble quaternion) {
-		this.set(quaternion);
+		this.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 	}
 
 	/** Constructor, sets the quaternion from the given axis vector and the angle around that axis in degrees.
@@ -118,8 +119,8 @@ public class QuaternionDouble {
 	 * @param roll the rotation around the z axis degrees
 	 * @return this quaternion */
 	public QuaternionDouble setEulerAngles (double yaw, double pitch, double roll) {
-		return setEulerAnglesRad(yaw * TrigTools.degreesToRadiansD, pitch * TrigTools.degreesToRadiansD,
-			roll * TrigTools.degreesToRadiansD);
+		return setEulerAnglesRad(yaw * degreesToRadiansD, pitch * degreesToRadiansD,
+			roll * degreesToRadiansD);
 	}
 
 	/** Sets the quaternion to the given euler angles in radians.
@@ -198,7 +199,7 @@ public class QuaternionDouble {
 		return Math.toDegrees(getYawRad());
 	}
 
-	public final static double len2 (final double x, final double y, final double z, final double w) {
+	public static double len2 (final double x, final double y, final double z, final double w) {
 		return x * x + y * y + z * z + w * w;
 	}
 
@@ -211,7 +212,7 @@ public class QuaternionDouble {
 	 * @return the quaternion for chaining */
 	public QuaternionDouble nor () {
 		double len = len2();
-		if (len != 0.0 && !MathTools.isEqual(len, 1.0, MathTools.EPSILON_D)) {
+		if (len != 0.0 && !isEqual(len, 1.0)) {
 			len = Math.sqrt(len);
 			w /= len;
 			x /= len;
@@ -334,8 +335,7 @@ public class QuaternionDouble {
 		return this;
 	}
 
-	// TODO : the matrix4 set(quaternion) doesnt set the last row+col of the matrix to 0,0,0,1 so... that's why there is this
-// method
+	// TODO : the matrix4 set(quaternion) doesn't set the last row+col of the matrix to 0,0,0,1 so... that's why there is this method
 	/** Fills a 4x4 matrix with the rotation matrix represented by this quaternion.
 	 * 
 	 * @param matrix Matrix to fill */
@@ -376,13 +376,13 @@ public class QuaternionDouble {
 
 	/** @return If this quaternion is an identity QuaternionDouble */
 	public boolean isIdentity () {
-		return MathTools.isZero(x, MathTools.EPSILON_D) && MathTools.isZero(y, MathTools.EPSILON_D) && MathTools.isZero(z, MathTools.EPSILON_D) && MathTools.isEqual(w, 1.0, MathTools.EPSILON_D);
+		return isZero(x, EPSILON_D) && isZero(y, EPSILON_D) && isZero(z, EPSILON_D) && isEqual(w, 1.0);
 	}
 
 	/** @return If this quaternion is an identity QuaternionDouble */
 	public boolean isIdentity (final double tolerance) {
-		return MathTools.isZero(x, tolerance) && MathTools.isZero(y, tolerance) && MathTools.isZero(z, tolerance)
-			&& MathTools.isEqual(w, 1.0, tolerance);
+		return isZero(x, tolerance) && isZero(y, tolerance) && isZero(z, tolerance)
+			&& isEqual(w, 1.0, tolerance);
 	}
 
 	// todo : the setFromAxis(v3,double) method should replace the set(v3,double) method
@@ -411,7 +411,7 @@ public class QuaternionDouble {
 	 * @param degrees The angle in degrees
 	 * @return This quaternion for chaining. */
 	public QuaternionDouble setFromAxis (final double x, final double y, final double z, final double degrees) {
-		return setFromAxisRad(x, y, z, degrees * TrigTools.degreesToRadiansD);
+		return setFromAxisRad(x, y, z, degrees * degreesToRadiansD);
 	}
 
 	/** Sets the quaternion components from the given axis and angle around that axis.
@@ -424,7 +424,7 @@ public class QuaternionDouble {
 		double d = Math.sqrt(x * x + y * y + z * z);
 		if (d == 0.0) return idt();
 		d = 1.0 / d;
-		double l_ang = radians < 0 ? TrigTools.PI2_D - (-radians % TrigTools.PI2_D) : radians % TrigTools.PI2_D;
+		double l_ang = radians < 0 ? PI2_D - (-radians % PI2_D) : radians % PI2_D;
 		double l_sin = Math.sin(l_ang / 2);
 		double l_cos = Math.cos(l_ang / 2);
 		return this.set(d * x * l_sin, d * y * l_sin, d * z * l_sin, l_cos).nor();
@@ -458,12 +458,12 @@ public class QuaternionDouble {
 	 * <p>
 	 * Sets the QuaternionDouble from the given x-, y- and z-axis which have to be orthonormal.
 	 * </p>
-	 * 
+	 *
 	 * <p>
-	 * Taken from Bones framework for JPCT, see http://www.aptalkarga.com/bones/ which in turn took it from Graphics Gem code at
-	 * ftp://ftp.cis.upenn.edu/pub/graphics/shoemake/quatut.ps.Z.
+	 * Taken from <a href="https://github.com/raftAtGit/Bones">Bones framework for JPCT</a> which in turn took it from Graphics Gem code at
+	 * ftp://ftp.cis.upenn.edu/pub/graphics/shoemake/quatut.ps.Z .
 	 * </p>
-	 * 
+	 *
 	 * @param xx x-axis x-coordinate
 	 * @param xy x-axis y-coordinate
 	 * @param xz x-axis z-coordinate
@@ -483,7 +483,7 @@ public class QuaternionDouble {
 	 * </p>
 	 * 
 	 * <p>
-	 * Taken from Bones framework for JPCT, see http://www.aptalkarga.com/bones/ which in turn took it from Graphics Gem code at
+	 * Taken from <a href="https://github.com/raftAtGit/Bones">Bones framework for JPCT</a> which in turn took it from Graphics Gem code at
 	 * ftp://ftp.cis.upenn.edu/pub/graphics/shoemake/quatut.ps.Z.
 	 * </p>
 	 * 
@@ -577,7 +577,7 @@ public class QuaternionDouble {
 	}
 
 	/** Spherical linear interpolation between this quaternion and the other quaternion, based on the alpha value in the range
-	 * [0,1]. Taken from Bones framework for JPCT, see http://www.aptalkarga.com/bones/
+	 * [0,1]. Taken from <a href="https://github.com/raftAtGit/Bones">Bones framework for JPCT</a>
 	 * @param end the end quaternion
 	 * @param alpha alpha in the range [0,1]
 	 * @return this quaternion for chaining */
@@ -647,7 +647,7 @@ public class QuaternionDouble {
 	}
 
 	/** Calculates (this quaternion)^alpha where alpha is a real number and stores the result in this quaternion. See
-	 * http://en.wikipedia.org/wiki/Quaternion#Exponential.2C_logarithm.2C_and_power
+	 * <a href="http://en.wikipedia.org/wiki/Quaternion#Exponential.2C_logarithm.2C_and_power">Wikipedia</a>.
 	 * @param alpha Exponent
 	 * @return This quaternion for chaining */
 	public QuaternionDouble exp (double alpha) {
@@ -660,9 +660,8 @@ public class QuaternionDouble {
 		double theta = Math.acos(w / norm);
 
 		// Calculate coefficient of basis elements
-		double coeff = 0;
-		if (Math.abs(theta) < 0.001) // If theta is small enough, use the limit of sin(alpha*theta) / sin(theta) instead of actual
-// value
+		double coeff;
+		if (Math.abs(theta) < 0.001) // If theta is small enough, use the limit of sin(alpha*theta) / sin(theta) instead of actual value
 			coeff = normExp * alpha / norm;
 		else
 			coeff = normExp * Math.sin(alpha * theta) / (norm * Math.sin(theta));
@@ -681,13 +680,17 @@ public class QuaternionDouble {
 
 	@Override
 	public int hashCode () {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + BitConversion.doubleToMixedIntBits(w);
-		result = prime * result + BitConversion.doubleToMixedIntBits(x);
-		result = prime * result + BitConversion.doubleToMixedIntBits(y);
-		result = prime * result + BitConversion.doubleToMixedIntBits(z);
-		return result;
+		final long prime = 421;
+		long result = 1, bits;
+		bits = NumberUtils.doubleToLongBits(w);
+		result = prime * result + (bits ^ bits >>> 32);
+		bits = NumberUtils.doubleToLongBits(x);
+		result = prime * result + (bits ^ bits >>> 32);
+		bits = NumberUtils.doubleToLongBits(y);
+		result = prime * result + (bits ^ bits >>> 32);
+		bits = NumberUtils.doubleToLongBits(z);
+		result = prime * result + (bits ^ bits >>> 32);
+		return (int) (result ^ result >>> 32);
 	}
 
 	@Override
@@ -702,10 +705,10 @@ public class QuaternionDouble {
 			return false;
 		}
 		QuaternionDouble other = (QuaternionDouble)obj;
-		return (BitConversion.doubleToLongBits(w) == BitConversion.doubleToLongBits(other.w))
-			&& (BitConversion.doubleToLongBits(x) == BitConversion.doubleToLongBits(other.x))
-			&& (BitConversion.doubleToLongBits(y) == BitConversion.doubleToLongBits(other.y))
-			&& (BitConversion.doubleToLongBits(z) == BitConversion.doubleToLongBits(other.z));
+		return (NumberUtils.doubleToLongBits(w) == NumberUtils.doubleToLongBits(other.w))
+			&& (NumberUtils.doubleToLongBits(x) == NumberUtils.doubleToLongBits(other.x))
+			&& (NumberUtils.doubleToLongBits(y) == NumberUtils.doubleToLongBits(other.y))
+			&& (NumberUtils.doubleToLongBits(z) == NumberUtils.doubleToLongBits(other.z));
 	}
 
 	/** Get the dot product between the two quaternions (commutative).
@@ -718,8 +721,8 @@ public class QuaternionDouble {
 	 * @param z2 the z component of the second quaternion
 	 * @param w2 the w component of the second quaternion
 	 * @return the dot product between the first and second quaternion. */
-	public final static double dot (final double x1, final double y1, final double z1, final double w1, final double x2, final double y2,
-		final double z2, final double w2) {
+	public static double dot (final double x1, final double y1, final double z1, final double w1, final double x2, final double y2,
+							  final double z2, final double w2) {
 		return x1 * x2 + y1 * y2 + z1 * z2 + w1 * w2;
 	}
 
@@ -763,7 +766,7 @@ public class QuaternionDouble {
 	 * @see <a href="http://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation">wikipedia</a>
 	 * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle">calculation</a> */
 	public double getAxisAngle (Vector3 axis) {
-		return getAxisAngleRad(axis) * TrigTools.radiansToDegreesD;
+		return getAxisAngleRad(axis) * radiansToDegreesD;
 	}
 
 	/** Get the axis-angle representation of the rotation in radians. The supplied vector will receive the axis (x, y and z values)
@@ -807,7 +810,7 @@ public class QuaternionDouble {
 	 * axis and the angle of this rotation. Use {@link #getAngleAround(Vector3)} to get the angle around a specific axis.
 	 * @return the angle in degrees of the rotation */
 	public double getAngle () {
-		return getAngleRad() * TrigTools.radiansToDegreesD;
+		return getAngleRad() * radiansToDegreesD;
 	}
 
 	/** Get the swing rotation and twist rotation for the specified axis. The twist rotation represents the rotation around the
@@ -852,7 +855,7 @@ public class QuaternionDouble {
 	public double getAngleAroundRad (final double axisX, final double axisY, final double axisZ) {
 		final double d = (this.x * axisX + this.y * axisY + this.z * axisZ);
 		final double l2 = QuaternionDouble.len2(axisX * d, axisY * d, axisZ * d, this.w);
-		return MathTools.isZero(l2, MathTools.EPSILON_D) ?.0
+		return isZero(l2, EPSILON_D) ?.0
 			: (2.0 * Math.acos(Math.min(Math.max((d < 0 ? -this.w : this.w) / Math.sqrt(l2), -1.0), 1.0)));
 	}
 
@@ -869,7 +872,7 @@ public class QuaternionDouble {
 	 * @param axisZ the z component of the normalized axis for which to get the angle
 	 * @return the angle in degrees of the rotation around the specified axis */
 	public double getAngleAround (final double axisX, final double axisY, final double axisZ) {
-		return getAngleAroundRad(axisX, axisY, axisZ) * TrigTools.radiansToDegreesD;
+		return getAngleAroundRad(axisX, axisY, axisZ) * radiansToDegreesD;
 	}
 
 	/** Get the angle in degrees of the rotation around the specified axis. The axis must be normalized.
@@ -878,4 +881,55 @@ public class QuaternionDouble {
 	public double getAngleAround (final Vector3 axis) {
 		return getAngleAround(axis.x, axis.y, axis.z);
 	}
+
+	/** 2 to the -53 as a float; this is equal to {@code Math.ulp(0.5)}, and is the smallest non-zero distance possible
+	 * between two results of {@link Random#nextDouble()}.
+	 * Useful for converting a 53-bit {@code long} value to a gradient between 0 and 1. */
+	public static final double EPSILON_D = 0x1p-53;
+
+	/** 2.0 times {@link Math#PI}. */
+	public static final double PI2_D = Math.PI * 2.0;
+
+	/** Multiply by this to convert from radians to degrees. */
+	public static final double radiansToDegreesD = 180.0 / Math.PI;
+
+	/** Multiply by this to convert from degrees to radians. */
+	public static final double degreesToRadiansD = Math.PI / 180.0;
+
+	/**
+	 * This compares two doubles for equality and allows the given tolerance during comparison.
+	 * An example is {@code 0.3 - 0.2 == 0.1} vs. {@code isEqual(0.3 - 0.2, 0.1, 0.000001)};
+	 * the first is incorrectly false, while the second is correctly true.
+	 *
+	 * @param a         the first double to compare
+	 * @param b         the second double to compare
+	 * @param tolerance the maximum difference between a and b permitted for this to return true, inclusive
+	 * @return true if a and b have a difference less than or equal to tolerance, or false otherwise.
+	 */
+	public static boolean isEqual(double a, double b, double tolerance) {
+		return Math.abs(a - b) <= tolerance;
+	}
+
+	/**
+	 * This compares two doubles for equality with {@link #EPSILON_D} as the tolerance allowed for imprecision.
+	 * An example is {@code 0.3 - 0.2 == 0.1} vs. {@code isEqual(0.3 - 0.2, 0.1)};
+	 * the first is incorrectly false, while the second is correctly true.
+	 *
+	 * @param a         the first double to compare
+	 * @param b         the second double to compare
+	 * @return true if a and b have a difference less than or equal to {@link #EPSILON_D}, or false otherwise.
+	 */
+	public static boolean isEqual(double a, double b) {
+		return Math.abs(a - b) <= EPSILON_D;
+	}
+	/** Returns true if the value is zero. A suggested tolerance is {@code 0x1p-20}, which is exactly 2 to the -20 or
+	 * roughly 1 divided by 1 million, or a smaller number to reduce false-positives, such as {@code 0x1p-32}.
+	 *
+	 * @param value     any double
+	 * @param tolerance represent an outer bound below which the value is considered zero.
+	 */
+	public static boolean isZero(double value, double tolerance) {
+		return Math.abs(value) <= tolerance;
+	}
+
 }

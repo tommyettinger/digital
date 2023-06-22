@@ -252,8 +252,8 @@ public final class MathTools {
      * tolerance during comparison. An example is {@code 0.3 - 0.2 == 0.1} vs. {@code isEqual(0.3 - 0.2, 0.1, 0.000001)};
      * the first is incorrectly false, while the second is correctly true.
      *
-     * @param a         the first float to compare
-     * @param b         the second float to compare
+     * @param a         the first double to compare
+     * @param b         the second double to compare
      * @param tolerance the maximum difference between a and b permitted for this to return true, inclusive
      * @return true if a and b have a difference less than or equal to tolerance, or false otherwise.
      */
