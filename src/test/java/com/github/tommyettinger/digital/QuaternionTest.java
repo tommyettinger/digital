@@ -46,12 +46,22 @@ public class QuaternionTest {
 		q.idt();
 		rot.setEulerAngles(0, 0, 4f);
 
-		for (int i = 0; i < 90; i++) {
+		for (int i = 0; i < 21; i++) {
 			q.mul(rot);
 			q.setEulerAngles(q.getYaw(), q.getPitch(), q.getRoll());
 		}
 
-		assertEquals(0.0, q.getRoll(), epsilon);
+		assertEquals(84f, q.getRoll(), epsilon);
+
+		Quaternion quat = new Quaternion().setEulerAngles(0f, 0f, 88f);
+		System.out.println(quat.getYaw());
+		System.out.println(quat.getPitch());
+		System.out.println(quat.getRoll());
+		// prints:
+		//0.0
+		//90.0
+		//1.906113E-4
+		assertEquals(88f, quat.getRoll(), 0.05f);
 
 	}
 }

@@ -43,14 +43,14 @@ public class QuaternionDoubleTest {
 
 		assertEquals(0.0, q.getPitch(), epsilon);
 
-//		q.idt();
-//		rot.setEulerAngles(0, 0, 4.0);
-//
-//		for (int i = 0; i < 900; i++) {
-//			q.mul(rot);
-//			q.setEulerAngles(q.getYaw(), q.getPitch(), q.getRoll());
-//		}
-//
-//		assertEquals(0.0, q.getRoll(), epsilon);
+		q.idt();
+		rot.setEulerAngles(0, 0, 4.0);
+
+		for (int i = 0; i < 9000; i++) {
+			q.mul(rot);
+			q.setEulerAngles(q.getYaw(), q.getPitch(), q.getRoll());
+		}
+
+		assertEquals(0.0, q.getRoll(), epsilon);
 	}
 }
