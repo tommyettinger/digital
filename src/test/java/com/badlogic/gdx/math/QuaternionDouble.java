@@ -18,6 +18,7 @@ package com.badlogic.gdx.math;
 
 import com.badlogic.gdx.utils.NumberUtils;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /** A simple quaternion class using double precision.
@@ -26,7 +27,9 @@ import java.util.Random;
  * @author vesuvio
  * @author xoppa
  * @author Tommy Ettinger */
-public class QuaternionDouble {
+public class QuaternionDouble implements Serializable {
+	private static final long serialVersionUID = -5478290408946548791L;
+
 	private static final QuaternionDouble tmp1 = new QuaternionDouble(0, 0, 0, 0);
 	private static final QuaternionDouble tmp2 = new QuaternionDouble(0, 0, 0, 0);
 
