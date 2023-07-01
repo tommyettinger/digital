@@ -540,16 +540,13 @@ public class Vector4 implements Serializable, Vector<Vector4>  {
      * @return a string representation of this object. */
     @Override
     public String toString () {
-        return "(" + x + "," + y + "," + z + ", " + w + ")";
+        return "(" + x + "," + y + "," + z + "," + w + ")";
     }
 
     /** Sets this {@code Vector4} to the value represented by the specified string according to the format of {@link #toString()}.
      * @param v the string.
      * @return this vector, set with the value from v, for chaining */
     public Vector4 fromString (String v) {
-
-        // TODO, have not tested this
-
         int s0 = v.indexOf(',', 1);
         int s1 = v.indexOf(',', s0 + 1);
         int s2 = v.indexOf(',', s1 + 1);
