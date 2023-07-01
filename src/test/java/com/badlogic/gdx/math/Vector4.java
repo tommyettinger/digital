@@ -392,13 +392,85 @@ public class Vector4 implements Serializable, Vector<Vector4>  {
     /** @return true if this vector is in line with the other vector (either in the same or the opposite direction) */
     @Override
     public boolean isOnLine (Vector4 other, float epsilon) {
-        throw new UnsupportedOperationException();
+        // The algorithm used here is based on the one in yama, a C++ math library.
+        // https://github.com/iboB/yama/blob/f08a71c6fd84df5eed62557000373f17f14e1ec7/include/yama/vector4.hpp#L566-L598
+        // This code uses a flags variable to avoid allocating a float array.
+        int flags = 0;
+        float dx = 0, dy = 0, dz = 0, dw = 0;
+
+        if(MathUtils.isZero(x, epsilon)){
+            if(!MathUtils.isZero(other.x, epsilon)) {
+                return false;
+            }
+        }
+        else {
+            dx = x / other.x;
+            flags |= 1;
+        }
+        if(MathUtils.isZero(y, epsilon)){
+            if(!MathUtils.isZero(other.y, epsilon)) {
+                return false;
+            }
+        }
+        else {
+            dy = y / other.y;
+            flags |= 2;
+        }
+        if(MathUtils.isZero(z, epsilon)){
+            if(!MathUtils.isZero(other.z, epsilon)) {
+                return false;
+            }
+        }
+        else {
+            dz = z / other.z;
+            flags |= 4;
+        }
+        if(MathUtils.isZero(w, epsilon)){
+            if(!MathUtils.isZero(other.w, epsilon)) {
+                return false;
+            }
+        }
+        else {
+            dw = w / other.w;
+            flags |= 8;
+        }
+
+        switch (flags) {
+            case 0:
+            case 1:
+            case 2:
+            case 4:
+            case 8:
+                return true;
+            case 3:
+                return MathUtils.isEqual(dx, dy, epsilon);
+            case 5:
+                return MathUtils.isEqual(dx, dz, epsilon);
+            case 9:
+                return MathUtils.isEqual(dx, dw, epsilon);
+            case 6:
+                return MathUtils.isEqual(dy, dz, epsilon);
+            case 10:
+                return MathUtils.isEqual(dy, dw, epsilon);
+            case 12:
+                return MathUtils.isEqual(dz, dw, epsilon);
+            case 7:
+                return MathUtils.isEqual(dx, dy, epsilon) && MathUtils.isEqual(dx, dz, epsilon);
+            case 11:
+                return MathUtils.isEqual(dx, dy, epsilon) && MathUtils.isEqual(dx, dw, epsilon);
+            case 13:
+                return MathUtils.isEqual(dx, dz, epsilon) && MathUtils.isEqual(dx, dw, epsilon);
+            case 14:
+                return MathUtils.isEqual(dy, dz, epsilon) && MathUtils.isEqual(dy, dw, epsilon);
+            default: // this is essentially case 15:
+                return MathUtils.isEqual(dx, dy, epsilon) && MathUtils.isEqual(dx, dz, epsilon) && MathUtils.isEqual(dx, dw, epsilon);
+        }
     }
 
     /** @return true if this vector is in line with the other vector (either in the same or the opposite direction) */
     @Override
     public boolean isOnLine (Vector4 other) {
-        throw new UnsupportedOperationException();
+        return isOnLine(other,  MathUtils.FLOAT_ROUNDING_ERROR);
     }
 
     /** @return true if this vector is collinear with the other vector ({@link #isOnLine(Vector4, float)} &&
