@@ -506,10 +506,11 @@ public class PrecisionTest {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinNewTable", TrigTools::sin);
         functions.put("sinOldTable", OldTrigTools::sin);
+        functions.put("sinReallyOld", OldNumberTools::sin);
         functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinSmoother", TrigTools::sinSmoother);
-        functions.put("sinSmootherMixed", (f) -> sinMixed(tableMixed, f));
-        functions.put("sinGreen", PrecisionTest::sinGreen);
+//        functions.put("sinSmootherMixed", (f) -> sinMixed(tableMixed, f));
+//        functions.put("sinGreen", PrecisionTest::sinGreen);
 
 //        functions.put("sin00Prior", (f) -> sin(prior00, f));
 //        functions.put("sin05Prior", (f) -> sin(prior05, f));

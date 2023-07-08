@@ -78,7 +78,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation "com.badlogicgames.gdx:gdx:1.11.0"
+    testImplementation "com.badlogicgames.gdx:gdx:1.12.0"
     testImplementation "junit:junit:4.13.2"
 
     // ???
