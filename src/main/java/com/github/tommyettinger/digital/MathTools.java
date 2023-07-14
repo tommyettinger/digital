@@ -1165,6 +1165,8 @@ public final class MathTools {
      * Doesn't consider "weird floats" like INFINITY and NaN. This method will only properly ceil
      * floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or {@code 2147467263}.
      * Unlike {@link #ceil(float)}, this is significantly faster than {@code (int)Math.ceil(t)}.
+     * <br>
+     * Taken from libGDX MathUtils.
      *
      * @param t the float to find the ceiling for
      * @return the ceiling of t, as an int
@@ -1177,8 +1179,6 @@ public final class MathTools {
      * Returns the largest int less than or equal to the specified float.
      * Doesn't consider "weird floats" like INFINITY and NaN.
      * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
-     * <br>
-     * Taken from libGDX MathUtils.
      *
      * @param value any float
      * @return the floor of value, as an int
@@ -1191,6 +1191,8 @@ public final class MathTools {
     /**
      * Returns the largest int less than or equal to the specified float. This method will only properly floor floats that are
      * positive. Note, this method simply casts the float to int.
+     * <br>
+     * Taken from libGDX MathUtils.
      *
      * @param value any positive float
      */
@@ -1213,6 +1215,8 @@ public final class MathTools {
     /**
      * Returns the smallest integer greater than or equal to the specified float. This method will only properly ceil floats that
      * are positive.
+     * <br>
+     * Taken from libGDX MathUtils.
      *
      * @param value any positive float
      */
@@ -1223,6 +1227,8 @@ public final class MathTools {
     /**
      * Returns the closest integer to the specified float. This method will only properly round floats from -(2^14) to
      * (Float.MAX_VALUE - 2^14).
+     * <br>
+     * Taken from libGDX MathUtils.
      *
      * @param value a float from -(2^14) to (Float.MAX_VALUE - 2^14)
      */
@@ -1232,6 +1238,8 @@ public final class MathTools {
 
     /**
      * Returns the closest integer to the specified float. This method will only properly round floats that are positive.
+     * <br>
+     * Taken from libGDX MathUtils.
      *
      * @param value any positive float
      */
@@ -1575,8 +1583,8 @@ public final class MathTools {
     /**
      * Very similar to {@link TrigTools#sinTurns(double)} with half frequency, or {@link Math#sin(double)} with {@link Math#PI}
      * frequency, but optimized (and shaped) a little differently. This looks like a squished sine wave when graphed,
-     * and is essentially just interpolating between each pair of odd and even inputs using what FastNoise calls
-     * {@code QUINTIC} interpolation. This interpolation is slightly flatter at peaks and valleys than a sine wave is.
+     * and is essentially just interpolating between each pair of odd and even inputs using "quintic" interpolation.
+     * This interpolation is slightly flatter at peaks and valleys than a sine wave is.
      * <br>
      * An input of any even number should produce something very close to -1.0, any odd number should produce something
      * very close to 1.0, and any number halfway between two incremental integers (like 8.5 or -10.5) should produce 0.0
@@ -1599,13 +1607,15 @@ public final class MathTools {
      * Very similar to {@link TrigTools#sinTurns(double)} with half frequency, or {@link Math#sin(double)} with {@link Math#PI}
      * frequency, but optimized (and shaped) a little differently. This looks like a squished sine wave when graphed,
      * and is essentially just interpolating between each pair of odd and even inputs using what is sometimes called
-     * {@code HERMITE} interpolation. This interpolation is rounder at peaks and valleys than a sine wave is; it is
+     * hermite interpolation. This interpolation is rounder at peaks and valleys than a sine wave is; it is
      * also called {@code smoothstep} in GLSL, and is called cubic here because it gets the third power of a value.
      * <br>
      * An input of any even number should produce something very close to -1.0, any odd number should produce something
      * very close to 1.0, and any number halfway between two incremental integers (like 8.5 or -10.5) should produce 0.0
      * or a very small fraction. In the (unlikely) event that this is given a double that is too large to represent
      * many or any non-integer values, this will simply return -1.0 or 1.0.
+     * <br>
+     * This version of a sway method uses cubic interpolation; it uses up to the third power of value.
      *
      * @param value any double other than NaN or infinite values; extremely large values can't work properly
      * @return a double from -1.0 (inclusive) to 1.0 (inclusive)

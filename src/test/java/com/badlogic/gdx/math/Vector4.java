@@ -401,32 +401,32 @@ public class Vector4 implements Serializable, Vector<Vector4> {
 		int flags = 0;
 		float dx = 0, dy = 0, dz = 0, dw = 0;
 
-		if (MathUtils.isZero(x, epsilon)) {
-			if (!MathUtils.isZero(other.x, epsilon)) {
+		if (MathUtils.isZero(other.x, epsilon)) {
+			if (!MathUtils.isZero(x, epsilon)) {
 				return false;
 			}
 		} else {
 			dx = x / other.x;
 			flags |= 1;
 		}
-		if (MathUtils.isZero(y, epsilon)) {
-			if (!MathUtils.isZero(other.y, epsilon)) {
+		if (MathUtils.isZero(other.y, epsilon)) {
+			if (!MathUtils.isZero(y, epsilon)) {
 				return false;
 			}
 		} else {
 			dy = y / other.y;
 			flags |= 2;
 		}
-		if (MathUtils.isZero(z, epsilon)) {
-			if (!MathUtils.isZero(other.z, epsilon)) {
+		if (MathUtils.isZero(other.z, epsilon)) {
+			if (!MathUtils.isZero(z, epsilon)) {
 				return false;
 			}
 		} else {
 			dz = z / other.z;
 			flags |= 4;
 		}
-		if (MathUtils.isZero(w, epsilon)) {
-			if (!MathUtils.isZero(other.w, epsilon)) {
+		if (MathUtils.isZero(other.w, epsilon)) {
+			if (!MathUtils.isZero(w, epsilon)) {
 				return false;
 			}
 		} else {
