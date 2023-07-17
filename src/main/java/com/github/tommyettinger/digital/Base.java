@@ -4444,8 +4444,7 @@ public class Base {
      * number of instances of search that were found, or 0 if source or search is null or if the searched area is empty.
      * If endIndex is negative, this will search from startIndex until the end of the source.
      * <br>
-     * This really belongs in a different class with String operations, but it's the only method of its type we're using
-     * here, so it can be in Base. It is public so that user code can have it for special-case split operations.
+     * This is now a simple wrapper around {@link TextTools#count(String, String, int, int)}.
      *
      * @param source     a String to look through
      * @param search     a String to look for
@@ -4454,14 +4453,7 @@ public class Base {
      * @return the number of times search was found in source
      */
     public static int count(final String source, final String search, final int startIndex, int endIndex) {
-        if (endIndex < 0)
-            endIndex = 0x7fffffff;
-        if (source.isEmpty() || search.isEmpty() || startIndex < 0 || startIndex >= endIndex)
-            return 0;
-        int amount = 0, idx = startIndex - 1;
-        while ((idx = source.indexOf(search, idx + 1)) >= 0 && idx < endIndex)
-            ++amount;
-        return amount;
+        return TextTools.count(source, search, startIndex, endIndex);
     }
 
     @Override
