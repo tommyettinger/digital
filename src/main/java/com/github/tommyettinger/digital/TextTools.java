@@ -23,6 +23,54 @@ import java.util.Iterator;
  * Various methods for searching, joining, splitting, and padding String and sometimes CharSequence items.
  */
 public class TextTools {
+    /**
+     * Joins the boolean array {@code elements} without delimiters into a String, using "1" for true and "0" for false.
+     * @param elements an array or vararg of booleans
+     * @return a String using 1 for true elements and 0 for false, or "N" if elements is null
+     */
+    public static String join(boolean... elements) {
+        return join('1', '0', elements);
+    }
+    /**
+     * Joins the boolean array {@code elements} without delimiters into a String, using the char {@code t} for true and
+     * the char {@code f} for false.
+     * @param elements an array or vararg of booleans
+     * @return a String using 1 for true elements and 0 for false, or "N" if elements is null
+     */
+    public static String join(char t, char f, boolean... elements) {
+        if (elements == null || elements.length == 0) return "";
+        StringBuilder sb = new StringBuilder(64);
+        for (int i = 0; i < elements.length; i++) {
+            sb.append(elements[i] ? t : f);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Joins the boolean array {@code elements} without delimiters into a String, using "1" for true and "0" for false.
+     * @param sb a StringBuilder that will be modified in-place
+     * @param elements an array or vararg of booleans
+     * @return sb after modifications (if elements was non-null)
+     */
+    public static StringBuilder appendJoined(StringBuilder sb, boolean... elements) {
+        return appendJoined(sb, '1', '0', elements);
+    }
+
+    /**
+     * Joins the boolean array {@code elements} without delimiters into a String, using the char {@code t} for true and
+     * the char {@code f} for false.
+     * @param sb a StringBuilder that will be modified in-place
+     * @param elements an array or vararg of booleans
+     * @return sb after modifications (if elements was non-null)
+     */
+    public static StringBuilder appendJoined(StringBuilder sb, char t, char f, boolean... elements) {
+        if (sb == null || elements == null) return sb;
+        if(elements.length == 0) return sb;
+        for (int i = 0; i < elements.length; i++) {
+            sb.append(elements[i] ? t : f);
+        }
+        return sb;
+    }
 
     /**
      * Joins the items in {@code elements} by calling their toString method on them (or just using the String "null" for
