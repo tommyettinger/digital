@@ -79,6 +79,44 @@ public class TextTools {
         }
         return sb;
     }
+    /**
+     * Given a CharSequence that may contain the char {@code t}, gets a boolean array where an occurrence of t in the
+     * CharSequence produces true and any other char produces false. If source is null, or if source is empty, this
+     * returns an empty array. This starts reading at {@code startIndex} and stops reading before {@code endIndex}. The
+     * endIndex can safely be given as {@link Integer#MAX_VALUE} if you don't have or know an ending boundary; in that
+     * case, this simply uses {@code source.length()} as endIndex.
+     *
+     * @param source     a CharSequence; if null, this returns an empty array
+     * @param t          the char that signifies a true value
+     * @param startIndex the first index, inclusive, in source to split from
+     * @param endIndex   the last index, exclusive, in source to split from
+     * @return a boolean array that has true values where {@code t} was encountered in source
+     */
+    public boolean[] booleanSplitDense(CharSequence source, char t, int startIndex, int endIndex) {
+        if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+            return new boolean[0];
+        endIndex = Math.min(endIndex, source.length());
+        int amount = endIndex - startIndex;
+        boolean[] splat = new boolean[amount];
+        for (int i = 0; i < amount; i++) {
+            if (source.charAt(startIndex++) == t)
+                splat[i] = true;
+        }
+        return splat;
+    }
+
+    /**
+     * Given a CharSequence that may contain the char {@code t}, gets a boolean array where an occurrence of t in the
+     * CharSequence produces true and any other char produces false. If source is null, or if source is empty, this
+     * returns an empty array.
+     *
+     * @param source    a CharSequence, such as a String; if null, this returns an empty array
+     * @param t         the char that signifies a true value
+     * @return a boolean array that has true values where {@code t} was encountered in source
+     */
+    public boolean[] booleanSplitDense(CharSequence source, char t) {
+        return booleanSplitDense(source, t, 0, source.length());
+    }
 
     /**
      * Joins the items in {@code elements} by calling their toString method on them (or just using the String "null" for
