@@ -395,8 +395,8 @@ public class TextTools {
         if(source == null || search == null || source.isEmpty() || search.isEmpty()
                 || startIndex < 0 || startIndex >= endIndex)
             return 0;
-        int amount = 0, idx = startIndex-1;
-        while ((idx = source.indexOf(search, idx+1)) >= 0 && idx < endIndex)
+        int amount = 0, idx = startIndex-1, slen = search.length();
+        while ((idx = source.indexOf(search, idx+1)) >= 0 && idx + slen <= endIndex)
             ++amount;
         return amount;
     }
