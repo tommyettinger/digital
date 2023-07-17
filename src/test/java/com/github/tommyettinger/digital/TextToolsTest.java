@@ -15,7 +15,22 @@ public class TextToolsTest {
         splat = TextTools.split(csv, ", ");
         Assert.assertEquals(6, splat.length);
         splat = TextTools.split(csv, ", ", 9, csv.length() - 7);
-//        for(String s : splat) System.out.println("!!!" + s + "!!!");
+//        for(String s : splat) System.out.println(">>>" + s + "<<<");
         Assert.assertEquals(4, splat.length);
+        String bd = "10001101";
+        boolean[] full = TextTools.booleanSplitDense(bd);
+        Assert.assertTrue(full[0]);
+        Assert.assertFalse(full[1]);
+        Assert.assertFalse(full[2]);
+        Assert.assertFalse(full[3]);
+        Assert.assertTrue(full[4]);
+        Assert.assertTrue(full[5]);
+        Assert.assertFalse(full[6]);
+        Assert.assertTrue(full[7]);
+        full = TextTools.booleanSplitDense(bd, '1', 4, 7);
+        Assert.assertTrue(full[0]);
+        Assert.assertTrue(full[1]);
+        Assert.assertFalse(full[2]);
+
     }
 }

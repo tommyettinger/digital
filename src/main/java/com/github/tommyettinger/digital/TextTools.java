@@ -79,6 +79,32 @@ public class TextTools {
         }
         return sb;
     }
+
+    /**
+     * Given a CharSequence that may contain the char {@code '1'}, gets a boolean array where an occurrence of '1' in
+     * the CharSequence produces true and any other char produces false. If source is null, or if source is empty, this
+     * returns an empty array.
+     *
+     * @param source    a CharSequence, such as a String; if null, this returns an empty array
+     * @return a boolean array that has true values where {@code '1'} was encountered in source
+     */
+    public static boolean[] booleanSplitDense(CharSequence source) {
+        return booleanSplitDense(source, '1', 0, source.length());
+    }
+
+    /**
+     * Given a CharSequence that may contain the char {@code t}, gets a boolean array where an occurrence of t in the
+     * CharSequence produces true and any other char produces false. If source is null, or if source is empty, this
+     * returns an empty array.
+     *
+     * @param source    a CharSequence, such as a String; if null, this returns an empty array
+     * @param t         the char that signifies a true value
+     * @return a boolean array that has true values where {@code t} was encountered in source
+     */
+    public static boolean[] booleanSplitDense(CharSequence source, char t) {
+        return booleanSplitDense(source, t, 0, source.length());
+    }
+
     /**
      * Given a CharSequence that may contain the char {@code t}, gets a boolean array where an occurrence of t in the
      * CharSequence produces true and any other char produces false. If source is null, or if source is empty, this
@@ -92,7 +118,7 @@ public class TextTools {
      * @param endIndex   the last index, exclusive, in source to split from
      * @return a boolean array that has true values where {@code t} was encountered in source
      */
-    public boolean[] booleanSplitDense(CharSequence source, char t, int startIndex, int endIndex) {
+    public static boolean[] booleanSplitDense(CharSequence source, char t, int startIndex, int endIndex) {
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return new boolean[0];
         endIndex = Math.min(endIndex, source.length());
@@ -103,19 +129,6 @@ public class TextTools {
                 splat[i] = true;
         }
         return splat;
-    }
-
-    /**
-     * Given a CharSequence that may contain the char {@code t}, gets a boolean array where an occurrence of t in the
-     * CharSequence produces true and any other char produces false. If source is null, or if source is empty, this
-     * returns an empty array.
-     *
-     * @param source    a CharSequence, such as a String; if null, this returns an empty array
-     * @param t         the char that signifies a true value
-     * @return a boolean array that has true values where {@code t} was encountered in source
-     */
-    public boolean[] booleanSplitDense(CharSequence source, char t) {
-        return booleanSplitDense(source, t, 0, source.length());
     }
 
     /**
