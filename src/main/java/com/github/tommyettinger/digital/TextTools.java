@@ -27,21 +27,21 @@ public class TextTools {
      * Joins the boolean array {@code elements} without delimiters into a String, using "1" for true and "0" for false.
      * This is "dense" because it doesn't have any delimiters between elements.
      * @param elements an array or vararg of booleans
-     * @return a String using 1 for true elements and 0 for false, or "N" if elements is null
+     * @return a String using 1 for true elements and 0 for false, or the empty string if elements is null or empty
      */
     public static String joinDense(boolean... elements) {
-        return joinDense("1", "0", elements);
+        return joinDense('1', '0', elements);
     }
     /**
-     * Joins the boolean array {@code elements} without delimiters into a String, using the CharSequence {@code t} for
-     * true and the CharSequence {@code f} for false. This is "dense" because it doesn't have any delimiters between
+     * Joins the boolean array {@code elements} without delimiters into a String, using the char {@code t} for
+     * true and the char {@code f} for false. This is "dense" because it doesn't have any delimiters between
      * elements.
-     * @param t the CharSequence (usually a String) to write for true values
-     * @param f the CharSequence (usually a String) to write for false values
+     * @param t the char to write for true values
+     * @param f the char to write for false values
      * @param elements an array or vararg of booleans
-     * @return a String using 1 for true elements and 0 for false, or "N" if elements is null
+     * @return a String using 1 for true elements and 0 for false, or the empty string if elements is null or empty
      */
-    public static String joinDense(CharSequence t, CharSequence f, boolean... elements) {
+    public static String joinDense(char t, char f, boolean... elements) {
         if (elements == null || elements.length == 0) return "";
         StringBuilder sb = new StringBuilder(64);
         for (int i = 0; i < elements.length; i++) {
@@ -51,27 +51,27 @@ public class TextTools {
     }
 
     /**
-     * Joins the boolean array {@code elements} without delimiters into a String, using "1" for true and "0" for false.
-     * This is "dense" because it doesn't have any delimiters between elements.
+     * Joins the boolean array {@code elements} without delimiters into a StringBuilder, using "1" for true and "0" for
+     * false. This is "dense" because it doesn't have any delimiters between elements.
      * @param sb a StringBuilder that will be modified in-place
      * @param elements an array or vararg of booleans
      * @return sb after modifications (if elements was non-null)
      */
     public static StringBuilder appendJoinedDense(StringBuilder sb, boolean... elements) {
-        return appendJoinedDense(sb, "1", "0", elements);
+        return appendJoinedDense(sb, '1', '0', elements);
     }
 
     /**
-     * Joins the boolean array {@code elements} without delimiters into a String, using the CharSequence {@code t} for
-     * true and the CharSequence {@code f} for false. This is "dense" because it doesn't have any delimiters between
+     * Joins the boolean array {@code elements} without delimiters into a StringBuilder, using the char {@code t} for
+     * true and the char {@code f} for false. This is "dense" because it doesn't have any delimiters between
      * elements.
      * @param sb a StringBuilder that will be modified in-place
-     * @param t the CharSequence (usually a String) to write for true values
-     * @param f the CharSequence (usually a String) to write for false values
+     * @param t the char to write for true values
+     * @param f the char to write for false values
      * @param elements an array or vararg of booleans
      * @return sb after modifications (if elements was non-null)
      */
-    public static StringBuilder appendJoinedDense(StringBuilder sb, CharSequence t, CharSequence f, boolean... elements) {
+    public static StringBuilder appendJoinedDense(StringBuilder sb, char t, char f, boolean... elements) {
         if (sb == null || elements == null) return sb;
         if(elements.length == 0) return sb;
         for (int i = 0; i < elements.length; i++) {
