@@ -141,7 +141,7 @@ public class TextTools {
     /**
      * Joins the items in {@code elements} by calling their toString method on them (or just using the String "null" for
      * null items), and separating each item with {@code delimiter}. This can take any Iterable of any type for its
-     * elements parameter.
+     * {@code elements} parameter.
      * @param delimiter the String or other CharSequence to separate items in elements with; if null, uses ""
      * @param elements the Object items to stringify and join into one String; if Iterable is null or empty, this
      *                 returns an empty String, and if items are null, they are shown as "null"
@@ -456,6 +456,37 @@ public class TextTools {
         if((idx2 = source.indexOf(delimiter, idx+dl)) < 0)
         {
             splat[amount] = safeSubstring(source, idx+dl, source.length());
+        }
+        else
+        {
+            splat[amount] = safeSubstring(source, idx+dl, idx2);
+        }
+        return splat;
+    }
+
+    /**
+     * Like {@link String#split(String)} but doesn't use any regex for splitting (the delimiter is a literal String).
+     * This overload allows specifying an (inclusive) start index and (exclusive) end index.
+     * @param source the String to get split-up substrings from
+     * @param delimiter the literal String to split on (not a regex); will not be included in the returned String array
+     * @param startIndex the first index, inclusive, in source to split from
+     * @param endIndex   the last index, exclusive, in source to split from
+     * @return a String array consisting of at least one String (the entirety of Source if nothing was split)
+     */
+    public static String[] split(String source, String delimiter, int startIndex, int endIndex) {
+        if (source == null || delimiter == null || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+            return new String[0];
+        endIndex = Math.min(endIndex, source.length());
+        int amount = count(source, delimiter, startIndex, endIndex);
+        if (amount <= 0) return new String[]{source.substring(startIndex, endIndex)};
+        String[] splat = new String[amount+1];
+        int dl = delimiter.length(), idx = startIndex - dl, idx2;
+        for (int i = 0; i < amount; i++) {
+            splat[i] = safeSubstring(source, idx+dl, idx = source.indexOf(delimiter, idx+dl));
+        }
+        if((idx2 = source.indexOf(delimiter, idx+dl)) < 0)
+        {
+            splat[amount] = safeSubstring(source, idx+dl, endIndex);
         }
         else
         {
