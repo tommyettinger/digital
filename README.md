@@ -134,20 +134,31 @@ Platonic solids). It could be useful for code that needs 3D shapes
 in code for something like continuous noise, but doesn't have
 access to 3D models.
 
+TextTools provides some features that are similar to ones in Base,
+but different enough to belong in their own class. It operates on
+CharSequences usually, but sometimes needs Strings, so I'll just
+call this vague type "text." This class includes many different
+ways to search text for something, code to count the occurrences
+of text in a larger piece of text, code to join/split arrays of
+text and larger texts (this also works for boolean arrays), code
+for padding text, and code for replacing text with literals. This
+class mostly exists to avoid duplicating similar code that occurs
+often throughout my projects, and is related to code here.
+
 ## How do I get it?
 
 With Gradle, add this to your dependencies (in your core module's
 `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.3"
+api "com.github.tommyettinger:digital:0.3.4"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.3:sources"
+api "com.github.tommyettinger:digital:0.3.4:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`

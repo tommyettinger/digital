@@ -20,7 +20,9 @@ package com.github.tommyettinger.digital;
 import java.util.Iterator;
 
 /**
- * Various methods for searching, joining, splitting, and padding String and sometimes CharSequence items.
+ * Various methods for searching, joining, splitting, replacing, counting, and padding String and sometimes
+ * CharSequence items. This also has code to join boolean arrays into Strings, and split those results into boolean
+ * arrays, which is a similar feature to what exists in {@link Base} for numeric types.
  */
 public class TextTools {
     /**
