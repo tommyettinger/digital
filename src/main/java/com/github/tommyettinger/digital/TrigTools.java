@@ -245,6 +245,12 @@ public final class TrigTools {
     /**
      * Returns the sine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from radians to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #sinSmoother(float)} if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
@@ -260,6 +266,12 @@ public final class TrigTools {
     /**
      * Returns the cosine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from radians to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #cosSmoother(float)} if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
@@ -319,6 +331,12 @@ public final class TrigTools {
     /**
      * Returns the sine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from degrees to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #sinSmootherDeg(float)} if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
@@ -334,6 +352,12 @@ public final class TrigTools {
     /**
      * Returns the cosine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from degrees to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #cosSmootherDeg(float)} if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
@@ -367,6 +391,12 @@ public final class TrigTools {
     /**
      * Returns the sine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from turns to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #sinSmootherTurns(float) if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
@@ -378,6 +408,12 @@ public final class TrigTools {
     /**
      * Returns the cosine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from turns to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #cosSmootherTurns(float) if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
@@ -411,6 +447,12 @@ public final class TrigTools {
     /**
      * Returns the sine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from radians to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #sinSmoother(double)} if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param radians an angle in radians, where 0 to {@link #PI2_D} is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
@@ -422,6 +464,12 @@ public final class TrigTools {
     /**
      * Returns the cosine in radians from a lookup table. For optimal precision, use radians between -PI2 and PI2 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from radians to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #cosSmoother(double)} if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param radians an angle in radians, where 0 to {@link #PI2_D} is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
@@ -457,6 +505,12 @@ public final class TrigTools {
     /**
      * Returns the sine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from degrees to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #sinSmootherDeg(double)} if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
@@ -468,6 +522,12 @@ public final class TrigTools {
     /**
      * Returns the cosine in degrees from a lookup table. For optimal precision, use degrees between -360 and 360 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from degrees to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #cosSmootherDeg(double)} if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
@@ -501,6 +561,12 @@ public final class TrigTools {
     /**
      * Returns the sine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from turns to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #sinSmootherTurns(double)} if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
@@ -512,6 +578,12 @@ public final class TrigTools {
     /**
      * Returns the cosine in turns from a lookup table. For optimal precision, use turns between -1 and 1 (both
      * inclusive).
+     * <br>
+     * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
+     * you need very fine detail. The steps occur because it converts its argument from turns to an array index in a
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * use {@link #cosSmootherTurns(double)} if you need better accuracy; it uses the least-significant digits to smoothly
+     * interpolate between two items in the array.
      *
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
@@ -548,7 +620,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of sin(); in particular, only 16384
      * outputs are possible from {@link TrigTools#sin(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible sin() returns, you can use this.
+     * more possible results in-between the roughly 8192 possible sin() returns, you can use this or {@link #sinSmoother(float)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param radians an angle in radians; most precise between -PI2 and PI2
@@ -572,7 +644,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of cos(); in particular, only 16384
      * outputs are possible from {@link TrigTools#cos(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible cos() returns, you can use this.
+     * more possible results in-between the roughly 8192 possible cos() returns, you can use this or {@link #cosSmoother(float)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param radians an angle in radians; most precise between -PI2 and PI2
@@ -598,7 +670,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of sin(); in particular, only 16384
      * outputs are possible from {@link TrigTools#sin(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible sin() returns, you can use this.
+     * more possible results in-between the roughly 8192 possible sin() returns, you can use this or {@link #sinSmoother(double)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param radians an angle in radians; most precise between -PI2 and PI2
@@ -624,7 +696,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of cos(); in particular, only 16384
      * outputs are possible from {@link TrigTools#cos(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible cos() returns, you can use this.
+     * more possible results in-between the roughly 8192 possible cos() returns, you can use this or {@link #cosSmoother(double)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param radians an angle in radians; most precise between -PI2 and PI2
@@ -645,7 +717,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of sinDeg(); in particular, only 16384
      * outputs are possible from {@link TrigTools#sinDeg(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this.
+     * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this or {@link #sinSmootherDeg(float)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param degrees an angle in degrees; most precise between -360 and 360
@@ -669,7 +741,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of cosDeg(); in particular, only 16384
      * outputs are possible from {@link TrigTools#cosDeg(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this.
+     * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this or {@link #cosSmootherDeg(float)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param degrees an angle in degrees; most precise between -360 and 360
@@ -690,7 +762,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of sinDeg(); in particular, only 16384
      * outputs are possible from {@link TrigTools#sinDeg(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this.
+     * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this or {@link #sinSmootherDeg(double)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param degrees an angle in degrees; most precise between -360 and 360
@@ -711,7 +783,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of cosDeg(); in particular, only 16384
      * outputs are possible from {@link TrigTools#cosDeg(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this.
+     * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this or {@link #cosSmootherDeg(double)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param degrees an angle in degrees; most precise between -360 and 360
@@ -732,7 +804,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of sinTurns(); in particular, only 16384
      * outputs are possible from {@link TrigTools#sinTurns(float)}, and about half of those are duplicates, so if you
-     * need more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this.
+     * need more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this or {@link #sinSmootherTurns(float)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param turns an angle in turns; most precise between -1 and 1
@@ -758,7 +830,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of cosTurns(); in particular, only 16384
      * outputs are possible from {@link TrigTools#cosTurns(float)}, and about half of those are duplicates, so if you
-     * need more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this.
+     * need more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this or {@link #cosSmootherTurns(float)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param turns an angle in turns; most precise between -1 and 1
@@ -779,7 +851,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of sinTurns(); in particular, only 16384
      * outputs are possible from {@link TrigTools#sinTurns(float)}, and about half of those are duplicates, so if you
-     * need more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this.
+     * need more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this or {@link #sinSmootherTurns(double)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param turns an angle in turns; most precise between -1 and 1
@@ -800,7 +872,7 @@ public final class TrigTools {
      * This was updated more recently than the 7th century, and has better precision than the original. You may want to
      * use this if you notice statistical issues with the tabular approximation of cosTurns(); in particular, only 16384
      * outputs are possible from {@link TrigTools#cosTurns(float)}, and about half of those are duplicates, so if you
-     * need more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this.
+     * need more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this or {@link #cosSmootherTurns(double)}.
      * <br>
      * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
      * @param turns an angle in turns; most precise between -1 and 1
