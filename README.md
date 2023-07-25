@@ -145,20 +145,34 @@ for padding text, and code for replacing text with literals. This
 class mostly exists to avoid duplicating similar code that occurs
 often throughout my projects, and is related to code here.
 
+Interpolations, along with its nested classes InterpolationFunction
+and Interpolator, provide a way to store and look up functions to
+smoothly interpolate between floats. This code is very similar to
+the Interpolation class in libGDX, and all the instances in
+Interpolation have a counterpart in Interpolations (there are some
+more here, as well). Creating an Interpolator registers its name
+in Interpolations' registry, where it can be looked up on its own
+with `get(String)` or as a group with `getInterpolatorArray()`.
+There are also ways to create one of the building blocks of an
+Interpolator, an InterpolationFunction, with methods in
+Interpolations. This makes creating new Interpolators with different
+parameters as easy as assigning a name to the generated function.
+[Here's a sample page that shows how each Interpolator looks graphed.](docs/interpolators.html)
+
 ## How do I get it?
 
 With Gradle, add this to your dependencies (in your core module's
 `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.4"
+api "com.github.tommyettinger:digital:0.3.5"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.4:sources"
+api "com.github.tommyettinger:digital:0.3.5:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`

@@ -395,8 +395,8 @@ public final class TrigTools {
      * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
      * you need very fine detail. The steps occur because it converts its argument from turns to an array index in a
      * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
-     * use {@link #sinSmootherTurns(float) if you need better accuracy; it uses the least-significant digits to smoothly
-     * interpolate between two items in the array.
+     * use {@link #sinSmootherTurns(float)} if you need better accuracy; it uses the least-significant digits to
+     * smoothly interpolate between two items in the array.
      *
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
@@ -412,8 +412,8 @@ public final class TrigTools {
      * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
      * you need very fine detail. The steps occur because it converts its argument from turns to an array index in a
      * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
-     * use {@link #cosSmootherTurns(float) if you need better accuracy; it uses the least-significant digits to smoothly
-     * interpolate between two items in the array.
+     * use {@link #cosSmootherTurns(float)} if you need better accuracy; it uses the least-significant digits to
+     * smoothly interpolate between two items in the array.
      *
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
