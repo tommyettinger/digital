@@ -21,7 +21,7 @@ import java.util.LinkedHashMap;
 import static com.github.tommyettinger.digital.MathTools.barronSpline;
 
 /**
- * Provides predefined {@link Interpolator} constants and ways to generate {@link InterpolationFunction} instance, as
+ * Provides predefined {@link Interpolator} constants and ways to generate {@link InterpolationFunction} instances, as
  * well as acting as the registry for known Interpolator values so that they can be looked up by name.
  * <a href="https://tommyettinger.github.io/digital/interpolators.html">You can view the graphs for every Interpolator here</a>.
  */
@@ -68,8 +68,22 @@ public final class Interpolations {
      * functional method is {@link #apply(float)}.
      */
     public interface InterpolationFunction {
+        /**
+         * Given a float {@code alpha}, which is almost always between 0 and 1 inclusive, gets a typically-different
+         * float that is usually (but not always) between 0 and 1 inclusive.
+         * @param alpha almost always between 0 and 1, inclusive
+         * @return a value that is usually between 0 and 1, inclusive, for inputs between 0 and 1
+         */
         float apply(float alpha);
 
+        /**
+         * Maps a call to {@link #apply(float)} from the 0-1 range to the {@code start}-{@code end} range.
+         * Usually (but not always), this returns a float between start and end, inclusive.
+         * @param start the inclusive lower bound; some functions can return less
+         * @param end the inclusive upper bound; some functions can return more
+         * @param alpha almost always between 0 and 1, inclusive
+         * @return a value that is usually between start and end, inclusive, for alpha between 0 and 1
+         */
         default float apply(float start, float end, float alpha) {
             return start + apply(alpha) * (end - start);
         }
@@ -81,7 +95,15 @@ public final class Interpolations {
      * range (preventing potentially troublesome complications when large or negative inputs come in).
      */
     public static class Interpolator implements InterpolationFunction {
+        /**
+         * A unique String that identifies this object.
+         * @see #getTag()
+         */
         public final String tag;
+        /**
+         * The InterpolationFunction this actually uses to do its math work.
+         * @see #getFn()
+         */
         public final InterpolationFunction fn;
 
         /**
