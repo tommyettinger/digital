@@ -653,6 +653,7 @@ public final class Interpolations {
      */
     public static InterpolationFunction bounceOutFunction(final float... pairs) {
         return a -> {
+            if(a >= 1f) return 1f;
             a += pairs[0] * 0.5f;
             float width = 0f, height = 0f;
             for (int i = 0, n = (pairs.length & -2) - 1; i < n; i += 2) {
