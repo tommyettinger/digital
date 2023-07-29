@@ -869,11 +869,15 @@ public final class Interpolations {
      * than 1.
      * @return an InterpolationFunction that will use the given configuration
      */
-    public static InterpolationFunction elasticOutFunction(final float value, final float power, final int bounces,
-                                                        final float scale) {
+    public static Interpolations.InterpolationFunction elasticOutFunction(final float value, final float power, final int bounces,
+                                                                          final float scale) {
         final float bounce = bounces * (0.5f - (bounces & 1));
-        return a -> (1f - (float)Math.pow(value, power * -a) * TrigTools.sinTurns(bounce - a * bounce) * scale);
+        return a -> {
+            float f = (1f - (float) Math.pow(value, power * -a) * TrigTools.sinTurns(bounce - a * bounce) * scale);
+            return a <= 0.02f ? MathTools.lerp(0f, f, a * 50f) : f;
+        };
     }
+
     /**
      * Goes extra-high near the start, using {@link #elasticOutFunction(float, float, int, float)}. Value is 2, power is
      * 10, bounces are 7, and scale is 1.
@@ -889,10 +893,13 @@ public final class Interpolations {
      * than 1.
      * @return an InterpolationFunction that will use the given configuration
      */
-    public static InterpolationFunction elasticInFunction(final float value, final float power, final int bounces,
-                                                           final float scale) {
+    public static Interpolations.InterpolationFunction elasticInFunction(final float value, final float power, final int bounces,
+                                                                         final float scale) {
         final float bounce = bounces * (0.5f - (bounces & 1));
-        return a -> (float)Math.pow(value, power * (a - 1)) * TrigTools.sinTurns(a * bounce) * scale;
+        return a -> {
+            float f = (float) Math.pow(value, power * (a - 1)) * TrigTools.sinTurns(a * bounce) * scale;
+            return a >= 0.98f ? MathTools.lerp(f, 1f, 50f * (a - 0.98f)) : f;
+        };
     }
     /**
      * Goes extra-low near the end, using {@link #elasticInFunction(float, float, int, float)}. Value is 2, power is
