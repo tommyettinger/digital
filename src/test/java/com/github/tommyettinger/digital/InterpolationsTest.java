@@ -64,6 +64,28 @@ public class InterpolationsTest {
 //                }
             }
         }
+    }
 
+    @Test
+    public void testMonotonicity() {
+        float old = 0f;
+        int failures = 0;
+        for (int i = 1; i < 0x1000000; i++) {
+            float a = i * 0x1p-24f;
+            //Out of 16777216 tested floats, there were 2099462 failures in monotonicity.
+//            float next = a * a * a * (a * (a * 5.9999995f - 15) + 10);
+            //Out of 16777216 tested floats, there were 2100008 failures in monotonicity.
+//            float next = a * a * a * (a * (a * 6 - 15) + 10);
+            //Out of 16777216 tested floats, there were 2099439 failures in monotonicity.
+//            float next = a * a * a * (a * (a * 6f - 14.999999f) + 9.999999f);
+            //Out of 16777216 tested floats, there were 2100806 failures in monotonicity.
+            float next = a * a * a * (a * (a * 5.9999995f - 14.999999f) + 9.999999f);
+            if(next < old){
+                failures++;
+//                System.out.println("Problem at " + Base.BASE10.friendly(a) + ": " + Base.BASE10.friendly(old) + "> " + Base.BASE10.friendly(next));
+            }
+            old = next;
+        }
+        System.out.println("Out of " + 0x1000000 + " tested floats, there were " + failures + " failures in monotonicity.");
     }
 }
