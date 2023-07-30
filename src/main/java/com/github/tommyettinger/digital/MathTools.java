@@ -465,7 +465,7 @@ public final class MathTools {
      * <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a> for more, but
      * this code approximates cbrt(x) and not 1/sqrt(x)). This specific code
      * was originally by Marc B. Reynolds, posted in his
-     * <a href="https://github.com/Marc-B-Reynolds/Stand-alone-junk/blob/master/src/Posts/ballcube.c#L182-L197">"Stand-alone-junk" repo</a> .
+     * <a href="https://github.com/Marc-B-Reynolds/Stand-alone-junk/blob/7d8d1e19b2ab09743f46964f60244906e1023f6a/src/Posts/ballcube.c#L182-L197">"Stand-alone-junk" repo</a> .
      * <br>
      * This was adjusted very slightly so {@code cbrt(1f) == 1f}. While this corrects the behavior for one of the most
      * commonly-expected inputs, it may change results for (very) large positive or negative inputs.

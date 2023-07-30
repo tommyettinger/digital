@@ -165,14 +165,14 @@ With Gradle, add this to your dependencies (in your core module's
 `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.5"
+api "com.github.tommyettinger:digital:0.3.6"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.5:sources"
+api "com.github.tommyettinger:digital:0.3.6:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
@@ -211,3 +211,11 @@ though its license is also Apache 2.0, I included its license
 here as [LICENSE-RYU.txt](LICENSE-RYU.txt). The Ryu code that
 is relevant to what we use here is also replicated with only
 minor compatibility changes in the `src/test` folder.
+There's some cases where an individual method was ported from
+another permissively-licensed repo, such as
+`a_cbrt` from [Stand-alone-junk](https://github.com/Marc-B-Reynolds/Stand-alone-junk)
+(Marc B. Reynolds' in-progress code), or `probit` from
+[P.J. Acklam's site](https://web.archive.org/web/20151030215612/http://home.online.no/~pjacklam/notes/invnorm/)
+(archived), and for most of these I
+have tried to provide credit and a link to the source in the
+documentation for that method.
