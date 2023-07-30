@@ -653,23 +653,25 @@ public final class Interpolations {
      */
     public static InterpolationFunction bounceOutFunction(final float... pairs) {
         return a -> {
-            if(a >= 1f) return 1f;
-            a += pairs[0] * 0.5f;
+//            if(a >= 1f) return 1f;
+            float b = a + pairs[0] * 0.5f;
             float width = 0f, height = 0f;
             for (int i = 0, n = (pairs.length & -2) - 1; i < n; i += 2) {
                 width = pairs[i];
-                if (a <= width) {
+                if (b <= width) {
                     height = pairs[i + 1];
                     break;
                 }
-                a -= width;
+                b -= width;
             }
-            float z = 4f / (width * width) * height * a;
-            return 1f - (z * width - z * a);
+            float z = 4f / (width * width) * height * b;
+            float f = 1f - z * (width - b);
             // pretty sure this is equivalent to the 2 lines above. Not certain.
 //            a /= width;
 //            float z = 4 / width * height * a;
 //            return 1 - (z - z * a) * width;
+            return a >= 0.98f ? MathTools.lerp(f, 1f, 50f * (a - 0.98f)) : f;
+
         };
     }
 
