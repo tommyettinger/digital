@@ -161,18 +161,32 @@ parameters as easy as assigning a name to the generated function.
 
 ## How do I get it?
 
-With Gradle, add this to your dependencies (in your core module's
-`build.gradle`, for libGDX projects):
+This library needs Java language level 8, but does not rely on any
+APIs introduced in Java 8. Targeting level 8 means this will work
+even if your project uses the newest Java versions (20 and later do
+not support targeting Java 7). Android projects should be able to
+use digital even without needing core library desugaring, as long
+as they target release 8 or higher. GWT can use digital without
+issue since GWT 2.8.0, which made 8 usable. RoboVM, for iOS, can use
+digital because no APIs are used from Java 8. In a libGDX project,
+**you must make sure** the sourceCompatibility is 8 or higher in
+your core module and any other modules that use digital. This is
+currently not the default for gdx-setup projects, but is the default
+for [gdx-liftoff](https://github.com/tommyettinger/gdx-liftoff)
+projects. Liftoff also lets you just check a box to depend on digital.
+
+To depend on digital with Gradle, add this to your dependencies (in
+your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.6"
+api "com.github.tommyettinger:digital:0.3.7"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.6:sources"
+api "com.github.tommyettinger:digital:0.3.7:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`

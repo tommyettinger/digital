@@ -70,12 +70,12 @@ public class InterpolationsTest {
     public void testMonotonicity() {
         float old = 0f, next = 0f;
         int failures = 0, boundFailures = 0;
-        AlternateRandom r = new AlternateRandom();
+//        AlternateRandom r = new AlternateRandom();
         for (int i = 1; i < 0x1000000; i++) {
             float a = i * 0x1p-24f;
             //0x1p-24f: Out of 16777216 tested floats, there were 2099462 failures in monotonicity and 6451 violations of the bounds.
             //0x1p-23f: Out of 16777216 tested floats, there were 1157781 failures in monotonicity.
-            next = a * a * a * (a * (a * 5.9999995f - 15f) + 10f);
+//            next = a * a * a * (a * (a * 5.9999995f - 15f) + 10f);
             //0x1p-24f: Out of 16777216 tested floats, there were 2099942 failures in monotonicity and 0 violations of the bounds.
             next = a * a * a * (a * (a * 6f - 15f) + 9.999998f); // returns 0.99999887f when given 1f.
             //0x1p-24f: Out of 16777216 tested floats, there were 2100008 failures in monotonicity and 22237 violations of the bounds.
