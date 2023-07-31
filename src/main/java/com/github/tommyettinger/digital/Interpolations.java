@@ -201,18 +201,18 @@ public final class Interpolations {
      * A quintic Hermite spline by Ken Perlin.
      * <br>
      * This was modified slightly because the original constants were meant for doubles, and here we use floats. Without
-     * this tiny change (the smallest possible change here, from 6.0f to 5.9999995f), giving an input of 0.99999994f
-     * would unexpectedly produce an output greater than 1.0f .
+     * this tiny change (the smallest possible change here, from 10.0f to 9.999998f), giving an input of 0.99999994f, or
+     * one of thousands of other inputs, would unexpectedly produce an output greater than 1.0f .
      */
-    public static final Interpolator smoother = new Interpolator("smoother", a -> a * a * a * (a * (a * 5.9999995f - 15) + 10));
+    public static final Interpolator smoother = new Interpolator("smoother", a -> a * a * a * (a * (a * 6f - 15f) + 9.999998f));
     /**
      * A quintic Hermite spline by Ken Perlin; this uses the same function as {@link #smoother}.
      * <br>
      * This was modified slightly because the original constants were meant for doubles, and here we use floats. Without
-     * this tiny change (the smallest possible change here, from 6.0f to 5.9999995f), giving an input of 0.99999994f
-     * would unexpectedly produce an output greater than 1.0f .
+     * this tiny change (the smallest possible change here, from 10.0f to 9.999998f), giving an input of 0.99999994f, or
+     * one of thousands of other inputs, would unexpectedly produce an output greater than 1.0f .
      */
-    public static final Interpolator fade = new Interpolator("fade", a -> a * a * a * (a * (a * 5.9999995f - 15) + 10));
+    public static final Interpolator fade = new Interpolator("fade", a -> a * a * a * (a * (a * 6f - 15f) + 9.999998f));
     /**
      * Produces an InterpolationFunction that uses the given power variable.
      * When power is greater than 1, this starts slowly, speeds up in the middle and slows down at the end. The

@@ -68,24 +68,36 @@ public class InterpolationsTest {
 
     @Test
     public void testMonotonicity() {
-        float old = 0f;
-        int failures = 0;
+        float old = 0f, next = 0f;
+        int failures = 0, boundFailures = 0;
+        AlternateRandom r = new AlternateRandom();
         for (int i = 1; i < 0x1000000; i++) {
             float a = i * 0x1p-24f;
-            //Out of 16777216 tested floats, there were 2099462 failures in monotonicity.
-//            float next = a * a * a * (a * (a * 5.9999995f - 15) + 10);
-            //Out of 16777216 tested floats, there were 2100008 failures in monotonicity.
-//            float next = a * a * a * (a * (a * 6 - 15) + 10);
-            //Out of 16777216 tested floats, there were 2099439 failures in monotonicity.
-//            float next = a * a * a * (a * (a * 6f - 14.999999f) + 9.999999f);
-            //Out of 16777216 tested floats, there were 2100806 failures in monotonicity.
-            float next = a * a * a * (a * (a * 5.9999995f - 14.999999f) + 9.999999f);
+            //0x1p-24f: Out of 16777216 tested floats, there were 2099462 failures in monotonicity and 6451 violations of the bounds.
+            //0x1p-23f: Out of 16777216 tested floats, there were 1157781 failures in monotonicity.
+            next = a * a * a * (a * (a * 5.9999995f - 15f) + 10f);
+            //0x1p-24f: Out of 16777216 tested floats, there were 2099942 failures in monotonicity and 0 violations of the bounds.
+            next = a * a * a * (a * (a * 6f - 15f) + 9.999998f); // returns 0.99999887f when given 1f.
+            //0x1p-24f: Out of 16777216 tested floats, there were 2100008 failures in monotonicity and 22237 violations of the bounds.
+            //0x1p-23f: Out of 16777216 tested floats, there were 1010361 failures in monotonicity.
+//            next = a * a * a * (a * (a * 6 - 15) + 10);
+            //0x1p-24f: Out of 16777216 tested floats, there were 2099439 failures in monotonicity and 22050 violations of the bounds.
+            //0x1p-23f: Out of 16777216 tested floats, there were 1010475 failures in monotonicity.
+//            next = a * a * a * (a * (a * 6f - 14.999999f) + 9.999999f);
+            //0x1p-24f: Out of 16777216 tested floats, there were 2100806 failures in monotonicity and 6959 violations of the bounds.
+            //0x1p-23f: Out of 16777216 tested floats, there were 1157750 failures in monotonicity.
+//            next = a * a * a * (a * (a * 5.9999995f - 14.999999f) + 9.999999f);
+//            next = a * a * BitConversion.intBitsToFloat(BitConversion.floatToIntBits(a) & -2) * (a * (a * 6 - 15) + 10);
             if(next < old){
                 failures++;
-//                System.out.println("Problem at " + Base.BASE10.friendly(a) + ": " + Base.BASE10.friendly(old) + "> " + Base.BASE10.friendly(next));
+//                if(r.next(12) == 0)
+//                    System.out.println("Problem at " + Base.BASE10.friendly(a) + ": " + Base.BASE10.friendly(old) + "> " + Base.BASE10.friendly(next));
             }
+            if(next > 1f)
+                boundFailures++;
             old = next;
         }
-        System.out.println("Out of " + 0x1000000 + " tested floats, there were " + failures + " failures in monotonicity.");
+        System.out.println("0x1p-24f: Out of " + 0x1000000 + " tested floats, there were " + failures + " failures in monotonicity and " + boundFailures + " violations of the bounds.");
+        System.out.println("Ended with 1.0 producing " + next);
     }
 }
