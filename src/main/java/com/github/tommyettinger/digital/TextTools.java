@@ -24,7 +24,13 @@ import java.util.Iterator;
  * CharSequence items. This also has code to join boolean arrays into Strings, and split those results into boolean
  * arrays, which is a similar feature to what exists in {@link Base} for numeric types.
  */
-public class TextTools {
+public final class TextTools {
+
+    /**
+     * No need to instantiate.
+     */
+    private TextTools(){
+    }
     /**
      * Joins the boolean array {@code elements} without delimiters into a String, using "1" for true and "0" for false.
      * This is "dense" because it doesn't have any delimiters between elements.

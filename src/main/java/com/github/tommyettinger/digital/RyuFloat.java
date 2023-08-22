@@ -26,6 +26,11 @@ import java.math.BigInteger;
  * Ryu is licensed under Apache 2.0, the same as digital. It was written by Ulf Adams and contributors.
  */
 final class RyuFloat {
+  /**
+   * No need to instantiate.
+   */
+  private RyuFloat() {
+  }
   private static final int FLOAT_MANTISSA_BITS = 23;
   private static final int FLOAT_MANTISSA_MASK = (1 << FLOAT_MANTISSA_BITS) - 1;
 

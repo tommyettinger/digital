@@ -33,6 +33,11 @@ package com.github.tommyettinger.digital;
  */
 public final class BitConversion {
     /**
+     * No need to instantiate.
+     */
+    private BitConversion() {
+    }
+    /**
      * Identical to {@link Double#doubleToLongBits(double)} on desktop; optimized on GWT. When compiling to JS via GWT,
      * there is no way to distinguish NaN values with different bits but that are still NaN, so this doesn't try to
      * somehow permit that. Uses JS typed arrays on GWT, which are well-supported now across all recent browsers and

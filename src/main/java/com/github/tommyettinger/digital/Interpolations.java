@@ -26,6 +26,11 @@ import static com.github.tommyettinger.digital.MathTools.barronSpline;
  * <a href="https://tommyettinger.github.io/digital/interpolators.html">You can view the graphs for every Interpolator here</a>.
  */
 public final class Interpolations {
+    /**
+     * No need to instantiate.
+     */
+    private Interpolations() {
+    }
 
     private static final LinkedHashMap<String, Interpolator> REGISTRY = new LinkedHashMap<>(128);
 
@@ -53,12 +58,6 @@ public final class Interpolations {
      */
     public static Interpolator[] getInterpolatorArray() {
         return REGISTRY.values().toArray(new Interpolator[0]);
-    }
-
-    /**
-     * No need to instantiate.
-     */
-    private Interpolations() {
     }
 
     /**

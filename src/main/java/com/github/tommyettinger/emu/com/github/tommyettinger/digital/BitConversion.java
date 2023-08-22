@@ -28,6 +28,9 @@ import com.google.gwt.typedarrays.shared.Int8Array;
 import com.google.gwt.typedarrays.shared.DataView;
 
 public final class BitConversion {
+	private BitConversion() {
+	}
+
 	public static final Int8Array wba = Int8ArrayNative.create(8);
 	public static final Int32Array wia = Int32ArrayNative.create(wba.buffer(), 0, 2);
 	public static final Float32Array wfa = Float32ArrayNative.create(wba.buffer(), 0, 2);

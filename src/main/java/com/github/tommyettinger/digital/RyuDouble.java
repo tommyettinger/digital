@@ -26,6 +26,11 @@ import java.math.BigInteger;
  * Ryu is licensed under Apache 2.0, the same as digital. It was written by Ulf Adams and contributors.
  */
 final class RyuDouble {
+  /**
+   * No need to instantiate.
+   */
+  private RyuDouble() {
+  }
   private static final int DOUBLE_MANTISSA_BITS = 52;
   private static final long DOUBLE_MANTISSA_MASK = (1L << DOUBLE_MANTISSA_BITS) - 1;
 

@@ -43,8 +43,10 @@ import static com.github.tommyettinger.digital.TrigTools.PI_D;
  * @author Nathan Sweet
  */
 public final class MathTools {
+    /**
+     * No need to instantiate.
+     */
     private MathTools() {
-        // Prevent instantiation.
     }
 
     /**
@@ -55,21 +57,21 @@ public final class MathTools {
      * three-digit numbers (16 * 64 is 1024, so 0 to 999 should be precise there). A larger rounding error can introduce
      * false-positive equivalence with very small inputs.
      */
-    public static final float FLOAT_ROUNDING_ERROR = 0x1p-20f; // was 0.000001f
+    public static final float FLOAT_ROUNDING_ERROR = 9.536743E-7f; // 9.536743E-7f is 0x1p-20f
     
     /**
      * 2 to the -24 as a float; this is equal to {@code Math.ulp(0.5f)}, and is the smallest non-zero distance possible
      * between two results of {@link Random#nextFloat()}.
      * Useful for converting a 24-bit {@code int} or {@code long} value to a gradient between 0 and 1.
      */
-    public static final float EPSILON = 0x1p-24f;
-    
+    public static final float EPSILON = 5.9604645E-8f; // 5.9604645E-8f is 0x1p-24f
+
     /**
      * 2 to the -53 as a float; this is equal to {@code Math.ulp(0.5)}, and is the smallest non-zero distance possible
      * between two results of {@link Random#nextDouble()}.
      * Useful for converting a 53-bit {@code long} value to a gradient between 0 and 1.
      */
-    public static final double EPSILON_D = 0x1p-53;
+    public static final double EPSILON_D = 1.1102230246251565E-16;// 1.1102230246251565E-16 is 0x1p-53;
 
     /**
      * The {@code float} value that is closer than any other to
@@ -193,7 +195,7 @@ public final class MathTools {
 
     private static final int BIG_ENOUGH_INT = 16384;
     private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
-    private static final double CEIL = 0x1.fffffep-1f; // was 0.9999999
+    private static final double CEIL = 0.99999994f; // 0.99999994f is 0x1.fffffep-1f
     private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5f;
 
     /**
@@ -502,7 +504,7 @@ public final class MathTools {
 
         a = Math.abs(x);
         small = a <  0.015625;                         // Scale large, small and/or subnormal numbers to avoid underflow, overflow or subnormal numbers
-        a = small ? a * 0x1.0p+210 : a * 0.125;
+        a = small ? a * 1.645504557321206E63 : a * 0.125; // 1.645504557321206E63 is 0x1.0p+210
         ai = BitConversion.doubleToLongBits(a);
         if (ai >= 0x7FF0000000000000L || x == 0.0){    // Inf, 0.0 and NaN
             r = x + x;
@@ -542,7 +544,7 @@ public final class MathTools {
             double denom = a * 3.0 - 2.0 * diff;
             r = (diff/denom) * r + r;
 */
-            r = small ? r * 0x1.0p-70 : r * 2.0;   // Undo scaling
+            r = small ? r * 8.470329472543003E-22 : r * 2.0;   // Undo scaling; 8.470329472543003E-22 is 0x1.0p-70
             r = Math.copySign(r, x);
         }
         return r;
@@ -713,8 +715,9 @@ public final class MathTools {
     public static float barronSpline(final float x, final float shape, final float turning) {
         final float d = turning - x;
         final int f = BitConversion.floatToIntBits(d) >> 31, n = f | 1;
-        return (turning * n - f) * (x + f) / (Float.MIN_NORMAL - f + (x + shape * d) * n) - f;
+        return (turning * n - f) * (x + f) / (1.17549435E-38f - f + (x + shape * d) * n) - f;
     }
+    // 1.17549435E-38f is 0x1p-126f
 
     /**
      * A generalization on bias and gain functions that can represent both; this version is branch-less.
@@ -736,8 +739,10 @@ public final class MathTools {
     public static double barronSpline(final double x, final double shape, final double turning) {
         final double d = turning - x;
         final int f = BitConversion.doubleToHighIntBits(d) >> 31, n = f | 1;
-        return (turning * n - f) * (x + f) / (Double.MIN_NORMAL - f + (x + shape * d) * n) - f;
+        return (turning * n - f) * (x + f) / (2.2250738585072014E-308 - f + (x + shape * d) * n) - f;
     }
+
+    //2.2250738585072014E-308 is 0x1p-1022
     
     /**
      * A generalization on bias and gain functions that can represent both; this version is branch-less and
@@ -760,8 +765,9 @@ public final class MathTools {
     public static float noiseSpline(float x, final float shape, float turning) {
         final float d = (turning = turning * 0.5f + 0.5f) - (x = x * 0.5f + 0.5f);
         final int f = BitConversion.floatToIntBits(d) >> 31, n = f | 1;
-        return ((turning * n - f) * (x + f) / (Float.MIN_NORMAL - f + (x + shape * d) * n) - f - 0.5f) * 2f;
+        return ((turning * n - f) * (x + f) / (1.17549435E-38f - f + (x + shape * d) * n) - f - 0.5f) * 2f;
     }
+    // 1.17549435E-38f is 0x1p-126f
     
     /**
      * A generalization on bias and gain functions that can represent both; this version is branch-less and
@@ -784,8 +790,10 @@ public final class MathTools {
     public static double noiseSpline(double x, final double shape, double turning) {
         final double d = (turning = turning * 0.5 + 0.5) - (x = x * 0.5 + 0.5);
         final int f = BitConversion.doubleToHighIntBits(d) >> 31, n = f | 1;
-        return ((turning * n - f) * (x + f) / (Double.MIN_NORMAL - f + (x + shape * d) * n) - f - 0.5) * 2.0;
+        return ((turning * n - f) * (x + f) / (2.2250738585072014E-308 - f + (x + shape * d) * n) - f - 0.5) * 2.0;
     }
+
+    // 2.2250738585072014E-308 is 0x1p-1022
     
     /**
      * A way of taking a double in the (0.0, 1.0) range and mapping it to a Gaussian or normal distribution, so high
@@ -1259,8 +1267,8 @@ public final class MathTools {
      * @return {@code n} with its 13 least significant bits effectively removed
      */
     public static float truncate(final float n) {
-        long i = (long) (n * 0x1p13f); // 0x1p13f is 2 raised to the 13 as a float, or 8192.0f
-        return i * 0x1p-13f;           // 0x1p-13f is 1 divided by (2 raised to the 13) as a float, or 1.0f/8192.0f
+        long i = (long) (n * 8192f); // 8192f is 2 raised to the 13 as a float
+        return i * 1.2207031E-4f;    // 1.2207031E-4f is 2 raised to the -13 as a float, or 0x1p-13f
     }
 
     /**
@@ -1272,8 +1280,8 @@ public final class MathTools {
      * @return {@code n} with its 42 least significant bits effectively removed
      */
     public static double truncate(final double n) {
-        long i = (long) (n * 0x1p42); // 0x1p42 is 2 raised to the 42 as a double
-        return i * 0x1p-42;          // 0x1p-42 is 1 divided by (2 raised to the 42) as a double
+        long i = (long) (n * 4.398046511104E12); // 4.398046511104E12 is 2 raised to the 42 as a double
+        return i * 2.2737367544323206E-13;       // 2.2737367544323206E-13 is 2 raised to the -42 as a double, or 0x1p-42
     }
 
     /**
@@ -1465,8 +1473,9 @@ public final class MathTools {
 
 
     /**
-     * Returns true if the value is zero. A suggested tolerance is {@code 0x1p-20}, which is the same value the float
-     * overload uses for its default tolerance, or a smaller number to reduce false-positives, such as {@code 0x1p-32}.
+     * Returns true if the value is zero. A suggested tolerance is {@code 9.5367431640625E-7}, which is the same value
+     * the float overload uses for its default tolerance, the simpler {@code 1E-6} (one millionth), or a smaller number
+     * to reduce false-positives, such as {@code 0x1p-32} (2 to the -32) or {@code 1E-9} (one billionth).
      *
      * @param value     any double
      * @param tolerance represent an outer bound below which the value is considered zero.
