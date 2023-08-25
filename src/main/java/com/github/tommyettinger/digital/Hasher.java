@@ -887,8 +887,9 @@ public class Hasher {
     public long hash64(final long[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        long seed = this.seed, a = this.seed + b4, b = this.seed + b3, c = this.seed + b2, d = this.seed + b1;
+        long seed = this.seed;
         final int len = Math.min(length, data.length - start);
+        long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
         for (int i = start + 3; i < len; i += 4) {
             a ^= data[i - 3] * b1;
             a = (a << 23 | a >>> 41) * b3;
@@ -902,6 +903,9 @@ public class Hasher {
         }
         seed += b5;
         switch (len & 3) {
+            case 0:
+                seed = wow(b1 - seed, b4 + seed);
+                break;
             case 1:
                 seed = wow(seed, b1 ^ data[start + len - 1]);
                 break;
@@ -912,8 +916,8 @@ public class Hasher {
                 seed = wow(seed + data[start + len - 3], b2 + data[start + len - 2]) + wow(seed + data[start + len - 1], seed ^ b3);
                 break;
         }
-        seed = (seed ^ seed >>> 16) * (b0 ^ (len + seed) << 4);
-        return seed ^ seed >>> 23 ^ seed >>> 42;
+        seed = (seed ^ len) * (seed << 16 ^ b0);
+        return (seed ^ (seed << 33 | seed >>> 31) ^ (seed << 19 | seed >>> 45));
     }
 
     public long hash64(final float[] data) {
@@ -1560,8 +1564,9 @@ public class Hasher {
     public int hash(final long[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        long seed = this.seed, a = this.seed + b4, b = this.seed + b3, c = this.seed + b2, d = this.seed + b1;
+        long seed = this.seed;
         final int len = Math.min(length, data.length - start);
+        long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
         for (int i = start + 3; i < len; i += 4) {
             a ^= data[i - 3] * b1;
             a = (a << 23 | a >>> 41) * b3;
@@ -1575,6 +1580,9 @@ public class Hasher {
         }
         seed += b5;
         switch (len & 3) {
+            case 0:
+                seed = wow(b1 - seed, b4 + seed);
+                break;
             case 1:
                 seed = wow(seed, b1 ^ data[start + len - 1]);
                 break;
@@ -1585,8 +1593,8 @@ public class Hasher {
                 seed = wow(seed + data[start + len - 3], b2 + data[start + len - 2]) + wow(seed + data[start + len - 1], seed ^ b3);
                 break;
         }
-        seed = (seed ^ seed >>> 16) * (b0 ^ (len + seed) << 4);
-        return (int) (seed ^ seed >>> 23 ^ seed >>> 42);
+        seed = (seed ^ len) * (seed << 16 ^ b0);
+        return (int)(seed ^ (seed << 33 | seed >>> 31) ^ (seed << 19 | seed >>> 45));
     }
 
     public int hash(final float[] data) {
@@ -2236,7 +2244,7 @@ public class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         seed += b1; seed ^= seed >>> 23 ^ seed >>> 48 ^ seed << 7 ^ seed << 53;
-        long a = seed + b4, b = seed + b3, c = seed + b2, d = seed + b1;
+        long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
         final int len = Math.min(length, data.length - start);
         for (int i = start + 3; i < len; i += 4) {
             a ^= data[i - 3] * b1;
@@ -2251,6 +2259,9 @@ public class Hasher {
         }
         seed += b5;
         switch (len & 3) {
+            case 0:
+                seed = wow(b1 - seed, b4 + seed);
+                break;
             case 1:
                 seed = wow(seed, b1 ^ data[start + len - 1]);
                 break;
@@ -2261,8 +2272,8 @@ public class Hasher {
                 seed = wow(seed + data[start + len - 3], b2 + data[start + len - 2]) + wow(seed + data[start + len - 1], seed ^ b3);
                 break;
         }
-        seed = (seed ^ seed >>> 16) * (b0 ^ (len + seed) << 4);
-        return seed ^ seed >>> 23 ^ seed >>> 42;
+        seed = (seed ^ len) * (seed << 16 ^ b0);
+        return (seed ^ (seed << 33 | seed >>> 31) ^ (seed << 19 | seed >>> 45));
     }
 
     public static long hash64(long seed, final float[] data) {
@@ -2903,7 +2914,7 @@ public class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         seed += b1; seed ^= seed >>> 23 ^ seed >>> 48 ^ seed << 7 ^ seed << 53;
-        long a = seed + b4, b = seed + b3, c = seed + b2, d = seed + b1;
+        long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
         final int len = Math.min(length, data.length - start);
         for (int i = start + 3; i < len; i += 4) {
             a ^= data[i - 3] * b1;
@@ -2918,6 +2929,9 @@ public class Hasher {
         }
         seed += b5;
         switch (len & 3) {
+            case 0:
+                seed = wow(b1 - seed, b4 + seed);
+                break;
             case 1:
                 seed = wow(seed, b1 ^ data[start + len - 1]);
                 break;
@@ -2928,8 +2942,8 @@ public class Hasher {
                 seed = wow(seed + data[start + len - 3], b2 + data[start + len - 2]) + wow(seed + data[start + len - 1], seed ^ b3);
                 break;
         }
-        seed = (seed ^ seed >>> 16) * (b0 ^ (len + seed) << 4);
-        return (int) (seed ^ seed >>> 23 ^ seed >>> 42);
+        seed = (seed ^ len) * (seed << 16 ^ b0);
+        return (int)(seed ^ (seed << 33 | seed >>> 31) ^ (seed << 19 | seed >>> 45));
     }
 
     public static int hash(long seed, final float[] data) {
