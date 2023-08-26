@@ -1317,35 +1317,41 @@ public class Hasher {
             return 0;
         long seed = this.seed;
         final int len = Math.min(length, data.length - start);
+        long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
         for (int i = start + 3; i < len; i += 4) {
-            seed = mum(
-                    mum(hash(data[i - 3]) ^ b1, hash(data[i - 2]) ^ b2) + seed,
-                    mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
+            a ^= hash64(data[i - 3]) * b1;
+            a = (a << 23 | a >>> 41) * b3;
+            b ^= hash64(data[i - 2]) * b2;
+            b = (b << 25 | b >>> 39) * b4;
+            c ^= hash64(data[i - 1]) * b3;
+            c = (c << 29 | c >>> 35) * b5;
+            d ^= hash64(data[i]) * b4;
+            d = (d << 31 | d >>> 33) * b1;
+            seed += a + b + c + d;
         }
-        int t;
+        seed += b5;
         switch (len & 3) {
             case 0:
-                seed = mum(b1 ^ seed, b4 + seed);
+                seed = wow(b1 - seed, b4 + seed);
                 break;
             case 1:
-                seed = mum(seed ^ ((t = hash(data[start + len - 1])) >>> 16), b3 ^ (t & 0xFFFFL));
+                seed = wow(seed, b1 ^ hash64(data[start + len - 1]));
                 break;
             case 2:
-                seed = mum(seed ^ hash(data[start + len - 2]), b0 ^ hash(data[start + len - 1]));
+                seed = wow(seed + hash64(data[start + len - 2]), b2 ^ hash64(data[start + len - 1]));
                 break;
             case 3:
-                seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
+                seed = wow(seed + hash64(data[start + len - 3]), b2 + hash64(data[start + len - 2])) + wow(seed + hash64(data[start + len - 1]), seed ^ b3);
                 break;
         }
-        seed = (seed ^ seed << 16) * (len ^ b0);
-        return seed - (seed >>> 31) + (seed << 33);
+        seed = (seed ^ len) * (seed << 16 ^ b0);
+        return (seed ^ (seed << 33 | seed >>> 31) ^ (seed << 19 | seed >>> 45));
     }
 
     public long hash64(final Object data) {
         if (data == null)
             return 0;
-        final long h = (data.hashCode() + seed) * 0x9E3779B97F4A7C15L;
-        return h - (h >>> 31) + (h << 33);
+        return wow(data.hashCode() ^ b4, b5 - seed) ^ seed;
     }
 
     public int hash(final boolean[] data) {
@@ -1998,33 +2004,40 @@ public class Hasher {
             return 0;
         long seed = this.seed;
         final int len = Math.min(length, data.length - start);
+        long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
         for (int i = start + 3; i < len; i += 4) {
-            seed = mum(
-                    mum(hash(data[i - 3]) ^ b1, hash(data[i - 2]) ^ b2) + seed,
-                    mum(hash(data[i - 1]) ^ b3, hash(data[i]) ^ b4));
+            a ^= hash64(data[i - 3]) * b1;
+            a = (a << 23 | a >>> 41) * b3;
+            b ^= hash64(data[i - 2]) * b2;
+            b = (b << 25 | b >>> 39) * b4;
+            c ^= hash64(data[i - 1]) * b3;
+            c = (c << 29 | c >>> 35) * b5;
+            d ^= hash64(data[i]) * b4;
+            d = (d << 31 | d >>> 33) * b1;
+            seed += a + b + c + d;
         }
-        int t;
+        seed += b5;
         switch (len & 3) {
             case 0:
-                seed = mum(b1 ^ seed, b4 + seed);
+                seed = wow(b1 - seed, b4 + seed);
                 break;
             case 1:
-                seed = mum(seed ^ ((t = hash(data[start + len - 1])) >>> 16), b3 ^ (t & 0xFFFFL));
+                seed = wow(seed, b1 ^ hash64(data[start + len - 1]));
                 break;
             case 2:
-                seed = mum(seed ^ hash(data[start + len - 2]), b0 ^ hash(data[start + len - 1]));
+                seed = wow(seed + hash64(data[start + len - 2]), b2 ^ hash64(data[start + len - 1]));
                 break;
             case 3:
-                seed = mum(seed ^ hash(data[start + len - 3]), b2 ^ hash(data[start + len - 2])) ^ mum(seed ^ hash(data[start + len - 1]), b4);
+                seed = wow(seed + hash64(data[start + len - 3]), b2 + hash64(data[start + len - 2])) + wow(seed + hash64(data[start + len - 1]), seed ^ b3);
                 break;
         }
-        seed = (seed ^ seed << 16) * (len ^ b0);
-        return (int) (seed - (seed >>> 32));
+        seed = (seed ^ len) * (seed << 16 ^ b0);
+        return (int)(seed ^ (seed << 33 | seed >>> 31) ^ (seed << 19 | seed >>> 45));
     }
 
     public int hash(final Object data) {
         if (data == null) return 0;
-        return (int) ((data.hashCode() + seed) * 0x9E3779B97F4A7C15L >>> 32);
+        return (int)(mum(data.hashCode() ^ b2, b3 - seed) ^ seed);
     }
 
 
@@ -2680,36 +2693,42 @@ public class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         seed += b1; seed ^= seed >>> 23 ^ seed >>> 48 ^ seed << 7 ^ seed << 53;
+        long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
         final int len = Math.min(length, data.length - start);
         for (int i = start + 3; i < len; i += 4) {
-            seed = mum(
-                    mum(hash(seed, data[i - 3]) ^ b1, hash(seed, data[i - 2]) ^ b2) + seed,
-                    mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
+            a ^= hash64(seed, data[i - 3]) * b1;
+            a = (a << 23 | a >>> 41) * b3;
+            b ^= hash64(seed, data[i - 2]) * b2;
+            b = (b << 25 | b >>> 39) * b4;
+            c ^= hash64(seed, data[i - 1]) * b3;
+            c = (c << 29 | c >>> 35) * b5;
+            d ^= hash64(seed, data[i]) * b4;
+            d = (d << 31 | d >>> 33) * b1;
+            seed += a + b + c + d;
         }
-        int t;
+        seed += b5;
         switch (len & 3) {
             case 0:
-                seed = mum(b1 ^ seed, b4 + seed);
+                seed = wow(b1 - seed, b4 + seed);
                 break;
             case 1:
-                seed = mum(seed ^ ((t = hash(seed, data[start + len - 1])) >>> 16), b3 ^ (t & 0xFFFFL));
+                seed = wow(seed, b1 ^ hash64(seed, data[start + len - 1]));
                 break;
             case 2:
-                seed = mum(seed ^ hash(seed, data[start + len - 2]), b0 ^ hash(seed, data[start + len - 1]));
+                seed = wow(seed + hash64(seed, data[start + len - 2]), b2 ^ hash64(seed, data[start + len - 1]));
                 break;
             case 3:
-                seed = mum(seed ^ hash(seed, data[start + len - 3]), b2 ^ hash(seed, data[start + len - 2])) ^ mum(seed ^ hash(seed, data[start + len - 1]), b4);
+                seed = wow(seed + hash64(seed, data[start + len - 3]), b2 + hash64(seed, data[start + len - 2])) + wow(seed + hash64(seed, data[start + len - 1]), seed ^ b3);
                 break;
         }
-        seed = (seed ^ seed << 16) * (len ^ b0);
-        return seed - (seed >>> 31) + (seed << 33);
+        seed = (seed ^ len) * (seed << 16 ^ b0);
+        return (seed ^ (seed << 33 | seed >>> 31) ^ (seed << 19 | seed >>> 45));
     }
 
     public static long hash64(long seed, final Object data) {
         if (data == null)
             return 0;
-        final long h = (data.hashCode() + seed) * 0x9E3779B97F4A7C15L;
-        return h - (h >>> 31) + (h << 33);
+        return wow(data.hashCode() ^ b4, b5 - seed) ^ seed;
     }
 
     public static int hash(long seed, final boolean[] data) {
@@ -3355,29 +3374,36 @@ public class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         seed += b1; seed ^= seed >>> 23 ^ seed >>> 48 ^ seed << 7 ^ seed << 53;
+        long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
         final int len = Math.min(length, data.length - start);
         for (int i = start + 3; i < len; i += 4) {
-            seed = mum(
-                    mum(hash(seed, data[i - 3]) ^ b1, hash(seed, data[i - 2]) ^ b2) + seed,
-                    mum(hash(seed, data[i - 1]) ^ b3, hash(seed, data[i]) ^ b4));
+            a ^= hash64(seed, data[i - 3]) * b1;
+            a = (a << 23 | a >>> 41) * b3;
+            b ^= hash64(seed, data[i - 2]) * b2;
+            b = (b << 25 | b >>> 39) * b4;
+            c ^= hash64(seed, data[i - 1]) * b3;
+            c = (c << 29 | c >>> 35) * b5;
+            d ^= hash64(seed, data[i]) * b4;
+            d = (d << 31 | d >>> 33) * b1;
+            seed += a + b + c + d;
         }
-        int t;
+        seed += b5;
         switch (len & 3) {
             case 0:
-                seed = mum(b1 ^ seed, b4 + seed);
+                seed = wow(b1 - seed, b4 + seed);
                 break;
             case 1:
-                seed = mum(seed ^ ((t = hash(seed, data[start + len - 1])) >>> 16), b3 ^ (t & 0xFFFFL));
+                seed = wow(seed, b1 ^ hash64(seed, data[start + len - 1]));
                 break;
             case 2:
-                seed = mum(seed ^ hash(seed, data[start + len - 2]), b0 ^ hash(seed, data[start + len - 1]));
+                seed = wow(seed + hash64(seed, data[start + len - 2]), b2 ^ hash64(seed, data[start + len - 1]));
                 break;
             case 3:
-                seed = mum(seed ^ hash(seed, data[start + len - 3]), b2 ^ hash(seed, data[start + len - 2])) ^ mum(seed ^ hash(seed, data[start + len - 1]), b4);
+                seed = wow(seed + hash64(seed, data[start + len - 3]), b2 + hash64(seed, data[start + len - 2])) + wow(seed + hash64(seed, data[start + len - 1]), seed ^ b3);
                 break;
         }
-        seed = (seed ^ seed << 16) * (len ^ b0);
-        return (int) (seed - (seed >>> 32));
+        seed = (seed ^ len) * (seed << 16 ^ b0);
+        return (int)(seed ^ (seed << 33 | seed >>> 31) ^ (seed << 19 | seed >>> 45));
     }
 
     public static int hash(long seed, final Object data) {
@@ -3385,6 +3411,6 @@ public class Hasher {
             return 0;
         seed += b1;
         seed ^= seed >>> 23 ^ seed >>> 48 ^ seed << 7 ^ seed << 53;
-        return (int) ((data.hashCode() + seed) * 0x9E3779B97F4A7C15L >>> 32);
+        return (int)(mum(data.hashCode() ^ b2, b3 - seed) ^ seed);
     }
 }
