@@ -95,19 +95,23 @@ functions for primitive arrays (and arrays of objects, if they
 implement hashCode()), and has 64-bit and 32-bit variants. The
 specific hashing algorithm it uses is a somewhat-hardened
 version of [wyhash](https://github.com/wangyi-fudan/wyhash) that
-doesn't use 128-bit math. While it can hash all types of 1D
+doesn't use 128-bit math.
+
+While Hasher can hash all types of 1D
 primitive array and most types of 2D primitive array, it can't
 do much with 3D or higher sizes at the moment. However, the only
 change that would be needed to add a `hash()` method for, say, a
-`float[][][]` is to copy the `hash(float[][])` method and change
-the parameter to be a `float[][][]`, so if you have the source,
+`float[][][]` is to copy the `hash(float[][], int, int)` method and change
+the first parameter to be a `float[][][]`, so if you have the source,
 you can add this yourself with a quick copy and paste. Hasher
 allows you to specify the seed when you call `hash()` or
 `hash64()` (as static methods), but it also has a fairly-large
 array of `predefined` hash functions with instance methods for
 `hash()` and `hash64()`. Starting in 0.3.0, Hasher can either
 process a whole input array or part of one, specified by a start
-index and a length. Hasher also has a few unary hashes that
+index and a length.
+
+Hasher also has a few unary hashes that
 can be used as quick and dirty random number generators when
 applied to numbers in a sequence. The unary hashes can output
 longs, bounded ints, floats, and doubles, so they may be useful in
@@ -115,6 +119,18 @@ a lot of cases. They are named like `randomize1()`, `randomize2()`,
 `randomize3()`, and so on, with higher numbers being typically
 slightly slower but also higher-quality (and more permissive of
 sets of inputs with atypical patterns).
+
+While Hasher should usually
+change only very rarely, if at all, I was concerned about a few
+properties of the hashing code that might have meant some values
+would be returned less frequently, though this wasn't detectable to
+the [SMHasher test suite](https://github.com/rurban/smhasher). In
+version 0.4.0, Hasher's output for any given seed will be different
+from the same seed in previous versions. You can get the older
+Hasher instances either from Git history or the test folder's
+[OldHasher v020](src/test/java/com/github/tommyettinger/digital/v020/OldHasher.java)
+or [OldHasher v037](src/test/java/com/github/tommyettinger/digital/v037/OldHasher.java) files,
+if you need to reproduce the results of older seeds.
 
 AlternateRandom is a quick micro-port of a random number generator
 from the closely-related [juniper](https://github.com/tommyettinger/juniper)
@@ -179,14 +195,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.7"
+api "com.github.tommyettinger:digital:0.4.0"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.3.7:sources"
+api "com.github.tommyettinger:digital:0.4.0:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
