@@ -811,18 +811,18 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoothTurns(float turns) {
-        //Absolute error:   0.00014983
-        //Relative error:   0.00000000
-        //Maximum error:    0.00035477
-        //Worst input:      -0.83077192
-        //Worst approx output: 0.87360507
-        //Correct output:      0.87395984
         turns = turns * 4f;
         final int ceil = (int) Math.ceil(turns) & -2;
         turns -= ceil;
         final float x2 = turns * turns, x3 = turns * x2;
         return (((11 * turns - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
     }
+    //Absolute error:   0.00014983
+    //Relative error:   0.00024772
+    //Maximum error:    0.00035477
+    //Worst input:      -0.83077192
+    //Worst approx output: 0.87360507
+    //Correct output:      0.87395984
 
     /**
      * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th

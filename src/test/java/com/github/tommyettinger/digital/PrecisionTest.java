@@ -11,7 +11,7 @@ import static com.github.tommyettinger.digital.TrigTools.*;
 import static java.lang.Math.abs;
 
 // REMOVE the @Ignore if you want to run any tests! They take a while to run as a whole, though.
-@Ignore
+//@Ignore
 public class PrecisionTest {
 
     public static final int PI_BITS = Float.floatToIntBits(TrigTools.PI);
@@ -655,13 +655,44 @@ public class PrecisionTest {
                 "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
 
+    /**
+     * Running sinSmootherTurns
+     * Absolute error:   0.00000001
+     * Relative error:   0.00000097
+     * Maximum error:    0.00000006
+     * Worst input:      -0.91666651
+     * Worst approx output: 0.50000083
+     * Correct output:      0.50000089
+     * Running sinSmoothTurns
+     * Absolute error:   0.00014983
+     * Relative error:   0.00024772
+     * Maximum error:    0.00035477
+     * Worst input:      -0.83077192
+     * Worst approx output: 0.87360507
+     * Correct output:      0.87395984
+     * Running sinTurnsNewTable
+     * Absolute error:   0.00012112
+     * Relative error:   0.00161588
+     * Maximum error:    0.00038050
+     * Worst input:      -0.50006056
+     * Worst approx output: 0.00000000
+     * Correct output:      0.00038050
+     * Running sinTurnsKaze
+     * Absolute error:   0.00333274
+     * Relative error:   0.00964342
+     * Maximum error:    0.00722286
+     * Worst input:      -0.93186998
+     * Worst approx output: 0.40789607
+     * Correct output:      0.41511893
+     */
     @Test
     public void testSinTurns() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinSmootherTurns", TrigTools::sinSmootherTurns);
         functions.put("sinSmoothTurns", TrigTools::sinSmoothTurns);
         functions.put("sinTurnsNewTable", TrigTools::sinTurns);
-        functions.put("sinTurnsOldTable", OldTrigTools::sinTurns);
+//        functions.put("sinTurnsOldTable", OldTrigTools::sinTurns);
+        functions.put("sinTurnsKaze", PrecisionTest::sinKazeTurns);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -2158,5 +2189,49 @@ Worst input (abs):       4.205234527587891000000000
         double y = Double.longBitsToDouble(i);
         return y * (1.5 - 0.5 * x * y * y);
     }
+
+    /**
+     * This is an attempt to port Kaze Emanuar's N64-optimized sincos() approximation, using just the sin() part.
+     * @param angle in turns, to make this possible to test alongside sinTurns()
+     * @return a sine value between -1 and 1 inclusive
+     */
+    public static float sinKazeTurns(float angle) {
+        short int_angle = (short) (int)((angle - MathTools.fastFloor(angle)) * 0x1p16f);
+        int shifter = (int_angle ^ (int_angle << 1)) & 0xC000;
+        float x = (short)(((int_angle + shifter) << 17) >>> 16);
+        float cosx = (1f - 0.0000000010911122665310369f * x * x);
+        float sinx = (float) Math.sqrt(1f - cosx * cosx);
+        if ((shifter & 0x4000) != 0)
+            sinx = cosx;
+        if(int_angle < 0)
+            sinx = -sinx;
+        return sinx;
+    }
+
+    // Kaze Emanuar's N64-optimized sincos() approximation
+    /*
+#define SECOND_ORDER_COEFFICIENT 0.0000000010911122665310369f
+#define quasi_cos_2(x) (ONE - SECOND_ORDER_COEFFICIENT * x * x)
+// only uses 1/8 range using some symmetries. is a lot more accurate and...???
+CONST f32x2 sincos(s16 int_angle) {
+  s32 shifter = (int_angle ^ (int_angle << 1)) & 0xC000;
+  f32 x = (f32) (((int_angle + shifter) << 17) >> 16);
+  float cosx = quasi_cos_2(x);
+  float sinx = sqrtf(ONE - cosx * cosx);
+  if (shifter & Ox4000) {
+    float temp = cosx;
+    cosx = sinx;
+    sinx = temp;
+  }
+  if (int_angle < 0) {
+    sinx = -sinx;
+  }
+  if (shifter & Ox8000) {
+    cosx = -cosx;
+  }
+  // imaginary part in cosine to give the reader mental damage
+  return F32X2_NEW(sinx, cosx);
+}
+     */
 
 }
