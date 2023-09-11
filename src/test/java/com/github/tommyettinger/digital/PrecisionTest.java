@@ -502,13 +502,25 @@ public class PrecisionTest {
 //        float[] table0625 = makeTableFloat(0.625);
 //        float[] table065625 = makeTableFloat(0.65625);
 //        float[] table075 = makeTableFloat(0.75);
-        float[] tableMixed = makeTableFloatMixed();
+//        float[] tableMixed = makeTableFloatMixed();
+        float[] table32 = makeTableFloatVar(32);
+        float[] table64 = makeTableFloatVar(64);
+        float[] table128 = makeTableFloatVar(128);
+        float[] table256 = makeTableFloatVar(256);
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinNewTable", TrigTools::sin);
+        functions.put("sinSmoother", TrigTools::sinSmoother);
+        functions.put("sinTable32", (f) -> sinVar(table32, f));
+        functions.put("sinTable64", (f) -> sinVar(table64, f));
+        functions.put("sinTable128", (f) -> sinVar(table128, f));
+        functions.put("sinTable256", (f) -> sinVar(table256, f));
+        functions.put("sinSmootherTable32", (f) -> sinSmootherVar(table32, f));
+        functions.put("sinSmootherTable64", (f) -> sinSmootherVar(table64, f));
+        functions.put("sinSmootherTable128", (f) -> sinSmootherVar(table128, f));
+        functions.put("sinSmootherTable256", (f) -> sinSmootherVar(table256, f));
         functions.put("sinOldTable", OldTrigTools::sin);
         functions.put("sinReallyOld", OldNumberTools::sin);
         functions.put("sinSmooth", TrigTools::sinSmooth);
-        functions.put("sinSmoother", TrigTools::sinSmoother);
 //        functions.put("sinSmootherMixed", (f) -> sinMixed(tableMixed, f));
 //        functions.put("sinGreen", PrecisionTest::sinGreen);
 
@@ -2159,6 +2171,7 @@ Worst input (abs):       4.205234527587891000000000
     public static float cos(float[] SIN_TABLE, float radians) {
         return SIN_TABLE[(int) (radians * radToIndex) + SIN_TO_COS & TABLE_MASK];
     }
+
     public static double sin(double[] SIN_TABLE_D, double radians) {
         return SIN_TABLE_D[(int) (radians * radToIndexD) & TABLE_MASK];
     }
@@ -2166,6 +2179,49 @@ Worst input (abs):       4.205234527587891000000000
     public static double cos(double[] SIN_TABLE_D, double radians) {
         return SIN_TABLE_D[(int) (radians * radToIndexD) + SIN_TO_COS & TABLE_MASK];
     }
+
+
+    public static float[] makeTableFloatVar(final int TABLE_SIZE) {
+        final int TABLE_MASK = TABLE_SIZE -1;
+        float[] SIN_TABLE = new float[TABLE_SIZE+1];
+        for (int i = 0; i < TABLE_SIZE; i++)
+            SIN_TABLE[i] = (float) (Math.sin((double) i / TABLE_SIZE * PI2));
+        // The four right angles get extra-precise values, because they are
+        // the most likely to need to be correct.
+        SIN_TABLE[0] = 0f;
+        SIN_TABLE[TABLE_SIZE] = 0f;
+        SIN_TABLE[(int) (0.25f * TABLE_SIZE) & TABLE_MASK] = 1f;
+        SIN_TABLE[(int) (0.5f  * TABLE_SIZE) & TABLE_MASK] = 0f;
+        SIN_TABLE[(int) (0.75f * TABLE_SIZE) & TABLE_MASK] = -1.0f;
+        return SIN_TABLE;
+    }
+
+    public static float sinVar(float[] table, float radians) {
+        return table[(int) (radians * (table.length-1) * (0.5f * PI_INVERSE)) & table.length - 2];
+    }
+
+    public static float cosVar(float[] table, float radians) {
+        return table[(int) (radians * (table.length-1) * (0.5f * PI_INVERSE)) + (table.length >>> 2) & table.length - 2];
+    }
+
+    public static float sinSmootherVar(float[] table, float radians) {
+        final int len = table.length - 1;
+        radians *= len * (0.5f * PI_INVERSE);
+        final int floor = (int)(radians + 16384.0) - 16384;
+        final int masked = floor & len - 1;
+        final float from = table[masked], to = table[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    public static float cosSmootherVar(float[] table, float radians) {
+        final int len = table.length - 1;
+        radians *= len * (0.5f * PI_INVERSE);
+        final int floor = (int)(radians + 16384.0) - 16384;
+        final int masked = floor + (len >>> 2) & len - 1;
+        final float from = table[masked], to = table[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
 
     // These don't use BitConversion to make copying them into a jshell session easier.
 
