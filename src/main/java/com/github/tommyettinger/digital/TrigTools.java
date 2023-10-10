@@ -260,7 +260,7 @@ public final class TrigTools {
         //Mean relative error:     0.0154355764
         //Maximum abs. error:      0.0003835472
         //Maximum rel. error:   2538.7736816406
-        return SIN_TABLE[(int) (radians * radToIndex) & TABLE_MASK];
+        return SIN_TABLE[(int) (radians * radToIndex + 0.5f) & TABLE_MASK];
     }
 
     /**
@@ -277,7 +277,7 @@ public final class TrigTools {
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
     public static float cos(float radians) {
-        return SIN_TABLE[(int) (radians * radToIndex) + SIN_TO_COS & TABLE_MASK];
+        return SIN_TABLE[(int) (radians * radToIndex + 0.5f) + SIN_TO_COS & TABLE_MASK];
     }
 
     /**
@@ -346,7 +346,7 @@ public final class TrigTools {
         //Mean relative error:     0.0018105424
         //Maximum abs. error:      0.0003834828
         //Maximum rel. error:    719.0000000000
-        return SIN_TABLE[(int) (degrees * degToIndex) & TABLE_MASK];
+        return SIN_TABLE[(int) (degrees * degToIndex + 0.5f) & TABLE_MASK];
     }
 
     /**
@@ -363,7 +363,7 @@ public final class TrigTools {
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
     public static float cosDeg(float degrees) {
-        return SIN_TABLE[(int) (degrees * degToIndex) + SIN_TO_COS & TABLE_MASK];
+        return SIN_TABLE[(int) (degrees * degToIndex + 0.5f) + SIN_TO_COS & TABLE_MASK];
     }
 
     /**
@@ -402,7 +402,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static float sinTurns(float turns) {
-        return SIN_TABLE[(int) (turns * turnToIndex) & TABLE_MASK];
+        return SIN_TABLE[(int) (turns * turnToIndex + 0.5f) & TABLE_MASK];
     }
 
     /**
@@ -419,7 +419,7 @@ public final class TrigTools {
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
     public static float cosTurns(float turns) {
-        return SIN_TABLE[(int) (turns * turnToIndex) + SIN_TO_COS & TABLE_MASK];
+        return SIN_TABLE[(int) (turns * turnToIndex + 0.5f) + SIN_TO_COS & TABLE_MASK];
     }
 
     /**
@@ -458,7 +458,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static double sin(double radians) {
-        return SIN_TABLE_D[(int) (radians * radToIndexD) & TABLE_MASK];
+        return SIN_TABLE_D[(int) (radians * radToIndexD + 0.5) & TABLE_MASK];
     }
 
     /**
@@ -475,7 +475,7 @@ public final class TrigTools {
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
     public static double cos(double radians) {
-        return SIN_TABLE_D[(int) (radians * radToIndexD) + SIN_TO_COS & TABLE_MASK];
+        return SIN_TABLE_D[(int) (radians * radToIndexD + 0.5) + SIN_TO_COS & TABLE_MASK];
     }
 
     /**
@@ -516,7 +516,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static double sinDeg(double degrees) {
-        return SIN_TABLE_D[(int) (degrees * degToIndexD) & TABLE_MASK];
+        return SIN_TABLE_D[(int) (degrees * degToIndexD + 0.5) & TABLE_MASK];
     }
 
     /**
@@ -533,7 +533,7 @@ public final class TrigTools {
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
     public static double cosDeg(double degrees) {
-        return SIN_TABLE_D[(int) (degrees * degToIndexD) + SIN_TO_COS & TABLE_MASK];
+        return SIN_TABLE_D[(int) (degrees * degToIndexD + 0.5) + SIN_TO_COS & TABLE_MASK];
     }
 
     /**
@@ -572,7 +572,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static double sinTurns(double turns) {
-        return SIN_TABLE_D[(int) (turns * turnToIndexD) & TABLE_MASK];
+        return SIN_TABLE_D[(int) (turns * turnToIndexD + 0.5) & TABLE_MASK];
     }
 
     /**
@@ -589,7 +589,7 @@ public final class TrigTools {
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
     public static double cosTurns(double turns) {
-        return SIN_TABLE_D[(int) (turns * turnToIndexD) + SIN_TO_COS & TABLE_MASK];
+        return SIN_TABLE_D[(int) (turns * turnToIndexD + 0.5) + SIN_TO_COS & TABLE_MASK];
     }
 
     /**

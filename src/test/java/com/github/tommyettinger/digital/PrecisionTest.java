@@ -738,7 +738,7 @@ public class PrecisionTest {
 //        functions.put("sinGdx", MathUtils::sin);
 
         functions.put("sinOldTable", OldTrigTools::sin);
-//        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
+        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
 //        functions.put("sinReallyOld", OldNumberTools::sin);
 
 //        functions.put("sinMixed", (f) -> sinMixed(tableMixed, f));
@@ -771,6 +771,7 @@ public class PrecisionTest {
             }
             for (int i = PI2BITS; i >= 0; i--) {
                 float x = Float.intBitsToFloat(i);
+//            for (float x = PI2; x >= 0; x-= 0x1p-16f) {
                 float tru = (float) Math.sin(x),
                         approx = op.applyAsFloat(x),
                         err = tru - approx,
@@ -1769,7 +1770,7 @@ Worst input (abs):       4.205234527587891000000000
                 * (1 - (floor & 2));
     }
     public static float sinAlternate(float radians) {
-        return SIN_TABLE[(int) (radians * radToIndex + 0.5f) & TABLE_MASK];
+        return SIN_TABLE[(int) (radians * radToIndex) & TABLE_MASK];
     }
 
     public static float sinSmoother(float radians) {
