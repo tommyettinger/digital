@@ -1,5 +1,6 @@
 package com.github.tommyettinger.digital;
 
+import com.badlogic.gdx.math.MathUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -702,50 +703,54 @@ public class PrecisionTest {
      */
     @Test
     public void testSin() {
-        float[] prior00 = makeTableFloatPrior(0.0);
-        float[] prior05 = makeTableFloatPrior(0.5);
-        float[] table05 = makeTableFloat(0.5);
-        float[] table025 = makeTableFloat(0.25);
-        float[] tablePhi = makeTableFloat(MathTools.GOLDEN_RATIO_INVERSE_D);
-        float[] table0625 = makeTableFloat(0.625);
-        float[] table065625 = makeTableFloat(0.65625);
-        float[] table075 = makeTableFloat(0.75);
-        float[] tableMixed = makeTableFloatMixed();
-        float[] table32 = makeTableFloatVar(32);
-        float[] table64 = makeTableFloatVar(64);
-        float[] table128 = makeTableFloatVar(128);
-        float[] table256 = makeTableFloatVar(256);
-        float[] table1024 = makeTableFloatVar(1024);
-        float[] table4096 = makeTableFloatVar(4096);
+//        float[] prior00 = makeTableFloatPrior(0.0);
+//        float[] prior05 = makeTableFloatPrior(0.5);
+//        float[] table05 = makeTableFloat(0.5);
+//        float[] table025 = makeTableFloat(0.25);
+//        float[] tablePhi = makeTableFloat(MathTools.GOLDEN_RATIO_INVERSE_D);
+//        float[] table0625 = makeTableFloat(0.625);
+//        float[] table065625 = makeTableFloat(0.65625);
+//        float[] table075 = makeTableFloat(0.75);
+//        float[] tableMixed = makeTableFloatMixed();
+//        float[] table32 = makeTableFloatVar(32);
+//        float[] table64 = makeTableFloatVar(64);
+//        float[] table128 = makeTableFloatVar(128);
+//        float[] table256 = makeTableFloatVar(256);
+//        float[] table1024 = makeTableFloatVar(1024);
+//        float[] table4096 = makeTableFloatVar(4096);
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinNewTable", TrigTools::sin);
-        functions.put("sinSmoother", TrigTools::sinSmoother);
-        functions.put("sinTable32", (f) -> sinVar(table32, f));
-        functions.put("sinTable64", (f) -> sinVar(table64, f));
-        functions.put("sinTable128", (f) -> sinVar(table128, f));
-        functions.put("sinTable256", (f) -> sinVar(table256, f));
-        functions.put("sinTable1024", (f) -> sinVar(table1024, f));
-        functions.put("sinTable4096", (f) -> sinVar(table4096, f));
-        functions.put("sinSmootherTable32", (f) -> sinSmootherVar(table32, f));
-        functions.put("sinSmootherTable64", (f) -> sinSmootherVar(table64, f));
-        functions.put("sinSmootherTable128", (f) -> sinSmootherVar(table128, f));
-        functions.put("sinSmootherTable256", (f) -> sinSmootherVar(table256, f));
-        functions.put("sinSmootherTable1024", (f) -> sinSmootherVar(table1024, f));
-        functions.put("sinSmootherTable4096", (f) -> sinSmootherVar(table4096, f));
-        functions.put("sinOldTable", OldTrigTools::sin);
-        functions.put("sinReallyOld", OldNumberTools::sin);
         functions.put("sinSmooth", TrigTools::sinSmooth);
-        functions.put("sinMixed", (f) -> sinMixed(tableMixed, f));
-        functions.put("sinGreen", PrecisionTest::sinGreen);
+        functions.put("sinSmoother", TrigTools::sinSmoother);
+//        functions.put("sinTable32", (f) -> sinVar(table32, f));
+//        functions.put("sinTable64", (f) -> sinVar(table64, f));
+//        functions.put("sinTable128", (f) -> sinVar(table128, f));
+//        functions.put("sinTable256", (f) -> sinVar(table256, f));
+//        functions.put("sinTable1024", (f) -> sinVar(table1024, f));
+//        functions.put("sinTable4096", (f) -> sinVar(table4096, f));
+//        functions.put("sinSmootherTable32", (f) -> sinSmootherVar(table32, f));
+//        functions.put("sinSmootherTable64", (f) -> sinSmootherVar(table64, f));
+//        functions.put("sinSmootherTable128", (f) -> sinSmootherVar(table128, f));
+//        functions.put("sinSmootherTable256", (f) -> sinSmootherVar(table256, f));
+//        functions.put("sinSmootherTable1024", (f) -> sinSmootherVar(table1024, f));
+//        functions.put("sinSmootherTable4096", (f) -> sinSmootherVar(table4096, f));
+//        functions.put("sinGdx", MathUtils::sin);
 
-        functions.put("sin00Prior", (f) -> sin(prior00, f));
-        functions.put("sin05Prior", (f) -> sin(prior05, f));
-        functions.put("sin05", (f) -> sin(table05, f));
-        functions.put("sin025", (f) -> sin(table025, f));
-        functions.put("sinPhi", (f) -> sin(tablePhi, f));
-        functions.put("sin0625", (f) -> sin(table0625, f));
-        functions.put("sin065625", (f) -> sin(table065625, f));
-        functions.put("sin075", (f) -> sin(table075, f));
+        functions.put("sinOldTable", OldTrigTools::sin);
+        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
+//        functions.put("sinReallyOld", OldNumberTools::sin);
+
+//        functions.put("sinMixed", (f) -> sinMixed(tableMixed, f));
+//        functions.put("sinGreen", PrecisionTest::sinGreen);
+
+//        functions.put("sin00Prior", (f) -> sin(prior00, f));
+//        functions.put("sin05Prior", (f) -> sin(prior05, f));
+//        functions.put("sin05", (f) -> sin(table05, f));
+//        functions.put("sin025", (f) -> sin(table025, f));
+//        functions.put("sinPhi", (f) -> sin(tablePhi, f));
+//        functions.put("sin0625", (f) -> sin(table0625, f));
+//        functions.put("sin065625", (f) -> sin(table065625, f));
+//        functions.put("sin075", (f) -> sin(table075, f));
 
 //        functions.put("sinCurve", PrecisionTest::sinCurve);
 //        functions.put("sinNick", PrecisionTest::sinNick);
@@ -759,6 +764,10 @@ public class PrecisionTest {
             float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
             float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
             long counter = 0L;
+            for (int i = 1; i <= 6; i++) {
+                System.out.printf("sin(%d), approximate: %.10f\n", i, op.applyAsFloat(i));
+                System.out.printf("sin(%d), should be:   %.10f\n", i, Math.sin(i));
+            }
             for (int i = PI2BITS; i >= 0; i--) {
                 float x = Float.intBitsToFloat(i);
                 float tru = (float) Math.sin(x),

@@ -136,7 +136,7 @@ public final class OldTrigTools {
      */
     public static final float degreesToRadians = PI / 180f;
     /**
-     * A precalculated table of 16384 floats, corresponding to the y-value of points on the unit circle, ordered by
+     * A precalculated table of 16385 floats, corresponding to the y-value of points on the unit circle, ordered by
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
      * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
      * <br>
@@ -144,7 +144,7 @@ public final class OldTrigTools {
      * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get y, then look up
      * {@code (angle + TrigTools.SIN_TO_COS) & TrigTools.TABLE_MASK} (or {@code (angle + 4096) & 16383}) to get x.
      */
-    public static final float[] SIN_TABLE = new float[TABLE_SIZE];
+    public static final float[] SIN_TABLE = new float[TABLE_SIZE+1];
 
     /**
      * Multiply by this to convert from radians to degrees.
@@ -155,7 +155,7 @@ public final class OldTrigTools {
      */
     public static final double degreesToRadiansD = Math.PI / 180.0;
     /**
-     * A precalculated table of 16384 doubles, corresponding to the y-value of points on the unit circle, ordered by
+     * A precalculated table of 16385 doubles, corresponding to the y-value of points on the unit circle, ordered by
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
      * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
      * <br>
@@ -163,7 +163,7 @@ public final class OldTrigTools {
      * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get y, then look up
      * {@code (angle + TrigTools.SIN_TO_COS) & TrigTools.TABLE_MASK} (or {@code (angle + 4096) & 16383}) to get x.
      */
-    public static final double[] SIN_TABLE_D = new double[TABLE_SIZE];
+    public static final double[] SIN_TABLE_D = new double[TABLE_SIZE+1];
 
     static {
         for (int i = 0; i < TABLE_SIZE; i++)
@@ -427,6 +427,380 @@ public final class OldTrigTools {
         final double x2 = turns * turns, x4 = x2 * x2;
         return turns * ((0.0010582010582010583) * x4 - (0.1111111111111111) * x2 + 1.0)
                 / ((0.015873015873015872) * x4 - (0.4444444444444444) * x2 + 1.0);
+    }
+
+    /**
+     * Gets an approximation of the sine of {@code radians} that is usually much more accurate than
+     * {@link #sin(float)}, but that is somewhat slower. This still offers about 2x to
+     * 4x the throughput of {@link Math#sin(double)} (cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sin(float)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param radians an angle in radians; optimally between {@code -PI2} and {@code PI2}
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static float sinSmoother(float radians) {
+        // 14 bits
+        //Mean absolute error:      0.0000037685
+        //Mean relative error:  13753.3007812500
+        //Maximum abs. error:       0.0001920144
+        //Maximum rel. error:  957569.0625000000
+        radians = radians * radToIndex - 0.5f;
+        final int floor = (int)(radians + 16384.0) - 16384;
+        final int masked = floor & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    /**
+     * Gets an approximation of the sine of {@code radians} that is usually much more accurate than
+     * {@link #sin(double)}, but that is somewhat slower. This still offers better
+     * throughput than {@link Math#sin(double)}.
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sin(double)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param radians an angle in radians; optimally between {@code -PI2_D} and {@code PI2_D}
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static double sinSmoother(double radians) {
+        // 14 bits
+        //Mean absolute error:     0.0000000078
+        //Mean relative error:     0.0000001134
+        //Maximum abs. error:      0.0000000184
+        //Maximum rel. error:      1.0000000000
+        radians = radians * radToIndexD - 0.5;
+        final int floor = (int) Math.floor(radians);
+        final int masked = floor & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    /**
+     * Gets an approximation of the cosine of {@code radians} that is usually much more accurate than
+     * {@link #cos(float)}, but that is somewhat slower. This still offers about 2x to
+     * 4x the throughput of {@link Math#cos(double)} (cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #cos(float)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param radians an angle in radians; optimally between {@code -PI2} and {@code PI2}
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static float cosSmoother(float radians) {
+        // 14 bits
+        //Mean absolute error:     0.0000000719
+        //Mean relative error:     0.0000011134
+        //Maximum abs. error:      0.0000004172
+        //Maximum rel. error:      0.9999999404
+        radians = radians * radToIndex - 0.5f;
+        final int floor = (int)(radians + 16384.0) - 16384;
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    /**
+     * Gets an approximation of the cosine of {@code radians} that is usually much more accurate than
+     * {@link #cos(double)}, but that is somewhat slower. This still offers better
+     * throughput than {@link Math#cos(double)}.
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #cos(double)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param radians an angle in radians; optimally between {@code -PI2_D} and {@code PI2_D}
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static double cosSmoother(double radians) {
+        radians = radians * radToIndexD - 0.5;
+        final int floor = (int) Math.floor(radians);
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    /**
+     * Gets an approximation of the tangent of {@code radians} that is usually much more accurate than
+     * {@link #tan(float)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
+     * higher throughput than {@link Math#tan(double)} (cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sin(float)} and {@link #cos(float)} use, but
+     * interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
+     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
+     * {@link #tan(float)} works, and tends to be much more precise.
+     * @param radians a float angle in radians, where 0 to {@link #PI2} is one rotation
+     * @return a float approximation of tan()
+     */
+    public static float tanSmoother(float radians) {
+        // on the -1.57 to 1.57 range:
+        //Mean absolute error:     0.0000502852
+        //Mean relative error:     0.0000002945
+        //Maximum abs. error:      0.1672363281
+        //Maximum rel. error:      0.0001353590
+        radians = radians * radToIndex - 0.5f;
+        final int floor = (int)(radians + 16384.0) - 16384;
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final float fromS = SIN_TABLE[maskedS], toS = SIN_TABLE[maskedS+1];
+        final float fromC = SIN_TABLE[maskedC], toC = SIN_TABLE[maskedC+1];
+        radians -= floor;
+        return (fromS + (toS - fromS) * radians)/(fromC + (toC - fromC) * radians);
+    }
+
+    /**
+     * Gets an approximation of the tangent of {@code radians} that is usually much more accurate than
+     * {@link #tan(double)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
+     * higher throughput than {@link Math#tan(double)}.
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sin(double)} and {@link #cos(double)} use, but
+     * interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
+     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
+     * {@link #tan(double)} works, and tends to be much more precise.
+     * @param radians a double angle in radians, where 0 to {@link #PI2} is one rotation
+     * @return an approximation of tan()
+     */
+    public static double tanSmoother(double radians) {
+        radians = radians * radToIndexD - 0.5;
+        final int floor = (int)Math.floor(radians);
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final double fromS = SIN_TABLE_D[maskedS], toS = SIN_TABLE_D[maskedS+1];
+        final double fromC = SIN_TABLE_D[maskedC], toC = SIN_TABLE_D[maskedC+1];
+        radians -= floor;
+        return (fromS + (toS - fromS) * radians)/(fromC + (toC - fromC) * radians);
+    }
+
+    /**
+     * Gets an approximation of the sine of {@code degrees} that is usually much more accurate than
+     * {@link #sinDeg(float)}, but that is somewhat slower. This still offers about 2x
+     * to 4x the throughput of {@link Math#sin(double)} (converted from degrees and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinDeg(float)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param degrees an angle in degrees; optimally between -360 and 360
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static float sinSmootherDeg(float degrees) {
+        //Mean absolute error:     0.0000000590
+        //Mean relative error:     0.0000008347
+        //Maximum abs. error:      0.0000003576
+        //Maximum rel. error:      0.2968730032
+        degrees *= degToIndex;
+        final int floor = (int)(degrees + 16384.0) - 16384;
+        final int masked = floor & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (degrees - floor);
+    }
+
+    /**
+     * Gets an approximation of the sine of {@code degrees} that is usually much more accurate than
+     * {@link #sinDeg(double)}, but that is somewhat slower. This still offers better
+     * throughput than {@link Math#sin(double)} (converted from degrees).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinDeg(double)} uses, but interpolates between
+     * two adjacent entries in the table, rather than just using one entry unmodified.
+     * @param degrees an angle in degrees; optimally between -360 and 360
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static double sinSmootherDeg(double degrees) {
+        degrees *= degToIndexD;
+        final int floor = (int) Math.floor(degrees);
+        final int masked = floor & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (degrees - floor);
+    }
+
+    /**
+     * Gets an approximation of the cosine of {@code degrees} that is usually much more accurate than
+     * {@link #cosDeg(float)}, but that is somewhat slower. This still offers about 2x to
+     * 4x the throughput of {@link Math#cos(double)} (converted from degrees and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #cosDeg(float)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param degrees an angle in degrees; optimally between -360 and 360
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static float cosSmootherDeg(float degrees) {
+        degrees *= degToIndex;
+        final int floor = (int)(degrees + 16384.0) - 16384;
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (degrees - floor);
+    }
+
+    /**
+     * Gets an approximation of the cosine of {@code degrees} that is usually much more accurate than
+     * {@link #cosDeg(double)}, but that is somewhat slower. This still offers better
+     * throughput than {@link Math#cos(double)} (converted from degrees).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #cosDeg(double)} uses, but interpolates between
+     * two adjacent entries in the table, rather than just using one entry unmodified.
+     * @param degrees an angle in degrees; optimally between -360 and 360
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static double cosSmootherDeg(double degrees) {
+        degrees *= degToIndexD;
+        final int floor = (int) Math.floor(degrees);
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (degrees - floor);
+    }
+
+    /**
+     * Gets an approximation of the tangent of {@code degrees} that is usually much more accurate than
+     * {@link #tanDeg(float)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
+     * higher throughput than {@link Math#tan(double)} (converted from degrees and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinDeg(float)} and {@link #cosDeg(float)} use, but
+     * interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
+     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
+     * {@link #tanDeg(float)} works, and tends to be much more precise.
+     * @param degrees a float angle in degrees, where 0 to 360 is one rotation
+     * @return a float approximation of tan()
+     */
+    public static float tanSmootherDeg(float degrees) {
+        degrees *= degToIndex;
+        final int floor = (int)(degrees + 16384.0) - 16384;
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final float fromS = SIN_TABLE[maskedS], toS = SIN_TABLE[maskedS+1];
+        final float fromC = SIN_TABLE[maskedC], toC = SIN_TABLE[maskedC+1];
+        return (fromS + (toS - fromS) * (degrees - floor))/(fromC + (toC - fromC) * (degrees - floor));
+    }
+
+    /**
+     * Gets an approximation of the tangent of {@code degrees} that is usually much more accurate than
+     * {@link #tanDeg(double)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
+     * higher throughput than {@link Math#tan(double)} (converted from degrees).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinDeg(double)} and {@link #cosDeg(double)} use,
+     * but interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
+     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
+     * {@link #tanDeg(double)} works, and tends to be much more precise.
+     * @param degrees a double angle in degrees, where 0 to 360 is one rotation
+     * @return an approximation of tan()
+     */
+    public static double tanSmootherDeg(double degrees) {
+        degrees *= degToIndexD;
+        final int floor = (int)Math.floor(degrees);
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final double fromS = SIN_TABLE_D[maskedS], toS = SIN_TABLE_D[maskedS+1];
+        final double fromC = SIN_TABLE_D[maskedC], toC = SIN_TABLE_D[maskedC+1];
+        return (fromS + (toS - fromS) * (degrees - floor))/(fromC + (toC - fromC) * (degrees - floor));
+    }
+
+    /**
+     * Gets an approximation of the sine of {@code turns} that is usually much more accurate than
+     * {@link #sinTurns(float)}, but that is somewhat slower. This still offers about 2x
+     * to 4x the throughput of {@link Math#sin(double)} (converted from turns and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinTurns(float)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param turns an angle in turns; optimally between -1 and 1
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static float sinSmootherTurns(float turns) {
+        turns *= turnToIndex;
+        final int floor = (int)(turns + 16384.0) - 16384;
+        final int masked = floor & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (turns - floor);
+    }
+
+    /**
+     * Gets an approximation of the sine of {@code turns} that is usually much more accurate than
+     * {@link #sinTurns(double)}, but that is somewhat slower. This still offers better
+     * throughput than {@link Math#sin(double)} (converted from turns).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinTurns(double)} uses, but interpolates between
+     * two adjacent entries in the table, rather than just using one entry unmodified.
+     * @param turns an angle in turns; optimally between -1 and 1
+     * @return the approximate sine of the given angle, from -1 to 1 inclusive
+     */
+    public static double sinSmootherTurns(double turns) {
+        turns *= turnToIndexD;
+        final int floor = (int) Math.floor(turns);
+        final int masked = floor & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (turns - floor);
+    }
+
+    /**
+     * Gets an approximation of the cosine of {@code turns} that is usually much more accurate than
+     * {@link #cosTurns(float)}, but that is somewhat slower. This still offers about 2x to
+     * 4x the throughput of {@link Math#cos(double)} (converted from turns and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #cosTurns(float)} uses, but interpolates between two
+     * adjacent entries in the table, rather than just using one entry unmodified.
+     * @param turns an angle in turns; optimally between -1 and 1
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static float cosSmootherTurns(float turns) {
+        turns *= turnToIndex;
+        final int floor = (int)(turns + 16384.0) - 16384;
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (turns - floor);
+    }
+
+    /**
+     * Gets an approximation of the cosine of {@code turns} that is usually much more accurate than
+     * {@link #cosTurns(double)}, but that is somewhat slower. This still offers better
+     * throughput than {@link Math#cos(double)} (converted from turns).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #cosTurns(double)} uses, but interpolates between
+     * two adjacent entries in the table, rather than just using one entry unmodified.
+     * @param turns an angle in turns; optimally between -1 and 1
+     * @return the approximate cosine of the given angle, from -1 to 1 inclusive
+     */
+    public static double cosSmootherTurns(double turns) {
+        turns *= turnToIndexD;
+        final int floor = (int) Math.floor(turns);
+        final int masked = floor + SIN_TO_COS & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (turns - floor);
+    }
+
+    /**
+     * Gets an approximation of the tangent of {@code turns} that is usually much more accurate than
+     * {@link #tanTurns(float)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
+     * higher throughput than {@link Math#tan(double)} (converted from turns and cast to float).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinTurns(float)} and {@link #cosTurns(float)} use, but
+     * interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
+     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
+     * {@link #tanTurns(float)} works, and tends to be much more precise.
+     * @param turns a float angle in turns, where 0 to 1 is one rotation
+     * @return a float approximation of tan()
+     */
+    public static float tanSmootherTurns(float turns) {
+        turns *= turnToIndex;
+        final int floor = (int)(turns + 16384.0) - 16384;
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final float fromS = SIN_TABLE[maskedS], toS = SIN_TABLE[maskedS+1];
+        final float fromC = SIN_TABLE[maskedC], toC = SIN_TABLE[maskedC+1];
+        return (fromS + (toS - fromS) * (turns - floor))/(fromC + (toC - fromC) * (turns - floor));
+    }
+
+    /**
+     * Gets an approximation of the tangent of {@code turns} that is usually much more accurate than
+     * {@link #tanTurns(double)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
+     * higher throughput than {@link Math#tan(double)} (converted from turns).
+     * <br>
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinTurns(double)} and {@link #cosTurns(double)} use,
+     * but interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
+     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
+     * {@link #tanTurns(double)} works, and tends to be much more precise.
+     * @param turns a double angle in turns, where 0 to 1 is one rotation
+     * @return an approximation of tan()
+     */
+    public static double tanSmootherTurns(double turns) {
+        turns *= turnToIndexD;
+        final int floor = (int)Math.floor(turns);
+        final int maskedS = floor & TABLE_MASK;
+        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
+        final double fromS = SIN_TABLE_D[maskedS], toS = SIN_TABLE_D[maskedS+1];
+        final double fromC = SIN_TABLE_D[maskedC], toC = SIN_TABLE_D[maskedC+1];
+        return (fromS + (toS - fromS) * (turns - floor))/(fromC + (toC - fromC) * (turns - floor));
     }
 
     // ---
