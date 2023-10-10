@@ -719,9 +719,10 @@ public class PrecisionTest {
 //        float[] table1024 = makeTableFloatVar(1024);
 //        float[] table4096 = makeTableFloatVar(4096);
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("sinAlternate", PrecisionTest::sinAlternate);
         functions.put("sinNewTable", TrigTools::sin);
-        functions.put("sinSmooth", TrigTools::sinSmooth);
-        functions.put("sinSmoother", TrigTools::sinSmoother);
+//        functions.put("sinSmooth", TrigTools::sinSmooth);
+//        functions.put("sinSmoother", TrigTools::sinSmoother);
 //        functions.put("sinTable32", (f) -> sinVar(table32, f));
 //        functions.put("sinTable64", (f) -> sinVar(table64, f));
 //        functions.put("sinTable128", (f) -> sinVar(table128, f));
@@ -737,7 +738,7 @@ public class PrecisionTest {
 //        functions.put("sinGdx", MathUtils::sin);
 
         functions.put("sinOldTable", OldTrigTools::sin);
-        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
+//        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
 //        functions.put("sinReallyOld", OldNumberTools::sin);
 
 //        functions.put("sinMixed", (f) -> sinMixed(tableMixed, f));
@@ -1767,6 +1768,9 @@ Worst input (abs):       4.205234527587891000000000
         return (1.00005519f * i * ii + (3 * 0.99873585f) * ii * radians + (3 * 0.55342686f) * i * radians * radians)
                 * (1 - (floor & 2));
     }
+    public static float sinAlternate(float radians) {
+        return SIN_TABLE[(int) (radians * radToIndex + 0.5f) & TABLE_MASK];
+    }
 
     public static float sinSmoother(float radians) {
         // 15 bits
@@ -2275,7 +2279,7 @@ Worst input (abs):       4.205234527587891000000000
         functions.put("tablePhi", (f) -> sin(tablePhi, f));
         functions.put("sinNewTable", TrigTools::sin);
         functions.put("sinOldTable", OldTrigTools::sin);
-        functions.put("sinSmoother", PrecisionTest::sinSmoother);
+        functions.put("sinSmoother", TrigTools::sinSmoother);
         functions.put("sinSmooth", TrigTools::sinSmooth);
 //        functions.put("sinCurve", PrecisionTest::sinCurve);
 //        functions.put("sinNick", PrecisionTest::sinNick);
