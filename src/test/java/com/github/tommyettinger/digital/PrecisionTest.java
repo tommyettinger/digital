@@ -263,26 +263,43 @@ public class PrecisionTest {
     }
 
     /**
+     * Testing from PI2 to 0 in decrements of 0x1p-20f:
      * <pre>
      * Running sinNewTable
-     * Mean absolute error:     0.0000075369
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0003835472
-     * Maximum rel. error:   2538.7736816406
+     * Mean absolute error:     0.0000607132
+     * Mean relative error:     0.0006373811
+     * Maximum abs. error:      0.0001917910
+     * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
-     * Best input (lo):         5.734020233154297000000000
-     * Best output (lo):       -0.5219752789 (0xBF05A02C)
-     * Correct output (lo):    -0.5219752789 (0xBF05A02C)
+     * Best input (lo):         6.221826076507568000000000
+     * Best output (lo):       -0.0613207370 (0xBD7B2B74)
+     * Correct output (lo):    -0.0613207370 (0xBD7B2B74)
+     * Worst input (hi):        6.283185482025146500000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000001748 (0x343BBD2E)
+     * Worst input (abs):       3.153672695159912000000000
+     * Worst output (abs):     -0.0122715384 (0xBC490E90)
+     * Correct output (abs):   -0.0120797474 (0xBC45EA22)
+     * Running sinOldTable
+     * Mean absolute error:     0.0000607236
+     * Mean relative error:     0.0010932287
+     * Maximum abs. error:      0.0003832261
+     * Maximum rel. error:   1267.9168701172
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.282993793487549000000000
+     * Best output (lo):       -0.0001915137 (0xB948D111)
+     * Correct output (lo):    -0.0001915137 (0xB948D111)
      * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:   2538.7736816406
-     * Worst output (hi):       0.0003834952 (0x39C90FDA)
+     * Highest output rel:   1267.9167480469
+     * Worst output (hi):       0.0001916011 (0x3948E888)
      * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       6.282034873962402000000000
-     * Worst output (abs):     -0.0015339801 (0xBAC90FD5)
-     * Correct output (abs):   -0.0011504330 (0xBA96CA20)
-     * Running sinSmoother
-     * Mean absolute error:     0.0000000013
-     * Mean relative error:     0.0000000233
+     * Worst input (abs):       3.141975879669189500000000
+     * Worst output (abs):      0.0000000000 (0x00000000)
+     * Correct output (abs):   -0.0003832261 (0xB9C8EBBC)
+     * Running sinSmootherNewTable
+     * Mean absolute error:     0.0000000825
+     * Mean relative error:     0.0000013669
      * Maximum abs. error:      0.0000004470
      * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
@@ -296,239 +313,31 @@ public class PrecisionTest {
      * Worst input (abs):       6.156139850616455000000000
      * Worst output (abs):     -0.1267044097 (0xBE01BECD)
      * Correct output (abs):   -0.1267039627 (0xBE01BEAF)
-     * Running sinTable32
-     * Mean absolute error:     0.0031479816
-     * Mean relative error:     0.0168270189
-     * Maximum abs. error:      0.1950903088
-     * Maximum rel. error:  1292023.2500000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         4.908738613128662000000000
-     * Best output (lo):       -0.9807852507 (0xBF7B14BE)
-     * Correct output (lo):    -0.9807852507 (0xBF7B14BE)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:  1292023.1250000000
-     * Worst output (hi):       0.1950902343 (0x3E47C5BC)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.196349531412124630000000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.1950903088 (0x3E47C5C1)
-     * Running sinTable64
-     * Mean absolute error:     0.0019171092
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0980171338
-     * Maximum rel. error:  649136.6250000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         5.595962047576904000000000
-     * Best output (lo):       -0.6343931556 (0xBF226797)
-     * Correct output (lo):    -0.6343931556 (0xBF226797)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:  649136.6250000000
-     * Worst output (hi):       0.0980170593 (0x3DC8BD2B)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.098174765706062320000000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0980171338 (0x3DC8BD35)
-     * Running sinTable128
-     * Mean absolute error:     0.0009647235
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0490676723
-     * Maximum rel. error:  324958.9375000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         5.595962047576904000000000
-     * Best output (lo):       -0.6343931556 (0xBF226797)
-     * Correct output (lo):    -0.6343931556 (0xBF226797)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:  324958.9062500000
-     * Worst output (hi):       0.0490675867 (0x3D48FB18)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.049087382853031160000000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0490676723 (0x3D48FB2F)
-     * Running sinTable256
-     * Mean absolute error:     0.0004823618
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0245412271
-     * Maximum rel. error:  162527.6406250000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.111379623413086000000000
-     * Best output (lo):       -0.1709617227 (0xBE2F1097)
-     * Correct output (lo):    -0.1709617227 (0xBE2F1097)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:  162527.6250000000
-     * Worst output (hi):       0.0245411415 (0x3CC90A81)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.024543691426515580000000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0245412271 (0x3CC90AAF)
-     * Running sinTable1024
-     * Mean absolute error:     0.0001205904
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0061358842
-     * Maximum rel. error:  40634.5507812500
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.111379623413086000000000
-     * Best output (lo):       -0.1709617227 (0xBE2F1097)
-     * Correct output (lo):    -0.1709617227 (0xBE2F1097)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:  40634.5468750000
-     * Worst output (hi):       0.0061357976 (0x3BC90ECD)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.006135922856628895000000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0061358842 (0x3BC90F87)
-     * Running sinTable4096
-     * Mean absolute error:     0.0000301476
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0015339801
-     * Maximum rel. error:  10157.5126953125
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.115981578826904000000000
-     * Best output (lo):       -0.1664257348 (0xBE2A6B82)
-     * Correct output (lo):    -0.1664257348 (0xBE2A6B82)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:  10157.5117187500
-     * Worst output (hi):       0.0015338928 (0x3AC90CE7)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.001533980714157223700000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0015339801 (0x3AC90FD5)
-     * Running sinSmootherTable32
-     * Mean absolute error:     0.0000602952
-     * Mean relative error:     0.0001205904
-     * Maximum abs. error:      0.0047921538
-     * Maximum rel. error:      1.0000000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.086849212646484000000000
-     * Best output (lo):       -0.1950771362 (0xBE47C24D)
-     * Correct output (lo):    -0.1950771362 (0xBE47C24D)
-     * Worst input (hi):        6.283185482025146500000000
-     * Highest output rel:      0.9999999404
-     * Worst output (hi):       0.0000000000 (0x00000000)
-     * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):       4.810526371002197000000000
-     * Worst output (abs):     -0.9903962612 (0xBF7D8A9C)
-     * Correct output (abs):   -0.9951884151 (0xBF7EC4AB)
-     * Running sinSmootherTable64
-     * Mean absolute error:     0.0000150738
-     * Mean relative error:     0.0000301476
-     * Maximum abs. error:      0.0012031198
-     * Maximum rel. error:      1.0000000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.185084342956543000000000
-     * Best output (lo):       -0.0979436859 (0xBDC896B3)
-     * Correct output (lo):    -0.0979436859 (0xBDC896B3)
-     * Worst input (hi):        6.283185482025146500000000
-     * Highest output rel:      0.9999999404
-     * Worst output (hi):       0.0000000000 (0x00000000)
-     * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):       4.761689186096191000000000
-     * Worst output (abs):     -0.9975818992 (0xBF7F6187)
-     * Correct output (abs):   -0.9987850189 (0xBF7FB060)
-     * Running sinSmootherTable128
-     * Mean absolute error:     0.0000037685
-     * Mean relative error:     0.0000075369
-     * Maximum abs. error:      0.0003011227
-     * Maximum rel. error:      1.0000000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.282127380371094000000000
-     * Best output (lo):       -0.0010579266 (0xBA8AAA20)
-     * Correct output (lo):    -0.0010579266 (0xBA8AAA20)
-     * Worst input (hi):        6.283185482025146500000000
-     * Highest output rel:      0.9999999404
-     * Worst output (hi):       0.0000000000 (0x00000000)
-     * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):       4.737161159515381000000000
-     * Worst output (abs):     -0.9993920922 (0xBF7FD829)
-     * Correct output (abs):   -0.9996932149 (0xBF7FEBE5)
-     * Running sinSmootherTable256
-     * Mean absolute error:     0.0000009421
-     * Mean relative error:     0.0000018842
-     * Maximum abs. error:      0.0000753403
-     * Maximum rel. error:      1.0000000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.281972408294678000000000
-     * Best output (lo):       -0.0012128986 (0xBA9EFA20)
-     * Correct output (lo):    -0.0012128986 (0xBA9EFA20)
-     * Worst input (hi):        6.283185482025146500000000
-     * Highest output rel:      0.9999999404
-     * Worst output (hi):       0.0000000000 (0x00000000)
-     * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):       4.724777698516846000000000
-     * Worst output (abs):     -0.9998479486 (0xBF7FF609)
-     * Correct output (abs):   -0.9999232888 (0xBF7FFAF9)
-     * Running sinSmootherTable1024
-     * Mean absolute error:     0.0000000589
-     * Mean relative error:     0.0000001178
-     * Maximum abs. error:      0.0000047684
-     * Maximum rel. error:      1.0000000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.281225204467773000000000
-     * Best output (lo):       -0.0019601015 (0xBB00750C)
-     * Correct output (lo):    -0.0019601015 (0xBB00750C)
-     * Worst input (hi):        6.283185482025146500000000
-     * Highest output rel:      0.9999999404
-     * Worst output (hi):       0.0000000000 (0x00000000)
-     * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):       4.789148330688477000000000
-     * Worst output (abs):     -0.9970507026 (0xBF7F3EB7)
-     * Correct output (abs):   -0.9970554709 (0xBF7F3F07)
-     * Running sinSmootherTable4096
-     * Mean absolute error:     0.0000000037
-     * Mean relative error:     0.0000000195
-     * Maximum abs. error:      0.0000004388
-     * Maximum rel. error:      1.0000000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.279717922210693000000000
-     * Best output (lo):       -0.0034673780 (0xBB633CF3)
-     * Correct output (lo):    -0.0034673780 (0xBB633CF3)
-     * Worst input (hi):        6.283185482025146500000000
-     * Highest output rel:      0.9999999404
-     * Worst output (hi):       0.0000000000 (0x00000000)
-     * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):       6.283169269561768000000000
-     * Worst output (abs):     -0.0000164764 (0xB78A36C0)
-     * Correct output (abs):   -0.0000160376 (0xB7868886)
-     * Running sinOldTable
-     * Mean absolute error:     0.0000059195
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0003834952
-     * Maximum rel. error:   1267.9168701172
+     * Running sinSmootherOldTable
+     * Mean absolute error:     0.0000000788
+     * Mean relative error:     0.0006054739
+     * Maximum abs. error:      0.0001917247
+     * Maximum rel. error:    634.0779418945
      * Lowest output rel:       0.0000000000
      * Best input (lo):         6.282993793487549000000000
      * Best output (lo):       -0.0001915137 (0xB948D111)
      * Correct output (lo):    -0.0001915137 (0xB948D111)
      * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:   1267.9167480469
-     * Worst output (hi):       0.0001916011 (0x3948E888)
+     * Highest output rel:    634.0778808594
+     * Worst output (hi):       0.0000958941 (0x38C91AC2)
      * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.000383495178539305900000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0003834952 (0x39C90FDA)
-     * Running sinReallyOld
-     * Mean absolute error:     0.0000301476
-     * Mean relative error:     0.0002411809
-     * Maximum abs. error:      0.0010906309
-     * Maximum rel. error:      1.0000000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         5.759676933288574000000000
-     * Best output (lo):       -0.4999217093 (0xBEFFF5BD)
-     * Correct output (lo):    -0.4999217093 (0xBEFFF5BD)
-     * Worst input (hi):        6.283185482025146500000000
-     * Highest output rel:      0.9999999404
-     * Worst output (hi):       0.0000000000 (0x00000000)
-     * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):       3.334770441055298000000000
-     * Worst output (abs):     -0.1908879131 (0xBE43781F)
-     * Correct output (abs):   -0.1919785440 (0xBE449606)
+     * Worst input (abs):       3.141784191131592000000000
+     * Worst output (abs):      0.0000001871 (0x3448E800)
+     * Correct output (abs):   -0.0001915375 (0xB948D778)
      * Running sinSmooth
-     * Mean absolute error:     0.0000037685
-     * Mean relative error:     0.0000075369
+     * Mean absolute error:     0.0001494278
+     * Mean relative error:     0.0002446158
      * Maximum abs. error:      0.0003550053
      * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
-     * Best input (lo):         5.759525299072266000000000
-     * Best output (lo):       -0.5000530481 (0xBF00037A)
-     * Correct output (lo):    -0.5000530481 (0xBF00037A)
+     * Best input (lo):         5.759520053863525000000000
+     * Best output (lo):       -0.5000575781 (0xBF0003C6)
+     * Correct output (lo):    -0.5000575781 (0xBF0003C6)
      * Worst input (hi):        6.283185482025146500000000
      * Highest output rel:      0.9999999404
      * Worst output (hi):       0.0000000000 (0x00000000)
@@ -536,166 +345,6 @@ public class PrecisionTest {
      * Worst input (abs):       4.208482265472412000000000
      * Worst output (abs):     -0.8753479123 (0xBF6016CD)
      * Correct output (abs):   -0.8757029176 (0xBF602E11)
-     * Running sinMixed
-     * Mean absolute error:     0.0000000017
-     * Mean relative error:     0.0000000233
-     * Maximum abs. error:      0.0000004470
-     * Maximum rel. error:      1.0000000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.019046306610107000000000
-     * Best output (lo):       -0.2610782385 (0xBE85AC0C)
-     * Correct output (lo):    -0.2610782385 (0xBE85AC0C)
-     * Worst input (hi):        6.283185482025146500000000
-     * Highest output rel:      0.9999999404
-     * Worst output (hi):       0.0000000000 (0x00000000)
-     * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):       6.149707317352295000000000
-     * Worst output (abs):     -0.1330824345 (0xBE0846C3)
-     * Correct output (abs):   -0.1330819875 (0xBE0846A5)
-     * Running sinGreen
-     * Mean absolute error:     0.0000003039
-     * Mean relative error:     0.0000004692
-     * Maximum abs. error:      0.0000721812
-     * Maximum rel. error:      1.0000000000
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         5.057551383972168000000000
-     * Best output (lo):       -0.9410204887 (0xBF70E6B8)
-     * Correct output (lo):    -0.9410204887 (0xBF70E6B8)
-     * Worst input (hi):        6.283185482025146500000000
-     * Highest output rel:      0.9999999404
-     * Worst output (hi):       0.0000000000 (0x00000000)
-     * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):       3.927059888839721700000000
-     * Worst output (abs):     -0.7070834637 (0xBF35036C)
-     * Correct output (abs):   -0.7071556449 (0xBF350827)
-     * Running sin00Prior
-     * Mean absolute error:     0.0000075369
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0003835472
-     * Maximum rel. error:   2538.7736816406
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         5.734020233154297000000000
-     * Best output (lo):       -0.5219752789 (0xBF05A02C)
-     * Correct output (lo):    -0.5219752789 (0xBF05A02C)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:   2538.7736816406
-     * Worst output (hi):       0.0003834952 (0x39C90FDA)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       6.282034873962402000000000
-     * Worst output (abs):     -0.0015339801 (0xBAC90FD5)
-     * Correct output (abs):   -0.0011504330 (0xBA96CA20)
-     * Running sin05Prior
-     * Mean absolute error:     0.0000059195
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0003834952
-     * Maximum rel. error:   1268.8869628906
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.243493556976318000000000
-     * Best output (lo):       -0.0396813303 (0xBD2288E4)
-     * Correct output (lo):    -0.0396813303 (0xBD2288E4)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:   1268.8868408203
-     * Worst output (hi):       0.0001917476 (0x39490FDB)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.000383495178539305900000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0003834952 (0x39C90FDA)
-     * Running sin05
-     * Mean absolute error:     0.0000059195
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0003834952
-     * Maximum rel. error:   1267.9168701172
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.282993793487549000000000
-     * Best output (lo):       -0.0001915137 (0xB948D111)
-     * Correct output (lo):    -0.0001915137 (0xB948D111)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:   1267.9167480469
-     * Worst output (hi):       0.0001916011 (0x3948E888)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.000383495178539305900000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0003834952 (0x39C90FDA)
-     * Running sin025
-     * Mean absolute error:     0.0000075369
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0003834952
-     * Maximum rel. error:   1902.6646728516
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.282897949218750000000000
-     * Best output (lo):       -0.0002873580 (0xB996A888)
-     * Correct output (lo):    -0.0002873580 (0xB996A888)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:   1902.6645507813
-     * Worst output (hi):       0.0002874454 (0x3996B444)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.000383495178539305900000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0003834952 (0x39C90FDA)
-     * Running sinPhi
-     * Mean absolute error:     0.0000059195
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0003834952
-     * Maximum rel. error:    967.9116210938
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.283039093017578000000000
-     * Best output (lo):       -0.0001462142 (0xB9195111)
-     * Correct output (lo):    -0.0001462142 (0xB9195111)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:    967.9114990234
-     * Worst output (hi):       0.0001463016 (0x39196888)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.000383495178539305900000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0003834952 (0x39C90FDA)
-     * Running sin0625
-     * Mean absolute error:     0.0000059195
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0003834952
-     * Maximum rel. error:    950.5429077148
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.283041477203369000000000
-     * Best output (lo):       -0.0001438300 (0xB916D111)
-     * Correct output (lo):    -0.0001438300 (0xB916D111)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:    950.5427856445
-     * Worst output (hi):       0.0001436790 (0x3916A888)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.000383495178539305900000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0003834952 (0x39C90FDA)
-     * Running sin065625
-     * Mean absolute error:     0.0000065251
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0003834952
-     * Maximum rel. error:    871.5941162109
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.283053874969482000000000
-     * Best output (lo):       -0.0001314322 (0xB909D111)
-     * Correct output (lo):    -0.0001314322 (0xB909D111)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:    871.5940551758
-     * Worst output (hi):       0.0001317580 (0x390A2888)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.000383495178539305900000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0003834952 (0x39C90FDA)
-     * Running sin075
-     * Mean absolute error:     0.0000075369
-     * Mean relative error:     0.0154355764
-     * Maximum abs. error:      0.0003834952
-     * Maximum rel. error:    633.1689453125
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.283089637756348000000000
-     * Best output (lo):       -0.0000956694 (0xB8C8A221)
-     * Correct output (lo):    -0.0000956694 (0xB8C8A221)
-     * Worst input (hi):        3.141592502593994000000000
-     * Highest output rel:    633.1688842773
-     * Worst output (hi):       0.0000957568 (0x38C8D111)
-     * Correct output (hi):     0.0000001510 (0x34222169)
-     * Worst input (abs):       0.000383495178539305900000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0003834952 (0x39C90FDA)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -719,10 +368,10 @@ public class PrecisionTest {
 //        float[] table1024 = makeTableFloatVar(1024);
 //        float[] table4096 = makeTableFloatVar(4096);
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("sinAlternate", PrecisionTest::sinAlternate);
+//        functions.put("sinAlternate", PrecisionTest::sinAlternate);
         functions.put("sinNewTable", TrigTools::sin);
-//        functions.put("sinSmooth", TrigTools::sinSmooth);
-//        functions.put("sinSmoother", TrigTools::sinSmoother);
+        functions.put("sinOldTable", OldTrigTools::sin);
+//        functions.put("sinSmootherAlternate", PrecisionTest::sinSmoother);
 //        functions.put("sinTable32", (f) -> sinVar(table32, f));
 //        functions.put("sinTable64", (f) -> sinVar(table64, f));
 //        functions.put("sinTable128", (f) -> sinVar(table128, f));
@@ -737,8 +386,11 @@ public class PrecisionTest {
 //        functions.put("sinSmootherTable4096", (f) -> sinSmootherVar(table4096, f));
 //        functions.put("sinGdx", MathUtils::sin);
 
-        functions.put("sinOldTable", OldTrigTools::sin);
+        functions.put("sinSmootherNewTable", TrigTools::sinSmoother);
         functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
+
+        functions.put("sinSmooth", TrigTools::sinSmooth);
+
 //        functions.put("sinReallyOld", OldNumberTools::sin);
 
 //        functions.put("sinMixed", (f) -> sinMixed(tableMixed, f));
@@ -765,13 +417,13 @@ public class PrecisionTest {
             float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
             float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
             long counter = 0L;
-            for (int i = 1; i <= 6; i++) {
-                System.out.printf("sin(%d), approximate: %.10f\n", i, op.applyAsFloat(i));
-                System.out.printf("sin(%d), should be:   %.10f\n", i, Math.sin(i));
-            }
-            for (int i = PI2BITS; i >= 0; i--) {
-                float x = Float.intBitsToFloat(i);
-//            for (float x = PI2; x >= 0; x-= 0x1p-16f) {
+//            for (int i = 1; i <= 6; i++) {
+//                System.out.printf("sin(%d), approximate: %.10f\n", i, op.applyAsFloat(i));
+//                System.out.printf("sin(%d), should be:   %.10f\n", i, Math.sin(i));
+//            }
+//            for (int i = PI2BITS; i >= 0; i--) {
+//                float x = Float.intBitsToFloat(i);
+            for (float x = PI2; x >= 0; x-= 0x1p-20f) {
                 float tru = (float) Math.sin(x),
                         approx = op.applyAsFloat(x),
                         err = tru - approx,
@@ -961,197 +613,70 @@ public class PrecisionTest {
 
 
     /**
+     * Testing from PI2 to 0 in decrements of 0x1p-24:
      * <pre>
-     * Running sinNewTable
-     * Mean absolute error:     0.0001220703
-     * Mean relative error:     0.0027473188
-     * Maximum abs. error:      0.0003834943
-     * Maximum rel. error:  96636.8593865985
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):        -1.570796342688151300000000
-     * Best output (lo):       -1.0000000000 (0xBFF0000000000000)
-     * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFFF)
-     * Worst input (hi):        3.141592649621419000000000
-     * Highest output rel:  96636.8593865985
-     * Worst output (hi):       0.0003834952 (0x3F3921FB49EE4A61)
-     * Correct output (hi):     0.0000000040 (0x3E310B4608D3131A)
-     * Worst input (abs):       3.142743138474873600000000
-     * Worst output (abs):     -0.0007669903 (0xBF4921FB2AECB1DF)
-     * Correct output (abs):   -0.0011504846 (0xBF52D97B776AE8FA)
      * Running sinOldTable
-     * Mean absolute error:     0.0001220982
-     * Mean relative error:     0.0022596092
-     * Maximum abs. error:      0.0005755700
-     * Maximum rel. error:  48281.0178162729
+     * Mean absolute error:     0.0000610469
+     * Mean relative error:     0.0011362897
+     * Maximum abs. error:      0.0003834685
+     * Maximum rel. error:   6886.6332071030
      * Lowest output rel:       0.0000000000
-     * Best input (lo):        -1.570796342688151300000000
+     * Best input (lo):         4.712388996277944000000000
      * Best output (lo):       -1.0000000000 (0xBFF0000000000000)
      * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFFF)
-     * Worst input (hi):        3.141592649621419000000000
-     * Highest output rel:  48281.0178162729
+     * Worst input (hi):        3.141592625771657800000000
+     * Highest output rel:   6886.6332071030
      * Worst output (hi):       0.0001916011 (0x3F291D1108B21DD4)
-     * Correct output (hi):     0.0000000040 (0x3E310B4608D3131A)
-     * Worst input (abs):      -0.001150461035319239000000
-     * Worst output (abs):     -0.0005748907 (0xBF42D688743A52A1)
-     * Correct output (abs):   -0.0011504608 (0xBF52D961DBA64784)
-     * Running sin00Prior
-     * Mean absolute error:     0.0001220703
-     * Mean relative error:     0.0027473188
-     * Maximum abs. error:      0.0003834943
-     * Maximum rel. error:  96636.8593865985
+     * Correct output (hi):     0.0000000278 (0x3E5DDE974234C4C5)
+     * Worst input (abs):       3.141976122056142600000000
+     * Worst output (abs):      0.0000000000 (0x0000000000000000)
+     * Correct output (abs):   -0.0003834685 (0xBF3921887B4DA65C)
+     * Running sinNewTable
+     * Mean absolute error:     0.0000610352
+     * Mean relative error:     0.0006482137
+     * Maximum abs. error:      0.0001917470
+     * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
-     * Best input (lo):        -1.570796342688151300000000
+     * Best input (lo):         4.712388996277944000000000
      * Best output (lo):       -1.0000000000 (0xBFF0000000000000)
      * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFFF)
-     * Worst input (hi):        3.141592649621419000000000
-     * Highest output rel:  96636.8593865985
-     * Worst output (hi):       0.0003834952 (0x3F3921FB49EE4A61)
-     * Correct output (hi):     0.0000000040 (0x3E310B4608D3131A)
-     * Worst input (abs):       3.142743138474873600000000
-     * Worst output (abs):     -0.0007669903 (0xBF4921FB2AECB1DF)
-     * Correct output (abs):   -0.0011504846 (0xBF52D97B776AE8FA)
-     * Running sin05Prior
-     * Mean absolute error:     0.0001220703
-     * Mean relative error:     0.0022598198
-     * Maximum abs. error:      0.0005752416
-     * Maximum rel. error:  48317.9305816451
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):        -1.570796342688151300000000
-     * Best output (lo):       -1.0000000000 (0xBFF0000000000000)
-     * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFFF)
-     * Worst input (hi):        3.141592649621419000000000
-     * Highest output rel:  48317.9305816451
-     * Worst output (hi):       0.0001917476 (0x3F2921FB51AEDA09)
-     * Correct output (hi):     0.0000000040 (0x3E310B4608D3131A)
-     * Worst input (abs):      -3.141209157305308300000000
-     * Worst output (abs):     -0.0009587378 (0xBF4F6A79D89661F2)
-     * Correct output (abs):   -0.0003834963 (0xBF3921FFF5AA249E)
-     * Running sin05
-     * Mean absolute error:     0.0001220703
-     * Mean relative error:     0.0022598198
-     * Maximum abs. error:      0.0005752416
-     * Maximum rel. error:  48317.9305816451
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):        -1.570796342688151300000000
-     * Best output (lo):       -1.0000000000 (0xBFF0000000000000)
-     * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFFF)
-     * Worst input (hi):        3.141592649621419000000000
-     * Highest output rel:  48317.9305816451
-     * Worst output (hi):       0.0001917476 (0x3F2921FB51AEDA09)
-     * Correct output (hi):     0.0000000040 (0x3E310B4608D3131A)
-     * Worst input (abs):      -3.141209157305308300000000
-     * Worst output (abs):     -0.0009587378 (0xBF4F6A79D89661F2)
-     * Correct output (abs):   -0.0003834963 (0xBF3921FFF5AA249E)
-     * Running sin025
-     * Mean absolute error:     0.0001118998
-     * Mean relative error:     0.0024166884
-     * Maximum abs. error:      0.0004793678
-     * Maximum rel. error:  72477.3953172247
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):        -1.570796342688151300000000
-     * Best output (lo):       -1.0000000000 (0xBFF0000000000000)
-     * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFFF)
-     * Worst input (hi):        3.141592649621419000000000
-     * Highest output rel:  72477.3953172247
-     * Worst output (hi):       0.0002876214 (0x3F32D97C7AD6EEFB)
-     * Correct output (hi):     0.0000000040 (0x3E310B4608D3131A)
-     * Worst input (abs):      -3.141209157305308300000000
-     * Worst output (abs):     -0.0008628641 (0xBF4C463A83EF9ED0)
-     * Correct output (abs):   -0.0003834963 (0xBF3921FFF5AA249E)
-     * Running sinPhi
-     * Mean absolute error:     0.0001339413
-     * Mean relative error:     0.0022477665
-     * Maximum abs. error:      0.0006205070
-     * Maximum rel. error:  36911.3784584334
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):        -1.570796342688151300000000
-     * Best output (lo):       -1.0000000000 (0xBFF0000000000000)
-     * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFFF)
-     * Worst input (hi):        3.141592649621419000000000
-     * Highest output rel:  36911.3784584334
-     * Worst output (hi):       0.0001464821 (0x3F23331FEAD36BA6)
-     * Correct output (hi):     0.0000000040 (0x3E310B4608D3131A)
-     * Worst input (abs):      -3.141209157305308300000000
-     * Worst output (abs):     -0.0010040033 (0xBF507318535651AD)
-     * Correct output (abs):   -0.0003834963 (0xBF3921FFF5AA249E)
-     * Running sin0625
-     * Mean absolute error:     0.0001347835
-     * Mean relative error:     0.0022483351
-     * Maximum abs. error:      0.0006231784
-     * Maximum rel. error:  36238.1980334245
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):        -1.570796342688151300000000
-     * Best output (lo):       -1.0000000000 (0xBFF0000000000000)
-     * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFFF)
-     * Worst input (hi):        3.141592649621419000000000
-     * Highest output rel:  36238.1980334245
-     * Worst output (hi):       0.0001438107 (0x3F22D97C7E1C4330)
-     * Correct output (hi):     0.0000000040 (0x3E310B4608D3131A)
-     * Worst input (abs):      -3.141209157305308300000000
-     * Worst output (abs):     -0.0010066747 (0xBF507E4CC09031EA)
-     * Correct output (abs):   -0.0003834963 (0xBF3921FFF5AA249E)
-     * Running sin065625
-     * Mean absolute error:     0.0001387564
-     * Mean relative error:     0.0022526745
-     * Maximum abs. error:      0.0006351627
-     * Maximum rel. error:  33218.2648821613
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):        -1.570796342688151300000000
-     * Best output (lo):       -1.0000000000 (0xBFF0000000000000)
-     * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFFF)
-     * Worst input (hi):        3.141592649621419000000000
-     * Highest output rel:  33218.2648821613
-     * Worst output (hi):       0.0001318265 (0x3F21475CC917DFD8)
-     * Correct output (hi):     0.0000000040 (0x3E310B4608D3131A)
-     * Worst input (abs):      -3.141209157305308300000000
-     * Worst output (abs):     -0.0010186589 (0xBF50B090B5885059)
-     * Correct output (abs):   -0.0003834963 (0xBF3921FFF5AA249E)
-     * Running sin075
-     * Mean absolute error:     0.0001525821
-     * Mean relative error:     0.0022836264
-     * Maximum abs. error:      0.0006711153
-     * Maximum rel. error:  24158.4654018163
-     * Lowest output rel:       0.0000000000
-     * Best input (lo):        -1.570796342688151300000000
-     * Best output (lo):       -1.0000000000 (0xBFF0000000000000)
-     * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFFF)
-     * Worst input (hi):        3.141592649621419000000000
-     * Highest output rel:  24158.4654018163
-     * Worst output (hi):       0.0000958738 (0x3F1921FB539EC565)
-     * Correct output (hi):     0.0000000040 (0x3E310B4608D3131A)
-     * Worst input (abs):      -3.141209157305308300000000
-     * Worst output (abs):     -0.0010546116 (0xBF51475C94326A6D)
-     * Correct output (abs):   -0.0003834963 (0xBF3921FFF5AA249E)
+     * Worst input (hi):        6.283185128365652000000000
+     * Highest output rel:      1.0000000000
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):    -0.0000001788 (0xBE880000008D310E)
+     * Worst input (abs):       6.282993559037344000000000
+     * Worst output (abs):     -0.0003834952 (0xBF3921FB49EE7334)
+     * Correct output (abs):   -0.0001917481 (0xBF2921FFFD6AAA3F)
      * Running sinSmooth
      * Mean absolute error:     0.0001498261
-     * Mean relative error:     0.0002467752
+     * Mean relative error:     0.0002467784
      * Maximum abs. error:      0.0003547083
      * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
-     * Best input (lo):        -1.570796402292796000000000
-     * Best output (lo):       -1.0000000000 (0xBFEFFFFFFFFFFFE6)
-     * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFE6)
-     * Worst input (hi):       -3.141592653589793000000000
+     * Best input (lo):         4.712388996277944000000000
+     * Best output (lo):       -1.0000000000 (0xBFEFFFFFFFFFFFFF)
+     * Correct output (lo):    -1.0000000000 (0xBFEFFFFFFFFFFFFF)
+     * Worst input (hi):        6.283185307179586000000000
      * Highest output rel:      1.0000000000
-     * Worst output (hi):      -0.0000000000 (0x8000000000000000)
-     * Correct output (hi):    -0.0000000000 (0xBCA1A62633145C07)
-     * Worst input (abs):       5.215633002919606000000000
-     * Worst output (abs):     -0.8756679714 (0xBFEC0578D667BC27)
-     * Correct output (abs):   -0.8760226797 (0xBFEC0860B6F7C06A)
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):    -0.0000000000 (0xBCB1A62633145C07)
+     * Worst input (abs):       5.215633277093069000000000
+     * Worst output (abs):     -0.8756678392 (0xBFEC05788F6AC7E7)
+     * Correct output (abs):   -0.8760225474 (0xBFEC08606FFACC2B)
      * Running sinSmoother
      * Mean absolute error:     0.0000000078
-     * Mean relative error:     0.0000000186
+     * Mean relative error:     0.0000000217
      * Maximum abs. error:      0.0000000184
      * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
-     * Best input (lo):         5.076709417504720000000000
-     * Best output (lo):       -0.9343661149 (0xBFEDE653C445B3A2)
-     * Correct output (lo):    -0.9343661149 (0xBFEDE653C445B3A5)
-     * Worst input (hi):       -3.141592653589793000000000
+     * Best input (lo):         4.748821024094717000000000
+     * Best output (lo):       -0.9993364265 (0xBFEFFA9062B02CA2)
+     * Correct output (lo):    -0.9993364265 (0xBFEFFA9062B02CA6)
+     * Worst input (hi):        6.283185307179586000000000
      * Highest output rel:      1.0000000000
      * Worst output (hi):       0.0000000000 (0x0000000000000000)
-     * Correct output (hi):    -0.0000000000 (0xBCA1A62633145C07)
-     * Worst input (abs):      -1.570988090830393700000000
+     * Correct output (hi):    -0.0000000000 (0xBCB1A62633145C07)
+     * Worst input (abs):       4.712580744420187000000000
      * Worst output (abs):     -0.9999999632 (0xBFEFFFFFEC425456)
      * Correct output (abs):   -0.9999999816 (0xBFEFFFFFF620F2B6)
      * </pre>
@@ -1168,16 +693,16 @@ public class PrecisionTest {
         double[] table075 = makeTableDouble(0.75);
 
         LinkedHashMap<String, DoubleUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("sinNewTable", TrigTools::sin);
         functions.put("sinOldTable", OldTrigTools::sin);
-        functions.put("sin00Prior", (f) -> sin(prior00, f));
-        functions.put("sin05Prior", (f) -> sin(prior05, f));
-        functions.put("sin05", (f) -> sin(table05, f));
-        functions.put("sin025", (f) -> sin(table025, f));
-        functions.put("sinPhi", (f) -> sin(tablePhi, f));
-        functions.put("sin0625", (f) -> sin(table0625, f));
-        functions.put("sin065625", (f) -> sin(table065625, f));
-        functions.put("sin075", (f) -> sin(table075, f));
+        functions.put("sinNewTable", TrigTools::sin);
+//        functions.put("sin00Prior", (f) -> sin(prior00, f));
+//        functions.put("sin05Prior", (f) -> sin(prior05, f));
+//        functions.put("sin05", (f) -> sin(table05, f));
+//        functions.put("sin025", (f) -> sin(table025, f));
+//        functions.put("sinPhi", (f) -> sin(tablePhi, f));
+//        functions.put("sin0625", (f) -> sin(table0625, f));
+//        functions.put("sin065625", (f) -> sin(table065625, f));
+//        functions.put("sin075", (f) -> sin(table075, f));
         functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinSmoother", PrecisionTest::sinSmoother);
 
@@ -1187,7 +712,7 @@ public class PrecisionTest {
             double absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
             double worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
             long counter = 0L;
-            for (double x = -PI_D; x <= PI2_D; x += 0x1p-24) {
+            for (double x = PI2_D; x >= 0; x -= 0x1p-24) {
 
                 double tru = Math.sin(x),
                         err = tru - op.applyAsDouble(x),
@@ -1237,14 +762,85 @@ public class PrecisionTest {
         }
     }
 
-
+    /**
+     * Testing from PI2 to 0 in decrements of 0x1p-20f:
+     * <pre>
+     * Running cosOldTable
+     * Mean absolute error:     0.0000608054
+     * Mean relative error:     0.0009555830
+     * Maximum abs. error:      0.0003829121
+     * Maximum rel. error:    410.9350585938
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):        4.712388515472412000000000
+     * Highest output rel:    410.9350585938
+     * Worst output (hi):      -0.0001915137 (0xB948D111)
+     * Correct output (hi):    -0.0000004649 (0xB4F9990F)
+     * Worst input (abs):       4.712771892547607000000000
+     * Worst output (abs):      0.0000000000 (0x00000000)
+     * Correct output (abs):    0.0003829121 (0x39C8C199)
+     * Running cosNewTable
+     * Mean absolute error:     0.0000607926
+     * Mean relative error:     0.0006305867
+     * Maximum abs. error:      0.0001917618
+     * Maximum rel. error:      0.9999999404
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):        4.712580204010010000000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0001912236 (0x39488333)
+     * Worst input (abs):       1.571371555328369100000000
+     * Worst output (abs):     -0.0007669903 (0xBA490FD9)
+     * Correct output (abs):   -0.0005752285 (0xBA16CAEE)
+     * Running cosSmooth
+     * Mean absolute error:     0.0001495095
+     * Mean relative error:     0.0002460266
+     * Maximum abs. error:      0.0003551245
+     * Maximum rel. error:      0.9999999404
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):        1.570796489715576200000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):      -0.0000000000 (0x80000000)
+     * Correct output (hi):    -0.0000001629 (0xB42EEF4C)
+     * Worst input (abs):       5.784777164459228500000000
+     * Worst output (abs):      0.8779895306 (0x3F60C3EC)
+     * Correct output (abs):    0.8783446550 (0x3F60DB32)
+     * Running cosSmoother
+     * Mean absolute error:     0.0000000848
+     * Mean relative error:     0.0000012386
+     * Maximum abs. error:      0.0000004172
+     * Maximum rel. error:      0.6110913157
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):        4.712388515472412000000000
+     * Highest output rel:      0.6110913157
+     * Worst output (hi):      -0.0000007490 (0xB5491000)
+     * Correct output (hi):    -0.0000004649 (0xB4F9990F)
+     * Worst input (abs):       5.303077220916748000000000
+     * Worst output (abs):      0.5569323897 (0x3F0E931F)
+     * Correct output (abs):    0.5569328070 (0x3F0E9326)
+     * -------
+     * Epsilon is:              0.0000000596
+     * -------
+     * </pre>
+     */
     @Test
     public void testCos() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("cosSmoother", PrecisionTest::cosSmoother);
-        functions.put("cosSmooth", TrigTools::cosSmooth);
-        functions.put("cosNewTable", TrigTools::cos);
         functions.put("cosOldTable", OldTrigTools::cos);
+        functions.put("cosNewTable", TrigTools::cos);
+        functions.put("cosSmooth", TrigTools::cosSmooth);
+        functions.put("cosSmoother", TrigTools::cosSmoother);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -1252,7 +848,7 @@ public class PrecisionTest {
             float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
             float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
             long counter = 0L;
-            for (float x = -TrigTools.PI; x <= TrigTools.PI2; x += 0x1p-20f) {
+            for (float x = TrigTools.PI2; x >= 0f; x -= 0x1p-20f) {
 
                 float tru = (float) Math.cos(x),
                         err = tru - op.applyAsFloat(x),
@@ -1304,10 +900,66 @@ public class PrecisionTest {
                 "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
 
+    /**
+     * Testing from -1.57f to 1.57f in increments of 0x1p-20f:
+     * <pre>
+     * Running tanSmoother
+     * Mean absolute error:     0.0000502852
+     * Mean relative error:     0.0000002945
+     * Maximum abs. error:      0.1672363281
+     * Maximum rel. error:      0.0001353590
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -1.477615714073181200000000
+     * Best output (lo):      -10.7007675171 (0xC12B3658)
+     * Correct output (lo):   -10.7007675171 (0xC12B3658)
+     * Worst input (hi):        1.569986939430236800000000
+     * Highest output rel:      0.0001353590
+     * Worst output (hi):    1235.3348388672 (0x449A6AB7)
+     * Correct output (hi):  1235.5020751953 (0x449A7011)
+     * Worst input (abs):       1.569986939430236800000000
+     * Worst output (abs):   1235.3348388672 (0x449A6AB7)
+     * Correct output (abs): 1235.5020751953 (0x449A7011)
+     * Running tanNoTable
+     * Mean absolute error:     0.0088905813
+     * Mean relative error:     0.0000341421
+     * Maximum abs. error:     17.9890136719
+     * Maximum rel. error:      0.0575221963
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -1.005164504051208500000000
+     * Best output (lo):       -1.5752424002 (0xBFC9A18B)
+     * Correct output (lo):    -1.5752424002 (0xBFC9A18B)
+     * Worst input (hi):        0.000000596046447753906200
+     * Highest output rel:      0.0575221963
+     * Worst output (hi):       0.0000005618 (0x3516CBE4)
+     * Correct output (hi):     0.0000005960 (0x35200000)
+     * Worst input (abs):       1.569998383522033700000000
+     * Worst output (abs):   1235.2326660156 (0x449A6772)
+     * Correct output (abs): 1253.2216796875 (0x449CA718)
+     * Running tanTable
+     * Mean absolute error:     0.1380470246
+     * Mean relative error:     0.0020219306
+     * Maximum abs. error:    386.6504516602
+     * Maximum rel. error:      0.9999999404
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -1.391320586204528800000000
+     * Best output (lo):       -5.5118293762 (0xC0B060E8)
+     * Correct output (lo):    -5.5118293762 (0xC0B060E8)
+     * Worst input (hi):       -0.000382781028747558600000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):    -0.0003827811 (0xB9C8B001)
+     * Worst input (abs):      -1.570000052452087400000000
+     * Worst output (abs):   -869.1978149414 (0xC4594CA9)
+     * Correct output (abs):-1255.8482666016 (0xC49CFB25)
+     * -------
+     * Epsilon is:              0.0000000596
+     * -------
+     * </pre>
+     */
     @Test
     public void testTan() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("tanSmoother", PrecisionTest::tanSmoother);
+        functions.put("tanSmoother", TrigTools::tanSmoother);
         functions.put("tanNoTable", TrigTools::tan);
         functions.put("tanTable", PrecisionTest::tanTable);
 
@@ -1805,7 +1457,7 @@ Worst input (abs):       4.205234527587891000000000
         //Maximum abs. error:      0.0000753403
         //Maximum rel. error:      0.9999999404
 
-        radians *= radToIndex;
+        radians = radians * radToIndex + 0.5f;
         final int floor = (int)(radians + 16384.0) - 16384;
         final int masked = floor & TABLE_MASK;
         final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];

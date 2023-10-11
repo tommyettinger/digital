@@ -316,7 +316,7 @@ public final class TrigTools {
         //Maximum rel. error:      0.0575221963
         radians *= TrigTools.PI_INVERSE;
         radians += 0.5f;
-        radians -= Math.floor(radians);
+        radians -= (int)(radians + 16384.0) - 16384;
         radians -= 0.5f;
         radians *= TrigTools.PI;
         final float x2 = radians * radians, x4 = x2 * x2;
@@ -380,7 +380,7 @@ public final class TrigTools {
     public static float tanDeg(float degrees) {
         degrees *= 1f/180f;
         degrees += 0.5f;
-        degrees -= Math.floor(degrees);
+        degrees -= (int)(degrees + 16384.0) - 16384;
         degrees -= 0.5f;
         degrees *= TrigTools.PI;
         final float x2 = degrees * degrees, x4 = x2 * x2;
@@ -436,7 +436,7 @@ public final class TrigTools {
     public static float tanTurns(float turns) {
         turns += turns;
         turns += 0.5f;
-        turns -= Math.floor(turns);
+        turns -= (int)(turns + 16384.0) - 16384;
         turns -= 0.5f;
         turns *= TrigTools.PI;
         final float x2 = turns * turns, x4 = x2 * x2;
