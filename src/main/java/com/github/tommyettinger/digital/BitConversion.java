@@ -297,4 +297,32 @@ public final class BitConversion {
     public static int getExponent(double num) {
         return Math.getExponent(num);
     }
+
+    /**
+     * Returns the number of contiguous '0' bits in {@code n} starting at the sign bit and checking towards the
+     * least-significant bit, stopping just before a '1' bit is encountered. Returns 0 for any negative input.
+     * Returns 32 for an input of 0.
+     * <br>
+     * This simply calls {@link Integer#numberOfLeadingZeros(int)} on most platforms, but on GWT, it calls the
+     * JS built-in function {@code Math.clz32(n)}. This probably performs better than the Integer method on GWT.
+     * @param n any int
+     * @return the number of '0' bits starting at the sign bit and going until just before a '1' bit is encountered
+     */
+    public static int countLeadingZeros(int n) {
+        return Integer.numberOfLeadingZeros(n);
+    }
+    /**
+     * Returns the number of contiguous '0' bits in {@code n} starting at the sign bit and checking towards the
+     * least-significant bit, stopping just before a '1' bit is encountered. Returns 0 for any negative input.
+     * Returns 64 for an input of 0.
+     * <br>
+     * This simply calls {@link Long#numberOfLeadingZeros(long)} on most platforms, but on GWT, it calls
+     * {@link #countLeadingZeros(int)}, which calls the JS built-in function {@code Math.clz32(n)}.
+     * This probably performs better than the Long method on GWT.
+     * @param n any long
+     * @return the number of '0' bits starting at the sign bit and going until just before a '1' bit is encountered
+     */
+    public static int countLeadingZeros(long n) {
+        return Long.numberOfLeadingZeros(n);
+    }
 }

@@ -126,4 +126,16 @@ public final class BitConversion {
 		return (wia.get(1) >>> 52 & 0x7FF) - 0x3FF;
 	}
 
+	public static native int countLeadingZeros(int n)/*-{
+	    return Math.clz32(n);
+	}-*/;
+
+	public static int countLeadingZeros(long n) {
+		// we store the top 32 bits first.
+		int x = (int)(n >>> 32);
+		// if the top 32 bits are 0, we know we don't need to count zeros in them.
+		// if they aren't 0, we know there is a 1 bit in there, so we don't need to count the low 32 bits.
+		return x == 0 ? 32 + countLeadingZeros((int)n) : countLeadingZeros(x);
+	}
+
 }
