@@ -370,7 +370,7 @@ public class PrecisionTest {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
 //        functions.put("sinAlternate", PrecisionTest::sinAlternate);
         functions.put("sinNewTable", TrigTools::sin);
-        functions.put("sinOldTable", OldTrigTools::sin);
+        functions.put("sinSmootherNewTable", TrigTools::sinSmoother);
 //        functions.put("sinSmootherAlternate", PrecisionTest::sinSmoother);
 //        functions.put("sinTable32", (f) -> sinVar(table32, f));
 //        functions.put("sinTable64", (f) -> sinVar(table64, f));
@@ -386,8 +386,8 @@ public class PrecisionTest {
 //        functions.put("sinSmootherTable4096", (f) -> sinSmootherVar(table4096, f));
 //        functions.put("sinGdx", MathUtils::sin);
 
-        functions.put("sinSmootherNewTable", TrigTools::sinSmoother);
-        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
+//        functions.put("sinOldTable", OldTrigTools::sin);
+//        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
 
         functions.put("sinSmooth", TrigTools::sinSmooth);
 
@@ -410,6 +410,7 @@ public class PrecisionTest {
 //        functions.put("sinLeibovici", PrecisionTest::sinLeibovici);
 //        functions.put("sinSteadman", PrecisionTest::sinSteadman);
 //        functions.put("sinBhaskara2", PrecisionTest::sinBhaskaraI);
+        functions.put("sinHastings", PrecisionTest::sinHastings);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -475,6 +476,29 @@ public class PrecisionTest {
         }
         System.out.printf("-------\n" +
                 "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
+    }
+
+    //Mean absolute error:     0.0000001121
+    //Mean relative error:     0.0000018874
+    //Maximum abs. error:      0.0000008196
+    //Maximum rel. error:      1.0000000000
+    /**
+     * Credit to <a href="https://stackoverflow.com/a/524606">Darius Bacon's Stack Overflow answer</a>.
+     * The algorithm is by Hastings, from Approximations For Digital Computers.
+     * The use of a triangle wave to reduce the range was my idea. This doesn't use a LUT.
+     * @param radians the angle to get the sine of, in radians
+     * @return the sine of the given angle
+     */
+    private static float sinHastings(float radians) {
+        radians = radians * (PI_INVERSE * 0.5f) + 0.25f;
+        float x = 4f * Math.abs(radians - ((int)(radians + 16384.5) - 16384)) - 1f;
+        float x2 = x * x;
+        return ((((0.00015148419f * x2
+                - 0.00467376557f) * x2
+                + 0.07968967928f) * x2
+                - 0.64596371106f) * x2
+                + 1.57079631847f) * x;
+
     }
 
     @Test
