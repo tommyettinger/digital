@@ -3,6 +3,8 @@ package com.github.tommyettinger.digital;
 import static org.junit.Assert.*;
 
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.QuaternionDouble;
+import com.badlogic.gdx.math.experimental.QuaternionX;
 import org.junit.Test;
 
 public class QuaternionTest {
@@ -62,6 +64,50 @@ public class QuaternionTest {
 		//90.0
 		//1.906113E-4
 		assertEquals(88f, quat.getRoll(), 0.05f);
+	}
 
+	@Test
+	public void testGdx() {
+		Quaternion r = new Quaternion();
+		Quaternion q = new Quaternion();
+		Quaternion rot = new Quaternion().setEulerAngles(4f, 8f, 16f);
+		for (int i = 0; i < 360; i++) {
+			r.mul(rot);
+			q.mul(rot);
+			q.setEulerAngles(q.getYaw(), q.getPitch(), q.getRoll());
+		}
+		System.out.println(r.getYaw() + " vs. " + q.getYaw());
+		System.out.println(r.getPitch() + " vs. " + q.getPitch());
+		System.out.println(r.getRoll() + " vs. " + q.getRoll());
+	}
+
+	@Test
+	public void testExperimental() {
+		QuaternionX r = new QuaternionX();
+		QuaternionX q = new QuaternionX();
+		QuaternionX rot = new QuaternionX().setEulerAngles(4f, 8f, 16f);
+		for (int i = 0; i < 360; i++) {
+			r.mul(rot);
+			q.mul(rot);
+			q.setEulerAngles(q.getYaw(), q.getPitch(), q.getRoll());
+		}
+		System.out.println(r.getYaw() + " vs. " + q.getYaw());
+		System.out.println(r.getPitch() + " vs. " + q.getPitch());
+		System.out.println(r.getRoll() + " vs. " + q.getRoll());
+	}
+
+	@Test
+	public void testWithDouble() {
+		QuaternionDouble r = new QuaternionDouble();
+		QuaternionDouble q = new QuaternionDouble();
+		QuaternionDouble rot = new QuaternionDouble().setEulerAngles(4f, 8f, 16f);
+		for (int i = 0; i < 360; i++) {
+			r.mul(rot);
+			q.mul(rot);
+			q.setEulerAngles(q.getYaw(), q.getPitch(), q.getRoll());
+		}
+		System.out.println(r.getYaw() + " vs. " + q.getYaw());
+		System.out.println(r.getPitch() + " vs. " + q.getPitch());
+		System.out.println(r.getRoll() + " vs. " + q.getRoll());
 	}
 }

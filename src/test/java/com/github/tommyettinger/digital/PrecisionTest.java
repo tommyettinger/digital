@@ -491,14 +491,13 @@ public class PrecisionTest {
      */
     private static float sinHastings(float radians) {
         radians = radians * (PI_INVERSE * 0.5f) + 0.25f;
-        float x = 4f * Math.abs(radians - ((int)(radians + 16384.5) - 16384)) - 1f;
-        float x2 = x * x;
-        return ((((0.00015148419f * x2
-                - 0.00467376557f) * x2
-                + 0.07968967928f) * x2
-                - 0.64596371106f) * x2
-                + 1.57079631847f) * x;
-
+        radians = 4f * Math.abs(radians - ((int)(radians + 16384.5) - 16384)) - 1f;
+        float r2 = radians * radians;
+        return ((((0.00015148419f * r2
+                - 0.00467376557f) * r2
+                + 0.07968967928f) * r2
+                - 0.64596371106f) * r2
+                + 1.57079631847f) * radians;
     }
 
     @Test
