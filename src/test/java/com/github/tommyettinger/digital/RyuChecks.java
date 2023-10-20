@@ -98,8 +98,8 @@ public class RyuChecks {
         }
         System.out.println();
         {
-            String text = "PI to only 7 places: ";
-            String sb = RyuFloat.appendDecimal(new StringBuilder(text), TrigTools.PI, 7).append(", and more").toString();
+            String text = "PI to only 12 places: ";
+            String sb = RyuFloat.appendDecimal(new StringBuilder(text), TrigTools.PI, 12).append(", and more").toString();
             float parsed = Base.BASE10.readFloat(sb, text.length(), Integer.MAX_VALUE);
             System.out.println(sb);
             System.out.println(parsed);
