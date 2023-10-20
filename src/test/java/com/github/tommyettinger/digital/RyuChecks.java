@@ -80,11 +80,30 @@ public class RyuChecks {
         }
         System.out.println();
         {
-            String sb = RyuFloat.appendDecimal(new StringBuilder("junk: "), Float.MIN_NORMAL).append(", and more").toString();
-            float parsed = Base.BASE10.readFloat(sb, 5, Integer.MAX_VALUE);
+            String text = "MIN_NORMAL: ";
+            String sb = RyuFloat.appendDecimal(new StringBuilder(text), Float.MIN_NORMAL).append(", and more").toString();
+            float parsed = Base.BASE10.readFloat(sb, text.length(), Integer.MAX_VALUE);
             System.out.println(sb);
             System.out.println(parsed);
             System.out.println(parsed == Float.MIN_NORMAL);
+        }
+        System.out.println();
+        {
+            String text = "MIN_NORMAL to only 5 places: ";
+            String sb = RyuFloat.appendDecimal(new StringBuilder(text), Float.MIN_NORMAL, 5).append(", and more").toString();
+            float parsed = Base.BASE10.readFloat(sb, text.length(), Integer.MAX_VALUE);
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == Float.MIN_NORMAL);
+        }
+        System.out.println();
+        {
+            String text = "PI to only 7 places: ";
+            String sb = RyuFloat.appendDecimal(new StringBuilder(text), TrigTools.PI, 7).append(", and more").toString();
+            float parsed = Base.BASE10.readFloat(sb, text.length(), Integer.MAX_VALUE);
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == TrigTools.PI);
         }
         System.out.println();
         {

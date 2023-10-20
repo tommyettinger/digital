@@ -357,10 +357,13 @@ final class RyuFloat {
   }
 
   public static String decimal(float value) {
-    return appendDecimal(new StringBuilder(), value).toString();
+    return appendDecimal(new StringBuilder(), value, 10000).toString();
   }
 
   public static StringBuilder appendDecimal(StringBuilder builder, float value) {
+    return appendDecimal(builder, value, 10000);
+  }
+  public static StringBuilder appendDecimal(StringBuilder builder, float value, int lengthLimit) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Float.isNaN(value)) {
@@ -494,6 +497,7 @@ final class RyuFloat {
     // Step 5: Print the decimal representation.
     // We follow Float.toString semantics here.
     int index = builder.length();
+    int startLimiting = index;
     if (sign) {
       builder.append('-');
     }
@@ -533,6 +537,8 @@ final class RyuFloat {
         output /= 10;
       }
     }
+    if((long)startLimiting + lengthLimit < builder.length())
+      builder.setLength(startLimiting + lengthLimit);
     return builder;
   }
 
