@@ -541,9 +541,9 @@ final class RyuFloat {
       for (; removed >= -1; removed--) {
         builder.append('0');
       }
-    }
-    if((long)startLimiting + lengthLimit < builder.length()) {
-      builder.setLength(startLimiting + lengthLimit);
+      if((long)startLimiting + lengthLimit < builder.length()) {
+        builder.setLength(startLimiting + lengthLimit);
+      }
     }
     return builder;
   }

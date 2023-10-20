@@ -71,12 +71,32 @@ public class RyuChecks {
             System.out.printf("Java general: %-20g, Java decimal: %-20f, Java scientific: %-20E\n", d, d, d);
             System.out.printf("Ryu general : %-20s, Ryu decimal : %-20s, Ryu scientific : %-20s, Ryu friendly : %-20s\n", RyuFloat.general(d), RyuFloat.decimal(d), RyuFloat.scientific(d), RyuFloat.friendly(d));
         }
+        System.out.println();
         {
-            String sb = RyuDouble.appendDecimal(new StringBuilder("junk: "), Double.MIN_NORMAL).append(", and more").toString();
-            double parsed = Base.BASE10.readDouble(sb, 5, Integer.MAX_VALUE);
+            String text = "MIN_NORMAL: ";
+            String sb = RyuDouble.appendDecimal(new StringBuilder(text), Double.MIN_NORMAL).append(", and more").toString();
+            double parsed = Base.BASE10.readDouble(sb, text.length(), Integer.MAX_VALUE);
             System.out.println(sb);
             System.out.println(parsed);
             System.out.println(parsed == Double.MIN_NORMAL);
+        }
+        System.out.println();
+        {
+            String text = "MIN_NORMAL to only 5 places: ";
+            String sb = RyuDouble.appendDecimal(new StringBuilder(text), Double.MIN_NORMAL, 5).append(", and more").toString();
+            double parsed = Base.BASE10.readDouble(sb, text.length(), Integer.MAX_VALUE);
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == Double.MIN_NORMAL);
+        }
+        System.out.println();
+        {
+            String text = "PI to only 12 places: ";
+            String sb = RyuDouble.appendDecimal(new StringBuilder(text), TrigTools.PI, 12).append(", and more").toString();
+            double parsed = Base.BASE10.readDouble(sb, text.length(), Integer.MAX_VALUE);
+            System.out.println(sb);
+            System.out.println(parsed);
+            System.out.println(parsed == TrigTools.PI);
         }
         System.out.println();
         {

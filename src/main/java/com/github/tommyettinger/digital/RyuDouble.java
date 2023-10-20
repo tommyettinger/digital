@@ -379,10 +379,13 @@ final class RyuDouble {
   }
 
   public static String decimal(double value) {
-    return appendDecimal(new StringBuilder(), value).toString();
+    return appendDecimal(new StringBuilder(), value, 10000).toString();
   }
 
   public static StringBuilder appendDecimal(StringBuilder builder, double value) {
+    return appendDecimal(builder, value, 10000);
+  }
+  public static StringBuilder appendDecimal(StringBuilder builder, double value, int lengthLimit) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Double.isNaN(value)) {
@@ -528,6 +531,7 @@ final class RyuDouble {
     // Step 5: Print the decimal representation.
     // We follow Double.toString semantics here.
     int index = builder.length();
+    int startLimiting = index;
     if (sign) {
       builder.append('-');
     }
@@ -568,6 +572,15 @@ final class RyuDouble {
         output /= 10;
       }
     }
+    if(lengthLimit != 10000) {
+      for (; removed >= -1; removed--) {
+        builder.append('0');
+      }
+      if((long)startLimiting + lengthLimit < builder.length()) {
+        builder.setLength(startLimiting + lengthLimit);
+      }
+    }
+
     return builder;
   }
 
