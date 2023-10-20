@@ -110,4 +110,33 @@ public class QuaternionTest {
 		System.out.println(r.getPitch() + " vs. " + q.getPitch());
 		System.out.println(r.getRoll() + " vs. " + q.getRoll());
 	}
+
+	/**
+	 * On libGDX 1.9.11:
+	 * <pre>
+	 * 6.1743784 vs. 179.99883
+	 * 10.768361 vs. 83.99919
+	 * 22.487045 vs. 179.99895
+	 * </pre>
+	 * On libGDX 1.9.12:
+	 * <pre>
+	 * 6.1743784 vs. -179.99641
+	 * 10.768361 vs. 84.00223
+	 * 22.487045 vs. -179.9974
+	 * </pre>
+	 */
+	@Test
+	public void testWhat() {
+		Quaternion r = new Quaternion();
+		Quaternion q = new Quaternion();
+		Quaternion rot = new Quaternion().setEulerAngles(4f, 8f, 16f);
+		for (int i = 0; i < 360; i++) {
+			r.mulLeft(rot);
+			q.setEulerAngles(q.getYaw()+4f, q.getPitch()+8f, q.getRoll()+16f);
+		}
+		System.out.println(r.getYaw() + " vs. " + q.getYaw());
+		System.out.println(r.getPitch() + " vs. " + q.getPitch());
+		System.out.println(r.getRoll() + " vs. " + q.getRoll());
+	}
+
 }
