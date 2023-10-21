@@ -330,6 +330,22 @@ public class PrecisionTest {
      * Worst input (abs):      -6.269955158233643000000000
      * Worst output (abs):      0.0134219285 (0x3C5BE7A6)
      * Correct output (abs):    0.0132297631 (0x3C58C1A6)
+     * Running sinShifty
+     * Mean absolute error:     0.0000601960
+     * Mean relative error:     0.0006447677
+     * Maximum abs. error:      0.0005745887
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.221826076507568000000000
+     * Best output (lo):       -0.0613207370 (0xBD7B2B74)
+     * Correct output (lo):    -0.0613207370 (0xBD7B2B74)
+     * Worst input (hi):        6.283185482025146500000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000001748 (0x343BBD2E)
+     * Worst input (abs):      -0.000574588775634765600000
+     * Worst output (abs):      0.0000000000 (0x00000000)
+     * Correct output (abs):   -0.0005745887 (0xBA169FFF)
      * Running sinSmootherOldTable
      * Mean absolute error:     0.0000001205
      * Mean relative error:     0.0007681165
@@ -421,6 +437,7 @@ public class PrecisionTest {
         functions.put("sin037Table", TrigTools037::sin);
         functions.put("sinNewTable", TrigTools::sin);
         functions.put("sinAlternate", PrecisionTest::sinAlternate);
+        functions.put("sinShifty", PrecisionTest::sinShifty);
         functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
         functions.put("sinSmoother037Table", TrigTools037::sinSmoother);
         functions.put("sinSmootherNewTable", TrigTools::sinSmoother);
@@ -1498,6 +1515,17 @@ Worst input (abs):       4.205234527587891000000000
     }
     public static float sinAlternate(float radians) {
         return SIN_TABLE[Math.round(radians * radToIndex) & TABLE_MASK];
+    }
+
+    /*
+Mean absolute error:     0.0000601960
+Mean relative error:     0.0006447678
+Maximum abs. error:      0.0005745887
+Maximum rel. error:      1.0000000000
+     */
+    public static float sinShifty(final float radians) {
+        final int idx = (int)(radians * radToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
     }
 
     public static float sinSmoother(float radians) {
