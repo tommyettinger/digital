@@ -379,7 +379,7 @@ final class RyuDouble {
   }
 
   public static String decimal(double value) {
-    return appendDecimal(new StringBuilder(), value, 10000).toString();
+    return appendDecimal(new StringBuilder(), value, -10000).toString();
   }
 
   public static String decimal(double value, int lengthLimit) {
@@ -387,7 +387,7 @@ final class RyuDouble {
   }
 
   public static StringBuilder appendDecimal(StringBuilder builder, double value) {
-    return appendDecimal(builder, value, 10000);
+    return appendDecimal(builder, value, -10000);
   }
   public static StringBuilder appendDecimal(StringBuilder builder, double value, int lengthLimit) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
@@ -576,7 +576,7 @@ final class RyuDouble {
         output /= 10;
       }
     }
-    if(lengthLimit != 10000) {
+    if(lengthLimit != -10000) {
       for (; removed >= -1; removed--) {
         builder.append('0');
       }

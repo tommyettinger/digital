@@ -25,9 +25,11 @@ import java.util.Random;
  * Provides ways to encode digits in different base systems, or radixes, and decode numbers written in those bases. This
  * includes base systems such as binary ({@link #BASE2}, using just 0 and 1), octal ({@link #BASE8}, 0 through 7),
  * decimal ({@link #BASE10}, 0 through 9), hexadecimal ({@link #BASE16}, 0-9 then A-F), and the even larger
- * hexatrigesimal ({@link #BASE36}, 0 through 9 then A-Z). Of special note are the two different approaches to encoding
- * base-64 data: {@link #BASE64} is the standard format, and {@link #URI_SAFE} is the different format used when
- * encoding data for a URI (typically meant for the Internet). The newest is {@link #BASE86}, which is also the largest
+ * hexatrigesimal ({@link #BASE36}, 0 through 9 then A-Z). Of special note are the three different approaches to
+ * encoding base-64 data: {@link #BASE64} is the standard format, {@link #URI_SAFE} is the different format used when
+ * encoding data for a URI (typically meant for the Internet), while {@link #SIMPLE64} is closer to the base-16 and
+ * base-36 formats here, with "0" actually meaning 0 (which is not true for the other base-64 schemes). The newest Base
+ * is @link #BASE86}, which is also the largest
  * base, and uses 0-9, A-Z, a-z, and then many punctuation characters. Even more bases can be created with
  * {@link #scrambledBase(Random)}, which when called creates a base-72 Base with randomized choices for digits;
  * this could be useful for obfuscating plain-text saved data so the average player can't read it.
@@ -35,8 +37,15 @@ import java.util.Random;
  * Each of these base systems provides a way to write bytes, shorts, ints, and longs as variable-character-count signed
  * numbers or as fixed-character-count unsigned numbers, using {@link #signed(long)} and {@link #unsigned(long)}
  * respectively. There is only one reading method for each size of number, but it is capable of reading both the signed
- * and unsigned results, and never throws an Exception (it just returns 0 if no number could be read). Each base system
- * can also read and write floats and doubles, but only using their bit representation, treated as an int or long.
+ * and unsigned results, and never throws an Exception (it just returns 0 if no number could be read).
+ * <br>
+ * Each base system can also read and write floats and doubles in several ways. Regardless of what chars a Base normally
+ * uses, all can print floats and doubles in the "normal" base-10 decimal format, such as 1234543.21, as well as using
+ * scientific notation, such as 1.23454e+06. The methods {@link #decimal(float)} and {@link #scientific(float)} produce
+ * those formats, while {@link #general(float)} changes between format based on the scale of its argument, and the new
+ * {@link #friendly(float)} uses human-friendlier decimal notation for more inputs, switching to scientific only if the
+ * result would be a very long piece of text. For decimal notation, you can optionally truncate and/or pad the output
+ * with {@link #decimal(float, int)}.
  */
 @SuppressWarnings({"ShiftOutOfRange", "PointlessBitwiseExpression"})
 public class Base {
@@ -1358,6 +1367,9 @@ public class Base {
      * You can specify how long the returned String is permitted to be using {@code lengthLimit}. The length limit
      * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
      * (though this should never actually return a String that long on its own, it will add padding to meet the limit).
+     * If the output would normally be shorter than {@code lengthLimit}, then this will pad the output with zeros at the
+     * end. If the output would normally be longer than {@code lengthLimit}, this truncates trailing digits rather
+     * than rounding (sorry).
      * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
      *
      * @param number any double
@@ -1387,6 +1399,9 @@ public class Base {
      * You can specify how long the appended text is permitted to be using {@code lengthLimit}. The length limit
      * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
      * (though this should never actually append that much on its own, it will add padding to meet the limit).
+     * If the output would normally be shorter than {@code lengthLimit}, then this will pad the output with zeros at the
+     * end. If the output would normally be longer than {@code lengthLimit}, this truncates trailing digits rather
+     * than rounding (sorry).
      * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
@@ -1986,6 +2001,9 @@ public class Base {
      * You can specify how long the returned String is permitted to be using {@code lengthLimit}. The length limit
      * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
      * (though this should never actually return a String that long on its own, it will add padding to meet the limit).
+     * If the output would normally be shorter than {@code lengthLimit}, then this will pad the output with zeros at the
+     * end. If the output would normally be longer than {@code lengthLimit}, this truncates trailing digits rather
+     * than rounding (sorry).
      * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
      *
      * @param number any float
@@ -2015,6 +2033,9 @@ public class Base {
      * You can specify how long the appended text is permitted to be using {@code lengthLimit}. The length limit
      * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
      * (though this should never actually append that much on its own, it will add padding to meet the limit).
+     * If the output would normally be shorter than {@code lengthLimit}, then this will pad the output with zeros at the
+     * end. If the output would normally be longer than {@code lengthLimit}, this truncates trailing digits rather
+     * than rounding (sorry).
      * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
