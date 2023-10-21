@@ -360,6 +360,10 @@ final class RyuFloat {
     return appendDecimal(new StringBuilder(), value, 10000).toString();
   }
 
+  public static String decimal(float value, int lengthLimit) {
+    return appendDecimal(new StringBuilder(), value, lengthLimit).toString();
+  }
+
   public static StringBuilder appendDecimal(StringBuilder builder, float value) {
     return appendDecimal(builder, value, 10000);
   }

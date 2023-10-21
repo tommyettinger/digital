@@ -1352,6 +1352,23 @@ public class Base {
     }
 
     /**
+     * Converts the given {@code number} to a base-10 representation that uses decimal notation.
+     * Returns a new String. This allocates a temporary StringBuilder internally, and you may instead want to reuse a
+     * StringBuilder with {@link #appendDecimal(StringBuilder, double, int)}.
+     * You can specify how long the returned String is permitted to be using {@code lengthLimit}. The length limit
+     * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
+     * (though this should never actually return a String that long on its own, it will add padding to meet the limit).
+     * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
+     *
+     * @param number any double
+     * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the returned String
+     * @return a new String containing {@code number} in decimal notation, always base-10
+     */
+    public String decimal(double number, int lengthLimit) {
+        return RyuDouble.decimal(number, lengthLimit);
+    }
+
+    /**
      * Converts the given {@code number} to a base-10 representation that uses decimal notation,
      * appending the result to {@code builder}. This can vary in how many chars it uses, and can rarely use hundreds.
      * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
@@ -1364,6 +1381,23 @@ public class Base {
         return RyuDouble.appendDecimal(builder, number);
     }
     
+    /**
+     * Converts the given {@code number} to a base-10 representation that uses decimal notation,
+     * appending the result to {@code builder}.
+     * You can specify how long the appended text is permitted to be using {@code lengthLimit}. The length limit
+     * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
+     * (though this should never actually append that much on its own, it will add padding to meet the limit).
+     * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any double
+     * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the appended section
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendDecimal(StringBuilder builder, double number, int lengthLimit) {
+        return RyuDouble.appendDecimal(builder, number, lengthLimit);
+    }
+
     /**
      * Reads in a CharSequence containing only the digits present in this Base, with an optional sign at the
      * start, and returns the double those bits represent, or 0.0 if nothing could be read. The leading sign can be
@@ -1946,6 +1980,23 @@ public class Base {
     }
 
     /**
+     * Converts the given {@code number} to a base-10 representation that uses decimal notation.
+     * Returns a new String. This allocates a temporary StringBuilder internally, and you may instead want to reuse a
+     * StringBuilder with {@link #appendDecimal(StringBuilder, float, int)}.
+     * You can specify how long the returned String is permitted to be using {@code lengthLimit}. The length limit
+     * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
+     * (though this should never actually return a String that long on its own, it will add padding to meet the limit).
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param number any float
+     * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the returned String
+     * @return a new String containing {@code number} in decimal notation, always base-10
+     */
+    public String decimal(float number, int lengthLimit) {
+        return RyuFloat.decimal(number, lengthLimit);
+    }
+
+    /**
      * Converts the given {@code number} to a base-10 representation that uses decimal notation,
      * appending the result to {@code builder}. This can vary in how many chars it uses, and can rarely use hundreds.
      * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
@@ -1956,6 +2007,23 @@ public class Base {
      */
     public StringBuilder appendDecimal(StringBuilder builder, float number) {
         return RyuFloat.appendDecimal(builder, number);
+    }
+    
+    /**
+     * Converts the given {@code number} to a base-10 representation that uses decimal notation,
+     * appending the result to {@code builder}.
+     * You can specify how long the appended text is permitted to be using {@code lengthLimit}. The length limit
+     * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
+     * (though this should never actually append that much on its own, it will add padding to meet the limit).
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any float
+     * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the appended section
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendDecimal(StringBuilder builder, float number, int lengthLimit) {
+        return RyuFloat.appendDecimal(builder, number, lengthLimit);
     }
 
     /**
