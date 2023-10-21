@@ -246,7 +246,7 @@ public final class MathTools {
      * @return the logarithm of value with base 2
      */
     public static float log2(float value) {
-        return (float) (Math.log(value) / 0.6931471805599453);
+        return (float) (Math.log(value) * 1.4426950408889634);
     }
 
     /**
@@ -445,9 +445,9 @@ public final class MathTools {
      * @return the square root of n, rounded down to the next lower {@code long} if the result isn't already a {@code long}
      */
     public static long isqrt(final long n) {
-        final int c = 63 - Long.numberOfLeadingZeros(n) >> 1;
+        final int c = 63 - BitConversion.countLeadingZeros(n) >> 1;
         long a = 1, d = 0, e;
-        for (int s = 31 & 32 - Integer.numberOfLeadingZeros(c); s > 0; ) {
+        for (int s = 31 & 32 - BitConversion.countLeadingZeros(c); s > 0; ) {
             e = d;
             d = c >>> --s;
             a = (a << d - e - 1) + (n >>> c + c - e - d + 1) / a;
@@ -946,7 +946,7 @@ public final class MathTools {
      * @return the next higher power of two that is greater than or equal to n
      */
     public static int nextPowerOfTwo(final int n) {
-        return 1 << -Integer.numberOfLeadingZeros(Math.max(2, n) - 1);
+        return 1 << -BitConversion.countLeadingZeros(Math.max(2, n) - 1);
     }
 
     /**
@@ -1722,13 +1722,13 @@ public final class MathTools {
      * The implementation may have different performance characteristics than {@link Random#nextFloat()},
      * because this doesn't perform any floating-point multiplication or division, and instead assembles bits
      * of a long. This uses {@link BitConversion#intBitsToFloat(int)} and
-     * {@link Long#numberOfLeadingZeros(long)}, both of which typically have optimized intrinsics on HotSpot,
+     * {@link BitConversion#countLeadingZeros(long)}, both of which typically use optimized intrinsics on HotSpot,
      * and this is branchless and loopless, unlike the original algorithm by Allen Downey.
      * @param bits a {@code long} that will determine what this returns, but with little correlation between numeric values
      * @return a float between 2.7105054E-20 and 0.99999994, exclusive (effectively 0 and 1, exclusive)
      */
     public static float exclusiveFloat(final long bits) {
-        return BitConversion.intBitsToFloat(126 - Long.numberOfLeadingZeros(bits) << 23 | (int)bits & 0x7FFFFF);
+        return BitConversion.intBitsToFloat(126 - BitConversion.countLeadingZeros(bits) << 23 | (int)bits & 0x7FFFFF);
     }
 
     /**
@@ -1748,13 +1748,13 @@ public final class MathTools {
      * The implementation may have different performance characteristics than {@link Random#nextDouble()},
      * because this doesn't perform any floating-point multiplication or division, and instead assembles bits
      * of a long. This uses {@link BitConversion#longBitsToDouble(long)} and
-     * {@link Long#numberOfLeadingZeros(long)}, both of which typically have optimized intrinsics on HotSpot,
+     * {@link BitConversion#countLeadingZeros(long)}, both of which typically use optimized intrinsics on HotSpot,
      * and this is branchless and loopless, unlike the original algorithm by Allen Downey.
      * @param bits a {@code long} that will determine what this returns, but with little correlation between numeric values
      * @return a float between 2.710505431213761E-20 and 0.9999999999999999, exclusive (effectively 0 and 1, exclusive)
      */
     public static double exclusiveDouble(final long bits) {
-        return BitConversion.longBitsToDouble(1022L - Long.numberOfLeadingZeros(bits) << 52 | bits & 0xFFFFFFFFFFFFFL);
+        return BitConversion.longBitsToDouble(1022L - BitConversion.countLeadingZeros(bits) << 52 | bits & 0xFFFFFFFFFFFFFL);
     }
 
     /**

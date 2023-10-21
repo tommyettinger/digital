@@ -1,6 +1,7 @@
 
 package com.badlogic.gdx.math;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -27,5 +28,15 @@ public class Vector4Test {
 		b.w = Float.MAX_VALUE * 0.5f;
 		assertTrue(a.isOnLine(b));
 		assertTrue(b.isOnLine(a));
+	}
+
+	@Test
+	public void testNormalize() {
+		Vector4 v = new Vector4();
+		MathUtils.random.setSeed(123456);
+		for (int i = 0; i < 1000; i++) {
+			v.set(MathUtils.random(-100, 100), MathUtils.random(-100, 100), MathUtils.random(-100, 100), MathUtils.random(-100, 100)).nor();
+			Assert.assertEquals(v.toString(), 1f, v.len2(), MathUtils.FLOAT_ROUNDING_ERROR);
+		}
 	}
 }
