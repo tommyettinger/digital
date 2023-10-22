@@ -436,8 +436,9 @@ public class PrecisionTest {
         functions.put("sinOldTable", OldTrigTools::sin);
         functions.put("sin037Table", TrigTools037::sin);
         functions.put("sinNewTable", TrigTools::sin);
-        functions.put("sinAlternate", PrecisionTest::sinAlternate);
         functions.put("sinShifty", PrecisionTest::sinShifty);
+        functions.put("sinBonus", PrecisionTest::sinBonus);
+        functions.put("sinAlternate", PrecisionTest::sinAlternate);
         functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
         functions.put("sinSmoother037Table", TrigTools037::sinSmoother);
         functions.put("sinSmootherNewTable", TrigTools::sinSmoother);
@@ -1526,6 +1527,13 @@ Maximum rel. error:      1.0000000000
     public static float sinShifty(final float radians) {
         final int idx = (int)(radians * radToIndex + 0.5f);
         return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
+    }
+    public static final float radToIndexBonus = (TABLE_SIZE << 1) / PI2;
+    public static final int TABLE_MASK_BONUS = (TABLE_SIZE << 1) - 1;
+
+    public static float sinBonus(float radians) {
+        final int idx = (int)(radians * radToIndexBonus) & TABLE_MASK_BONUS;
+        return SIN_TABLE[(idx & 1) + (idx >>> 1)];
     }
 
     public static float sinSmoother(float radians) {
