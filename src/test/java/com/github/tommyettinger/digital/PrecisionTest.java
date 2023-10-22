@@ -264,7 +264,9 @@ public class PrecisionTest {
     }
 
     /**
-     * Testing from PI2 to -PI2 in decrements of 0x1p-20f:
+     * Testing from PI2 to -PI2 in decrements of 0x1p-20f...
+     * <br>
+     * Low-precision approximations:
      * <pre>
      * Running sinOldTable
      * Mean absolute error:     0.0001522401
@@ -314,6 +316,38 @@ public class PrecisionTest {
      * Worst input (abs):      -3.141017436981201000000000
      * Worst output (abs):     -0.0011504854 (0xBA96CBE2)
      * Correct output (abs):   -0.0005752166 (0xBA16CA22)
+     * Running sinShifty
+     * Mean absolute error:     0.0000601960
+     * Mean relative error:     0.0006447678
+     * Maximum abs. error:      0.0005745887
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.221826076507568000000000
+     * Best output (lo):       -0.0613207370 (0xBD7B2B74)
+     * Correct output (lo):    -0.0613207370 (0xBD7B2B74)
+     * Worst input (hi):        6.283185482025146500000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000001748 (0x343BBD2E)
+     * Worst input (abs):      -0.000574588775634765600000
+     * Worst output (abs):      0.0000000000 (0x00000000)
+     * Correct output (abs):   -0.0005745887 (0xBA169FFF)
+     * Running sinBonus
+     * Mean absolute error:     0.0000907262
+     * Mean relative error:     0.0013683814
+     * Maximum abs. error:      0.0003835417
+     * Maximum rel. error:   2538.7736816406
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.221826076507568000000000
+     * Best output (lo):       -0.0613207370 (0xBD7B2B74)
+     * Correct output (lo):    -0.0613207370 (0xBD7B2B74)
+     * Worst input (hi):       -3.141592502593994000000000
+     * Highest output rel:   2538.7736816406
+     * Worst output (hi):      -0.0003834952 (0xB9C90FDA)
+     * Correct output (hi):    -0.0000001510 (0xB4222169)
+     * Worst input (abs):      -6.280500888824463000000000
+     * Worst output (abs):      0.0030679568 (0x3B490FC6)
+     * Correct output (abs):    0.0026844151 (0x3B2FED03)
      * Running sinAlternate
      * Mean absolute error:     0.0000601881
      * Mean relative error:     0.0006230407
@@ -330,22 +364,29 @@ public class PrecisionTest {
      * Worst input (abs):      -6.269955158233643000000000
      * Worst output (abs):      0.0134219285 (0x3C5BE7A6)
      * Correct output (abs):    0.0132297631 (0x3C58C1A6)
-     * Running sinShifty
-     * Mean absolute error:     0.0000601960
-     * Mean relative error:     0.0006447677
-     * Maximum abs. error:      0.0005745887
-     * Maximum rel. error:      1.0000000000
+     * Running sinGdx
+     * Mean absolute error:     0.0001522401
+     * Mean relative error:     0.0023401673
+     * Maximum abs. error:      0.0005752884
+     * Maximum rel. error:   3809.6450195313
      * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.221826076507568000000000
-     * Best output (lo):       -0.0613207370 (0xBD7B2B74)
-     * Correct output (lo):    -0.0613207370 (0xBD7B2B74)
-     * Worst input (hi):        6.283185482025146500000000
-     * Highest output rel:      0.9999999404
-     * Worst output (hi):       0.0000000000 (0x00000000)
-     * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):      -0.000574588775634765600000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):   -0.0005745887 (0xBA169FFF)
+     * Best input (lo):         6.282993793487549000000000
+     * Best output (lo):       -0.0001915137 (0xB948D111)
+     * Correct output (lo):    -0.0001915137 (0xB948D111)
+     * Worst input (hi):       -3.141592502593994000000000
+     * Highest output rel:   3809.6447753906
+     * Worst output (hi):      -0.0005753914 (0xBA16D5DD)
+     * Correct output (hi):    -0.0000001510 (0xB4222169)
+     * Worst input (abs):      -6.280500888824463000000000
+     * Worst output (abs):      0.0032597035 (0x3B55A0C0)
+     * Correct output (abs):    0.0026844151 (0x3B2FED03)
+     * -------
+     * Epsilon is:              0.0000000596
+     * -------
+     * </pre>
+     * <br>
+     * High-precision approximations:
+     * <pre>
      * Running sinSmootherOldTable
      * Mean absolute error:     0.0000001205
      * Mean relative error:     0.0007681165
@@ -410,6 +451,22 @@ public class PrecisionTest {
      * Worst input (abs):       4.208482265472412000000000
      * Worst output (abs):     -0.8753479123 (0xBF6016CD)
      * Correct output (abs):   -0.8757029176 (0xBF602E11)
+     * Running sinSmootherAlternate
+     * Mean absolute error:     0.0001209989
+     * Mean relative error:     0.0020668732
+     * Maximum abs. error:      0.0001921883
+     * Maximum rel. error:   1270.8868408203
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         4.712388515472412000000000
+     * Best output (lo):       -1.0000000000 (0xBF800000)
+     * Correct output (lo):    -1.0000000000 (0xBF800000)
+     * Worst input (hi):        3.141592502593994000000000
+     * Highest output rel:   1270.8867187500
+     * Worst output (hi):      -0.0001917476 (0xB9490FDA)
+     * Correct output (hi):     0.0000001510 (0x34222169)
+     * Worst input (abs):      -6.283169269561768000000000
+     * Worst output (abs):      0.0002082259 (0x395A5737)
+     * Correct output (abs):    0.0000160376 (0x37868886)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -439,12 +496,12 @@ public class PrecisionTest {
         functions.put("sinShifty", PrecisionTest::sinShifty);
         functions.put("sinBonus", PrecisionTest::sinBonus);
         functions.put("sinAlternate", PrecisionTest::sinAlternate);
+        functions.put("sinGdx", MathUtils::sin);
         functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
         functions.put("sinSmoother037Table", TrigTools037::sinSmoother);
         functions.put("sinSmootherNewTable", TrigTools::sinSmoother);
         functions.put("sinSmooth", TrigTools::sinSmooth);
-
-//        functions.put("sinSmootherAlternate", PrecisionTest::sinSmoother);
+        functions.put("sinSmootherAlternate", PrecisionTest::sinSmoother);
 //        functions.put("sinTable32", (f) -> sinVar(table32, f));
 //        functions.put("sinTable64", (f) -> sinVar(table64, f));
 //        functions.put("sinTable128", (f) -> sinVar(table128, f));
@@ -457,7 +514,6 @@ public class PrecisionTest {
 //        functions.put("sinSmootherTable256", (f) -> sinSmootherVar(table256, f));
 //        functions.put("sinSmootherTable1024", (f) -> sinSmootherVar(table1024, f));
 //        functions.put("sinSmootherTable4096", (f) -> sinSmootherVar(table4096, f));
-//        functions.put("sinGdx", MathUtils::sin);
 
 
 
@@ -856,29 +912,61 @@ public class PrecisionTest {
     }
 
     /**
-     * Testing from PI2 to 0 in decrements of 0x1p-20f:
+     * Testing from PI2 to -PI2 in decrements of 0x1p-20f:
      * <pre>
      * Running cosOldTable
-     * Mean absolute error:     0.0000608054
-     * Mean relative error:     0.0009555830
-     * Maximum abs. error:      0.0003829121
-     * Maximum rel. error:    410.9350585938
+     * Mean absolute error:     0.0001520912
+     * Mean relative error:     0.0020495371
+     * Maximum abs. error:      0.0005754033
+     * Maximum rel. error:   1236.6342773438
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):       -4.712388515472412000000000
+     * Highest output rel:   1236.6342773438
+     * Worst output (hi):      -0.0005753914 (0xBA16D5DD)
+     * Correct output (hi):    -0.0000004649 (0xB4F9990F)
+     * Worst input (abs):      -1.571563243865966800000000
+     * Worst output (abs):     -0.0001915137 (0xB948D111)
+     * Correct output (abs):   -0.0007669170 (0xBA490AEE)
+     * Running cos037Table
+     * Mean absolute error:     0.0001202006
+     * Mean relative error:     0.0017872408
+     * Maximum abs. error:      0.0003834893
+     * Maximum rel. error:    823.8764038086
      * Lowest output rel:       0.0000000000
      * Best input (lo):         6.283185482025146500000000
      * Best output (lo):        1.0000000000 (0x3F800000)
      * Correct output (lo):     1.0000000000 (0x3F800000)
      * Worst input (hi):        4.712388515472412000000000
-     * Highest output rel:    410.9350585938
-     * Worst output (hi):      -0.0001915137 (0xB948D111)
+     * Highest output rel:    823.8763427734
+     * Worst output (hi):      -0.0003834952 (0xB9C90FDA)
      * Correct output (hi):    -0.0000004649 (0xB4F9990F)
-     * Worst input (abs):       4.712771892547607000000000
-     * Worst output (abs):      0.0000000000 (0x00000000)
-     * Correct output (abs):    0.0003829121 (0x39C8C199)
+     * Worst input (abs):       4.707787036895752000000000
+     * Worst output (abs):     -0.0049854168 (0xBBA35CB5)
+     * Correct output (abs):   -0.0046019275 (0xBB96CBC4)
      * Running cosNewTable
-     * Mean absolute error:     0.0000607926
-     * Mean relative error:     0.0006305867
+     * Mean absolute error:     0.0001520677
+     * Mean relative error:     0.0022730588
+     * Maximum abs. error:      0.0005752177
+     * Maximum rel. error:   2354.8764648438
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):       -1.570796489715576200000000
+     * Highest output rel:   2354.8764648438
+     * Worst output (hi):       0.0003834952 (0x39C90FDA)
+     * Correct output (hi):    -0.0000001629 (0xB42EEF4C)
+     * Worst input (abs):      -1.568303585052490200000000
+     * Worst output (abs):      0.0030679568 (0x3B490FC6)
+     * Correct output (abs):    0.0024927391 (0x3B235D39)
+     * Running cosShifty
+     * Mean absolute error:     0.0000600989
+     * Mean relative error:     0.0006195953
      * Maximum abs. error:      0.0001917618
-     * Maximum rel. error:      0.9999999404
+     * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
      * Best input (lo):         6.283185482025146500000000
      * Best output (lo):        1.0000000000 (0x3F800000)
@@ -890,27 +978,43 @@ public class PrecisionTest {
      * Worst input (abs):       1.571371555328369100000000
      * Worst output (abs):     -0.0007669903 (0xBA490FD9)
      * Correct output (abs):   -0.0005752285 (0xBA16CAEE)
-     * Running cosSmooth
-     * Mean absolute error:     0.0001495095
-     * Mean relative error:     0.0002460266
-     * Maximum abs. error:      0.0003551245
-     * Maximum rel. error:      0.9999999404
+     * Running cosShifty2
+     * Mean absolute error:     0.0000601077
+     * Mean relative error:     0.0006369915
+     * Maximum abs. error:      0.0005742748
+     * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
      * Best input (lo):         6.283185482025146500000000
      * Best output (lo):        1.0000000000 (0x3F800000)
      * Correct output (lo):     1.0000000000 (0x3F800000)
-     * Worst input (hi):        1.570796489715576200000000
+     * Worst input (hi):        4.712580204010010000000000
      * Highest output rel:      0.9999999404
-     * Worst output (hi):      -0.0000000000 (0x80000000)
-     * Correct output (hi):    -0.0000001629 (0xB42EEF4C)
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0001912236 (0x39488333)
+     * Worst input (abs):      -1.571370601654052700000000
+     * Worst output (abs):      0.0000000000 (0x00000000)
+     * Correct output (abs):   -0.0005742748 (0xBA168AEE)
+     * Running cosSmooth
+     * Mean absolute error:     0.0001507175
+     * Mean relative error:     0.0002473110
+     * Maximum abs. error:      0.0003551245
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):        4.712389469146728500000000
+     * Highest output rel:      0.9999998808
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000004888 (0x35033379)
      * Worst input (abs):       5.784777164459228500000000
      * Worst output (abs):      0.8779895306 (0x3F60C3EC)
      * Correct output (abs):    0.8783446550 (0x3F60DB32)
      * Running cosSmoother
-     * Mean absolute error:     0.0000000848
-     * Mean relative error:     0.0000012386
+     * Mean absolute error:     0.0000000841
+     * Mean relative error:     0.0000012143
      * Maximum abs. error:      0.0000004172
-     * Maximum rel. error:      0.6110913157
+     * Maximum rel. error:      0.6110913754
      * Lowest output rel:       0.0000000000
      * Best input (lo):         6.283185482025146500000000
      * Best output (lo):        1.0000000000 (0x3F800000)
@@ -931,7 +1035,10 @@ public class PrecisionTest {
     public void testCos() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("cosOldTable", OldTrigTools::cos);
+        functions.put("cos037Table", TrigTools037::cos);
         functions.put("cosNewTable", TrigTools::cos);
+        functions.put("cosShifty", PrecisionTest::cosShifty);
+        functions.put("cosShifty2", PrecisionTest::cosShifty2);
         functions.put("cosSmooth", TrigTools::cosSmooth);
         functions.put("cosSmoother", TrigTools::cosSmoother);
 
@@ -941,18 +1048,21 @@ public class PrecisionTest {
             float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
             float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
             long counter = 0L;
-            for (float x = TrigTools.PI2; x >= 0f; x -= 0x1p-20f) {
+            for (float x = TrigTools.PI2; x >= -PI2; x -= 0x1p-20f) {
 
                 float tru = (float) Math.cos(x),
-                        err = tru - op.applyAsFloat(x),
+                        approx = op.applyAsFloat(x),
+                        err = tru - approx,
                         ae = abs(err),
-                        re = Math.abs(err / Math.nextAfter(tru, Math.copySign(Float.MAX_VALUE, tru)));
-                relError += re;
-                if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
-                    highestRelX = x;
-                }
-                if (minRelError != (minRelError = Math.min(minRelError, re))) {
-                    lowestRelX = x;
+                        re = MathTools.isZero(tru, 1E-10) ? 0f : Math.abs(err / tru);
+                if(!MathTools.isZero(tru, 1E-10)) {
+                    relError += re;
+                    if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                        highestRelX = x;
+                    }
+                    if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                        lowestRelX = x;
+                    }
                 }
                 absError += ae;
                 if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
@@ -1586,6 +1696,14 @@ Maximum rel. error:      1.0000000000
         final int masked = floor & TABLE_MASK;
         final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
         return from + (to - from) * (radians - floor);
+    }
+    public static float cosShifty(final float radians) {
+        final int idx = (int)(radians * radToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31) + SIN_TO_COS) & TABLE_MASK];
+    }
+    public static float cosShifty2(final float radians) {
+        final int idx = (int)(radians * radToIndex + 4096.5f);
+        return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
     }
 
     public static float cosSmoother(float radians) {
