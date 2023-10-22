@@ -626,13 +626,119 @@ public class PrecisionTest {
                 + 1.57079631847f) * radians;
     }
 
+    /**
+     * Testing from -360 to 360 in increments of 1E-4f...
+     * <pre>
+     * Running sinSmootherDeg
+     * Mean absolute error:     0.0000000590
+     * Mean relative error:     0.0000008347
+     * Maximum abs. error:      0.0000003576
+     * Maximum rel. error:      0.2968730032
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):      -359.995880126953100000000000
+     * Best output (lo):        0.0000719053 (0x3896CBE4)
+     * Correct output (lo):     0.0000719053 (0x3896CBE4)
+     * Worst input (hi):      179.999969482421880000000000
+     * Highest output rel:      0.2968729734
+     * Worst output (hi):       0.0000003745 (0x34C91000)
+     * Correct output (hi):     0.0000005326 (0x350EFA35)
+     * Worst input (abs):    -345.023620605468750000000000
+     * Worst output (abs):      0.2584204674 (0x3E844FB0)
+     * Correct output (abs):    0.2584208250 (0x3E844FBC)
+     * Running sinSmoothDeg
+     * Mean absolute error:     0.0001496345
+     * Mean relative error:     0.0002429262
+     * Maximum abs. error:      0.0003549457
+     * Maximum rel. error:      0.2965919971
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):      -330.027282714843750000000000
+     * Best output (lo):        0.4995875657 (0x3EFFC9F1)
+     * Correct output (lo):     0.4995875657 (0x3EFFC9F1)
+     * Worst input (hi):      179.999969482421880000000000
+     * Highest output rel:      0.2965919673
+     * Worst output (hi):       0.0000003747 (0x34C92492)
+     * Correct output (hi):     0.0000005326 (0x350EFA35)
+     * Worst input (abs):    -298.954559326171900000000000
+     * Worst output (abs):      0.8746489882 (0x3F5FE8FF)
+     * Correct output (abs):    0.8750039339 (0x3F600042)
+     * Running sinDegNewTable
+     * Mean absolute error:     0.0001487592
+     * Mean relative error:     0.0017648943
+     * Maximum abs. error:      0.0005752109
+     * Maximum rel. error:    238.9999847412
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):      -270.013916015625000000000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):     -359.999908447265600000000000
+     * Highest output rel:    238.9999694824
+     * Worst output (hi):       0.0003834952 (0x39C90FDA)
+     * Correct output (hi):     0.0000015979 (0x35D67750)
+     * Worst input (abs):      -0.560302376747131300000000
+     * Worst output (abs):     -0.0092037544 (0xBC16CB58)
+     * Correct output (abs):   -0.0097789653 (0xBC2037F4)
+     * Running sinDeg037Table
+     * Mean absolute error:     0.0001201583
+     * Mean relative error:     0.0018105424
+     * Maximum abs. error:      0.0003834828
+     * Maximum rel. error:    719.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):      -359.978027343750000000000000
+     * Best output (lo):        0.0003834952 (0x39C90FDA)
+     * Correct output (lo):     0.0003834952 (0x39C90FDA)
+     * Worst input (hi):      179.999969482421880000000000
+     * Highest output rel:    718.9998779297
+     * Worst output (hi):       0.0003834952 (0x39C90FDA)
+     * Correct output (hi):     0.0000005326 (0x350EFA35)
+     * Worst input (abs):       0.175780624151229860000000
+     * Worst output (abs):      0.0026844630 (0x3B2FEDD1)
+     * Correct output (abs):    0.0030679458 (0x3B490F97)
+     * Running sinDegOldTable
+     * Mean absolute error:     0.0001487850
+     * Mean relative error:     0.0019631863
+     * Maximum abs. error:      0.0005754356
+     * Maximum rel. error:    358.9999389648
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):      -270.013916015625000000000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):     -359.999908447265600000000000
+     * Highest output rel:    358.9999084473
+     * Worst output (hi):       0.0005752427 (0x3A16CBE3)
+     * Correct output (hi):     0.0000015979 (0x35D67750)
+     * Worst input (abs):      -0.219724908471107480000000
+     * Worst output (abs):     -0.0032594781 (0xBB559CF8)
+     * Correct output (abs):   -0.0038349137 (0xBB7B532D)
+     * Running sinShiftyDeg
+     * Mean absolute error:     0.0000601517
+     * Mean relative error:     0.0006477939
+     * Maximum abs. error:      0.0005745929
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):      -359.978027343750000000000000
+     * Best output (lo):        0.0003834952 (0x39C90FDA)
+     * Correct output (lo):     0.0003834952 (0x39C90FDA)
+     * Worst input (hi):     -359.999908447265600000000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000015979 (0x35D67750)
+     * Worst input (abs):      -0.032921746373176575000000
+     * Worst output (abs):      0.0000000000 (0x00000000)
+     * Correct output (abs):   -0.0005745929 (0xBA16A046)
+     * -------
+     * Epsilon is:              0.0000000596
+     * -------
+     * </pre>
+     */
     @Test
     public void testSinDeg() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("sinSmootherDeg", TrigTools::sinSmootherDeg);
         functions.put("sinSmoothDeg", TrigTools::sinSmoothDeg);
         functions.put("sinDegNewTable", TrigTools::sinDeg);
+        functions.put("sinDeg037Table", TrigTools037::sinDeg);
         functions.put("sinDegOldTable", OldTrigTools::sinDeg);
+        functions.put("sinShiftyDeg", PrecisionTest::sinShiftyDeg);
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
             final FloatUnaryOperator op = ent.getValue();
@@ -1638,6 +1744,14 @@ Maximum rel. error:      1.0000000000
         final int idx = (int)(radians * radToIndex + 0.5f);
         return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
     }
+    public static float sinShiftyDeg(final float radians) {
+        final int idx = (int)(radians * degToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
+    }
+    public static float sinShiftyTurns(final float radians) {
+        final int idx = (int)(radians * turnToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
+    }
     public static final float radToIndexBonus = (TABLE_SIZE << 1) / PI2;
     public static final int TABLE_MASK_BONUS = (TABLE_SIZE << 1) - 1;
 
@@ -1704,6 +1818,14 @@ Maximum rel. error:      1.0000000000
     public static float cosShifty2(final float radians) {
         final int idx = (int)(radians * radToIndex + 4096.5f);
         return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
+    }
+    public static float cosShiftyDeg(final float radians) {
+        final int idx = (int)(radians * degToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31) + SIN_TO_COS) & TABLE_MASK];
+    }
+    public static float cosShiftyTurns(final float radians) {
+        final int idx = (int)(radians * turnToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31) + SIN_TO_COS) & TABLE_MASK];
     }
 
     public static float cosSmoother(float radians) {
