@@ -53,16 +53,28 @@ package com.github.tommyettinger.digital;
  * but {@link #tanSmoother(float)} is faster on Java 11 and up, significantly so on Java 16 and up. However, tan() does
  * not use {@link #SIN_TABLE}, while tanSmoother() does, and this may be relevant if the table is not in-cache.
  * <br>
- * MathUtils had its sin and cos methods created by Riven on JavaGaming.org . The asin(), acos(), and atan() methods all
- * use Taylor series approximations from the 1955 research study "Approximations for Digital Computers," by RAND
- * Corporation; though one might think such code would be obsolete over 60 years later, the approximations from that
- * study seem to have higher accuracy and speed than most attempts in later decades, often those aimed at DSP usage.
- * Even older is the basis for sinSmooth() and cosSmooth(); the versions here are updated to be more precise, but are
- * closely related to a 7th-century sine approximation by Bhaskara I. The update was given in
+ * In the common case where you have an angle and want to get both the sin() and cos() of that angle, you can use the
+ * {@link #radiansToTableIndex(float)}, {@link #degreesToTableIndex(float)}, and/or {@link #turnsToTableIndex(float)}
+ * methods to go from an angle (in radians, degrees, or turns, as appropriate) to the index in
+ * {@link #SIN_TABLE the sine table} (or {@link #SIN_TABLE_D the sine table for doubles}) that corresponds to the result
+ * of sin(). That index can be used both to look up the sine, with {@code SIN_TABLE[radiansToTableIndex(angle)]}, and
+ * the cosine, with {@code SIN_TABLE[(radiansToTableIndex(angle) + SIN_TO_COS) & TABLE_MASK]}. Unlike in the example
+ * snippets, you should usually just call radiansToTableIndex() once and use its result in both places. This will give
+ * the same result for sine as {@link #sin(float)}, and the same result for cosine as {@link #cos(float)}.
+ * <br>
+ * MathUtils had its sin and cos methods created by Riven on JavaGaming.org . The versions of sin and cos here,
+ * including the way the lookup table is calculated, have been updated several times by Tommy Ettinger. The asin(),
+ * acos(), and atan() methods all use Taylor series approximations from the 1955 research study "Approximations for
+ * Digital Computers," by RAND Corporation; though one might think such code would be obsolete over 60 years later, the
+ * approximations from that study seem to have higher accuracy and speed than most attempts in later decades, often
+ * those aimed at DSP usage. Even older is the basis for sinSmooth() and cosSmooth(); the versions here are updated to
+ * be more precise, but are closely related to a 7th-century sine approximation by Bhaskara I. The update was given in
  * <a href="https://math.stackexchange.com/a/3886664">this Stack Exchange answer by WimC</a>. From the same site,
  * <a href="https://math.stackexchange.com/a/4453027">this Stack Exchange answer by Soonts</a> provided the tan()
  * method used here. The technique in the "Smoother" methods is not much different from the typical lookup table used by
- * sin() and cos(); it just linear-interpolates between two adjacent table entries.
+ * sin() and cos(); it just linear-interpolates between two adjacent table entries. The main difference between
+ * "Smoother" and the standard approximations is that the "Smoother" ones use both the floor and the ceiling of a float
+ * to get indices, while the standard approximations essentially round to the nearest index.
  */
 public final class TrigTools {
 

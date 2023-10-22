@@ -22,7 +22,15 @@ It also has, purely for GWT purposes, an `imul()` method that
 acts just like integer multiplication on most platforms, but
 compiles down to a call to the JavaScript `Math.imul()`
 function on GWT, which automatically handles overflow in the
-same way a desktop JVM would.
+same way a desktop JVM would. Similarly, `countLeadingZeros()`
+compiles to the JavaScript `Math.clz32()` function on GWT (or
+for `long` arguments, some small code that calls that), while
+using `Integer.numberOfLeadingZeros()` (or its `Long`
+counterpart) on non-GWT platforms. Counting leading zeros is
+an operation that shows up in a surprising assortment of
+places and is supposed to be fast, so having an alternative to
+[this monstrosity](https://github.com/gwtproject/gwt/blob/main/user/super/com/google/gwt/emul/java/lang/Integer.java#L118)
+is more than welcome.
 
 Base is much larger, and allows converting any Java primitive
 number type to a specific base/radix/number-system. Here,
@@ -46,7 +54,9 @@ scientific notation, if at all. These can be read back with
 output needs `readFloatExact()` or `readDoubleExact()`. If you
 use a scrambled base (a random one, as mentioned before), then
 you need to use `signed()`/`unsigned()`/`readFloatExact()`/
-`readDoubleExact()` to use the right scrambled digits. Base
+`readDoubleExact()` to use the right scrambled digits.
+`decimal()` can take an exact length to limit large output to,
+or zero-pad small output to. Base
 can also combine the String representations of an array of
 primitives (or part of such an array, since 0.3.1) using
 `join()` or `appendJoined()`, and split apart Strings into 
