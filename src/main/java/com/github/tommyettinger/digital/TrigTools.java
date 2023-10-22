@@ -248,19 +248,22 @@ public final class TrigTools {
      * <br>
      * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
      * you need very fine detail. The steps occur because it converts its argument from radians to an array index in a
-     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. This is
+     * least precise when the input is very close to 0 (between -0.001 and 0.001), where the result is 0.0 for some
+     * inputs where that isn't exactly correct. You can
      * use {@link #sinSmoother(float)} if you need better accuracy; it uses the least-significant digits to smoothly
      * interpolate between two items in the array.
      *
      * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
-    public static float sin(float radians) {
-        //Mean absolute error:     0.0000075369
-        //Mean relative error:     0.0154355764
-        //Maximum abs. error:      0.0003835472
-        //Maximum rel. error:   2538.7736816406
-        return SIN_TABLE[(int) (radians * radToIndex + 0.5f) & TABLE_MASK];
+    public static float sin(final float radians) {
+        //Mean absolute error:     0.0000601960
+        //Mean relative error:     0.0006447678
+        //Maximum abs. error:      0.0005745887
+        //Maximum rel. error:      1.0000000000
+        final int idx = (int)(radians * radToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
     }
 
     /**
@@ -276,8 +279,9 @@ public final class TrigTools {
      * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
-    public static float cos(float radians) {
-        return SIN_TABLE[(int) (radians * radToIndex + 0.5f) + SIN_TO_COS & TABLE_MASK];
+    public static float cos(final float radians) {
+        final int idx = (int)(radians * radToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31) + SIN_TO_COS) & TABLE_MASK];
     }
 
     /**
@@ -341,12 +345,9 @@ public final class TrigTools {
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
-    public static float sinDeg(float degrees) {
-        //Mean absolute error:     0.0001201583
-        //Mean relative error:     0.0018105424
-        //Maximum abs. error:      0.0003834828
-        //Maximum rel. error:    719.0000000000
-        return SIN_TABLE[(int) (degrees * degToIndex + 0.5f) & TABLE_MASK];
+    public static float sinDeg(final float degrees) {
+        final int idx = (int)(degrees * degToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
     }
 
     /**
@@ -362,8 +363,9 @@ public final class TrigTools {
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
-    public static float cosDeg(float degrees) {
-        return SIN_TABLE[(int) (degrees * degToIndex + 0.5f) + SIN_TO_COS & TABLE_MASK];
+    public static float cosDeg(final float degrees) {
+        final int idx = (int)(degrees * degToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31) + SIN_TO_COS) & TABLE_MASK];
     }
 
     /**
@@ -401,8 +403,9 @@ public final class TrigTools {
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
-    public static float sinTurns(float turns) {
-        return SIN_TABLE[(int) (turns * turnToIndex + 0.5f) & TABLE_MASK];
+    public static float sinTurns(final float turns) {
+        final int idx = (int)(turns * turnToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
     }
 
     /**
@@ -418,8 +421,9 @@ public final class TrigTools {
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
-    public static float cosTurns(float turns) {
-        return SIN_TABLE[(int) (turns * turnToIndex + 0.5f) + SIN_TO_COS & TABLE_MASK];
+    public static float cosTurns(final float turns) {
+        final int idx = (int)(turns * turnToIndex + 0.5f);
+        return SIN_TABLE[(idx + (idx >> 31) + SIN_TO_COS) & TABLE_MASK];
     }
 
     /**
@@ -457,8 +461,9 @@ public final class TrigTools {
      * @param radians an angle in radians, where 0 to {@link #PI2_D} is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
-    public static double sin(double radians) {
-        return SIN_TABLE_D[(int) (radians * radToIndexD + 0.5) & TABLE_MASK];
+    public static double sin(final double radians) {
+        final int idx = (int)(radians * radToIndexD + 0.5);
+        return SIN_TABLE_D[(idx + (idx >> 31)) & TABLE_MASK];
     }
 
     /**
@@ -474,8 +479,9 @@ public final class TrigTools {
      * @param radians an angle in radians, where 0 to {@link #PI2_D} is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
-    public static double cos(double radians) {
-        return SIN_TABLE_D[(int) (radians * radToIndexD + 0.5) + SIN_TO_COS & TABLE_MASK];
+    public static double cos(final double radians) {
+        final int idx = (int)(radians * radToIndexD + 0.5);
+        return SIN_TABLE_D[(idx + (idx >> 31) + SIN_TO_COS) & TABLE_MASK];
     }
 
     /**
@@ -515,8 +521,9 @@ public final class TrigTools {
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
-    public static double sinDeg(double degrees) {
-        return SIN_TABLE_D[(int) (degrees * degToIndexD + 0.5) & TABLE_MASK];
+    public static double sinDeg(final double degrees) {
+        final int idx = (int)(degrees * degToIndexD + 0.5);
+        return SIN_TABLE_D[(idx + (idx >> 31)) & TABLE_MASK];
     }
 
     /**
@@ -532,8 +539,9 @@ public final class TrigTools {
      * @param degrees an angle in degrees, where 0 to 360 is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
-    public static double cosDeg(double degrees) {
-        return SIN_TABLE_D[(int) (degrees * degToIndexD + 0.5) + SIN_TO_COS & TABLE_MASK];
+    public static double cosDeg(final double degrees) {
+        final int idx = (int)(degrees * degToIndexD + 0.5);
+        return SIN_TABLE_D[(idx + (idx >> 31) + SIN_TO_COS) & TABLE_MASK];
     }
 
     /**
@@ -571,8 +579,9 @@ public final class TrigTools {
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
-    public static double sinTurns(double turns) {
-        return SIN_TABLE_D[(int) (turns * turnToIndexD + 0.5) & TABLE_MASK];
+    public static double sinTurns(final double turns) {
+        final int idx = (int)(turns * turnToIndexD + 0.5);
+        return SIN_TABLE_D[(idx + (idx >> 31)) & TABLE_MASK];
     }
 
     /**
@@ -588,8 +597,9 @@ public final class TrigTools {
      * @param turns an angle in turns, where 0 to 1 is one rotation
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
-    public static double cosTurns(double turns) {
-        return SIN_TABLE_D[(int) (turns * turnToIndexD + 0.5) + SIN_TO_COS & TABLE_MASK];
+    public static double cosTurns(final double turns) {
+        final int idx = (int)(turns * turnToIndexD + 0.5);
+        return SIN_TABLE_D[(idx + (idx >> 31) + SIN_TO_COS) & TABLE_MASK];
     }
 
     /**
