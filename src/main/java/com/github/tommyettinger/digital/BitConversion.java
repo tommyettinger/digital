@@ -311,6 +311,22 @@ public final class BitConversion {
     public static int countLeadingZeros(int n) {
         return Integer.numberOfLeadingZeros(n);
     }
+
+    /**
+     * Returns the number of contiguous '0' bits in {@code n} starting at the least-significant bit and checking towards
+     * the sign bit, stopping just before a '1' bit is encountered. Returns 0 for any odd-number input.
+     * Returns 32 for an input of 0.
+     * <br>
+     * This simply calls {@link Integer#numberOfTrailingZeros(int)} on most platforms, but on GWT, it uses the
+     * JS built-in function {@code Math.clz32(n)} with some extra steps to get the trailing, rather than leading,
+     * zeros. This probably performs better than the Integer method on GWT, though not as well as
+     * {@link #countLeadingZeros(int)}
+     * @param n any int
+     * @return the number of '0' bits starting at the least-significant bit and going until just before a '1' bit is encountered
+     */
+    public static int countTrailingZeros(int n) {
+        return Integer.numberOfTrailingZeros(n);
+    }
     /**
      * Returns the number of contiguous '0' bits in {@code n} starting at the sign bit and checking towards the
      * least-significant bit, stopping just before a '1' bit is encountered. Returns 0 for any negative input.
@@ -324,5 +340,19 @@ public final class BitConversion {
      */
     public static int countLeadingZeros(long n) {
         return Long.numberOfLeadingZeros(n);
+    }
+    /**
+     * Returns the number of contiguous '0' bits in {@code n} starting at the least-significant bit and checking towards
+     * the sign bit, stopping just before a '1' bit is encountered. Returns 0 for any odd-number input.
+     * Returns 64 for an input of 0.
+     * <br>
+     * This simply calls {@link Long#numberOfTrailingZeros(long)} on most platforms, but on GWT, it calls
+     * {@link #countTrailingZeros(int)}, which uses the JS built-in function {@code Math.clz32(n)}. This probably
+     * performs better than the Long method on GWT, though not as well as {@link #countLeadingZeros(long)}.
+     * @param n any int
+     * @return the number of '0' bits starting at the least-significant bit and going until just before a '1' bit is encountered
+     */
+    public static int countTrailingZeros(long n) {
+        return Long.numberOfTrailingZeros(n);
     }
 }
