@@ -17,6 +17,8 @@
 
 package com.github.tommyettinger.digital;
 
+import com.badlogic.gdx.utils.NumberUtils;
+
 /**
  * Various trigonometric approximations, using a lookup table for sin(), cos(), and tan(), and Taylor series for their
  * inverses. This supplies variants for radians, degrees, and turns. This also has an atan2() approximation defined with
@@ -440,16 +442,70 @@ public final class OldTrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoother(float radians) {
-        // 14 bits
-        //Mean absolute error:      0.0000037685
-        //Mean relative error:  13753.3007812500
-        //Maximum abs. error:       0.0001920144
-        //Maximum rel. error:  957569.0625000000
+//        //Mean absolute error:     0.0000001205
+//        //Mean relative error:     0.0007681165
+//        //Maximum abs. error:      0.0002874465
+//        //Maximum rel. error:   1644.0024414063
+//        radians = radians * radToIndex - 0.5f;
+//        final int floor = (int)(radians + 16384.0) - 16384;
+//        final int masked = floor & TABLE_MASK;
+//        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+//        return from + (to - from) * (radians - floor);
+//        //Mean absolute error:     0.0001210357
+//        //Mean relative error:     0.0010268957
+//        //Maximum abs. error:      0.0001922157
+//        //Maximum rel. error:      1.1638665199
+//        radians = radians * radToIndex;
+//        final int floor = (int)(radians + 16384.0) - 16384;
+//        final int masked = floor & TABLE_MASK;
+//        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+//        return from + (to - from) * (radians - floor);
+//        //Mean absolute error:     0.0000902124
+//        //Mean relative error:     0.0008568958
+//        //Maximum abs. error:      0.0002871510
+//        //Maximum rel. error:      1.7204090357
+//        radians = radians * radToIndex;
+//        final int floor = (int)(radians + 16384.0) - 16384;
+//        final float rem = (radians - floor);
+//        final float from = SIN_TABLE[floor & TABLE_MASK], to = SIN_TABLE[floor + (NumberUtils.floatToIntBits(rem - 0.5f) >> 31 | 1) & TABLE_MASK];
+//        return from + (to - from) * rem;
+        //Mean absolute error:     0.0000001323
+        //Mean relative error:     0.0011963437
+        //Maximum abs. error:      0.0002878467
+        //Maximum rel. error:   1906.3225097656
+//        radians = radians * radToIndex - 0.5f;
+//        final int floor = (int)(radians + 16384.5) - 16384;
+//        final int masked = floor & TABLE_MASK;
+//        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+//        return from + (to - from) * (radians - floor);
+//        //Mean absolute error:     0.0000001249
+//        //Mean relative error:     0.0008269644
+//        //Maximum abs. error:      0.0003832272
+//        //Maximum rel. error:    635.4584350586
+//        radians = radians * radToIndex - 0.5f;
+//        final int floor = (int)radians + ((int)radians>>31);
+//        final int masked = floor & TABLE_MASK;
+//        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+//        return from + (to - from) * (radians - floor);
+//        //Mean absolute error:     0.0000000960
+//        //Mean relative error:     0.0007683055
+//        //Maximum abs. error:      0.0002874465
+//        //Maximum rel. error:   1644.0024414063
+//        radians = (float) (radians * radToIndexD - 0.5);
+//        final int floor = (int)(radians + 16384.0) - 16384;
+//        final int masked = floor & TABLE_MASK;
+//        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+//        return from + (to - from) * (radians - floor);
+        //Mean absolute error:     0.0000001191
+        //Mean relative error:     0.0006050895
+        //Maximum abs. error:      0.0001917247
+        //Maximum rel. error:    635.4584350586
         radians = radians * radToIndex - 0.5f;
-        final int floor = (int)(radians + 16384.0) - 16384;
+        final int floor = MathTools.floor(radians);
         final int masked = floor & TABLE_MASK;
         final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
         return from + (to - from) * (radians - floor);
+
     }
 
     /**
