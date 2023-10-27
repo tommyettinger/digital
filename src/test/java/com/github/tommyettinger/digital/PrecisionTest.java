@@ -493,8 +493,8 @@ public class PrecisionTest {
         functions.put("sinOldTable", OldTrigTools::sin);
 //        functions.put("sin037Table", TrigTools037::sin);
         functions.put("sinNewTable", TrigTools::sin);
-//        functions.put("sinShifty", PrecisionTest::sinShifty);
-//        functions.put("sinBonus", PrecisionTest::sinBonus);
+        functions.put("sinOldShifty", OldTrigTools::sinShifty);
+        functions.put("sinNewShifty", PrecisionTest::sinShifty);
 //        functions.put("sinAlternate", PrecisionTest::sinAlternate);
 //        functions.put("sinGdx", MathUtils::sin);
         functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
@@ -1734,15 +1734,19 @@ Worst input (abs):       4.205234527587891000000000
         return SIN_TABLE[Math.round(radians * radToIndex) & TABLE_MASK];
     }
 
-    /*
-Mean absolute error:     0.0000601960
-Mean relative error:     0.0006447678
-Maximum abs. error:      0.0005745887
-Maximum rel. error:      1.0000000000
-     */
     public static float sinShifty(final float radians) {
+        //Mean absolute error:     0.0000601960
+        //Mean relative error:     0.0006447678
+        //Maximum abs. error:      0.0005745887
+        //Maximum rel. error:      1.0000000000
         final int idx = (int)(radians * radToIndex + 0.5f);
         return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
+        //Mean absolute error:     0.0001203791
+        //Mean relative error:     0.0019150462
+        //Maximum abs. error:      0.0003835417
+        //Maximum rel. error:   2538.7736816406
+//        final int idx = (int)(radians * radToIndex);
+//        return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
     }
     public static float sinShiftyDeg(final float radians) {
         final int idx = (int)(radians * degToIndex + 0.5f);

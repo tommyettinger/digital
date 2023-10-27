@@ -446,11 +446,10 @@ public final class OldTrigTools {
 //        //Mean relative error:     0.0007681165
 //        //Maximum abs. error:      0.0002874465
 //        //Maximum rel. error:   1644.0024414063
-//        radians = radians * radToIndex - 0.5f;
-//        final int floor = (int)(radians + 16384.0) - 16384;
-//        final int masked = floor & TABLE_MASK;
-//        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
-//        return from + (to - from) * (radians - floor);
+        radians = radians * radToIndex - 0.5f;
+        final int floor = (int)(radians + 16384.0) - 16384;
+        final float from = SIN_TABLE[floor & TABLE_MASK], to = SIN_TABLE[(floor + 1) & TABLE_MASK];
+        return from + (to - from) * (radians - floor);
 //        //Mean absolute error:     0.0001210357
 //        //Mean relative error:     0.0010268957
 //        //Maximum abs. error:      0.0001922157
@@ -496,16 +495,31 @@ public final class OldTrigTools {
 //        final int masked = floor & TABLE_MASK;
 //        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
 //        return from + (to - from) * (radians - floor);
-        //Mean absolute error:     0.0000001191
-        //Mean relative error:     0.0006050895
+        //Mean absolute error:     0.0000000783
+        //Mean relative error:     0.0006054470
         //Maximum abs. error:      0.0001917247
-        //Maximum rel. error:    635.4584350586
-        radians = radians * radToIndex - 0.5f;
-        final int floor = MathTools.floor(radians);
-        final int masked = floor & TABLE_MASK;
-        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
-        return from + (to - from) * (radians - floor);
+        //Maximum rel. error:    634.0779418945
+//        if(radians < 0f) {
+//            radians = -radians * radToIndex - 0.5f;
+//            final int floor = (int) (radians + 1) - 1;
+//            final int masked = floor & TABLE_MASK;
+//            final float from = SIN_TABLE[masked], to = SIN_TABLE[masked + 1];
+//            return -from - (to - from) * (radians - floor);
+//        }
+//        radians = radians * radToIndex - 0.5f;
+//        final int floor = (int) (radians + 1) - 1;
+//        final int masked = floor & TABLE_MASK;
+//        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked + 1];
+//        return from + (to - from) * (radians - floor);
 
+    }
+    public static float sinShifty(final float radians) {
+        //Mean absolute error:     0.0000602018
+        //Mean relative error:     0.0010084792
+        //Maximum abs. error:      0.0003832261
+        //Maximum rel. error:   1267.9168701172
+        final int idx = (int)(radians * radToIndex);
+        return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
     }
 
     /**
