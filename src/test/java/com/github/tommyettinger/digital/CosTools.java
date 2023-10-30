@@ -971,6 +971,16 @@ public final class CosTools {
         final int masked = floor & TABLE_MASK;
         final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
         return from + (to - from) * (radians - floor);
+        
+//        //Mean absolute error:     0.6366196871
+//        //Mean relative error:     1.0000005960
+//        //Maximum abs. error:      2.0000000000
+//        //Maximum rel. error:      2.4425818920
+//        radians = Math.abs(radians) * radToIndex;
+//        final int floor = (int)radians;
+//        final int masked = floor + COS_TO_SIN & TABLE_MASK;
+//        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
+//        return from + (to - from) * (radians - floor);
     }
 
     /**
