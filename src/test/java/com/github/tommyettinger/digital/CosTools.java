@@ -314,7 +314,11 @@ public final class CosTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static float sin(final float radians) {
-        return COS_TABLE[((int)(Math.abs(radians) * radToIndex + 0.5f) + COS_TO_SIN) & TABLE_MASK];
+        //Mean absolute error:     0.0000601881
+        //Mean relative error:     0.0006230401
+        //Maximum abs. error:      0.0001918916
+        //Maximum rel. error:      1.0000000000
+        return COS_TABLE[((int)(Math.abs(radians - HALF_PI) * radToIndex + 0.5f)) & TABLE_MASK];
 
     }
 
@@ -958,9 +962,13 @@ public final class CosTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoother(float radians) {
-        radians = Math.abs(radians) * radToIndex;
+        //Mean absolute error:     0.0000000891
+        //Mean relative error:     0.0000014705
+        //Maximum abs. error:      0.0000005439
+        //Maximum rel. error:      1.0000000000
+        radians = Math.abs(radians - HALF_PI) * radToIndex;
         final int floor = (int)radians;
-        final int masked = floor + COS_TO_SIN & TABLE_MASK;
+        final int masked = floor & TABLE_MASK;
         final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
         return from + (to - from) * (radians - floor);
     }
