@@ -215,10 +215,9 @@ public final class CosTools {
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
      * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
      * <br>
-     * A quick way to get a random unit vector is to get a random 14-bit number, as with
-     * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get x, then look up
-     * {@code (angle + TrigTools.COS_TO_SIN) & TrigTools.TABLE_MASK} (or {@code (angle - 4096) & 16383}) to get x.
-     * Note that if {@link #TABLE_BITS} changes, this table will be a different size, and so will {@link #COS_TO_SIN}.
+     * A quick way to get a random unit vector is to get a random number that can be no larger than the table size, as
+     * with {@code int angle = (random.nextInt() & TrigTools.TABLE_MASK);}, and look up that angle in {@code COS_TABLE}
+     * for the vector's x and {@code SIN_TABLE} for the vector's y.
      * Elements 0 and 16384 are identical to allow wrapping.
      */
     public static final float[] COS_TABLE = new float[TABLE_SIZE+1];
@@ -228,10 +227,9 @@ public final class CosTools {
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
      * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
      * <br>
-     * A quick way to get a random unit vector is to get a random 14-bit number, as with
-     * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get x, then look up
-     * {@code (angle + TrigTools.COS_TO_SIN) & TrigTools.TABLE_MASK} (or {@code (angle - 4096) & 16383}) to get x.
-     * Note that if {@link #TABLE_BITS} changes, this table will be a different size, and so will {@link #COS_TO_SIN}.
+     * A quick way to get a random unit vector is to get a random number that can be no larger than the table size, as
+     * with {@code int angle = (random.nextInt() & TrigTools.TABLE_MASK);}, and look up that angle in
+     * {@code COS_TABLE_D} for the vector's x and {@code SIN_TABLE_D} for the vector's y.
      * Elements 0 and 16384 are identical to allow wrapping.
      */
     public static final double[] COS_TABLE_D = new double[TABLE_SIZE+1];
@@ -304,9 +302,7 @@ public final class CosTools {
      * <br>
      * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
      * you need very fine detail. The steps occur because it converts its argument from radians to an array index in a
-     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. This is
-     * least precise when the input is very close to 0 (between -0.001 and 0.001), where the result is 0.0 for some
-     * inputs where that isn't exactly correct. You can
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
      * use {@link #sinSmoother(float)} if you need better accuracy; it uses the least-significant digits to smoothly
      * interpolate between two items in the array.
      *
@@ -319,7 +315,6 @@ public final class CosTools {
         //Maximum abs. error:      0.0001918916
         //Maximum rel. error:      1.0000000000
         return COS_TABLE[((int)(Math.abs(radians - HALF_PI) * radToIndex + 0.5f)) & TABLE_MASK];
-
     }
 
     /**
@@ -336,7 +331,8 @@ public final class CosTools {
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
     public static float cos(final float radians) {
-        return COS_TABLE[((int)(Math.abs(radians) * radToIndex + 0.5f)) & TABLE_MASK];    }
+        return COS_TABLE[((int)(Math.abs(radians) * radToIndex + 0.5f)) & TABLE_MASK];
+    }
 
     /**
      * Returns the tangent in radians, using a Padé approximant.

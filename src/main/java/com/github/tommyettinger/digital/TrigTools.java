@@ -149,11 +149,11 @@ public final class TrigTools {
     /**
      * The hard-coded size of {@link #SIN_TABLE} in bits; this is 14 now, and could be adjusted in the future.
      */
-    public static final int SIN_BITS = 14; // 64KB. Adjust for accuracy.
+    public static final int TABLE_BITS = 14; // 64KB. Adjust for accuracy.
     /**
      * The size of {@link #SIN_TABLE}, available separately from the table's length for convenience.
      */
-    public static final int TABLE_SIZE = (1 << SIN_BITS);
+    public static final int TABLE_SIZE = (1 << TABLE_BITS);
 
     /**
      * If you add this to an index used in {@link #SIN_TABLE}, you get the result of the cosine instead of the sine.
@@ -215,10 +215,9 @@ public final class TrigTools {
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
      * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
      * <br>
-     * A quick way to get a random unit vector is to get a random 14-bit number, as with
-     * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get y, then look up
-     * {@code (angle + TrigTools.SIN_TO_COS) & TrigTools.TABLE_MASK} (or {@code (angle + 4096) & 16383}) to get x.
-     * Note that if {@link #SIN_BITS} changes, this table will be a different size, and so will {@link #SIN_TO_COS}.
+     * A quick way to get a random unit vector is to get a random number that can be no larger than the table size, as
+     * with {@code int angle = (random.nextInt() & TrigTools.TABLE_MASK);}, and look up that angle in {@code COS_TABLE}
+     * for the vector's x and {@code SIN_TABLE} for the vector's y.
      * Elements 0 and 16384 are identical to allow wrapping.
      */
     public static final float[] SIN_TABLE = new float[TABLE_SIZE+1];
@@ -228,17 +227,42 @@ public final class TrigTools {
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
      * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
      * <br>
-     * A quick way to get a random unit vector is to get a random 14-bit number, as with
-     * {@code int angle = random.nextInt() >>> 18;}, look up angle in this table to get y, then look up
-     * {@code (angle + TrigTools.SIN_TO_COS) & TrigTools.TABLE_MASK} (or {@code (angle + 4096) & 16383}) to get x.
-     * Note that if {@link #SIN_BITS} changes, this table will be a different size, and so will {@link #SIN_TO_COS}.
+     * A quick way to get a random unit vector is to get a random number that can be no larger than the table size, as
+     * with {@code int angle = (random.nextInt() & TrigTools.TABLE_MASK);}, and look up that angle in
+     * {@code COS_TABLE_D} for the vector's x and {@code SIN_TABLE_D} for the vector's y.
      * Elements 0 and 16384 are identical to allow wrapping.
      */
     public static final double[] SIN_TABLE_D = new double[TABLE_SIZE+1];
 
+    /**
+     * A precalculated table of 16385 floats, corresponding to the x-value of points on the unit circle, ordered by
+     * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
+     * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
+     * <br>
+     * A quick way to get a random unit vector is to get a random number that can be no larger than the table size, as
+     * with {@code int angle = (random.nextInt() & TrigTools.TABLE_MASK);}, and look up that angle in {@code COS_TABLE}
+     * for the vector's x and {@code SIN_TABLE} for the vector's y.
+     * Elements 0 and 16384 are identical to allow wrapping.
+     */
+    public static final float[] COS_TABLE = new float[TABLE_SIZE+1];
+
+    /**
+     * A precalculated table of 16385 doubles, corresponding to the x-value of points on the unit circle, ordered by
+     * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
+     * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
+     * <br>
+     * A quick way to get a random unit vector is to get a random number that can be no larger than the table size, as
+     * with {@code int angle = (random.nextInt() & TrigTools.TABLE_MASK);}, and look up that angle in
+     * {@code COS_TABLE_D} for the vector's x and {@code SIN_TABLE_D} for the vector's y.
+     * Elements 0 and 16384 are identical to allow wrapping.
+     */
+    public static final double[] COS_TABLE_D = new double[TABLE_SIZE+1];
+
     static {
         for (int i = 0; i < TABLE_SIZE; i++) {
-            SIN_TABLE[i] = (float) (SIN_TABLE_D[i] = Math.sin(((double)i) / TABLE_SIZE * PI2_D));
+            double theta = ((double)i) / TABLE_SIZE * PI2_D;
+            SIN_TABLE[i] = (float) (SIN_TABLE_D[i] = Math.sin(theta));
+            COS_TABLE[i] = (float) (COS_TABLE_D[i] = Math.cos(theta));
         }
         // The four right angles get extra-precise values, because they are
         // the most likely to need to be correct.
@@ -252,6 +276,18 @@ public final class TrigTools {
         SIN_TABLE_D[(int) (90 * degToIndexD) & TABLE_MASK] = 1.0;
         SIN_TABLE_D[(int) (180 * degToIndexD) & TABLE_MASK] = 0.0;
         SIN_TABLE_D[(int) (270 * degToIndexD) & TABLE_MASK] = -1.0;
+
+        COS_TABLE[0] = 1f;
+        COS_TABLE[TABLE_SIZE] = 1f;
+        COS_TABLE[(int) (90 * degToIndex) & TABLE_MASK] = 0f;
+        COS_TABLE[(int) (180 * degToIndex) & TABLE_MASK] = -1f;
+        COS_TABLE[(int) (270 * degToIndex) & TABLE_MASK] = 0f;
+        COS_TABLE_D[0] = 1.0;
+        COS_TABLE_D[TABLE_SIZE] = 1.0;
+        COS_TABLE_D[(int) (90 * degToIndexD) & TABLE_MASK] = 0.0;
+        COS_TABLE_D[(int) (180 * degToIndexD) & TABLE_MASK] = -1.0;
+        COS_TABLE_D[(int) (270 * degToIndexD) & TABLE_MASK] = 0.0;
+
     }
 
     /**
@@ -305,9 +341,7 @@ public final class TrigTools {
      * <br>
      * This approximation may have visible "steps" where it should be smooth, but this is generally only noticeable when
      * you need very fine detail. The steps occur because it converts its argument from radians to an array index in a
-     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. This is
-     * least precise when the input is very close to 0 (between -0.001 and 0.001), where the result is 0.0 for some
-     * inputs where that isn't exactly correct. You can
+     * {@link #TABLE_SIZE}-item array, and truncates some of the least-significant digits to do so if necessary. You can
      * use {@link #sinSmoother(float)} if you need better accuracy; it uses the least-significant digits to smoothly
      * interpolate between two items in the array.
      *
@@ -315,12 +349,11 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static float sin(final float radians) {
-        //Mean absolute error:     0.0000601960
-        //Mean relative error:     0.0006447678
-        //Maximum abs. error:      0.0005745887
+        //Mean absolute error:     0.0000601881
+        //Mean relative error:     0.0006230401
+        //Maximum abs. error:      0.0001918916
         //Maximum rel. error:      1.0000000000
-        final int idx = (int)(radians * radToIndex + 0.5f);
-        return SIN_TABLE[(idx + (idx >> 31)) & TABLE_MASK];
+        return COS_TABLE[((int)(Math.abs(radians - HALF_PI) * radToIndex + 0.5f)) & TABLE_MASK];
     }
 
     /**
@@ -337,8 +370,7 @@ public final class TrigTools {
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
     public static float cos(final float radians) {
-        final int idx = (int)(radians * radToIndex + 0.5f);
-        return SIN_TABLE[(idx + (idx >> 31) + SIN_TO_COS) & TABLE_MASK];
+        return COS_TABLE[((int)(Math.abs(radians) * radToIndex + 0.5f)) & TABLE_MASK];
     }
 
     /**
