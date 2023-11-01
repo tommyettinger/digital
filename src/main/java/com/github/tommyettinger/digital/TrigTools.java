@@ -1104,18 +1104,13 @@ public final class TrigTools {
      * @return a float approximation of tan()
      */
     public static float tanSmoother(float radians) {
-        // on the -1.57 to 1.57 range:
-        //Mean absolute error:     0.0000502852
-        //Mean relative error:     0.0000002945
-        //Maximum abs. error:      0.1672363281
-        //Maximum rel. error:      0.0001353590
         radians *= radToIndex;
         final int floor = (int)(radians + 16384.0) - 16384;
-        final int maskedS = floor & TABLE_MASK;
-        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
-        final float fromS = SIN_TABLE[maskedS], toS = SIN_TABLE[maskedS+1];
-        final float fromC = SIN_TABLE[maskedC], toC = SIN_TABLE[maskedC+1];
-        return (fromS + (toS - fromS) * (radians - floor))/(fromC + (toC - fromC) * (radians - floor));
+        final int masked = floor & TABLE_MASK;
+        radians -= floor;
+        final float fromS = SIN_TABLE[masked], toS = SIN_TABLE[masked+1];
+        final float fromC = COS_TABLE[masked], toC = COS_TABLE[masked+1];
+        return (fromS + (toS - fromS) * radians) / (fromC + (toC - fromC) * radians);
     }
 
     /**
@@ -1133,11 +1128,11 @@ public final class TrigTools {
     public static double tanSmoother(double radians) {
         radians *= radToIndexD;
         final int floor = (int)Math.floor(radians);
-        final int maskedS = floor & TABLE_MASK;
-        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
-        final double fromS = SIN_TABLE_D[maskedS], toS = SIN_TABLE_D[maskedS+1];
-        final double fromC = SIN_TABLE_D[maskedC], toC = SIN_TABLE_D[maskedC+1];
-        return (fromS + (toS - fromS) * (radians - floor))/(fromC + (toC - fromC) * (radians - floor));
+        final int masked = floor & TABLE_MASK;
+        radians -= floor;
+        final double fromS = COS_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];
+        final double fromC = COS_TABLE_D[masked], toC = COS_TABLE_D[masked+1];
+        return (fromS + (toS - fromS) * radians) / (fromC + (toC - fromC) * radians);
     }
 
     /**
@@ -1227,11 +1222,11 @@ public final class TrigTools {
     public static float tanSmootherDeg(float degrees) {
         degrees *= degToIndex;
         final int floor = (int)(degrees + 16384.0) - 16384;
-        final int maskedS = floor & TABLE_MASK;
-        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
-        final float fromS = SIN_TABLE[maskedS], toS = SIN_TABLE[maskedS+1];
-        final float fromC = SIN_TABLE[maskedC], toC = SIN_TABLE[maskedC+1];
-        return (fromS + (toS - fromS) * (degrees - floor))/(fromC + (toC - fromC) * (degrees - floor));
+        final int masked = floor & TABLE_MASK;
+        degrees -= floor;
+        final float fromS = SIN_TABLE[masked], toS = SIN_TABLE[masked+1];
+        final float fromC = COS_TABLE[masked], toC = COS_TABLE[masked+1];
+        return (fromS + (toS - fromS) * degrees) / (fromC + (toC - fromC) * degrees);
     }
 
     /**
@@ -1249,11 +1244,11 @@ public final class TrigTools {
     public static double tanSmootherDeg(double degrees) {
         degrees *= degToIndexD;
         final int floor = (int)Math.floor(degrees);
-        final int maskedS = floor & TABLE_MASK;
-        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
-        final double fromS = SIN_TABLE_D[maskedS], toS = SIN_TABLE_D[maskedS+1];
-        final double fromC = SIN_TABLE_D[maskedC], toC = SIN_TABLE_D[maskedC+1];
-        return (fromS + (toS - fromS) * (degrees - floor))/(fromC + (toC - fromC) * (degrees - floor));
+        final int masked = floor & TABLE_MASK;
+        degrees -= floor;
+        final double fromS = COS_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];
+        final double fromC = COS_TABLE_D[masked], toC = COS_TABLE_D[masked+1];
+        return (fromS + (toS - fromS) * degrees) / (fromC + (toC - fromC) * degrees);
     }
 
     /**
@@ -1343,11 +1338,11 @@ public final class TrigTools {
     public static float tanSmootherTurns(float turns) {
         turns *= turnToIndex;
         final int floor = (int)(turns + 16384.0) - 16384;
-        final int maskedS = floor & TABLE_MASK;
-        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
-        final float fromS = SIN_TABLE[maskedS], toS = SIN_TABLE[maskedS+1];
-        final float fromC = SIN_TABLE[maskedC], toC = SIN_TABLE[maskedC+1];
-        return (fromS + (toS - fromS) * (turns - floor))/(fromC + (toC - fromC) * (turns - floor));
+        final int masked = floor & TABLE_MASK;
+        turns -= floor;
+        final float fromS = SIN_TABLE[masked], toS = SIN_TABLE[masked+1];
+        final float fromC = COS_TABLE[masked], toC = COS_TABLE[masked+1];
+        return (fromS + (toS - fromS) * turns) / (fromC + (toC - fromC) * turns);
     }
 
     /**
@@ -1365,11 +1360,11 @@ public final class TrigTools {
     public static double tanSmootherTurns(double turns) {
         turns *= turnToIndexD;
         final int floor = (int)Math.floor(turns);
-        final int maskedS = floor & TABLE_MASK;
-        final int maskedC = floor + SIN_TO_COS & TABLE_MASK;
-        final double fromS = SIN_TABLE_D[maskedS], toS = SIN_TABLE_D[maskedS+1];
-        final double fromC = SIN_TABLE_D[maskedC], toC = SIN_TABLE_D[maskedC+1];
-        return (fromS + (toS - fromS) * (turns - floor))/(fromC + (toC - fromC) * (turns - floor));
+        final int masked = floor & TABLE_MASK;
+        turns -= floor;
+        final double fromS = SIN_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];
+        final double fromC = COS_TABLE_D[masked], toC = COS_TABLE_D[masked+1];
+        return (fromS + (toS - fromS) * turns) / (fromC + (toC - fromC) * turns);
     }
 
     // ---
