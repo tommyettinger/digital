@@ -30,7 +30,10 @@ counterpart) on non-GWT platforms. Counting leading zeros is
 an operation that shows up in a surprising assortment of
 places and is supposed to be fast, so having an alternative to
 [this monstrosity](https://github.com/gwtproject/gwt/blob/main/user/super/com/google/gwt/emul/java/lang/Integer.java#L118)
-is more than welcome.
+is more than welcome. There's also `countTrailingZeros()` for
+int and long arguments, which compiles into a single call to
+`Integer.numberOfTrailingZeros()` (or using `Long`) on most
+platforms, or a JS two-liner on GWT that uses `Math.clz32()`. 
 
 Base is much larger, and allows converting any Java primitive
 number type to a specific base/radix/number-system. Here,
@@ -205,14 +208,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.4.1"
+api "com.github.tommyettinger:digital:0.4.2"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.4.1:sources"
+api "com.github.tommyettinger:digital:0.4.2:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`

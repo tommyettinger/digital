@@ -160,7 +160,8 @@ public final class TrigTools {
     public static final double QUARTER_PI_D = Math.PI * 0.25;
 
     /**
-     * The hard-coded size of {@link #SIN_TABLE} in bits; this is 14 now, and could be adjusted in the future.
+     * The hard-coded size of {@link #SIN_TABLE}, {@link #COS_TABLE}, {@link #SIN_TABLE_D}, and {@link #COS_TABLE_D} in
+     * bits; this is 14 now, and could be adjusted in the future.
      */
     public static final int TABLE_BITS = 14; // 64KB. Adjust for accuracy.
     /**
@@ -180,28 +181,28 @@ public final class TrigTools {
     public static final int TABLE_MASK = TABLE_SIZE - 1;
 
     /**
-     * Multiply by this to convert from a float angle in radians to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     * Multiply by this to convert from a float angle in radians to an index in {@link #SIN_TABLE} (after it is rounded to int and masked with {@link #TABLE_MASK}).
      */
     public static final float radToIndex = TABLE_SIZE / PI2;
     /**
-     * Multiply by this to convert from a float angle in degrees to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     * Multiply by this to convert from a float angle in degrees to an index in {@link #SIN_TABLE} (after it is rounded to int and masked with {@link #TABLE_MASK}).
      */
     public static final float degToIndex = TABLE_SIZE / 360f;
     /**
-     * Multiply by this to convert from a float angle in turns to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     * Multiply by this to convert from a float angle in turns to an index in {@link #SIN_TABLE} (after it is rounded to int and masked with {@link #TABLE_MASK}).
      */
     public static final float turnToIndex = TABLE_SIZE;
 
     /**
-     * Multiply by this to convert from a double angle in radians to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     * Multiply by this to convert from a double angle in radians to an index in {@link #SIN_TABLE} (after it is rounded to int and masked with {@link #TABLE_MASK}).
      */
     public static final double radToIndexD = TABLE_SIZE / PI2_D;
     /**
-     * Multiply by this to convert from a double angle in degrees to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     * Multiply by this to convert from a double angle in degrees to an index in {@link #SIN_TABLE} (after it is rounded to int and masked with {@link #TABLE_MASK}).
      */
     public static final double degToIndexD = TABLE_SIZE / 360.0;
     /**
-     * Multiply by this to convert from a double angle in turns to an index in {@link #SIN_TABLE} (after it is rounded to int).
+     * Multiply by this to convert from a double angle in turns to an index in {@link #SIN_TABLE} (after it is rounded to int and masked with {@link #TABLE_MASK}).
      */
     public static final double turnToIndexD = TABLE_SIZE;
 
