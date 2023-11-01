@@ -291,11 +291,10 @@ public final class TrigTools {
     }
 
     /**
-     * Converts {@code radians} to an index that can be used in {@link #SIN_TABLE} or {@link #SIN_TABLE_D} to
-     * obtain the sine of the given angle. You can get the cosine by running
-     * {@code ((radiansToTableIndex(radians) + SIN_TO_COS) & TABLE_MASK)} . This method can be useful if you have
+     * Converts {@code radians} to an index that can be used in {@link #SIN_TABLE}, {@link #COS_TABLE}, or the _D
+     * variants on either to obtain the sine or cosine of the given angle. This method can be useful if you have
      * one angle and want to get both the sine and cosine of that angle (called the "sincos()" function elsewhere).
-     * This tries to round the given angle to the nearest table index, like {@link #sin(float)} does.
+     * This tries to round the given angle to the nearest table index.
      *
      * @param radians an angle in radians; may be positive or negative
      * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of radians
@@ -306,11 +305,10 @@ public final class TrigTools {
     }
 
     /**
-     * Converts {@code degrees} to an index that can be used in {@link #SIN_TABLE} or {@link #SIN_TABLE_D} to
-     * obtain the sine of the given angle. You can get the cosine by running
-     * {@code ((degreesToTableIndex(degrees) + SIN_TO_COS) & TABLE_MASK)} . This method can be useful if you have
+     * Converts {@code degrees} to an index that can be used in {@link #SIN_TABLE}, {@link #COS_TABLE}, or the _D
+     * variants on either to obtain the sine or cosine of the given angle. This method can be useful if you have
      * one angle and want to get both the sine and cosine of that angle (called the "sincos()" function elsewhere).
-     * This tries to round the given angle to the nearest table index, like {@link #sinDeg(float)} does.
+     * This tries to round the given angle to the nearest table index.
      *
      * @param degrees an angle in degrees; may be positive or negative
      * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of degrees
@@ -321,17 +319,58 @@ public final class TrigTools {
     }
 
     /**
-     * Converts {@code turns} to an index that can be used in {@link #SIN_TABLE} or {@link #SIN_TABLE_D} to
-     * obtain the sine of the given angle. You can get the cosine by running
-     * {@code ((turnsToTableIndex(turns) + SIN_TO_COS) & TABLE_MASK)} . This method can be useful if you have
+     * Converts {@code turns} to an index that can be used in {@link #SIN_TABLE}, {@link #COS_TABLE}, or the _D
+     * variants on either to obtain the sine or cosine of the given angle. This method can be useful if you have
      * one angle and want to get both the sine and cosine of that angle (called the "sincos()" function elsewhere).
-     * This tries to round the given angle to the nearest table index, like {@link #sinTurns(float)} does.
+     * This tries to round the given angle to the nearest table index.
      *
      * @param turns an angle in turns; may be positive or negative
      * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of turns
      */
     public static int turnsToTableIndex(final float turns) {
         final int idx = (int)(turns * radToIndex + 0.5f);
+        return (idx + (idx >> 31)) & TABLE_MASK;
+    }
+
+    /**
+     * Converts {@code radians} to an index that can be used in {@link #SIN_TABLE}, {@link #COS_TABLE}, or the _D
+     * variants on either to obtain the sine or cosine of the given angle. This method can be useful if you have
+     * one angle and want to get both the sine and cosine of that angle (called the "sincos()" function elsewhere).
+     * This tries to round the given angle to the nearest table index.
+     *
+     * @param radians an angle in radians; may be positive or negative
+     * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of radians
+     */
+    public static int radiansToTableIndex(final double radians) {
+        final int idx = (int)(radians * radToIndexD + 0.5);
+        return (idx + (idx >> 31)) & TABLE_MASK;
+    }
+
+    /**
+     * Converts {@code degrees} to an index that can be used in {@link #SIN_TABLE}, {@link #COS_TABLE}, or the _D
+     * variants on either to obtain the sine or cosine of the given angle. This method can be useful if you have
+     * one angle and want to get both the sine and cosine of that angle (called the "sincos()" function elsewhere).
+     * This tries to round the given angle to the nearest table index.
+     *
+     * @param degrees an angle in degrees; may be positive or negative
+     * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of degrees
+     */
+    public static int degreesToTableIndex(final double degrees) {
+        final int idx = (int)(degrees * radToIndexD + 0.5);
+        return (idx + (idx >> 31)) & TABLE_MASK;
+    }
+
+    /**
+     * Converts {@code turns} to an index that can be used in {@link #SIN_TABLE}, {@link #COS_TABLE}, or the _D
+     * variants on either to obtain the sine or cosine of the given angle. This method can be useful if you have
+     * one angle and want to get both the sine and cosine of that angle (called the "sincos()" function elsewhere).
+     * This tries to round the given angle to the nearest table index.
+     *
+     * @param turns an angle in turns; may be positive or negative
+     * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of turns
+     */
+    public static int turnsToTableIndex(final double turns) {
+        final int idx = (int)(turns * radToIndexD + 0.5);
         return (idx + (idx >> 31)) & TABLE_MASK;
     }
 
