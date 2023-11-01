@@ -18,29 +18,41 @@
 package com.github.tommyettinger.digital;
 
 /**
- * Various trigonometric approximations, using a lookup table for sin() and cos(), a non-tabular approximation for
- * sinSmooth() and cosSmooth(), a Padé approximant for tan(), and Taylor series for the inverses of sin(), cos(), and
- * tan(). This supplies variants for radians, degrees, and turns. This also has an atan2() approximation defined with
- * output in radians, degrees, and turns. The lookup-table-based sin() and cos() can be extraordinarily fast if the 64KB
- * table can stay in a processor cache, while the "smooth" approximations may have higher quality but perform less
- * quickly compared to an in-cache lookup table.
+ * Trigonometric approximations for sin(), cos(), tan(), asin(), acos(), atan(), and atan2(), with variants for most
+ * that allow users to trade speed for precision or vice versa. This is primarily derived from libGDX's MathUtils class.
+ * Unlike MathUtils, it exposes much more of its internal data, trusting that users can know what they are doing. A key
+ * difference here is that all methods have variants that treat angles as radians, as degrees, and as turns. That is,
+ * while a full rotation around a circle is {@code 2.0 * PI} radians, it is 360.0 degrees, and it is 1.0 turns.
  * <br>
- * This is primarily derived from libGDX's MathUtils class. The main new functionalities are the variants that take or
- * return measurements in turns, the now-available {@link #SIN_TABLE} and {@link #SIN_TABLE_D}, and double variants in
- * general. Using the sin table directly has other uses mentioned in its docs (in particular, uniform random unit
- * vectors). Because using a lookup table for {@link #sin(float)} and {@link #cos(float)} very small "jumps" between
+ * This uses one or two fairly-sizeable lookup tables for some methods (each takes just over 64KB); one stores 16385
+ * results of sin() and the other 16385 results of cos(). Yes, I know they are the same
+ * data, just offset from each other; some of the methods here run so briefly that getting the index with offset nearly
+ * doubled the time taken by the method. Here, {@link #sin(float)}, {@link #cos(float)}, {@link #sinSmoother(float)},
+ * {@link #cosSmoother(float)}, and {@link #tanSmoother(float)} use the LUTs. Other methods here use techniques
+ * ranging from basic Taylor series to Padé approximants. The lookup-table-based sin() and cos() can be extraordinarily
+ * fast if the 64KB table can stay in a processor cache, while the "smooth" approximations may have comparable quality
+ * but perform less quickly compared to an in-cache lookup table.
+ * <br>
+ * Relative to MathUtils in libGDX, the main new functionalities are the variants that take or
+ * return measurements in turns, the now-available {@link #SIN_TABLE}, {@link #COS_TABLE}, {@link #SIN_TABLE_D}, and
+ * {@link #COS_TABLE_D}, plus double variants in general. Using the sin or cos table directly has other uses mentioned
+ * in its docs (in particular, uniform random unit vectors).
+ * Because using a lookup table for {@link #sin(float)} and {@link #cos(float)} has very small "jumps" between
  * what it returns for smoothly increasing inputs, it may be unsuitable for some usage, such as calculating tan(), or
  * some statistical code. TrigTools provides sinSmooth(), cosSmooth(), and degree/turn variants of those for when the
  * precision should be moderately high, but it is most important to have a smoothly-curving graph of returns. A
  * different smooth approximation is used for tan(). In addition to the "xyzSmooth()" methods, there are also "smoother"
  * variants: {@link #sinSmoother(float)}, {@link #cosSmoother(float)}, {@link #tanSmoother(float)}, degree/turn variants
- * on those, and double variants on all of these. The smoother variants actually do use the same {@link #SIN_TABLE} that
- * sin() and cos() use, but they perform tiny linear interpolations between what would otherwise be sudden jumps. The
- * "smoother" methods are all very precise compared to the others here, and aren't necessarily slower than the "smooth"
- * methods -- see below.
+ * on those, and double variants on all of these. {@link #sinSmoother(float)} and {@link #cosSmoother(float)} get the
+ * table indices for rounding up from the given angle and for rounding down, and interpolate between the two in
+ * {@link #COS_TABLE} (or {@link #COS_TABLE_D}). Unlike {@link #sinSmoother(float)} and friends,
+ * {@link #tanSmoother(float)} uses both {@link #SIN_TABLE} and {@link #COS_TABLE}, does interpolation like what
+ * {@link #sinSmoother(float)} does for both sine and cosine, and divides to get the tangent.
+ * The "smoother" methods are all very precise compared to the others here, and aren't necessarily slower than the
+ * "smooth" methods -- see below.
  * <br>
  * For sine and cosine, {@link #sin(float)} and {@link #cos(float)} are extremely fast in benchmarks, but benchmarks
- * typically will have the {@link #SIN_TABLE} in cache; if that table is not in cache, then they probably don't perform
+ * typically will have the {@link #COS_TABLE} in cache; if that table is not in cache, then they probably don't perform
  * as well. You can get improved accuracy at the cost of reduced speed ("reduced" assumes the table is in-cache) by
  * using {@link #sinSmooth(float)} and {@link #cosSmooth(float)}; these should perform the same regardless of whether
  * the table is in cache, so they may even have an edge over sin() and cos() if the table isn't. Accuracy improves even
@@ -58,9 +70,8 @@ package com.github.tommyettinger.digital;
  * methods to go from an angle (in radians, degrees, or turns, as appropriate) to the index in
  * {@link #SIN_TABLE the sine table} (or {@link #SIN_TABLE_D the sine table for doubles}) that corresponds to the result
  * of sin(). That index can be used both to look up the sine, with {@code SIN_TABLE[radiansToTableIndex(angle)]}, and
- * the cosine, with {@code SIN_TABLE[(radiansToTableIndex(angle) + SIN_TO_COS) & TABLE_MASK]}. Unlike in the example
- * snippets, you should usually just call radiansToTableIndex() once and use its result in both places. This will give
- * the same result for sine as {@link #sin(float)}, and the same result for cosine as {@link #cos(float)}.
+ * the cosine, with {@code COS_TABLE[radiansToTableIndex(angle)]}. Unlike in the example snippets, you should usually
+ * just call radiansToTableIndex() once and use its result in both places.
  * <br>
  * MathUtils had its sin and cos methods created by Riven on JavaGaming.org . The versions of sin and cos here,
  * including the way the lookup table is calculated, have been updated several times by Tommy Ettinger. The asin(),
@@ -74,7 +85,9 @@ package com.github.tommyettinger.digital;
  * method used here. The technique in the "Smoother" methods is not much different from the typical lookup table used by
  * sin() and cos(); it just linear-interpolates between two adjacent table entries. The main difference between
  * "Smoother" and the standard approximations is that the "Smoother" ones use both the floor and the ceiling of a float
- * to get indices, while the standard approximations essentially round to the nearest index.
+ * to get indices, while the standard approximations essentially round to the nearest index. The current technique of
+ * looking up in a cosine table so that we can use the absolute value of an angle (since cos(x) is the same as cos(-x))
+ * is something I hadn't seen before, but I'm sure is not novel.
  */
 public final class TrigTools {
 
@@ -1020,7 +1033,7 @@ public final class TrigTools {
      * {@link #sin(float)} or {@link #sinSmooth(float)}, but that is somewhat slower. This still offers about 2x to
      * 4x the throughput of {@link Math#sin(double)} (cast to float).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sin(float)} uses, but interpolates between two
+     * Internally, this uses the same {@link #COS_TABLE} that {@link #sin(float)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param radians an angle in radians; optimally between {@code -PI2} and {@code PI2}
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
@@ -1042,7 +1055,7 @@ public final class TrigTools {
      * {@link #sin(double)} or {@link #sinSmooth(double)}, but that is somewhat slower. This still offers better
      * throughput than {@link Math#sin(double)}.
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sin(double)} uses, but interpolates between two
+     * Internally, this uses the same {@link #COS_TABLE_D} that {@link #sin(double)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param radians an angle in radians; optimally between {@code -PI2_D} and {@code PI2_D}
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
@@ -1060,7 +1073,7 @@ public final class TrigTools {
      * {@link #cos(float)} or {@link #cosSmooth(float)}, but that is somewhat slower. This still offers about 2x to
      * 4x the throughput of {@link Math#cos(double)} (cast to float).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE} that {@link #cos(float)} uses, but interpolates between two
+     * Internally, this uses the same {@link #COS_TABLE} that {@link #cos(float)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param radians an angle in radians; optimally between {@code -PI2} and {@code PI2}
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
@@ -1078,7 +1091,7 @@ public final class TrigTools {
      * {@link #cos(double)} or {@link #cosSmooth(double)}, but that is somewhat slower. This still offers better
      * throughput than {@link Math#cos(double)}.
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #cos(double)} uses, but interpolates between two
+     * Internally, this uses the same {@link #COS_TABLE_D} that {@link #cos(double)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param radians an angle in radians; optimally between {@code -PI2_D} and {@code PI2_D}
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
@@ -1096,10 +1109,10 @@ public final class TrigTools {
      * {@link #tan(float)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
      * higher throughput than {@link Math#tan(double)} (cast to float).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sin(float)} and {@link #cos(float)} use, but
-     * interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
-     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
-     * {@link #tan(float)} works, and tends to be much more precise.
+     * Internally, this gets one table index from the given angle (rounding down) and quickly gets another index by
+     * adding 1 (effectively rounding up). The down and up indices are looked up in {@link #SIN_TABLE} and
+     * {@link #COS_TABLE}, the sines are interpolated, the cosines are interpolated, and the sine is divided by the
+     * cosine. This is different from how {@link #tan(float)} works, and tends to be much more precise.
      * @param radians a float angle in radians, where 0 to {@link #PI2} is one rotation
      * @return a float approximation of tan()
      */
@@ -1118,10 +1131,10 @@ public final class TrigTools {
      * {@link #tan(double)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
      * higher throughput than {@link Math#tan(double)}.
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sin(double)} and {@link #cos(double)} use, but
-     * interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
-     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
-     * {@link #tan(double)} works, and tends to be much more precise.
+     * Internally, this gets one table index from the given angle (rounding down) and quickly gets another index by
+     * adding 1 (effectively rounding up). The down and up indices are looked up in {@link #SIN_TABLE_D} and
+     * {@link #COS_TABLE_D}, the sines are interpolated, the cosines are interpolated, and the sine is divided by the
+     * cosine. This is different from how {@link #tan(double)} works, and tends to be much more precise.
      * @param radians a double angle in radians, where 0 to {@link #PI2} is one rotation
      * @return an approximation of tan()
      */
@@ -1130,7 +1143,7 @@ public final class TrigTools {
         final int floor = (int)Math.floor(radians);
         final int masked = floor & TABLE_MASK;
         radians -= floor;
-        final double fromS = COS_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];
+        final double fromS = SIN_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];
         final double fromC = COS_TABLE_D[masked], toC = COS_TABLE_D[masked+1];
         return (fromS + (toS - fromS) * radians) / (fromC + (toC - fromC) * radians);
     }
@@ -1140,7 +1153,7 @@ public final class TrigTools {
      * {@link #sinDeg(float)} or {@link #sinSmoothDeg(float)}, but that is somewhat slower. This still offers about 2x
      * to 4x the throughput of {@link Math#sin(double)} (converted from degrees and cast to float).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinDeg(float)} uses, but interpolates between two
+     * Internally, this uses the same {@link #COS_TABLE} that {@link #sinDeg(float)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param degrees an angle in degrees; optimally between -360 and 360
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
@@ -1158,7 +1171,7 @@ public final class TrigTools {
      * {@link #sinDeg(double)} or {@link #sinSmoothDeg(double)}, but that is somewhat slower. This still offers better
      * throughput than {@link Math#sin(double)} (converted from degrees).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinDeg(double)} uses, but interpolates between
+     * Internally, this uses the same {@link #COS_TABLE_D} that {@link #sinDeg(double)} uses, but interpolates between
      * two adjacent entries in the table, rather than just using one entry unmodified.
      * @param degrees an angle in degrees; optimally between -360 and 360
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
@@ -1176,7 +1189,7 @@ public final class TrigTools {
      * {@link #cosDeg(float)} or {@link #cosSmoothDeg(float)}, but that is somewhat slower. This still offers about 2x to
      * 4x the throughput of {@link Math#cos(double)} (converted from degrees and cast to float).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE} that {@link #cosDeg(float)} uses, but interpolates between two
+     * Internally, this uses the same {@link #COS_TABLE} that {@link #cosDeg(float)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param degrees an angle in degrees; optimally between -360 and 360
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
@@ -1194,7 +1207,7 @@ public final class TrigTools {
      * {@link #cosDeg(double)} or {@link #cosSmoothDeg(double)}, but that is somewhat slower. This still offers better
      * throughput than {@link Math#cos(double)} (converted from degrees).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #cosDeg(double)} uses, but interpolates between
+     * Internally, this uses the same {@link #COS_TABLE_D} that {@link #cosDeg(double)} uses, but interpolates between
      * two adjacent entries in the table, rather than just using one entry unmodified.
      * @param degrees an angle in degrees; optimally between -360 and 360
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
@@ -1212,10 +1225,10 @@ public final class TrigTools {
      * {@link #tanDeg(float)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
      * higher throughput than {@link Math#tan(double)} (converted from degrees and cast to float).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinDeg(float)} and {@link #cosDeg(float)} use, but
-     * interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
-     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
-     * {@link #tanDeg(float)} works, and tends to be much more precise.
+     * Internally, this gets one table index from the given angle (rounding down) and quickly gets another index by
+     * adding 1 (effectively rounding up). The down and up indices are looked up in {@link #SIN_TABLE} and
+     * {@link #COS_TABLE}, the sines are interpolated, the cosines are interpolated, and the sine is divided by the
+     * cosine. This is different from how {@link #tan(float)} works, and tends to be much more precise.
      * @param degrees a float angle in degrees, where 0 to 360 is one rotation
      * @return a float approximation of tan()
      */
@@ -1234,10 +1247,10 @@ public final class TrigTools {
      * {@link #tanDeg(double)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
      * higher throughput than {@link Math#tan(double)} (converted from degrees).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinDeg(double)} and {@link #cosDeg(double)} use,
-     * but interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
-     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
-     * {@link #tanDeg(double)} works, and tends to be much more precise.
+     * Internally, this gets one table index from the given angle (rounding down) and quickly gets another index by
+     * adding 1 (effectively rounding up). The down and up indices are looked up in {@link #SIN_TABLE_D} and
+     * {@link #COS_TABLE_D}, the sines are interpolated, the cosines are interpolated, and the sine is divided by the
+     * cosine. This is different from how {@link #tan(double)} works, and tends to be much more precise.
      * @param degrees a double angle in degrees, where 0 to 360 is one rotation
      * @return an approximation of tan()
      */
@@ -1246,7 +1259,7 @@ public final class TrigTools {
         final int floor = (int)Math.floor(degrees);
         final int masked = floor & TABLE_MASK;
         degrees -= floor;
-        final double fromS = COS_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];
+        final double fromS = SIN_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];
         final double fromC = COS_TABLE_D[masked], toC = COS_TABLE_D[masked+1];
         return (fromS + (toS - fromS) * degrees) / (fromC + (toC - fromC) * degrees);
     }
@@ -1256,7 +1269,7 @@ public final class TrigTools {
      * {@link #sinTurns(float)} or {@link #sinSmoothTurns(float)}, but that is somewhat slower. This still offers about 2x
      * to 4x the throughput of {@link Math#sin(double)} (converted from turns and cast to float).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinTurns(float)} uses, but interpolates between two
+     * Internally, this uses the same {@link #COS_TABLE} that {@link #sinTurns(float)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param turns an angle in turns; optimally between -1 and 1
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
@@ -1274,7 +1287,7 @@ public final class TrigTools {
      * {@link #sinTurns(double)} or {@link #sinSmoothTurns(double)}, but that is somewhat slower. This still offers better
      * throughput than {@link Math#sin(double)} (converted from turns).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinTurns(double)} uses, but interpolates between
+     * Internally, this uses the same {@link #COS_TABLE_D} that {@link #sinTurns(double)} uses, but interpolates between
      * two adjacent entries in the table, rather than just using one entry unmodified.
      * @param turns an angle in turns; optimally between -1 and 1
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
@@ -1292,7 +1305,7 @@ public final class TrigTools {
      * {@link #cosTurns(float)} or {@link #cosSmoothTurns(float)}, but that is somewhat slower. This still offers about 2x to
      * 4x the throughput of {@link Math#cos(double)} (converted from turns and cast to float).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE} that {@link #cosTurns(float)} uses, but interpolates between two
+     * Internally, this uses the same {@link #COS_TABLE} that {@link #cosTurns(float)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param turns an angle in turns; optimally between -1 and 1
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
@@ -1310,7 +1323,7 @@ public final class TrigTools {
      * {@link #cosTurns(double)} or {@link #cosSmoothTurns(double)}, but that is somewhat slower. This still offers better
      * throughput than {@link Math#cos(double)} (converted from turns).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #cosTurns(double)} uses, but interpolates between
+     * Internally, this uses the same {@link #COS_TABLE_D} that {@link #cosTurns(double)} uses, but interpolates between
      * two adjacent entries in the table, rather than just using one entry unmodified.
      * @param turns an angle in turns; optimally between -1 and 1
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
@@ -1328,10 +1341,10 @@ public final class TrigTools {
      * {@link #tanTurns(float)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
      * higher throughput than {@link Math#tan(double)} (converted from turns and cast to float).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinTurns(float)} and {@link #cosTurns(float)} use, but
-     * interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
-     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
-     * {@link #tanTurns(float)} works, and tends to be much more precise.
+     * Internally, this gets one table index from the given angle (rounding down) and quickly gets another index by
+     * adding 1 (effectively rounding up). The down and up indices are looked up in {@link #SIN_TABLE} and
+     * {@link #COS_TABLE}, the sines are interpolated, the cosines are interpolated, and the sine is divided by the
+     * cosine. This is different from how {@link #tan(float)} works, and tends to be much more precise.
      * @param turns a float angle in turns, where 0 to 1 is one rotation
      * @return a float approximation of tan()
      */
@@ -1350,10 +1363,10 @@ public final class TrigTools {
      * {@link #tanTurns(double)}, and can be slightly faster on recent JDKs (or slower on JDK 8). This still offers much
      * higher throughput than {@link Math#tan(double)} (converted from turns).
      * <br>
-     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinTurns(double)} and {@link #cosTurns(double)} use,
-     * but interpolates between adjacent entries in the table, rather than just using one entry for each unmodified. It
-     * simply gets the sine and cosine at about the same time, then divides sine by cosine. This is different from how
-     * {@link #tanTurns(double)} works, and tends to be much more precise.
+     * Internally, this gets one table index from the given angle (rounding down) and quickly gets another index by
+     * adding 1 (effectively rounding up). The down and up indices are looked up in {@link #SIN_TABLE_D} and
+     * {@link #COS_TABLE_D}, the sines are interpolated, the cosines are interpolated, and the sine is divided by the
+     * cosine. This is different from how {@link #tan(double)} works, and tends to be much more precise.
      * @param turns a double angle in turns, where 0 to 1 is one rotation
      * @return an approximation of tan()
      */

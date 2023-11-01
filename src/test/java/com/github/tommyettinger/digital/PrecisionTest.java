@@ -1230,11 +1230,43 @@ public class PrecisionTest {
      * Worst input (abs):       1.569986939430236800000000
      * Worst output (abs):   1235.3348388672 (0x449A6AB7)
      * Correct output (abs): 1235.5020751953 (0x449A7011)
+     * Running tanSmoother037
+     * Mean absolute error:     0.0000502852
+     * Mean relative error:     0.0000002945
+     * Maximum abs. error:      0.1672363281
+     * Maximum rel. error:      0.0001353590
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -1.477615714073181200000000
+     * Best output (lo):      -10.7007675171 (0xC12B3658)
+     * Correct output (lo):   -10.7007675171 (0xC12B3658)
+     * Worst input (hi):        1.569986939430236800000000
+     * Highest output rel:      0.0001353590
+     * Worst output (hi):    1235.3348388672 (0x449A6AB7)
+     * Correct output (hi):  1235.5020751953 (0x449A7011)
+     * Worst input (abs):       1.569986939430236800000000
+     * Worst output (abs):   1235.3348388672 (0x449A6AB7)
+     * Correct output (abs): 1235.5020751953 (0x449A7011)
      * Running tanNoTable
      * Mean absolute error:     0.0088905813
      * Mean relative error:     0.0000341421
      * Maximum abs. error:     17.9890136719
-     * Maximum rel. error:      0.0575221963
+     * Maximum rel. error:      0.0575222000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -1.005164504051208500000000
+     * Best output (lo):       -1.5752424002 (0xBFC9A18B)
+     * Correct output (lo):    -1.5752424002 (0xBFC9A18B)
+     * Worst input (hi):        0.000000596046447753906200
+     * Highest output rel:      0.0575221963
+     * Worst output (hi):       0.0000005618 (0x3516CBE4)
+     * Correct output (hi):     0.0000005960 (0x35200000)
+     * Worst input (abs):       1.569998383522033700000000
+     * Worst output (abs):   1235.2326660156 (0x449A6772)
+     * Correct output (abs): 1253.2216796875 (0x449CA718)
+     * Running tanGdx
+     * Mean absolute error:     0.0088819480
+     * Mean relative error:     0.0000340990
+     * Maximum abs. error:     17.9890136719
+     * Maximum rel. error:      0.0575222000
      * Lowest output rel:       0.0000000000
      * Best input (lo):        -1.005164504051208500000000
      * Best output (lo):       -1.5752424002 (0xBFC9A18B)
@@ -1250,7 +1282,7 @@ public class PrecisionTest {
      * Mean absolute error:     0.1380470246
      * Mean relative error:     0.0020219306
      * Maximum abs. error:    386.6504516602
-     * Maximum rel. error:      0.9999999404
+     * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
      * Best input (lo):        -1.391320586204528800000000
      * Best output (lo):       -5.5118293762 (0xC0B060E8)
@@ -1271,8 +1303,10 @@ public class PrecisionTest {
     public void testTan() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("tanSmoother", TrigTools::tanSmoother);
+        functions.put("tanSmoother037", TrigTools037::tanSmoother);
         functions.put("tanNoTable", TrigTools::tan);
         functions.put("tanTable", PrecisionTest::tanTable);
+        functions.put("tanGdx", MathUtils::tan);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -1283,15 +1317,18 @@ public class PrecisionTest {
             for (float x = -1.57f; x <= 1.57f; x += 0x1p-20f) {
 
                 float tru = (float) Math.tan(x),
-                        err = tru - op.applyAsFloat(x),
+                        approx = op.applyAsFloat(x),
+                        err = tru - approx,
                         ae = abs(err),
-                        re = Math.abs(err / Math.nextAfter(tru, Math.copySign(Float.MAX_VALUE, tru)));
-                relError += re;
-                if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
-                    highestRelX = x;
-                }
-                if (minRelError != (minRelError = Math.min(minRelError, re))) {
-                    lowestRelX = x;
+                        re = MathTools.isZero(tru, 1E-10) ? 0f : Math.abs(err / tru);
+                if(!MathTools.isZero(tru, 1E-10)) {
+                    relError += re;
+                    if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                        highestRelX = x;
+                    }
+                    if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                        lowestRelX = x;
+                    }
                 }
                 absError += ae;
                 if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
