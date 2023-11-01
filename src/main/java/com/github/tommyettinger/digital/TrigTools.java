@@ -1026,15 +1026,14 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoother(float radians) {
-        // 14 bits
-        //Mean absolute error:     0.0000000013
-        //Mean relative error:     0.0000000233
-        //Maximum abs. error:      0.0000004470
+        //Mean absolute error:     0.0000000891
+        //Mean relative error:     0.0000014705
+        //Maximum abs. error:      0.0000005439
         //Maximum rel. error:      1.0000000000
-        radians *= radToIndex;
-        final int floor = (int)(radians + 16384.0) - 16384;
+        radians = Math.abs(radians - HALF_PI) * radToIndex;
+        final int floor = (int)radians;
         final int masked = floor & TABLE_MASK;
-        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
         return from + (to - from) * (radians - floor);
     }
 
@@ -1049,15 +1048,10 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static double sinSmoother(double radians) {
-        // 14 bits
-        //Mean absolute error:     0.0000000078
-        //Mean relative error:     0.0000001134
-        //Maximum abs. error:      0.0000000184
-        //Maximum rel. error:      1.0000000000
-        radians *= radToIndexD;
-        final int floor = (int) Math.floor(radians);
+        radians = Math.abs(radians - HALF_PI_D) * radToIndexD;
+        final int floor = (int)radians;
         final int masked = floor & TABLE_MASK;
-        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
         return from + (to - from) * (radians - floor);
     }
 
@@ -1072,15 +1066,10 @@ public final class TrigTools {
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static float cosSmoother(float radians) {
-        // 14 bits
-        //Mean absolute error:     0.0000000719
-        //Mean relative error:     0.0000011134
-        //Maximum abs. error:      0.0000004172
-        //Maximum rel. error:      0.9999999404
-        radians *= radToIndex;
-        final int floor = (int)(radians + 16384.0) - 16384;
-        final int masked = floor + SIN_TO_COS & TABLE_MASK;
-        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        radians = Math.abs(radians) * radToIndex;
+        final int floor = (int)radians;
+        final int masked = floor & TABLE_MASK;
+        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
         return from + (to - from) * (radians - floor);
     }
 
@@ -1095,10 +1084,10 @@ public final class TrigTools {
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static double cosSmoother(double radians) {
-        radians *= radToIndexD;
-        final int floor = (int) Math.floor(radians);
-        final int masked = floor + SIN_TO_COS & TABLE_MASK;
-        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        radians = Math.abs(radians) * radToIndexD;
+        final int floor = (int)radians;
+        final int masked = floor & TABLE_MASK;
+        final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
         return from + (to - from) * (radians - floor);
     }
 
@@ -1162,14 +1151,10 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmootherDeg(float degrees) {
-        //Mean absolute error:     0.0000000590
-        //Mean relative error:     0.0000008347
-        //Maximum abs. error:      0.0000003576
-        //Maximum rel. error:      0.2968730032
-        degrees *= degToIndex;
-        final int floor = (int)(degrees + 16384.0) - 16384;
+        degrees = Math.abs(degrees - 90) * degToIndex;
+        final int floor = (int)degrees;
         final int masked = floor & TABLE_MASK;
-        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
         return from + (to - from) * (degrees - floor);
     }
 
@@ -1184,10 +1169,10 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static double sinSmootherDeg(double degrees) {
-        degrees *= degToIndexD;
-        final int floor = (int) Math.floor(degrees);
+        degrees = Math.abs(degrees - 90) * degToIndexD;
+        final int floor = (int)degrees;
         final int masked = floor & TABLE_MASK;
-        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
         return from + (to - from) * (degrees - floor);
     }
 
@@ -1202,10 +1187,10 @@ public final class TrigTools {
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static float cosSmootherDeg(float degrees) {
-        degrees *= degToIndex;
-        final int floor = (int)(degrees + 16384.0) - 16384;
-        final int masked = floor + SIN_TO_COS & TABLE_MASK;
-        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        degrees = Math.abs(degrees) * degToIndex;
+        final int floor = (int)degrees;
+        final int masked = floor & TABLE_MASK;
+        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
         return from + (to - from) * (degrees - floor);
     }
 
@@ -1220,10 +1205,10 @@ public final class TrigTools {
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static double cosSmootherDeg(double degrees) {
-        degrees *= degToIndexD;
-        final int floor = (int) Math.floor(degrees);
-        final int masked = floor + SIN_TO_COS & TABLE_MASK;
-        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        degrees = Math.abs(degrees) * degToIndexD;
+        final int floor = (int)degrees;
+        final int masked = floor & TABLE_MASK;
+        final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
         return from + (to - from) * (degrees - floor);
     }
 
@@ -1282,10 +1267,10 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmootherTurns(float turns) {
-        turns *= turnToIndex;
-        final int floor = (int)(turns + 16384.0) - 16384;
+        turns = Math.abs(turns - 0.25f) * turnToIndex;
+        final int floor = (int)turns;
         final int masked = floor & TABLE_MASK;
-        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
         return from + (to - from) * (turns - floor);
     }
 
@@ -1300,10 +1285,10 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static double sinSmootherTurns(double turns) {
-        turns *= turnToIndexD;
-        final int floor = (int) Math.floor(turns);
+        turns = Math.abs(turns - 0.25) * turnToIndexD;
+        final int floor = (int)turns;
         final int masked = floor & TABLE_MASK;
-        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
         return from + (to - from) * (turns - floor);
     }
 
@@ -1318,10 +1303,10 @@ public final class TrigTools {
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static float cosSmootherTurns(float turns) {
-        turns *= turnToIndex;
-        final int floor = (int)(turns + 16384.0) - 16384;
-        final int masked = floor + SIN_TO_COS & TABLE_MASK;
-        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        turns = Math.abs(turns) * turnToIndex;
+        final int floor = (int)turns;
+        final int masked = floor & TABLE_MASK;
+        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
         return from + (to - from) * (turns - floor);
     }
 
@@ -1336,10 +1321,10 @@ public final class TrigTools {
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static double cosSmootherTurns(double turns) {
-        turns *= turnToIndexD;
-        final int floor = (int) Math.floor(turns);
-        final int masked = floor + SIN_TO_COS & TABLE_MASK;
-        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        turns = Math.abs(turns) * turnToIndexD;
+        final int floor = (int)turns;
+        final int masked = floor & TABLE_MASK;
+        final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
         return from + (to - from) * (turns - floor);
     }
 
