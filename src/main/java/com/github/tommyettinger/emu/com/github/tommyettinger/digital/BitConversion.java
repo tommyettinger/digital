@@ -131,7 +131,7 @@ public final class BitConversion {
 	}-*/;
 
 	public static native int countTrailingZeros(int n)/*-{
-	    let i = -n;
+	    var i = -n;
 	    return ((n | i) >> 31 | 32) & 31 - Math.clz32(n & i);
 	}-*/;
 
