@@ -14,14 +14,16 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.badlogic.gdx.math;
+package com.badlogic.gdx.math.experimental;
 
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.NumberUtils;
 
 import java.io.Serializable;
 
 /** Encapsulates a 4D vector. Allows chaining operations by returning a reference to itself in all modification methods.
+ * Use the version in libGDX 1.12.1 and higher instead of this, if possible.
  * @author badlogicgames@gmail.com
  * @author Antz */
 public class Vector4 implements Serializable, Vector<Vector4> {
