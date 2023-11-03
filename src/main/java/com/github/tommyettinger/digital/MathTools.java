@@ -385,17 +385,38 @@ public final class MathTools {
     /**
      * Determines the greatest common divisor of a pair of natural numbers
      * using the Euclidean algorithm.  This method only works with natural
-     * numbers.  If negative integers are passed in, the absolute values will
-     * be used.  The return value is always positive.
+     * number ints. If negative integers are passed in, the absolute values will
+     * be used. The return value is always non-negative.
      *
-     * @param a The first value.
-     * @param b The second value.
-     * @return The greatest common divisor.
+     * @param a the first value; any non-negative int
+     * @param b the second value; any non-negative int
+     * @return the greatest common divisor of a and b, as an int
+     */
+    public static int greatestCommonDivisor(int a, int b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    /**
+     * Determines the greatest common divisor of a pair of natural numbers
+     * using the Euclidean algorithm.  This method only works with natural
+     * number longs. If negative integers are passed in, the absolute values will
+     * be used. The return value is always non-negative.
+     *
+     * @param a the first value; any non-negative long
+     * @param b the second value; any non-negative long
+     * @return the greatest common divisor of a and b, as a long
      */
     public static long greatestCommonDivisor(long a, long b) {
         a = Math.abs(a);
         b = Math.abs(b);
-        while (b != 0) {
+        while (b != 0L) {
             long temp = b;
             b = a % b;
             a = temp;
