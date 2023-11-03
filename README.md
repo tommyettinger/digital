@@ -186,7 +186,7 @@ There are also ways to create one of the building blocks of an
 Interpolator, an InterpolationFunction, with methods in
 Interpolations. This makes creating new Interpolators with different
 parameters as easy as assigning a name to the generated function.
-[Here's a sample page that shows how each Interpolator looks graphed.](docs/interpolators.html)
+[Here's a sample page that shows how each Interpolator looks graphed.](https://tommyettinger.github.io/digital/interpolators.html)
 
 ## How do I get it?
 
