@@ -3362,49 +3362,6 @@ public class Base {
     }
 
     /**
-     * Given a float array and a delimiter to separate the items of that array, produces a String containing all floats
-     * from elements, in this Base, separated by delimiter. This uses {@link #appendGeneral(StringBuilder, float)},
-     * which means this always uses base-10, and may use decimal or scientific notation.
-     *
-     * @param delimiter the separator to put between numbers
-     * @param elements  a float array; if null, this returns an empty String
-     * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
-     */
-    public String join(String delimiter, float[] elements) {
-        if (elements.length == 0)
-            return "";
-        StringBuilder sb = new StringBuilder(elements.length << 3);
-        appendGeneral(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendGeneral(sb, elements[i]);
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
-     * the StringBuilder all floats from elements, in this Base, separated by delimiter. This uses
-     * {@link #appendGeneral(StringBuilder, float)}, which means this always uses base-10, and may use decimal or
-     * scientific notation.
-     *
-     * @param sb        the StringBuilder to append to; if null, this returns null
-     * @param delimiter the separator to put between numbers
-     * @param elements  a float array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
-     */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, float[] elements) {
-        if (elements.length == 0)
-            return sb;
-        appendGeneral(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendGeneral(sb, elements[i]);
-        }
-        return sb;
-    }
-
-    /**
      * Given a double array and a delimiter to separate the items of that array, produces a String containing all doubles
      * from elements, in this Base, separated by delimiter. This uses
      * {@link #appendDecimal(StringBuilder, double, int)}, which means this always uses base-10 with decimal notation.
@@ -3448,6 +3405,48 @@ public class Base {
         return sb;
     }
 
+    /**
+     * Given a float array and a delimiter to separate the items of that array, produces a String containing all floats
+     * from elements, in this Base, separated by delimiter. This uses {@link #appendGeneral(StringBuilder, float)},
+     * which means this always uses base-10, and may use decimal or scientific notation.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a float array; if null, this returns an empty String
+     * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
+     */
+    public String join(String delimiter, float[] elements) {
+        if (elements.length == 0)
+            return "";
+        StringBuilder sb = new StringBuilder(elements.length << 3);
+        appendGeneral(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendGeneral(sb, elements[i]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all floats from elements, in this Base, separated by delimiter. This uses
+     * {@link #appendGeneral(StringBuilder, float)}, which means this always uses base-10, and may use decimal or
+     * scientific notation.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a float array; if null, this returns sb without changes
+     * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
+     */
+    public StringBuilder appendJoined(StringBuilder sb, String delimiter, float[] elements) {
+        if (elements.length == 0)
+            return sb;
+        appendGeneral(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendGeneral(sb, elements[i]);
+        }
+        return sb;
+    }
     /**
      * Given a float array and a delimiter to separate the items of that array, produces a String containing all floats
      * from elements, in this Base, separated by delimiter. This uses
@@ -3640,6 +3639,33 @@ public class Base {
     /**
      * Given a double 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all doubles from elements, in this
+     * Base using {@link #appendJoinedDecimal(StringBuilder, String, int, double[])}, separated by minor delimiter and then by
+     * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
+     * appends any items.
+     *
+     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param majorDelimiter the separator to put between arrays
+     * @param minorDelimiter the separator to put between numbers
+     * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
+     * @param elements       a double 2D array; if null or empty, this returns sb without changes
+     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     */
+    public StringBuilder appendJoinedDecimal2D(StringBuilder sb, String majorDelimiter, String minorDelimiter,
+                                               int lengthLimit, double[][] elements) {
+        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+            throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
+        if (elements.length == 0)
+            return sb;
+        for (int i = 0; i < elements.length; i++) {
+            sb.append(majorDelimiter);
+            appendJoinedDecimal(sb, minorDelimiter, lengthLimit, elements[i]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a double 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
+     * each inner array, and a StringBuilder to append to, appends to the StringBuilder all doubles from elements, in this
      * Base using {@link #appendJoined(StringBuilder, String, double[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items. Like appendJoined(), this produces human-readable numbers using {@link #general(double)}.
@@ -3690,6 +3716,33 @@ public class Base {
     /**
      * Given a float 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all floats from elements, in this
+     * Base using {@link #appendJoinedDecimal(StringBuilder, String, int, float[])}, separated by minor delimiter and then by
+     * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
+     * appends any items.
+     *
+     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param majorDelimiter the separator to put between arrays
+     * @param minorDelimiter the separator to put between numbers
+     * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
+     * @param elements       a float 2D array; if null or empty, this returns sb without changes
+     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     */
+    public StringBuilder appendJoinedDecimal2D(StringBuilder sb, String majorDelimiter, String minorDelimiter,
+                                               int lengthLimit, float[][] elements) {
+        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+            throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
+        if (elements.length == 0)
+            return sb;
+        for (int i = 0; i < elements.length; i++) {
+            sb.append(majorDelimiter);
+            appendJoinedDecimal(sb, minorDelimiter, lengthLimit, elements[i]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a float 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
+     * each inner array, and a StringBuilder to append to, appends to the StringBuilder all floats from elements, in this
      * Base using {@link #appendJoined(StringBuilder, String, float[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items. Like appendJoined(), this produces human-readable numbers using {@link #general(float)}.
@@ -3716,7 +3769,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * long array. This is specifically meant to read the format produced by
      * {@link #appendJoined2D(StringBuilder, String, String, long[][])}, including the initial majorDelimiter before each sequence.
      *
@@ -3751,7 +3804,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * long array. This is specifically meant to read the format produced by
      * {@link #appendJoined2D(StringBuilder, String, String, long[][])}, including the initial majorDelimiter before each sequence.
      *
@@ -3768,7 +3821,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * int array. This is specifically meant to read the format produced by
      * {@link #appendJoined2D(StringBuilder, String, String, int[][])}, including the initial majorDelimiter before each sequence.
      *
@@ -3803,7 +3856,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * int array. This is specifically meant to read the format produced by
      * {@link #appendJoined2D(StringBuilder, String, String, int[][])}, including the initial majorDelimiter before each sequence.
      *
@@ -3820,7 +3873,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * short array. This is specifically meant to read the format produced by
      * {@link #appendJoined2D(StringBuilder, String, String, short[][])}, including the initial majorDelimiter before each sequence.
      *
@@ -3855,7 +3908,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * short array. This is specifically meant to read the format produced by
      * {@link #appendJoined2D(StringBuilder, String, String, short[][])}, including the initial majorDelimiter before each sequence.
      *
@@ -3872,7 +3925,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * byte array. This is specifically meant to read the format produced by
      * {@link #appendJoined2D(StringBuilder, String, String, byte[][])}, including the initial majorDelimiter before each sequence.
      *
@@ -3907,7 +3960,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * byte array. This is specifically meant to read the format produced by
      * {@link #appendJoined2D(StringBuilder, String, String, byte[][])}, including the initial majorDelimiter before each sequence.
      *
@@ -3924,7 +3977,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * char array. This is specifically meant to read the format produced by
      * {@link #appendJoined2D(StringBuilder, String, String, char[][])}, including the initial majorDelimiter before each sequence.
      *
@@ -3959,7 +4012,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * char array. This is specifically meant to read the format produced by
      * {@link #appendJoined2D(StringBuilder, String, String, char[][])}, including the initial majorDelimiter before
      * each sequence.
@@ -3977,7 +4030,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
      * {@link #appendJoinedExact2D(StringBuilder, String, String, double[][])}, including the initial majorDelimiter
      * before each sequence.
@@ -4015,7 +4068,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
      * {@link #appendJoinedExact2D(StringBuilder, String, String, double[][])}, including the initial majorDelimiter
      * before each sequence.
@@ -4033,10 +4086,11 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, double[][])}, including the initial majorDelimiter
-     * before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, double[][])} or
+     * {@link #appendJoinedDecimal2D(StringBuilder, String, String, int, double[][])},
+     * including the initial majorDelimiter before each sequence.
      * This can read in doubles produced by any Base using {@link #decimal(double)}, {@link #scientific(double)},
      * {@link #general(double)}, or {@link #friendly(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}.
      *
@@ -4071,10 +4125,11 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, double[][])}, including the initial majorDelimiter before
-     * each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, double[][])} or
+     * {@link #appendJoinedDecimal2D(StringBuilder, String, String, int, double[][])},
+     * including the initial majorDelimiter before each sequence.
      * This can read in doubles produced by any Base using {@link #decimal(double)}, {@link #scientific(double)},
      * {@link #general(double)}, or {@link #friendly(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}.
      *
@@ -4091,7 +4146,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
      * {@link #appendJoinedExact2D(StringBuilder, String, String, float[][])}, including the initial majorDelimiter
      * before each sequence.
@@ -4129,10 +4184,11 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoinedExact2D(StringBuilder, String, String, float[][])}, including the initial majorDelimiter
-     * before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, float[][])} or
+     * {@link #appendJoinedDecimal2D(StringBuilder, String, String, int, float[][])},
+     * including the initial majorDelimiter before each sequence.
      * This can read in floats produced by this Base using {@link #signed(float)} or {@link #unsigned(float)}, but
      * not {@link #decimal(float)}, {@link #scientific(float)}, {@link #general(float)}, or {@link #friendly(float)}.
      *
@@ -4147,10 +4203,11 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, float[][])}, including the initial majorDelimiter
-     * before each sequence.
+     * {@link #appendJoined2D(StringBuilder, String, String, float[][])} or
+     * {@link #appendJoinedDecimal2D(StringBuilder, String, String, int, float[][])},
+     * including the initial majorDelimiter before each sequence.
      * This can read in floats produced by any Base using {@link #decimal(float)}, {@link #scientific(float)},
      * {@link #general(float)}, or {@link #friendly(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
      *
@@ -4185,7 +4242,7 @@ public class Base {
 
     /**
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
-     * majorDelimiter and the numbers within a sequence separated by minorDelimiter returns those numbers as a 2D
+     * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
      * {@link #appendJoined2D(StringBuilder, String, String, float[][])}, including the initial majorDelimiter
      * before each sequence.
