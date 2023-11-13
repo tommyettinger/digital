@@ -2075,8 +2075,8 @@ public class Base {
      * This is meant entirely for non-human-editable content, and the digit strings this can read
      * will almost always be produced by {@link #signed(float)}, {@link #unsigned(float)}, or their append versions.
      * This cannot read the base-10 strings produced by {@link #general(float)}, {@link #scientific(float)},
-     * {@link #decimal(float)}, {@link #friendly(float)}, or their append versions; use {@link #readFloat(CharSequence)}
-     * for that.
+     * {@link #decimal(float)}, {@link #friendly(float)}, or their append versions; use
+     * {@link #readFloat(CharSequence, int, int)} for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -2100,8 +2100,8 @@ public class Base {
      * This is meant entirely for non-human-editable content, and the digit strings this can read
      * will almost always be produced by {@link #signed(float)}, {@link #unsigned(float)}, or their append versions.
      * This cannot read the base-10 strings produced by {@link #general(float)}, {@link #scientific(float)},
-     * {@link #decimal(float)}, {@link #friendly(float)}, or their append versions; use {@link #readFloat(CharSequence)}
-     * for that.
+     * {@link #decimal(float)}, {@link #friendly(float)}, or their append versions; use
+     * {@link #readFloat(char[], int, int)} for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -2124,7 +2124,7 @@ public class Base {
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
      * This can read in the format produced by {@link #decimal(float)}, {@link #scientific(float)},
      * {@link #friendly(float)}, or {@link #general(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
-     * Use {@link #readFloatExact} to read in signed() or unsigned() output.
+     * Use {@link #readFloatExact(CharSequence)} to read in signed() or unsigned() output.
      * <br>
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
@@ -2149,7 +2149,7 @@ public class Base {
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
      * This can read in the format produced by {@link #decimal(float)}, {@link #scientific(float)},
      * {@link #friendly(float)}, or {@link #general(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
-     * Use {@link #readFloatExact} to read in signed() or unsigned() output.
+     * Use {@link #readFloatExact(CharSequence, int, int)} to read in signed() or unsigned() output.
      * <br>
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
@@ -2181,14 +2181,23 @@ public class Base {
         char first = str.charAt(begin);
         final int start = first == '-' || first == '+' ? begin + 1 : begin;
 
-        if(end - start >= 3 && str.charAt(start) == 'N' && str.charAt(start+1) == 'a' && str.charAt(start+2) == 'N')
+        // we only check the first character because it's all we need to confirm a String is "NaN" or a truncation.
+        // truncations can happen when decimal(float, int) specifies a low length limit.
+        if(
+                end - start >= 1 && str.charAt(start) == 'N'
+//                && str.charAt(start+1) == 'a' && str.charAt(start+2) == 'N'
+        )
             return Float.NaN;
-        if(end - start >= 8 && str.charAt(start) == 'I' && str.charAt(start+1) == 'n' && str.charAt(start+2) == 'f'
-                && str.charAt(start+3) == 'i' && str.charAt(start+4) == 'n' && str.charAt(start+5) == 'i'
-                && str.charAt(start+6) == 't' && str.charAt(start+7) == 'y')
+        // we only check the first character because it's all we need to confirm a String is "Infinity" or a truncation.
+        if(
+                end - start >= 1 && str.charAt(start) == 'I'
+//                && str.charAt(start+1) == 'n'
+//                && str.charAt(start+2) == 'f' && str.charAt(start+3) == 'i' && str.charAt(start+4) == 'n'
+//                && str.charAt(start+5) == 'i' && str.charAt(start+6) == 't' && str.charAt(start+7) == 'y'
+        )
             return first == '-' ? Float.NEGATIVE_INFINITY : Float.POSITIVE_INFINITY;
 
-        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        end--; // don't want to loop to the last char, check it afterward for type qualifiers
         int i = start;
         // loop to the next to last char or to the last char if we need another digit to
         // make a valid number (e.g. chars[0..5] = "1234E")
@@ -2289,7 +2298,7 @@ public class Base {
             }
         }
         // allowSigns is true iff the val ends in 'E'
-        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
+        // check foundDigit to make sure weird stuff like '.' and '1E-' doesn't pass
         if(!allowSigns && foundDigit){
             try {
                 return Float.parseFloat(str.toString().substring(begin, i));
@@ -2309,7 +2318,7 @@ public class Base {
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
      * This can read in the format produced by {@link #decimal(float)}, {@link #scientific(float)},
      * {@link #friendly(float)}, or {@link #general(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
-     * Use {@link #readFloatExact} to read in signed() or unsigned() output.
+     * Use {@link #readFloatExact(char[], int, int)} to read in signed() or unsigned() output.
      * <br>
      * Much of this method is from the Apache Commons Lang method NumberUtils.isCreatable(String),
      * <a href="https://github.com/apache/commons-lang/blob/469013a4f5a5cb666b35d72122690bb7f355c0b5/src/main/java/org/apache/commons/lang3/math/NumberUtils.java#L1601">available here</a>.
@@ -2341,14 +2350,23 @@ public class Base {
         char first = str[begin];
         final int start = first == '-' || first == '+' ? begin + 1 : begin;
 
-        if(end - start >= 3 && str[start] == 'N' && str[start+1] == 'a' && str[start+2] == 'N')
+        // we only check the first character because it's all we need to confirm a String is "NaN" or a truncation.
+        // truncations can happen when decimal(float, int) specifies a low length limit.
+        if(
+                end - start >= 1 && str[start] == 'N'
+//                 && str[start+1] == 'a' && str[start+2] == 'N'
+        )
             return Float.NaN;
-        if(end - start >= 8 && str[start] == 'I' && str[start+1] == 'n' && str[start+2] == 'f'
-                && str[start+3] == 'i' && str[start+4] == 'n' && str[start+5] == 'i'
-                && str[start+6] == 't' && str[start+7] == 'y')
+        // we only check the first character because it's all we need to confirm a String is "Infinity" or a truncation.
+        if(
+                end - start >= 1 && str[start] == 'I'
+//                        && str[start+1] == 'n' && str[start+2] == 'f'
+//                        && str[start+3] == 'i' && str[start+4] == 'n' && str[start+5] == 'i'
+//                        && str[start+6] == 't' && str[start+7] == 'y'
+        )
             return first == '-' ? Float.NEGATIVE_INFINITY : Float.POSITIVE_INFINITY;
 
-        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        end--; // don't want to loop to the last char, check it afterward for type qualifiers
         int i = start;
         // loop to the next to last char or to the last char if we need another digit to
         // make a valid number (e.g. chars[0..5] = "1234E")
@@ -2450,7 +2468,7 @@ public class Base {
             }
         }
         // allowSigns is true iff the val ends in 'E'
-        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
+        // check foundDigit to make sure weird stuff like '.' and '1E-' doesn't pass
         if(!allowSigns && foundDigit){
             try {
                 return Float.parseFloat(String.valueOf(str, begin, i - begin));
