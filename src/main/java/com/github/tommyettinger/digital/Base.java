@@ -3405,6 +3405,94 @@ public class Base {
     }
 
     /**
+     * Given a double array and a delimiter to separate the items of that array, produces a String containing all doubles
+     * from elements, in this Base, separated by delimiter. This uses
+     * {@link #appendDecimal(StringBuilder, double, int)}, which means this always uses base-10 with decimal notation.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
+     * @param elements  a double array; if null, this returns an empty String
+     * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
+     */
+    public String joinDecimal(String delimiter, int lengthLimit, double[] elements) {
+        if (elements.length == 0)
+            return "";
+        StringBuilder sb = new StringBuilder(elements.length << 3);
+        appendDecimal(sb, elements[0], lengthLimit);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendDecimal(sb, elements[i], lengthLimit);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all doubles from elements, in this Base, separated by delimiter. This uses
+     * {@link #appendDecimal(StringBuilder, double, int)}, which means this always uses base-10 with decimal notation.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
+     * @param elements  a double array; if null, this returns sb without changes
+     * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
+     */
+    public StringBuilder appendJoinedDecimal(StringBuilder sb, String delimiter, int lengthLimit, double[] elements) {
+        if (elements.length == 0)
+            return sb;
+        appendDecimal(sb, elements[0], lengthLimit);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendDecimal(sb, elements[i], lengthLimit);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a float array and a delimiter to separate the items of that array, produces a String containing all floats
+     * from elements, in this Base, separated by delimiter. This uses
+     * {@link #appendDecimal(StringBuilder, float, int)}, which means this always uses base-10 with decimal notation.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
+     * @param elements  a float array; if null, this returns an empty String
+     * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
+     */
+    public String joinDecimal(String delimiter, int lengthLimit, float[] elements) {
+        if (elements.length == 0)
+            return "";
+        StringBuilder sb = new StringBuilder(elements.length << 3);
+        appendDecimal(sb, elements[0], lengthLimit);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendDecimal(sb, elements[i], lengthLimit);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all floats from elements, in this Base, separated by delimiter. This uses
+     * {@link #appendDecimal(StringBuilder, float, int)}, which means this always uses base-10 with decimal notation.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
+     * @param elements  a float array; if null, this returns sb without changes
+     * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
+     */
+    public StringBuilder appendJoinedDecimal(StringBuilder sb, String delimiter, int lengthLimit, float[] elements) {
+        if (elements.length == 0)
+            return sb;
+        appendDecimal(sb, elements[0], lengthLimit);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendDecimal(sb, elements[i], lengthLimit);
+        }
+        return sb;
+    }
+
+    /**
      * Given a long 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all longs from elements, in this
      * Base, separated by minor delimiter and then by major delimiter. For any non-null, non-empty elements, this will
