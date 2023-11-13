@@ -382,7 +382,7 @@ public class BaseTest {
 				Assert.assertEquals(in, enc.readDouble(enc.scientific(in)), Double.MIN_VALUE);
 				Assert.assertEquals(in, enc.readDouble(enc.decimal(in)), Double.MIN_VALUE);
 				Assert.assertEquals(in, enc.readDouble(enc.friendly(in)), Double.MIN_VALUE);
-				System.out.println(enc.decimal(in, 10));
+				System.out.println(enc.decimal(in, 8));
 			}
 			Assert.assertTrue(Double.isNaN(enc.readDoubleExact(enc.signed(Double.NaN))));
 			Assert.assertTrue(Double.isNaN(enc.readDoubleExact(enc.unsigned(Double.NaN))));
@@ -433,6 +433,7 @@ public class BaseTest {
 				Assert.assertEquals(in, enc.readFloat(enc.scientific(in)), Float.MIN_VALUE);
 				Assert.assertEquals(in, enc.readFloat(enc.decimal(in)), Float.MIN_VALUE);
 				Assert.assertEquals(in, enc.readFloat(enc.friendly(in)), Float.MIN_VALUE);
+				System.out.println(enc.decimal(in, 8));
 			}
 			Assert.assertTrue(Float.isNaN(enc.readFloatExact(enc.signed(Float.NaN))));
 			Assert.assertTrue(Float.isNaN(enc.readFloatExact(enc.unsigned(Float.NaN))));
@@ -448,6 +449,9 @@ public class BaseTest {
 			Assert.assertArrayEquals(enc.floatSplit(" " + enc.join(" ", inputs), " ", 1, Integer.MAX_VALUE), inputs, 0.00001f);
 			Assert.assertArrayEquals(enc.floatSplit2D(enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D).toString(), "`", ","), inputs2D);
 			Assert.assertArrayEquals(enc.floatSplit2D(" " + enc.appendJoined2D(new StringBuilder(), "`", ",", inputs2D), "`", ",", 1, Integer.MAX_VALUE), inputs2D);
+
+			System.out.println(enc.joinDecimal(" ", 10, inputs));
+			System.out.println();
 
 			for (float[] inp : inputs2D) {
 				String joined = enc.appendJoined(new StringBuilder(), " ", inp).toString();

@@ -371,20 +371,70 @@ final class RyuFloat {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Float.isNaN(value)) {
-      return builder.append("NaN");
+      int startLimiting = builder.length();
+      builder.append("NaN");
+      if(lengthLimit != -10000) {
+        if((long)startLimiting + lengthLimit < builder.length()) {
+          builder.setLength(startLimiting + lengthLimit);
+        }
+        else {
+          while (builder.length() < startLimiting + lengthLimit) {
+            builder.append(' ');
+          }
+        }
+      }
+      return builder;
     }
     if (value == Float.POSITIVE_INFINITY || value == Float.NEGATIVE_INFINITY) {
+      int startLimiting = builder.length();
       if (value == Float.NEGATIVE_INFINITY) {
-        builder.append('-');
+        builder.append("-Infinity");
       }
-      return builder.append("Infinity");
+      else {
+        builder.append("Infinity");
+      }
+      if(lengthLimit != -10000) {
+        if((long)startLimiting + lengthLimit < builder.length()) {
+          builder.setLength(startLimiting + lengthLimit);
+        }
+        else {
+          while (builder.length() < startLimiting + lengthLimit) {
+            builder.append(' ');
+          }
+        }
+      }
+      return builder;
     }
     int bits = BitConversion.floatToIntBits(value);
     if (bits == 0) {
-      return builder.append("0.0");
+      int startLimiting = builder.length();
+      builder.append("0.0");
+      if(lengthLimit != -10000) {
+        if((long)startLimiting + lengthLimit < builder.length()) {
+          builder.setLength(startLimiting + lengthLimit);
+        }
+        else {
+          while (builder.length() < startLimiting + lengthLimit) {
+            builder.append('0');
+          }
+        }
+      }
+      return builder;
     }
     if (bits == 0x80000000){
-      return builder.append("-0.0");
+      int startLimiting = builder.length();
+      builder.append("-0.0");
+      if(lengthLimit != -10000) {
+        if((long)startLimiting + lengthLimit < builder.length()) {
+          builder.setLength(startLimiting + lengthLimit);
+        }
+        else {
+          while (builder.length() < startLimiting + lengthLimit) {
+            builder.append('0');
+          }
+        }
+      }
+      return builder;
     }
 
     // Otherwise extract the mantissa and exponent bits and run the full algorithm.
