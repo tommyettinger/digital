@@ -1442,7 +1442,7 @@ public class Base {
      * will almost always be produced by {@link #signed(double)}, {@link #unsigned(double)}, or their append versions.
      * This cannot read the base-10 strings produced by {@link #general(double)}, {@link #scientific(double)},
      * {@link #decimal(double)}, {@link #friendly(double)}, or their append versions; use
-     * {@link #readDouble(CharSequence)} for that.
+     * {@link #readDouble(CharSequence, int, int)} for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -1467,7 +1467,7 @@ public class Base {
      * will almost always be produced by {@link #signed(double)}, {@link #unsigned(double)}, or their append versions.
      * This cannot read the base-10 strings produced by {@link #general(double)}, {@link #scientific(double)},
      * {@link #decimal(double)}, {@link #friendly(double)}, or their append versions; use
-     * {@link #readDouble(CharSequence)} for that.
+     * {@link #readDouble(char[], int, int)} for that.
      * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
@@ -1547,14 +1547,23 @@ public class Base {
         char first = str.charAt(begin);
         final int start = first == '-' || first == '+' ? begin + 1 : begin;
 
-        if(end - start >= 3 && str.charAt(start) == 'N' && str.charAt(start+1) == 'a' && str.charAt(start+2) == 'N')
+        // we only check the first character because it's all we need to confirm a String is "NaN" or a truncation.
+        // truncations can happen when decimal(double, int) specifies a low length limit.
+        if(
+                end - start >= 1 && str.charAt(start) == 'N'
+//                && str.charAt(start+1) == 'a' && str.charAt(start+2) == 'N'
+        )
             return Double.NaN;
-        if(end - start >= 8 && str.charAt(start) == 'I' && str.charAt(start+1) == 'n' && str.charAt(start+2) == 'f'
-                && str.charAt(start+3) == 'i' && str.charAt(start+4) == 'n' && str.charAt(start+5) == 'i'
-                && str.charAt(start+6) == 't' && str.charAt(start+7) == 'y')
+        // we only check the first character because it's all we need to confirm a String is "Infinity" or a truncation.
+        if(
+                end - start >= 1 && str.charAt(start) == 'I'
+//                && str.charAt(start+1) == 'n'
+//                && str.charAt(start+2) == 'f' && str.charAt(start+3) == 'i' && str.charAt(start+4) == 'n'
+//                && str.charAt(start+5) == 'i' && str.charAt(start+6) == 't' && str.charAt(start+7) == 'y'
+        )
             return first == '-' ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
 
-        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        end--; // don't want to loop to the last char, check it afterward for type qualifiers
         int i = start;
         // loop to the next to last char or to the last char if we need another digit to
         // make a valid number (e.g. chars[0..5] = "1234E")
@@ -1655,7 +1664,7 @@ public class Base {
             }
         }
         // allowSigns is true iff the val ends in 'E'
-        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
+        // check foundDigit to make sure weird stuff like '.' and '1E-' doesn't pass
         if(!allowSigns && foundDigit){
             try {
                 return Double.parseDouble(str.toString().substring(begin, i));
@@ -1707,14 +1716,23 @@ public class Base {
         char first = str[begin];
         final int start = first == '-' || first == '+' ? begin + 1 : begin;
 
-        if(end - start >= 3 && str[start] == 'N' && str[start+1] == 'a' && str[start+2] == 'N')
+        // we only check the first character because it's all we need to confirm a String is "NaN" or a truncation.
+        // truncations can happen when decimal(float, int) specifies a low length limit.
+        if(
+                end - start >= 1 && str[start] == 'N'
+//                 && str[start+1] == 'a' && str[start+2] == 'N'
+        )
             return Double.NaN;
-        if(end - start >= 8 && str[start] == 'I' && str[start+1] == 'n' && str[start+2] == 'f'
-                && str[start+3] == 'i' && str[start+4] == 'n' && str[start+5] == 'i'
-                && str[start+6] == 't' && str[start+7] == 'y')
+        // we only check the first character because it's all we need to confirm a String is "Infinity" or a truncation.
+        if(
+                end - start >= 1 && str[start] == 'I'
+//                        && str[start+1] == 'n' && str[start+2] == 'f'
+//                        && str[start+3] == 'i' && str[start+4] == 'n' && str[start+5] == 'i'
+//                        && str[start+6] == 't' && str[start+7] == 'y'
+        )
             return first == '-' ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
 
-        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        end--; // don't want to loop to the last char, check it afterward for type qualifiers
         int i = start;
         // loop to the next to last char or to the last char if we need another digit to
         // make a valid number (e.g. chars[0..5] = "1234E")
@@ -1816,7 +1834,7 @@ public class Base {
             }
         }
         // allowSigns is true iff the val ends in 'E'
-        // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
+        // check foundDigit to make sure weird stuff like '.' and '1E-' doesn't pass
         if(!allowSigns && foundDigit){
             try {
                 return Double.parseDouble(String.valueOf(str, begin, i - begin));
