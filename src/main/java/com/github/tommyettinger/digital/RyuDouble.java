@@ -393,20 +393,70 @@ final class RyuDouble {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Double.isNaN(value)) {
-      return builder.append("NaN");
+      int startLimiting = builder.length();
+      builder.append("NaN");
+      if(lengthLimit != -10000) {
+        if((long)startLimiting + lengthLimit < builder.length()) {
+          builder.setLength(startLimiting + lengthLimit);
+        }
+        else {
+          while (builder.length() < startLimiting + lengthLimit) {
+            builder.append(' ');
+          }
+        }
+      }
+      return builder;
     }
     if (value == Double.POSITIVE_INFINITY || value == Double.NEGATIVE_INFINITY) {
+      int startLimiting = builder.length();
       if (value == Double.NEGATIVE_INFINITY) {
-        builder.append('-');
+        builder.append("-Infinity");
       }
-      return builder.append("Infinity");
+      else {
+        builder.append("Infinity");
+      }
+      if(lengthLimit != -10000) {
+        if((long)startLimiting + lengthLimit < builder.length()) {
+          builder.setLength(startLimiting + lengthLimit);
+        }
+        else {
+          while (builder.length() < startLimiting + lengthLimit) {
+            builder.append(' ');
+          }
+        }
+      }
+      return builder;
     }
     long bits = BitConversion.doubleToLongBits(value);
     if (bits == 0) {
-      return builder.append("0.0");
+      int startLimiting = builder.length();
+      builder.append("0.0");
+      if(lengthLimit != -10000) {
+        if((long)startLimiting + lengthLimit < builder.length()) {
+          builder.setLength(startLimiting + lengthLimit);
+        }
+        else {
+          while (builder.length() < startLimiting + lengthLimit) {
+            builder.append('0');
+          }
+        }
+      }
+      return builder;
     }
     if (bits == 0x8000000000000000L){
-      return builder.append("-0.0");
+      int startLimiting = builder.length();
+      builder.append("-0.0");
+      if(lengthLimit != -10000) {
+        if((long)startLimiting + lengthLimit < builder.length()) {
+          builder.setLength(startLimiting + lengthLimit);
+        }
+        else {
+          while (builder.length() < startLimiting + lengthLimit) {
+            builder.append('0');
+          }
+        }
+      }
+      return builder;
     }
 
     // Otherwise extract the mantissa and exponent bits and run the full algorithm.
@@ -584,7 +634,6 @@ final class RyuDouble {
         builder.setLength(startLimiting + lengthLimit);
       }
     }
-
     return builder;
   }
 
