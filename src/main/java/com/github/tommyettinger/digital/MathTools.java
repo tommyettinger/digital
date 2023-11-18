@@ -1412,19 +1412,18 @@ public final class MathTools {
     /**
      * Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
      * the direction with the smallest delta angle. This version, unlike the versions for radians and degrees, avoids
-     * all modulus operations (instead casting floats to int four times).
+     * all modulus operations (instead using something close to {@link #fastFloor(float)} 3 times).
      *
      * @param fromTurns start angle in turns
      * @param toTurns   target angle in turns
      * @param progress  interpolation value in the range [0, 1]
      * @return the interpolated angle in the range [0, 1)
      */
-    public static float lerpAngleTurns(float fromTurns, float toTurns, float progress) {
+    public static float lerpAngleTurns(float fromTurns, float toTurns, float progress){
         float d = toTurns - fromTurns;
-        d -= (int)d - 1.5f;
-        d = fromTurns + progress * (d - (int)d - 0.5f);
-        d -= (int)d - 1f;
-        return d - (int)d;
+        d -= ((int) (d + 16384.0) - 16385.5f);
+        d = fromTurns + progress * (d - ((int) (d + 16384.0) - 16383.5f));
+        return d - ((int) (d + 16384.0) - 16384);
     }
 
     /**
@@ -1458,19 +1457,18 @@ public final class MathTools {
     /**
      * Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
      * the direction with the smallest delta angle. This version, unlike the versions for radians and degrees, avoids
-     * all modulus operations (instead casting doubles to ints four times).
+     * all modulus operations (instead calling {@link Math#floor(double)} 3 times).
      *
-     * @param fromTurns start angle in turns; should be no more significant than 2147483647.0
-     * @param toTurns   target angle in turns; should be no more significant than 2147483647.0
+     * @param fromTurns start angle in turns
+     * @param toTurns   target angle in turns
      * @param progress  interpolation value in the range [0, 1]
      * @return the interpolated angle in the range [0, 1)
      */
     public static double lerpAngleTurns(double fromTurns, double toTurns, double progress) {
         double d = toTurns - fromTurns;
-        d -= (int)d - 1.5;
-        d = fromTurns + progress * (d - (int)d - 0.5);
-        d -= (int)d - 1.0;
-        return d - (int)d;
+        d -= Math.floor(d) - 1.5f;
+        d = fromTurns + progress * (d - Math.floor(d) - 0.5f));
+        return d - Math.floor(d);
     }
 
     /**
