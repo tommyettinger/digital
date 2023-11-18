@@ -819,7 +819,7 @@ public final class MathTools {
     /**
      * A way of taking a double in the (0.0, 1.0) range and mapping it to a Gaussian or normal distribution, so high
      * inputs correspond to high outputs, and similarly for the low range. This is centered on 0.0 and its standard
-     * deviation seems to be 1.0 (the same as {@link java.util.Random#nextGaussian()}). If this is given an input of 0.0
+     * deviation seems to be 1.0 (the same as {@link Random#nextGaussian()}). If this is given an input of 0.0
      * or less, it returns -38.5, which is slightly less than the result when given {@link Double#MIN_VALUE}. If it is
      * given an input of 1.0 or more, it returns 38.5, which is significantly larger than the result when given the
      * largest double less than 1.0 (this value is further from 1.0 than {@link Double#MIN_VALUE} is from 0.0). If
@@ -1505,6 +1505,24 @@ public final class MathTools {
         return Math.abs(value) <= tolerance;
     }
 
+
+    /**
+     * Given a float {@code x}, this returns the second-closest float to x in the direction of zero.
+     * If x is {@code 0f}, {@code -0f}, {@link Float#MIN_VALUE}, {@code -Float.MIN_VALUE}, or
+     * {@code Float.MIN_VALUE - Float.MIN_VALUE}, this is undefined and will probably produce an incorrect result.
+     * This is very similar to {@code Math.nextAfter(x, 0.0)}, but is defined on more platforms, and skips the closest
+     * number in the direction of zero. This produces numerically larger changes to x when x is more significant.
+     * 
+     * @param x any finite float
+     * @return a float closer to 0 than x
+     */
+    public static float towardsZero(float x) {
+        int bits = BitConversion.floatToIntBits(x), sign = bits & 0x80000000;
+        bits ^= sign;
+        if(bits >>> 1 == 0) return 0;
+        return BitConversion.intBitsToFloat(bits - 2 | sign);
+    }
+
     /**
      * Takes any float and produces a float in the -1f to 1f range, with similar inputs producing
      * close to a consistent rate of up and down through the range. This is meant for noise, where it may be useful to
@@ -1683,6 +1701,20 @@ public final class MathTools {
         value -= floor;
         floor &= 1;
         return value * value * value * (value * (value * 6.0 - 15.0) + 10.0) * (-floor | 1) + floor;
+    }
+
+    /**
+     * Emphasizes or de-emphasizes extreme values using Schlick's gain function when {@code x} is between 0 and 1
+     * (inclusive), or effectively {@code -gain(-x)} when x is between -1 and 0. The bias parameter is handled a little
+     * differently from how Schlick implemented it; here, {@code bias=1} produces a straight line (no bias), bias
+     * between 0 and 1 is shaped like the {@link MathTools#cbrt(float)} function, and
+     * bias greater than 1 is shaped like {@link MathTools#cube(float)}.
+     * @param x between -1 and 1, inclusive
+     * @param bias any float greater than 0 (exclusive)
+     * @return an altered float between -1 and 1, inclusive
+     */
+    public static float signedGain(float x, float bias) {
+        return x / (((bias - 1f) * (1f - Math.abs(x))) + 1f);
     }
 
     /**
