@@ -1505,22 +1505,35 @@ public final class MathTools {
         return Math.abs(value) <= tolerance;
     }
 
-
     /**
-     * Given a float {@code x}, this returns the second-closest float to x in the direction of zero.
-     * If x is {@code 0f}, {@code -0f}, {@link Float#MIN_VALUE}, {@code -Float.MIN_VALUE}, or
-     * {@code Float.MIN_VALUE - Float.MIN_VALUE}, this is undefined and will probably produce an incorrect result.
-     * This is very similar to {@code Math.nextAfter(x, 0.0)}, but is defined on more platforms, and skips the closest
-     * number in the direction of zero. This produces numerically larger changes to x when x is more significant.
-     * 
+     * Given a float {@code x}, this returns the closest float to x in the direction of zero.
+     * All negative inputs will produce a negative output, including {@code -0.0f}, which returns itself.
+     * This is very similar to {@code Math.nextAfter(x, 0.0)}, but is defined on more platforms. This produces
+     * numerically larger changes to x when x is more significant.
+     *
      * @param x any finite float
      * @return a float closer to 0 than x
      */
-    public static float towardsZero(float x) {
-        int bits = BitConversion.floatToIntBits(x), sign = bits & 0x80000000;
-        bits ^= sign;
-        if(bits >>> 1 == 0) return 0;
-        return BitConversion.intBitsToFloat(bits - 2 | sign);
+    public static float towardsZero(final float x) {
+        final int bits = BitConversion.floatToIntBits(x), sign = bits & 0x80000000;
+        return BitConversion.intBitsToFloat(Math.max((bits ^ sign) - 1, 0) | sign);
+    }
+
+    /**
+     * Given a float {@code x}, this returns the float to that is {@code steps} possible floats away from x,
+     * in the direction of zero. All negative inputs will produce a negative output, including {@code -0.0f},
+     * which returns itself. This is very similar to {@code Math.nextAfter(x, 0.0)}, but is defined on more
+     * platforms and can take many steps instead of just one at a time. This produces numerically larger
+     * changes to x when x is more significant. Negative values for {@code steps} are undefined here, as are
+     * very large values (there should never be a million steps!).
+     *
+     * @param x any finite float
+     * @param steps how many steps to get closer to 0
+     * @return a float closer to 0 than x (or 0) with the same sign as x
+     */
+    public static float towardsZero(final float x, final int steps) {
+        final int bits = BitConversion.floatToIntBits(x), sign = bits & 0x80000000;
+        return BitConversion.intBitsToFloat(Math.max((bits ^ sign) - steps, 0) | sign);
     }
 
     /**
