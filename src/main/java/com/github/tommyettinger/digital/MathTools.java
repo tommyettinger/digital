@@ -1412,7 +1412,7 @@ public final class MathTools {
     /**
      * Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
      * the direction with the smallest delta angle. This version, unlike the versions for radians and degrees, avoids
-     * all modulus operations (instead using something close to {@link #fastFloor(float)} 3 times).
+     * all modulus operations (instead using something close to {@link #fastFloor(float)} twice).
      *
      * @param fromTurns start angle in turns
      * @param toTurns   target angle in turns
@@ -1420,11 +1420,27 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, 1)
      */
     public static float lerpAngleTurns(float fromTurns, float toTurns, float progress){
-        float d = toTurns - fromTurns;
-        d -= ((int) (d + 16384.0) - 16385.5f);
-        d = fromTurns + progress * (d - ((int) (d + 16384.0) - 16383.5f));
-        return d - ((int) (d + 16384.0) - 16384);
+       float d = toTurns - fromTurns;
+       d = fromTurns + progress * (d - ((int) (d + 16384.5) - 16384));
+       return d - ((int) (d + 16384.0) - 16384);
     }
+
+    //// Slightly older, but closer to the other implementations; may be more correct?
+//    public static float lerpAngleTurns(float fromTurns, float toTurns, float progress){
+//        float d = toTurns - fromTurns;
+//        d -= ((int) (d + 16384.0) - 16385.5f);
+//        d = fromTurns + progress * (d - ((int) (d + 16384.0) - 16383.5f));
+//        return d - ((int) (d + 16384.0) - 16384);
+//    }
+
+
+//    {
+//        float d = toTurns - fromTurns;
+//        d -= (int)d - 1.5f;
+//        d = fromTurns + progress * (d - (int)d - 0.5f);
+//        d -= (int)d - 1f;
+//        return d - (int)d;
+//    }
 
     /**
      * Linearly interpolates between two angles in radians. Takes into account that angles wrap at {@code PI2} and
@@ -1457,7 +1473,7 @@ public final class MathTools {
     /**
      * Linearly interpolates between two angles in turns. Takes into account that angles wrap at 1.0 and always takes
      * the direction with the smallest delta angle. This version, unlike the versions for radians and degrees, avoids
-     * all modulus operations (instead calling {@link Math#floor(double)} 3 times).
+     * all modulus operations (instead calling {@link Math#floor(double)} twice).
      *
      * @param fromTurns start angle in turns
      * @param toTurns   target angle in turns
@@ -1466,10 +1482,17 @@ public final class MathTools {
      */
     public static double lerpAngleTurns(double fromTurns, double toTurns, double progress) {
         double d = toTurns - fromTurns;
-        d -= Math.floor(d) - 1.5f;
-        d = fromTurns + progress * (d - Math.floor(d) - 0.5f));
+        d = fromTurns + progress * (d - Math.floor(d) - 0.5);
         return d - Math.floor(d);
     }
+
+    //// older, probably slower, may be more correct if an issue shows up.
+// public static double lerpAngleTurns(double fromTurns, double toTurns, double progress) {
+//        double d = toTurns - fromTurns;
+//        d -= Math.floor(d) - 1.5;
+//        d = fromTurns + progress * (d - Math.floor(d) - 0.5);
+//        return d - Math.floor(d);
+// }
 
     /**
      * Returns true if the value is zero (using the default tolerance, {@link #FLOAT_ROUNDING_ERROR}, as outer bound).
