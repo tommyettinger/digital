@@ -19,10 +19,34 @@ public class LerpAngleTest {
     }
     @Test
     public void testTurnsDouble() {
-        for (float a = 0.05f; a <= 1f; a += 0.1f) {
+        for (float a = 0.05f; a <= 1f; a += 0.123f) {
             for (float l : left) {
                 for (float r : right) {
                     Assert.assertEquals("l: " + l + ", r: " + r + ", a: " + a, MathUtils.lerpAngleDeg(l * 360, r * 360, a), MathTools.lerpAngleTurns(l, r, (double)a) * 360, 0.01);
+                }
+            }
+        }
+    }
+    @Test
+    public void testDegreesFloat() {
+        for (float a = 0.05f; a <= 1f; a += 0.123f) {
+            for (float lb : left) {
+                float l = lb * 360;
+                for (float rb : right) {
+                    float r = rb * 360;
+                    Assert.assertEquals("l: " + l + ", r: " + r + ", a: " + a, MathUtils.lerpAngleDeg(l, r, a), MathTools.lerpAngleDeg(l, r, a), 0.01f);
+                }
+            }
+        }
+    }
+    @Test
+    public void testDegreesDouble() {
+        for (float a = 0.05f; a <= 1f; a += 0.123f) {
+            for (float lb : left) {
+                float l = lb * 360;
+                for (float rb : right) {
+                    float r = rb * 360;
+                    Assert.assertEquals("l: " + l + ", r: " + r + ", a: " + a, MathUtils.lerpAngleDeg(l, r, a), MathTools.lerpAngleDeg(l, r, (double)a), 0.01);
                 }
             }
         }

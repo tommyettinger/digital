@@ -1482,7 +1482,7 @@ public final class MathTools {
      */
     public static double lerpAngleTurns(double fromTurns, double toTurns, double progress) {
         double d = toTurns - fromTurns;
-        d = fromTurns + progress * (d - Math.floor(d) - 0.5);
+        d = fromTurns + progress * (d - Math.floor(d+0.5f));
         return d - Math.floor(d);
     }
 
