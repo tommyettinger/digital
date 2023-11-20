@@ -39,6 +39,7 @@ public class LerpAngleTest {
             }
         }
     }
+
     @Test
     public void testDegreesDouble() {
         for (float a = 0.05f; a <= 1f; a += 0.123f) {
@@ -47,6 +48,32 @@ public class LerpAngleTest {
                 for (float rb : right) {
                     float r = rb * 360;
                     Assert.assertEquals("l: " + l + ", r: " + r + ", a: " + a, MathUtils.lerpAngleDeg(l, r, a), MathTools.lerpAngleDeg(l, r, (double)a), 0.01);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testRadiansFloat() {
+        for (float a = 0.05f; a <= 1f; a += 0.123f) {
+            for (float lb : left) {
+                float l = lb * TrigTools.PI2;
+                for (float rb : right) {
+                    float r = rb * TrigTools.PI2;
+                    Assert.assertEquals("l: " + l + ", r: " + r + ", a: " + a, MathUtils.lerpAngle(l, r, a), MathTools.lerpAngle(l, r, a), 0.01f);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testRadiansDouble() {
+        for (float a = 0.05f; a <= 1f; a += 0.123f) {
+            for (float lb : left) {
+                float l = lb * TrigTools.PI2;
+                for (float rb : right) {
+                    float r = rb * TrigTools.PI2;
+                    Assert.assertEquals("l: " + l + ", r: " + r + ", a: " + a, MathUtils.lerpAngle(l, r, a), MathTools.lerpAngle(l, r, (double) a), 0.01);
                 }
             }
         }
