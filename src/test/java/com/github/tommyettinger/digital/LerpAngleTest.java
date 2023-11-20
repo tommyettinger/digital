@@ -17,4 +17,14 @@ public class LerpAngleTest {
             }
         }
     }
+    @Test
+    public void testTurnsDouble() {
+        for (float a = 0.05f; a <= 1f; a += 0.1f) {
+            for (float l : left) {
+                for (float r : right) {
+                    Assert.assertEquals("l: " + l + ", r: " + r + ", a: " + a, MathUtils.lerpAngleDeg(l * 360, r * 360, a), MathTools.lerpAngleTurns(l, r, (double)a) * 360, 0.01);
+                }
+            }
+        }
+    }
 }
