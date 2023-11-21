@@ -1125,6 +1125,51 @@ public final class MathTools {
     }
 
     /**
+     * Like {@link Math#floor(double)}, but takes a float and returns an int.
+     * Doesn't consider "weird floats" like INFINITY and NaN. This method will only properly floor
+     * floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or {@code 2147467263}.
+     * Unlike {@link #floor(double)}, {@link #longFloor(float)}, and {@link #longFloor(double)},
+     * this is significantly faster than {@code (int)Math.floor(t)}.
+     * <br>
+     * Taken from libGDX MathUtils.
+     *
+     * @param t a float from -16384 to 2147467263 (both inclusive)
+     * @return the floor of t, as an int
+     */
+    public static int fastFloor(final float t) {
+        return (int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
+    }
+
+    /**
+     * Like {@link Math#ceil(double)}, but takes a float and returns an int.
+     * Doesn't consider "weird floats" like INFINITY and NaN. This method will only properly ceil
+     * floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or {@code 2147467263}.
+     * Unlike {@link #ceil(float)}, this is significantly faster than {@code (int)Math.ceil(t)}.
+     * <br>
+     * Taken from libGDX MathUtils.
+     *
+     * @param t the float to find the ceiling for
+     * @return the ceiling of t, as an int
+     */
+    public static int fastCeil(final float t) {
+        return BIG_ENOUGH_INT - (int) (BIG_ENOUGH_FLOOR - t);
+    }
+
+    /**
+     * Like the fract() function available in GLSL shaders, this gets the fractional part of the float
+     * input {@code t} by returning a result equivalent to {@code t - MathTools.fastFloor(t)} . For
+     * negative inputs, this doesn't behave differently than for positive; both will always return a
+     * float that is <code>0 &lt;= t &lt; 1</code> . Like {@link #fastFloor(float)}, this method will
+     * only work for finite floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or
+     * {@code 2147467263}.
+     * @param t a float from -16384 to 2147467263 (both inclusive)
+     * @return the fractional part of t, as a float <code>0 &lt;= result &lt; 1</code>
+     */
+    public static float fastFract(final float t) {
+        return t - ((int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT);
+    }
+
+    /**
      * Like {@link Math#floor}, but returns a long.
      * Doesn't consider "weird doubles" like INFINITY and NaN.
      * This is only faster than {@code (long)Math.floor(t)} on Java 8 for supported desktop platforms.
@@ -1164,22 +1209,6 @@ public final class MathTools {
     }
 
     /**
-     * Like {@link Math#floor(double)}, but takes a float and returns an int.
-     * Doesn't consider "weird floats" like INFINITY and NaN. This method will only properly floor
-     * floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or {@code 2147467263}.
-     * Unlike {@link #floor(double)}, {@link #longFloor(float)}, and {@link #longFloor(double)},
-     * this is significantly faster than {@code (int)Math.floor(t)}.
-     * <br>
-     * Taken from libGDX MathUtils.
-     *
-     * @param t a float from -16384 to 2147467263 (both inclusive)
-     * @return the floor of t, as an int
-     */
-    public static int fastFloor(final float t) {
-        return (int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
-    }
-
-    /**
      * Like {@link Math#ceil(double)}, but returns an int.
      * Doesn't consider "weird doubles" like INFINITY and NaN.
      * This is only faster than {@code (int)Math.ceil(t)} on Java 8 for supported desktop platforms.
@@ -1190,21 +1219,6 @@ public final class MathTools {
     public static int ceil(final double t) {
         final int z = (int) t;
         return t > z ? z + 1 : z;
-    }
-
-    /**
-     * Like {@link Math#ceil(double)}, but takes a float and returns an int.
-     * Doesn't consider "weird floats" like INFINITY and NaN. This method will only properly ceil
-     * floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or {@code 2147467263}.
-     * Unlike {@link #ceil(float)}, this is significantly faster than {@code (int)Math.ceil(t)}.
-     * <br>
-     * Taken from libGDX MathUtils.
-     *
-     * @param t the float to find the ceiling for
-     * @return the ceiling of t, as an int
-     */
-    public static int fastCeil(final float t) {
-        return BIG_ENOUGH_INT - (int) (BIG_ENOUGH_FLOOR - t);
     }
 
     /**
@@ -1277,6 +1291,31 @@ public final class MathTools {
      */
     public static int roundPositive(float value) {
         return (int) (value + 0.5f);
+    }
+
+    /**
+     * Like the fract() function available in GLSL shaders, this gets the fractional part of the float
+     * input {@code t} by returning a result equivalent to {@code t - Math.floor(t)} . For
+     * negative inputs, this doesn't behave differently than for positive; both will always return a
+     * float that is <code>0 &lt;= t &lt; 1</code> .
+     * @see #fastFract(float) 
+     * @param t a finite float that should be between about {@code -Math.pow(2, 23)} and {@code Math.pow(2, 23)}
+     * @return the fractional part of t, as a float <code>0 &lt;= result &lt; 1</code>
+     */
+    public static float fract(final float t) {
+        return (float) (t - Math.floor(t));
+    }
+
+    /**
+     * Like the fract() function available in GLSL shaders, this gets the fractional part of the double
+     * input {@code t} by returning a result equivalent to {@code t - Math.floor(t)} . For
+     * negative inputs, this doesn't behave differently than for positive; both will always return a
+     * double that is <code>0 &lt;= t &lt; 1</code> .
+     * @param t a finite double that should be between about {@code -Math.pow(2, 52)} and {@code Math.pow(2, 52)}
+     * @return the fractional part of t, as a double <code>0 &lt;= result &lt; 1</code>
+     */
+    public static double fract(final double t) {
+        return t - Math.floor(t);
     }
 
     /**
