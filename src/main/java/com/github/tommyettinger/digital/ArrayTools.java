@@ -1392,11 +1392,12 @@ public final class ArrayTools {
      * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
-    public static void fill(boolean[][] array2d, boolean value) {
+    public static boolean[][] fill(boolean[][] array2d, boolean value) {
         final int width = array2d.length;
         for (int i = 0; i < width; i++) {
             Arrays.fill(array2d[i], value);
         }
+        return array2d;
     }
 
     /**
@@ -1406,11 +1407,12 @@ public final class ArrayTools {
      * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
-    public static void fill(char[][] array2d, char value) {
+    public static char[][] fill(char[][] array2d, char value) {
         final int width = array2d.length;
         for (int i = 0; i < width; i++) {
             Arrays.fill(array2d[i], value);
         }
+        return array2d;
     }
 
     /**
@@ -1420,11 +1422,12 @@ public final class ArrayTools {
      * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
-    public static void fill(float[][] array2d, float value) {
+    public static float[][] fill(float[][] array2d, float value) {
         final int width = array2d.length;
         for (int i = 0; i < width; i++) {
             Arrays.fill(array2d[i], value);
         }
+        return array2d;
     }
 
 
@@ -1435,11 +1438,12 @@ public final class ArrayTools {
      * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
-    public static void fill(double[][] array2d, double value) {
+    public static double[][] fill(double[][] array2d, double value) {
         final int width = array2d.length;
         for (int i = 0; i < width; i++) {
             Arrays.fill(array2d[i], value);
         }
+        return array2d;
     }
 
     /**
@@ -1449,11 +1453,12 @@ public final class ArrayTools {
      * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
-    public static void fill(int[][] array2d, int value) {
+    public static int[][] fill(int[][] array2d, int value) {
         final int width = array2d.length;
         for (int i = 0; i < width; i++) {
             Arrays.fill(array2d[i], value);
         }
+        return array2d;
     }
 
     /**
@@ -1463,11 +1468,12 @@ public final class ArrayTools {
      * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
-    public static void fill(long[][] array2d, long value) {
+    public static long[][] fill(long[][] array2d, long value) {
         final int width = array2d.length;
         for (int i = 0; i < width; i++) {
             Arrays.fill(array2d[i], value);
         }
+        return array2d;
     }
 
     /**
@@ -1477,12 +1483,14 @@ public final class ArrayTools {
      * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
-    public static void fill(byte[][] array2d, byte value) {
+    public static byte[][] fill(byte[][] array2d, byte value) {
         final int width = array2d.length;
         for (int i = 0; i < width; i++) {
             Arrays.fill(array2d[i], value);
         }
+        return array2d;
     }
+
     /**
      * Fills {@code array2d} with identical references to {@code value} (not copies).
      * Note that there is no fill() method that creates a new 2D array of a generic type.
@@ -1490,11 +1498,12 @@ public final class ArrayTools {
      * @param array2d a 2D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array2D with
      */
-    public static <T> void fill(T[][] array2d, T value) {
+    public static <T> T[][] fill(T[][] array2d, T value) {
         final int width = array2d.length;
         for (int i = 0; i < width; i++) {
             Arrays.fill(array2d[i], value);
         }
+        return array2d;
     }
 
     /**
@@ -1508,7 +1517,7 @@ public final class ArrayTools {
      * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array3d with
      */
-    public static void fill3D(boolean[][][] array3d, boolean value) {
+    public static boolean[][][] fill(boolean[][][] array3d, boolean value) {
         final int depth = array3d.length;
         final int width = depth == 0 ? 0 : array3d[0].length;
         final int height = width == 0 ? 0 : array3d[0][0].length;
@@ -1519,6 +1528,7 @@ public final class ArrayTools {
                 }
             }
         }
+        return array3d;
     }
     
     /**
@@ -1532,7 +1542,7 @@ public final class ArrayTools {
      * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array3d with
      */
-    public static void fill3D(char[][][] array3d, char value) {
+    public static char[][][] fill(char[][][] array3d, char value) {
         final int depth = array3d.length;
         final int width = depth == 0 ? 0 : array3d[0].length;
         final int height = width == 0 ? 0 : array3d[0][0].length;
@@ -1543,6 +1553,7 @@ public final class ArrayTools {
                 }
             }
         }
+        return array3d;
     }
     
     /**
@@ -1556,7 +1567,7 @@ public final class ArrayTools {
      * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array3d with
      */
-    public static void fill3D(float[][][] array3d, float value) {
+    public static float[][][] fill(float[][][] array3d, float value) {
         final int depth = array3d.length;
         final int width = depth == 0 ? 0 : array3d[0].length;
         final int height = width == 0 ? 0 : array3d[0][0].length;
@@ -1567,6 +1578,7 @@ public final class ArrayTools {
                 }
             }
         }
+        return array3d;
     }
 
     /**
@@ -1580,7 +1592,7 @@ public final class ArrayTools {
      * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array3d with
      */
-    public static void fill3D(double[][][] array3d, double value) {
+    public static double[][][] fill(double[][][] array3d, double value) {
         final int depth = array3d.length;
         final int width = depth == 0 ? 0 : array3d[0].length;
         final int height = width == 0 ? 0 : array3d[0][0].length;
@@ -1591,6 +1603,7 @@ public final class ArrayTools {
                 }
             }
         }
+        return array3d;
     }
 
     /**
@@ -1604,7 +1617,7 @@ public final class ArrayTools {
      * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array3d with
      */
-    public static void fill3D(int[][][] array3d, int value) {
+    public static int[][][] fill(int[][][] array3d, int value) {
         final int depth = array3d.length;
         final int width = depth == 0 ? 0 : array3d[0].length;
         final int height = width == 0 ? 0 : array3d[0][0].length;
@@ -1615,6 +1628,7 @@ public final class ArrayTools {
                 }
             }
         }
+        return array3d;
     }
 
     /**
@@ -1628,7 +1642,7 @@ public final class ArrayTools {
      * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array3d with
      */
-    public static void fill3D(long[][][] array3d, long value) {
+    public static long[][][] fill(long[][][] array3d, long value) {
         final int depth = array3d.length;
         final int width = depth == 0 ? 0 : array3d[0].length;
         final int height = width == 0 ? 0 : array3d[0][0].length;
@@ -1639,6 +1653,7 @@ public final class ArrayTools {
                 }
             }
         }
+        return array3d;
     }
 
     /**
@@ -1652,7 +1667,7 @@ public final class ArrayTools {
      * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array3d with
      */
-    public static void fill3D(byte[][][] array3d, byte value) {
+    public static byte[][][] fill(byte[][][] array3d, byte value) {
         final int depth = array3d.length;
         final int width = depth == 0 ? 0 : array3d[0].length;
         final int height = width == 0 ? 0 : array3d[0][0].length;
@@ -1663,6 +1678,7 @@ public final class ArrayTools {
                 }
             }
         }
+        return array3d;
     }
 
     /**
@@ -1675,7 +1691,7 @@ public final class ArrayTools {
      * @param array3d a 3D array that will be modified in-place; no sub-arrays can be null
      * @param value   the value to fill all of array3d with
      */
-    public static <T> void fill3D(T[][][] array3d, T value) {
+    public static <T> T[][][] fill(T[][][] array3d, T value) {
         final int depth = array3d.length;
         final int width = depth == 0 ? 0 : array3d[0].length;
         final int height = width == 0 ? 0 : array3d[0][0].length;
@@ -1686,6 +1702,7 @@ public final class ArrayTools {
                 }
             }
         }
+        return array3d;
     }
 
     /**
@@ -1699,7 +1716,7 @@ public final class ArrayTools {
      * @param endX    the last x position to fill (inclusive)
      * @param endY    the last y position to fill (inclusive)
      */
-    public static void fill(boolean[][] array2d, boolean value, int startX, int startY, int endX, int endY) {
+    public static boolean[][] fill(boolean[][] array2d, boolean value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
         final int height = width == 0 ? 0 : array2d[0].length;
         for (int x = startX; x <= endX && x < width; x++) {
@@ -1707,6 +1724,7 @@ public final class ArrayTools {
                 array2d[x][y] = value;
             }
         }
+        return array2d;
     }
 
     /**
@@ -1720,7 +1738,7 @@ public final class ArrayTools {
      * @param endX    the last x position to fill (inclusive)
      * @param endY    the last y position to fill (inclusive)
      */
-    public static void fill(char[][] array2d, char value, int startX, int startY, int endX, int endY) {
+    public static char[][] fill(char[][] array2d, char value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
         final int height = width == 0 ? 0 : array2d[0].length;
         for (int x = startX; x <= endX && x < width; x++) {
@@ -1728,6 +1746,7 @@ public final class ArrayTools {
                 array2d[x][y] = value;
             }
         }
+        return array2d;
     }
 
     /**
@@ -1741,7 +1760,7 @@ public final class ArrayTools {
      * @param endX    the last x position to fill (inclusive)
      * @param endY    the last y position to fill (inclusive)
      */
-    public static void fill(float[][] array2d, float value, int startX, int startY, int endX, int endY) {
+    public static float[][] fill(float[][] array2d, float value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
         final int height = width == 0 ? 0 : array2d[0].length;
         for (int x = startX; x <= endX && x < width; x++) {
@@ -1749,6 +1768,7 @@ public final class ArrayTools {
                 array2d[x][y] = value;
             }
         }
+        return array2d;
     }
 
     /**
@@ -1762,7 +1782,7 @@ public final class ArrayTools {
      * @param endX    the last x position to fill (inclusive)
      * @param endY    the last y position to fill (inclusive)
      */
-    public static void fill(double[][] array2d, double value, int startX, int startY, int endX, int endY) {
+    public static double[][] fill(double[][] array2d, double value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
         final int height = width == 0 ? 0 : array2d[0].length;
         for (int x = startX; x <= endX && x < width; x++) {
@@ -1770,6 +1790,7 @@ public final class ArrayTools {
                 array2d[x][y] = value;
             }
         }
+        return array2d;
     }
 
     /**
@@ -1783,7 +1804,7 @@ public final class ArrayTools {
      * @param endX    the last x position to fill (inclusive)
      * @param endY    the last y position to fill (inclusive)
      */
-    public static void fill(int[][] array2d, int value, int startX, int startY, int endX, int endY) {
+    public static int[][] fill(int[][] array2d, int value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
         final int height = width == 0 ? 0 : array2d[0].length;
         for (int x = startX; x <= endX && x < width; x++) {
@@ -1791,6 +1812,7 @@ public final class ArrayTools {
                 array2d[x][y] = value;
             }
         }
+        return array2d;
     }
 
     /**
@@ -1804,7 +1826,7 @@ public final class ArrayTools {
      * @param endX    the last x position to fill (inclusive)
      * @param endY    the last y position to fill (inclusive)
      */
-    public static void fill(long[][] array2d, long value, int startX, int startY, int endX, int endY) {
+    public static long[][] fill(long[][] array2d, long value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
         final int height = width == 0 ? 0 : array2d[0].length;
         for (int x = startX; x <= endX && x < width; x++) {
@@ -1812,6 +1834,7 @@ public final class ArrayTools {
                 array2d[x][y] = value;
             }
         }
+        return array2d;
     }
 
     /**
@@ -1825,7 +1848,7 @@ public final class ArrayTools {
      * @param endX    the last x position to fill (inclusive)
      * @param endY    the last y position to fill (inclusive)
      */
-    public static <T> void fill(T[][] array2d, T value, int startX, int startY, int endX, int endY) {
+    public static <T> T[][] fill(T[][] array2d, T value, int startX, int startY, int endX, int endY) {
         final int width = array2d.length;
         final int height = width == 0 ? 0 : array2d[0].length;
         for (int x = startX; x <= endX && x < width; x++) {
@@ -1833,6 +1856,7 @@ public final class ArrayTools {
                 array2d[x][y] = value;
             }
         }
+        return array2d;
     }
 
     /**

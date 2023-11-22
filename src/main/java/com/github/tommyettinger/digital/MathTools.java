@@ -1298,7 +1298,7 @@ public final class MathTools {
      * input {@code t} by returning a result equivalent to {@code t - Math.floor(t)} . For
      * negative inputs, this doesn't behave differently than for positive; both will always return a
      * float that is <code>0 &lt;= t &lt; 1</code> .
-     * @see #fastFract(float) 
+     * @see #fastFract(float)
      * @param t a finite float that should be between about {@code -Math.pow(2, 23)} and {@code Math.pow(2, 23)}
      * @return the fractional part of t, as a float <code>0 &lt;= result &lt; 1</code>
      */
