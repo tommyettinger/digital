@@ -1597,6 +1597,37 @@ public final class MathTools {
     }
 
     /**
+     * Given a double {@code x}, this returns the closest double to x in the direction of zero.
+     * All negative {@code x} will produce a negative output, including {@code -0.0}, which returns itself.
+     * This is very similar to {@code Math.nextAfter(x, 0.0)}, but is defined on more platforms. This produces
+     * numerically larger changes to x when x is more significant.
+     *
+     * @param x any finite double
+     * @return a double closer to 0 than x
+     */
+    public static double towardsZero(final double x) {
+        final long bits = BitConversion.doubleToLongBits(x), sign = bits & 0x8000000000000000L;
+        return BitConversion.longBitsToDouble(Math.max((bits ^ sign) - 1, 0) | sign);
+    }
+
+    /**
+     * Given a double {@code x}, this returns the double to that is {@code steps} possible floats away from x,
+     * in the direction of zero. All negative {@code x} will produce a negative output, including {@code -0.0},
+     * which returns itself. This is very similar to {@code Math.nextAfter(x, 0.0)}, but is defined on more
+     * platforms and can take many steps instead of just one at a time. This produces numerically larger
+     * changes to x when x is more significant. Negative values for {@code steps} are undefined here, as are
+     * very large values (the steps amount should never have 16 digits!).
+     *
+     * @param x any finite double
+     * @param steps how many steps to get closer to 0
+     * @return a double closer to 0 than x (or 0) with the same sign as x
+     */
+    public static double towardsZero(final double x, final long steps) {
+        final long bits = BitConversion.doubleToLongBits(x), sign = bits & 0x8000000000000000L;
+        return BitConversion.longBitsToDouble(Math.max((bits ^ sign) - steps, 0) | sign);
+    }
+
+    /**
      * Takes an x and a y value, each an int treated as unsigned, and returns a long that interleaves their bits so the
      * least significant bit and every other bit after it are filled with the bits of x, while the
      * second-least-significant bit and every other bit after that are filled with the bits of y. Essentially, this
