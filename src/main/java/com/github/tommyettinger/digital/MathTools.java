@@ -1609,7 +1609,7 @@ public final class MathTools {
      * @param y an int that will be treated as unsigned
      * @return a long that interleaves x and y, with x in the least significant bit position
      */
-    public static long interleaveBits(int x, int y)
+    public static long interleaveBits(final int x, final int y)
     {
         long n = (x & 0xFFFFFFFFL) | (long)y << 32;
         n =    ((n & 0x00000000ffff0000L) <<16) | ((n >>>16) & 0x00000000ffff0000L) | (n & 0xffff00000000ffffL);
@@ -1617,6 +1617,26 @@ public final class MathTools {
         n =    ((n & 0x00f000f000f000f0L) << 4) | ((n >>> 4) & 0x00f000f000f000f0L) | (n & 0xf00ff00ff00ff00fL);
         n =    ((n & 0x0c0c0c0c0c0c0c0cL) << 2) | ((n >>> 2) & 0x0c0c0c0c0c0c0c0cL) | (n & 0xc3c3c3c3c3c3c3c3L);
         return ((n & 0x2222222222222222L) << 1) | ((n >>> 1) & 0x2222222222222222L) | (n & 0x9999999999999999L);
+    }
+
+
+    /**
+     * Takes an int that represents a distance down the Z-order curve and moves its bits around so that
+     * its x component is stored in the bottom 16 bits (use {@code (n & 0xffff)} to obtain) and its y component is
+     * stored in the upper 16 bits (use {@code (n >>> 16)} to obtain). Numbers made by interleaving other numbers, like
+     * {@code n}, are sometimes called Morton codes, and the sequence of Morton codes forms a pattern called the
+     * Z-order curve. You can get a Morton code from an x, y position using {@link #interleaveBits(int, int)}, and to
+     * use it here you can just cast it to an int.
+     * @see #interleaveBits(int, int)
+     * @param n an int that has already been interleaved, though this can really be any int
+     * @return an int with x in its lower bits ({@code x = n & 0xffff;}) and y in its upper bits ({@code y = n >>> 16;})
+     */
+    public static int disperseBits(int n)
+    {
+        n =    ((n & 0x22222222) << 1) | ((n >>> 1) & 0x22222222) | (n & 0x99999999);
+        n =    ((n & 0x0c0c0c0c) << 2) | ((n >>> 2) & 0x0c0c0c0c) | (n & 0xc3c3c3c3);
+        n =    ((n & 0x00f000f0) << 4) | ((n >>> 4) & 0x00f000f0) | (n & 0xf00ff00f);
+        return ((n & 0x0000ff00) << 8) | ((n >>> 8) & 0x0000ff00) | (n & 0xff0000ff);
     }
 
     /**
