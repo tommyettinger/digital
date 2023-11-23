@@ -1597,6 +1597,48 @@ public final class MathTools {
     }
 
     /**
+     * Takes an x and a y value, each an int treated as unsigned, and returns a long that interleaves their bits so the
+     * least significant bit and every other bit after it are filled with the bits of x, while the
+     * second-least-significant bit and every other bit after that are filled with the bits of y. Essentially, this
+     * takes two numbers with bits labeled like {@code a b c} for x and {@code R S T} for y and makes a number with
+     * those bits arranged like {@code R a S b T c}. Numbers made by interleaving other numbers like this are sometimes
+     * called Morton codes, and the sequence of Morton codes forms a pattern called the Z-order curve. You can retrieve
+     * x and y from a Morton code (like what this returns) using {@link #disperseBits(long)}.
+     * @see #disperseBits(long)
+     * @param x an int that will be treated as unsigned
+     * @param y an int that will be treated as unsigned
+     * @return a long that interleaves x and y, with x in the least significant bit position
+     */
+    public static long interleaveBits(int x, int y)
+    {
+        long n = (x & 0xFFFFFFFFL) | (long)y << 32;
+        n =    ((n & 0x00000000ffff0000L) <<16) | ((n >>>16) & 0x00000000ffff0000L) | (n & 0xffff00000000ffffL);
+        n =    ((n & 0x0000ff000000ff00L) << 8) | ((n >>> 8) & 0x0000ff000000ff00L) | (n & 0xff0000ffff0000ffL);
+        n =    ((n & 0x00f000f000f000f0L) << 4) | ((n >>> 4) & 0x00f000f000f000f0L) | (n & 0xf00ff00ff00ff00fL);
+        n =    ((n & 0x0c0c0c0c0c0c0c0cL) << 2) | ((n >>> 2) & 0x0c0c0c0c0c0c0c0cL) | (n & 0xc3c3c3c3c3c3c3c3L);
+        return ((n & 0x2222222222222222L) << 1) | ((n >>> 1) & 0x2222222222222222L) | (n & 0x9999999999999999L);
+    }
+
+    /**
+     * Takes a long that represents a distance down the Z-order curve and moves its bits around so that
+     * its x component is stored in the bottom 32 bits (use {@code (n & 0xffffffffL)} to obtain) and its y component is
+     * stored in the upper 32 bits (use {@code (n >>> 32)} to obtain). Numbers made by interleaving other numbers, like
+     * {@code n}, are sometimes called Morton codes, and the sequence of Morton codes forms a pattern called the
+     * Z-order curve. You can get a Morton code from an x, y position using {@link #interleaveBits(int, int)}.
+     * @see #interleaveBits(int, int)
+     * @param n a long that has already been interleaved, though this can really be any long
+     * @return a long with x in its lower bits ({@code x = dispersed & 0xffffffffL;}) and y in its upper bits ({@code y = dispersed >>> 32;})
+     */
+    public static long disperseBits(long n)
+    {
+        n =    ((n & 0x2222222222222222L) << 1) | ((n >>> 1) & 0x2222222222222222L) | (n & 0x9999999999999999L);
+        n =    ((n & 0x0c0c0c0c0c0c0c0cL) << 2) | ((n >>> 2) & 0x0c0c0c0c0c0c0c0cL) | (n & 0xc3c3c3c3c3c3c3c3L);
+        n =    ((n & 0x00f000f000f000f0L) << 4) | ((n >>> 4) & 0x00f000f000f000f0L) | (n & 0xf00ff00ff00ff00fL);
+        n =    ((n & 0x0000ff000000ff00L) << 8) | ((n >>> 8) & 0x0000ff000000ff00L) | (n & 0xff0000ffff0000ffL);
+        return ((n & 0x00000000ffff0000L) <<16) | ((n >>>16) & 0x00000000ffff0000L) | (n & 0xffff00000000ffffL);
+    }
+
+    /**
      * Takes any float and produces a float in the -1f to 1f range, with similar inputs producing
      * close to a consistent rate of up and down through the range. This is meant for noise, where it may be useful to
      * limit the amount of change between nearby points' noise values and prevent sudden "jumps" in noise value. An
