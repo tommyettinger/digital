@@ -1698,7 +1698,7 @@ public final class MathTools {
      * 8.5f or -10.5f) should produce 0f or a very small fraction. This method is closely related to
      * {@link #sway(float)}, which will smoothly curve its output to produce more values that are close to -1 or 1.
      *
-     * @param value any float
+     * @param value any finite float
      * @return a float from -1f (inclusive) to 1f (inclusive)
      */
     public static float zigzag(float value) {
@@ -1706,6 +1706,34 @@ public final class MathTools {
         value -= floor;
         floor = -(floor & 1) | 1;
         return value * (floor << 1) - floor;
+    }
+
+    /**
+     * A standard <a href="https://en.wikipedia.org/wiki/Triangle_wave">triangle wave</a> with a period of 1 and a range
+     * of -1 to 1 (both inclusive). Every integer input given to this will produce -1 as its output. Every input that is
+     * exactly 0.5 plus an integer will produce 1 as its output. In between, the graph is a straight line between those
+     * two points, going up, down, up, down, etc. as the input increases.
+     * @param t the input to the triangle wave; can be any finite float
+     * @return a float between -1f and 1f, both inclusive
+     */
+    public static float triangleWave(float t) {
+        return Math.abs(t -
+                (int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT //inlined round(t)
+        ) * 4f - 1f;
+    }
+
+    /**
+     * A standard <a href="https://en.wikipedia.org/wiki/Triangle_wave">triangle wave</a> with a period of 1 and a range
+     * of -1 to 1 (both inclusive). Every integer input given to this will produce -1 as its output. Every input that is
+     * exactly 0.5 plus an integer will produce 1 as its output. In between, the graph is a straight line between those
+     * two points, going up, down, up, down, etc. as the input increases.
+     * @param t the input to the triangle wave; can be any finite double
+     * @return a double between -1.0 and 1.0, both inclusive
+     */
+    public static double triangleWave(double t) {
+        return Math.abs(t -
+                Math.round(t)
+        ) * 4.0 - 1.0;
     }
 
     /**
