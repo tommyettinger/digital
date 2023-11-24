@@ -1768,6 +1768,34 @@ public final class MathTools {
     }
 
     /**
+     * A standard <a href="https://en.wikipedia.org/wiki/Sawtooth_wave">sawtooth wave</a> with a period of 1 and a range
+     * of -1 to 1 (both inclusive). Every integer input given to this will produce 0 as its output. Every input that is
+     * exactly 0.5 plus an integer will produce -1 as its output. As the input goes from the latter to a higher value,
+     * the output will also increase, until it reaches an output of 1, when it drops instantly down to -1.
+     * @param t the input to the sawtooth wave; can be any float from -16384 to 4194304
+     * @return a float between -1f and 1f, both inclusive
+     */
+    public static float sawtoothWave(float t) {
+        return (t -
+                (int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT //inlined round(t)
+        ) * 2f;
+    }
+
+    /**
+     * A standard <a href="https://en.wikipedia.org/wiki/Sawtooth_wave">sawtooth wave</a> with a period of 1 and a range
+     * of -1 to 1 (both inclusive). Every integer input given to this will produce 0 as its output. Every input that is
+     * exactly 0.5 plus an integer will produce -1 as its output. As the input goes from the latter to a higher value,
+     * the output will also increase, until it reaches an output of 1, when it drops instantly down to -1.
+     * @param t the input to the sawtooth wave; can be any finite double
+     * @return a double between -1.0 and 1.0, both inclusive
+     */
+    public static double sawtoothWave(double t) {
+        return (t -
+                Math.round(t)
+        ) * 2.0;
+    }
+
+    /**
      * Very similar to {@link TrigTools#sinTurns(float)} with half frequency, or {@link Math#sin(double)} with {@link Math#PI}
      * frequency, but optimized (and shaped) a little differently. This looks like a squished sine wave when graphed,
      * and is essentially just interpolating between each pair of odd and even inputs using what FastNoise calls
