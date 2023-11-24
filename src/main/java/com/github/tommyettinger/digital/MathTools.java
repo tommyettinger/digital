@@ -1738,6 +1738,36 @@ public final class MathTools {
     }
 
     /**
+     * A standard <a href="https://en.wikipedia.org/wiki/Square_wave">square wave</a> with a period of 1 and a range
+     * of -1, 0, and 1 (inclusive and discrete). Every integer input given to this will produce -1 as its output. Every
+     * input that is exactly 0.5 plus an integer will produce 1 as its output. Inputs that are numerically closer to the
+     * former (an integer) than the latter will also be -1; inputs that are numerically closer to the latter will be 1.
+     * Inputs that are equally close to both will be 0.
+     * @param t the input to the square wave; can be any float from -16384 to 4194304
+     * @return a float that may be -1f, 0f, or 1f, with no other values possible for inputs in range
+     */
+    public static float squareWave(float t) {
+        return Math.signum(Math.abs(t -
+                (int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT //inlined round(t)
+        ) - 0.25f);
+    }
+
+    /**
+     * A standard <a href="https://en.wikipedia.org/wiki/Square_wave">square wave</a> with a period of 1 and a range
+     * of -1, 0, and 1 (inclusive and discrete). Every integer input given to this will produce -1 as its output. Every
+     * input that is exactly 0.5 plus an integer will produce 1 as its output. Inputs that are numerically closer to the
+     * former (an integer) than the latter will also be -1; inputs that are numerically closer to the latter will be 1.
+     * Inputs that are equally close to both will be 0.
+     * @param t the input to the square wave; can be any finite double
+     * @return a double that may be -1.0, 0.0, or 1.0, with no other values possible for inputs in range
+     */
+    public static double squareWave(double t) {
+        return Math.signum(Math.abs(t -
+                Math.round(t)
+        ) - 0.25);
+    }
+
+    /**
      * Very similar to {@link TrigTools#sinTurns(float)} with half frequency, or {@link Math#sin(double)} with {@link Math#PI}
      * frequency, but optimized (and shaped) a little differently. This looks like a squished sine wave when graphed,
      * and is essentially just interpolating between each pair of odd and even inputs using what FastNoise calls
