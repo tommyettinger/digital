@@ -1126,14 +1126,14 @@ public final class MathTools {
 
     /**
      * Like {@link Math#floor(double)}, but takes a float and returns an int.
-     * Doesn't consider "weird floats" like INFINITY and NaN. This method will only properly floor
-     * floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or {@code 2147467263}.
+     * Only works with finite floats. This method will only properly floor
+     * floats from {@code -16384} to {@code 4194304}.
      * Unlike {@link #floor(double)}, {@link #longFloor(float)}, and {@link #longFloor(double)},
      * this is significantly faster than {@code (int)Math.floor(t)}.
      * <br>
      * Taken from libGDX MathUtils.
      *
-     * @param t a float from -16384 to 2147467263 (both inclusive)
+     * @param t a float from -16384 to 4194304 (both inclusive)
      * @return the floor of t, as an int
      */
     public static int fastFloor(final float t) {
@@ -1142,13 +1142,13 @@ public final class MathTools {
 
     /**
      * Like {@link Math#ceil(double)}, but takes a float and returns an int.
-     * Doesn't consider "weird floats" like INFINITY and NaN. This method will only properly ceil
-     * floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or {@code 2147467263}.
+     * Only works with finite floats. This method will only properly ceil
+     * floats from {@code -16384} to {@code 4194304}.
      * Unlike {@link #ceil(float)}, this is significantly faster than {@code (int)Math.ceil(t)}.
      * <br>
      * Taken from libGDX MathUtils.
      *
-     * @param t the float to find the ceiling for
+     * @param t the float to find the ceiling for, from -16384 to 4194304
      * @return the ceiling of t, as an int
      */
     public static int fastCeil(final float t) {
@@ -1171,7 +1171,7 @@ public final class MathTools {
 
     /**
      * Like {@link Math#floor}, but returns a long.
-     * Doesn't consider "weird doubles" like INFINITY and NaN.
+     * Only works with finite doubles.
      * This is only faster than {@code (long)Math.floor(t)} on Java 8 for supported desktop platforms.
      *
      * @param t the double to find the floor for
@@ -1184,7 +1184,7 @@ public final class MathTools {
 
     /**
      * Like {@link Math#floor(double)}, but takes a float and returns a long.
-     * Doesn't consider "weird floats" like INFINITY and NaN.
+     * Only works with finite floats.
      * This is only faster than {@code (long)Math.floor(t)} on Java 8 for supported desktop platforms.
      *
      * @param t the double to find the floor for
@@ -1197,7 +1197,7 @@ public final class MathTools {
 
     /**
      * Like {@link Math#floor(double)} , but returns an int.
-     * Doesn't consider "weird doubles" like INFINITY and NaN.
+     * Only works with finite doubles.
      * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
      *
      * @param t the float to find the floor for
@@ -1210,7 +1210,7 @@ public final class MathTools {
 
     /**
      * Like {@link Math#ceil(double)}, but returns an int.
-     * Doesn't consider "weird doubles" like INFINITY and NaN.
+     * Only works with finite doubles.
      * This is only faster than {@code (int)Math.ceil(t)} on Java 8 for supported desktop platforms.
      *
      * @param t the float to find the ceiling for
@@ -1223,7 +1223,7 @@ public final class MathTools {
 
     /**
      * Returns the largest int less than or equal to the specified float.
-     * Doesn't consider "weird floats" like INFINITY and NaN.
+     * Only works with finite floats.
      * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
      *
      * @param value any float
@@ -1248,10 +1248,10 @@ public final class MathTools {
 
     /**
      * Returns the smallest int greater than or equal to the specified float.
-     * Doesn't consider "weird floats" like INFINITY and NaN.
+     * Only works with finite floats.
      * This is only faster than {@code (int)Math.ceil(t)} on Java 8 for supported desktop platforms.
      *
-     * @param value a float from -(2^14) to (Float.MAX_VALUE - 2^14)
+     * @param value the ceil of value, as an int
      */
     public static int ceil(float value) {
         final int z = (int) value;
@@ -1271,14 +1271,15 @@ public final class MathTools {
     }
 
     /**
-     * Returns the closest integer to the specified float. This method will only properly round floats from -(2^14) to
-     * (Float.MAX_VALUE - 2^14).
+     * Returns the closest integer to the specified float. This method will only properly round floats from -16384
+     * (inclusive) to 4194304 (exclusive).
      * <br>
      * Taken from libGDX MathUtils.
      *
-     * @param value a float from -(2^14) to (Float.MAX_VALUE - 2^14)
+     * @param value a float from -16384 to 4194304
      */
     public static int round(float value) {
+//        return (int) (value + 16384.5) - 16384;
         return (int) (value + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT;
     }
 
@@ -1713,7 +1714,7 @@ public final class MathTools {
      * of -1 to 1 (both inclusive). Every integer input given to this will produce -1 as its output. Every input that is
      * exactly 0.5 plus an integer will produce 1 as its output. In between, the graph is a straight line between those
      * two points, going up, down, up, down, etc. as the input increases.
-     * @param t the input to the triangle wave; can be any finite float
+     * @param t the input to the triangle wave; can be any float from -16384 to 4194304
      * @return a float between -1f and 1f, both inclusive
      */
     public static float triangleWave(float t) {
