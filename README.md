@@ -71,7 +71,7 @@ trigonometric functions, offering sin, cos, tan, asin, acos,
 atan, and atan2 in radians, degrees, and turns. It also allows
 access to the lookup table used by sin and cos. Much of
 TrigTools can be seen as similar to what libGDX's MathUtils
-class offers, but allowing access to the lookup table permits
+class offers, but allowing access to the lookup tables permits
 a few novel features (see its docs). It supports float and
 double arguments/returns for all functions. It also provides
 "smooth" sin and cos approximations that aren't table-based,
@@ -88,9 +88,20 @@ lot of commonly-defined constants, such as the square root of
 2 and the golden ratio, as floats and doubles. Some methods
 here are useful in other mathematical code, like gamma and
 greatestCommonDivisor; others are more esoteric, like
-modularMultiplicativeInverse. There are also a few functions
+modularMultiplicativeInverse. There are some of the standard
+signal processing functions, such as triangle waves, square
+waves, and sawtooth waves. There are also a few functions
 here, "sway" and relatives, that look like sine waves when
-graphed, but are simpler to calculate internally.
+graphed, but are simpler to calculate internally. You can do
+some bitwise operations with MathTools, such as interleaving
+the bits of two numbers (also called a Morton code, or a
+position on the Z-Order Curve). There are ways to bring a
+float or double closer to 0.0 by the smallest possible amount.
+There's the fract() methods, familiar to shader programmers,
+that get the fractional part of a float or double.
+In general, if you need a math function that isn't
+trigonometry-related and doesn't do something with text, you
+may want to look here first.
 
 ArrayTools provides common code for dealing with 2D arrays, and
 also sometimes 1D or 3D arrays. It allows copying, inserting,
@@ -208,14 +219,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.4.3"
+api "com.github.tommyettinger:digital:0.4.4"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.4.3:sources"
+api "com.github.tommyettinger:digital:0.4.4:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`

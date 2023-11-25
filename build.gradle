@@ -81,7 +81,4 @@ repositories {
 dependencies {
     testImplementation "com.badlogicgames.gdx:gdx:1.12.1"
     testImplementation "junit:junit:4.13.2"
-
-    // ???
-    //testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.9.0"
 }
