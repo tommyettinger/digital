@@ -1719,8 +1719,9 @@ public final class MathTools {
      */
     public static float triangleWave(float t) {
         return Math.abs(t -
-                (int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT //inlined round(t)
+                ((int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT) //inlined round(t)
         ) * 4f - 1f;
+        // return Math.abs(t - ((int) (t + 16384.5) - 16384)) * 2f;
     }
 
     /**
@@ -1748,7 +1749,7 @@ public final class MathTools {
      */
     public static float squareWave(float t) {
         return Math.signum(Math.abs(t -
-                (int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT //inlined round(t)
+                ((int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT) //inlined round(t)
         ) - 0.25f);
     }
 
@@ -1777,7 +1778,7 @@ public final class MathTools {
      */
     public static float sawtoothWave(float t) {
         return (t -
-                (int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT //inlined round(t)
+                ((int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT) //inlined round(t)
         ) * 2f;
     }
 
