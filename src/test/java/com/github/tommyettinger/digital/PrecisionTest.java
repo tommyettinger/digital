@@ -515,9 +515,16 @@ public class PrecisionTest {
 //        functions.put("sinNewShifty", PrecisionTest::sinShifty);
 //        functions.put("sinAlternate", PrecisionTest::sinAlternate);
 //        functions.put("sinGdx", MathUtils::sin);
-//        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
-//        functions.put("sinSmoother037Table", TrigTools037::sinSmoother);
-//        functions.put("sinSmootherNewTable", TrigTools::sinSmoother);
+        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
+        functions.put("sinSmoother037Table", TrigTools037::sinSmoother);
+        functions.put("sinSmootherNewTable", TrigTools::sinSmoother);
+        functions.put("sinSmootherFF", (radians) -> {
+            final double r = radians * radToIndexD;
+            final int floor = (int) (r + 16384.0) - 16384;
+            final int masked = floor & TABLE_MASK;
+            final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+            return from + (to - from) * ((float)r - floor);
+        });
 //        functions.put("sinSmootherCTable", CosTools::sinSmoother);
 //        functions.put("sinSmooth", TrigTools::sinSmooth);
 //        functions.put("sinSmootherAlternate", PrecisionTest::sinSmoother);
