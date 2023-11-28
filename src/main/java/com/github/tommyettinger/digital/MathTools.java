@@ -1751,6 +1751,7 @@ public final class MathTools {
         return Math.signum(Math.abs(t -
                 ((int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT) //inlined round(t)
         ) - 0.25f);
+        // public static float squareWave(float t) { return Math.signum(Math.abs(t - ((int) (t + 16384.5) - 16384)) - 0.25f); }
     }
 
     /**
