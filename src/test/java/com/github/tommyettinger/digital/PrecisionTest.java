@@ -301,9 +301,9 @@ public class PrecisionTest {
      * Worst output (abs):     -0.0030679568 (0xBB490FC6)
      * Correct output (abs):   -0.0026844151 (0xBB2FED03)
      * Running sinNewTable
-     * Mean absolute error:     0.0000601881
-     * Mean relative error:     0.0006230401
-     * Maximum abs. error:      0.0001918916
+     * Mean absolute error:     0.0000601880
+     * Mean relative error:     0.0006230396
+     * Maximum abs. error:      0.0001917388
      * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
      * Best input (lo):         6.221826076507568000000000
@@ -313,9 +313,9 @@ public class PrecisionTest {
      * Highest output rel:      0.9999999404
      * Worst output (hi):       0.0000000000 (0x00000000)
      * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):      -6.265736103057861000000000
-     * Worst output (abs):      0.0172564276 (0x3C8D5D5A)
-     * Correct output (abs):    0.0174483191 (0x3C8EEFC7)
+     * Worst input (abs):       3.131813526153564500000000
+     * Worst output (abs):      0.0095872330 (0x3C1D13C5)
+     * Correct output (abs):    0.0097789718 (0x3C2037FB)
      * Running sinFF
      * Mean absolute error:     0.0000601880
      * Mean relative error:     0.0006230396
@@ -483,6 +483,22 @@ public class PrecisionTest {
      * Worst input (abs):      -6.283169269561768000000000
      * Worst output (abs):      0.0002082259 (0x395A5737)
      * Correct output (abs):    0.0000160376 (0x37868886)
+     * Running sinSmootherFloatFF
+     * Mean absolute error:     0.0000000824
+     * Mean relative error:     0.0000013559
+     * Maximum abs. error:      0.0000004470
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         5.909108638763428000000000
+     * Best output (lo):       -0.3654132187 (0xBEBB1771)
+     * Correct output (lo):    -0.3654132187 (0xBEBB1771)
+     * Worst input (hi):        6.283185482025146500000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000001748 (0x343BBD2E)
+     * Worst input (abs):       6.156139850616455000000000
+     * Worst output (abs):     -0.1267044097 (0xBE01BECD)
+     * Correct output (abs):   -0.1267039627 (0xBE01BEAF)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -509,22 +525,29 @@ public class PrecisionTest {
         functions.put("sinOldTable", OldTrigTools::sin);
         functions.put("sin037Table", TrigTools037::sin);
         functions.put("sinNewTable", TrigTools::sin);
-        functions.put("sinFF", (radians) -> SIN_TABLE[(int) (radians * radToIndexD + 16384.5) - 16384 & TABLE_MASK]);
+//        functions.put("sinFF", (radians) -> SIN_TABLE[(int) (radians * radToIndexD + 16384.5) - 16384 & TABLE_MASK]);
 //        functions.put("sinCTable", CosTools::sin);
 //        functions.put("sinOldShifty", OldTrigTools::sinShifty);
 //        functions.put("sinNewShifty", PrecisionTest::sinShifty);
 //        functions.put("sinAlternate", PrecisionTest::sinAlternate);
 //        functions.put("sinGdx", MathUtils::sin);
-        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
-        functions.put("sinSmoother037Table", TrigTools037::sinSmoother);
-        functions.put("sinSmootherNewTable", TrigTools::sinSmoother);
-        functions.put("sinSmootherFF", (radians) -> {
-            final double r = radians * radToIndexD;
-            final int floor = (int) (r + 16384.0) - 16384;
-            final int masked = floor & TABLE_MASK;
-            final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
-            return from + (to - from) * ((float)r - floor);
-        });
+//        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
+//        functions.put("sinSmoother037Table", TrigTools037::sinSmoother);
+//        functions.put("sinSmootherNewTable", TrigTools::sinSmoother);
+//        functions.put("sinSmootherFF", (radians) -> {
+//            final double r = radians * radToIndexD;
+//            final int floor = (int) (r + 16384.0) - 16384;
+//            final int masked = floor & TABLE_MASK;
+//            final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+//            return from + (to - from) * ((float)r - floor);
+//        });
+//        functions.put("sinSmootherFloatFF", (radians) -> {
+//                    radians *= radToIndex;
+//                    final int floor = (int) (radians + 16384.0) - 16384;
+//                    final int masked = floor & TABLE_MASK;
+//                    final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+//                    return from + (to - from) * (radians - floor);
+//        });
 //        functions.put("sinSmootherCTable", CosTools::sinSmoother);
 //        functions.put("sinSmooth", TrigTools::sinSmooth);
 //        functions.put("sinSmootherAlternate", PrecisionTest::sinSmoother);

@@ -402,11 +402,8 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static float sin(final float radians) {
-        //Mean absolute error:     0.0000601881
-        //Mean relative error:     0.0006230401
-        //Maximum abs. error:      0.0001918916
-        //Maximum rel. error:      1.0000000000
-        return COS_TABLE[((int)(Math.abs(radians - HALF_PI) * radToIndex + 0.5f)) & TABLE_MASK];
+        return SIN_TABLE[(int) (radians * radToIndexD + 16384.5) - 16384 & TABLE_MASK];
+//        return COS_TABLE[((int)(Math.abs(radians - HALF_PI) * radToIndex + 0.5f)) & TABLE_MASK];
     }
 
     /**
@@ -488,7 +485,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static float sinDeg(final float degrees) {
-        return COS_TABLE[((int)(Math.abs(degrees - 90) * degToIndex + 0.5f)) & TABLE_MASK];
+        return SIN_TABLE[(int) (degrees * degToIndexD + 16384.5) - 16384 & TABLE_MASK];
     }
 
     /**
@@ -544,7 +541,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static float sinTurns(final float turns) {
-        return COS_TABLE[((int)(Math.abs(turns - 0.25f) * turnToIndex + 0.5f)) & TABLE_MASK];
+        return SIN_TABLE[(int) (turns * turnToIndexD + 16384.5) - 16384 & TABLE_MASK];
     }
 
     /**
@@ -600,7 +597,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static double sin(final double radians) {
-        return COS_TABLE_D[((int)(Math.abs(radians - HALF_PI_D) * radToIndexD + 0.5)) & TABLE_MASK];
+        return SIN_TABLE_D[(int) (radians * radToIndexD + 16384.5) - 16384 & TABLE_MASK];
     }
 
     /**
@@ -658,7 +655,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static double sinDeg(final double degrees) {
-        return COS_TABLE_D[((int)(Math.abs(degrees - 90) * degToIndexD + 0.5)) & TABLE_MASK];
+        return SIN_TABLE_D[(int) (degrees * degToIndexD + 16384.5) - 16384 & TABLE_MASK];
     }
 
     /**
@@ -714,7 +711,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static double sinTurns(final double turns) {
-        return COS_TABLE_D[((int)(Math.abs(turns - 0.25) * turnToIndexD + 0.5)) & TABLE_MASK];
+        return SIN_TABLE_D[(int) (turns * turnToIndexD + 16384.5) - 16384 & TABLE_MASK];
     }
 
     /**
