@@ -19,6 +19,7 @@ package com.github.tommyettinger.digital;
 import java.util.LinkedHashMap;
 
 import static com.github.tommyettinger.digital.MathTools.barronSpline;
+import static com.github.tommyettinger.digital.TrigTools.*;
 
 /**
  * Provides predefined {@link Interpolator} constants and ways to generate {@link InterpolationFunction} instances, as
@@ -556,23 +557,21 @@ public final class Interpolations {
      */
     public static final Interpolator kumaraswamyMostlyHigh = new Interpolator("kumaraswamyMostlyHigh", kumaraswamyFunction(5f, 1f));
 
-
+// The "sine" implementations use the SIN and COS tables directly to avoid a few operations inside sinTurns().
+// They use SIN_TO_COS as an offset because if the number of bits in the table changes, SIN_TO_COS will adapt.
     /**
      * Moves like a sine wave does; starts slowly, rises quickly, then ends slowly.
      */
-    public static final Interpolator sine = new Interpolator("sine", a -> (1f - TrigTools.cosTurns(0.5f * a)) * 0.5f);
-    // when we check against libGDX, the above (approximate) and below (exact) both aren't equal to libGDX's
-    // very-approximate code...
-    //    public static final Interpolator sine = new Interpolator("sine", a -> (1f - (float) Math.cos(Math.PI * a)) * 0.5f);
+    public static final Interpolator sine = new Interpolator("sine", a -> (a = SIN_TABLE[(int) (a * SIN_TO_COS) & TABLE_MASK]) * a);
 
     /**
      * Moves like a sine wave does; starts slowly and rises quickly.
      */
-    public static final Interpolator sineIn = new Interpolator("sineIn", a -> (1f - TrigTools.cosTurns(0.25f * a)));
+    public static final Interpolator sineIn = new Interpolator("sineIn", a -> (1f - COS_TABLE[(int) (a * SIN_TO_COS) & TABLE_MASK]));
     /**
      * Moves like a sine wave does; starts quickly and slows down.
      */
-    public static final Interpolator sineOut = new Interpolator("sineOut", a -> (TrigTools.sinTurns(0.25f * a)));
+    public static final Interpolator sineOut = new Interpolator("sineOut", a -> SIN_TABLE[(int) (a * SIN_TO_COS) & TABLE_MASK]);
 
 // This is here so that we can validate the old circle output against the new.
 //    public static final Interpolator circleOld = new Interpolator("circle", a -> {

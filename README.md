@@ -12,7 +12,11 @@ useful as a package, since they often depend on each other.
 
 BitConversion allows converting float and double values to
 int and long versions of their underlying bits (and it does
-this in a way that works on GWT efficiently). It also has
+this in a way that works on GWT efficiently). While code that
+does this is available in the regular JDK in Float and Double,
+the implementations for those provided by GWT are extremely
+slow. BitConversion was initially meant just to provide a
+faster route for those conversions on GWT, but it also has
 some methods that convert float-int and double-long with
 reversed byte order (using a fast intrinsic on desktop JDKs
 and a special trick on GWT), and others that get only the low
@@ -142,7 +146,10 @@ longs, bounded ints, floats, and doubles, so they may be useful in
 a lot of cases. They are named like `randomize1()`, `randomize2()`,
 `randomize3()`, and so on, with higher numbers being typically
 slightly slower but also higher-quality (and more permissive of
-sets of inputs with atypical patterns).
+sets of inputs with atypical patterns). Most usage is probably
+served best by `randomize3()` and its bounded int, float, and
+double variants, since it uses a proven algorithm (MX3) and isn't
+much different on runtime performance.
 
 While Hasher should usually
 change only very rarely, if at all, I was concerned about a few
@@ -207,12 +214,14 @@ even if your project uses the newest Java versions (20 and later do
 not support targeting Java 7). Android projects should be able to
 use digital even without needing core library desugaring, as long
 as they target release 8 or higher. GWT can use digital without
-issue since GWT 2.8.0, which made 8 usable. RoboVM, for iOS, can use
-digital because no APIs are used from Java 8. In a libGDX project,
-**you must make sure** the sourceCompatibility is 8 or higher in
-your core module and any other modules that use digital. This is
-currently not the default for gdx-setup projects, but is the default
-for [gdx-liftoff](https://github.com/tommyettinger/gdx-liftoff)
+issue from GWT 2.8.0 up; GWT compatibility is a major focus of this
+library. RoboVM, for iOS, can use digital because no APIs are used
+from Java 8.
+
+In a libGDX project, **you must make sure** the sourceCompatibility is
+8 or higher in your core module and any other modules that use digital.
+This is currently not the default for gdx-setup projects, but is the
+default for [gdx-liftoff](https://github.com/tommyettinger/gdx-liftoff)
 projects. Liftoff also lets you just check a box to depend on digital.
 
 To depend on digital with Gradle, add this to your dependencies (in
