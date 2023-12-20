@@ -364,7 +364,7 @@ public class PrecisionTest {
      * Worst input (abs):      -6.280500888824463000000000
      * Worst output (abs):      0.0030679568 (0x3B490FC6)
      * Correct output (abs):    0.0026844151 (0x3B2FED03)
-     * Running sinAlternate
+     * Running sinRound
      * Mean absolute error:     0.0000601881
      * Mean relative error:     0.0006230407
      * Maximum abs. error:      0.0001921654
@@ -396,6 +396,22 @@ public class PrecisionTest {
      * Worst input (abs):      -6.280500888824463000000000
      * Worst output (abs):      0.0032597035 (0x3B55A0C0)
      * Correct output (abs):    0.0026844151 (0x3B2FED03)
+     * Running sinFloaty
+     * Mean absolute error:     0.0000601882
+     * Mean relative error:     0.0006230420
+     * Maximum abs. error:      0.0001921714
+     * Maximum rel. error:      1.0024425983
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.221826076507568000000000
+     * Best output (lo):       -0.0613207370 (0xBD7B2B74)
+     * Correct output (lo):    -0.0613207370 (0xBD7B2B74)
+     * Worst input (hi):       -6.282993793487549000000000
+     * Highest output rel:      1.0024424791
+     * Worst output (hi):       0.0003834952 (0x39C90FDA)
+     * Correct output (hi):     0.0001915137 (0x3948D111)
+     * Worst input (abs):       3.148686885833740200000000
+     * Worst output (abs):     -0.0072863442 (0xBBEEC249)
+     * Correct output (abs):   -0.0070941728 (0xBBE8763C)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -529,7 +545,8 @@ public class PrecisionTest {
 //        functions.put("sinCTable", CosTools::sin);
 //        functions.put("sinOldShifty", OldTrigTools::sinShifty);
 //        functions.put("sinNewShifty", PrecisionTest::sinShifty);
-//        functions.put("sinAlternate", PrecisionTest::sinAlternate);
+        functions.put("sinRound", PrecisionTest::sinRound);
+        functions.put("sinFloaty", PrecisionTest::sinFloaty);
 //        functions.put("sinGdx", MathUtils::sin);
 //        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
 //        functions.put("sinSmoother037Table", TrigTools037::sinSmoother);
@@ -1816,8 +1833,11 @@ Worst input (abs):       4.205234527587891000000000
         return (1.00005519f * i * ii + (3 * 0.99873585f) * ii * radians + (3 * 0.55342686f) * i * radians * radians)
                 * (1 - (floor & 2));
     }
-    public static float sinAlternate(float radians) {
+    public static float sinRound(float radians) {
         return SIN_TABLE[Math.round(radians * radToIndex) & TABLE_MASK];
+    }
+    public static float sinFloaty(final float radians) {
+        return SIN_TABLE[(int) (radians * radToIndex + 16384.5f) & TABLE_MASK];
     }
 
     public static float sinShifty(final float radians) {
