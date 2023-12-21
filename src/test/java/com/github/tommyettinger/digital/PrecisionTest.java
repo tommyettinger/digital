@@ -1191,6 +1191,217 @@ public class PrecisionTest {
     }
 
     /**
+     * Testing from PI2 to 0 in decrements of 0x1p-24:
+     * <pre>
+     * Running cosOldTable
+     * Mean absolute error:     0.0000610469
+     * Mean relative error:     0.0012491322
+     * Maximum abs. error:      0.0003834844
+     * Maximum rel. error:  16066.3400824541
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185307179586000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        1.570796314870016000000000
+     * Highest output rel:  16066.3400824541
+     * Worst output (hi):       0.0001916011 (0x3F291D1108B21DD4)
+     * Correct output (hi):     0.0000000119 (0x3E499BC5C234C4C6)
+     * Worst input (abs):       1.571179811154500800000000
+     * Worst output (abs):      0.0000000000 (0x0000000000000000)
+     * Correct output (abs):   -0.0003834844 (0xBF3921CCBE1ED691)
+     * Running cos037Table
+     * Mean absolute error:     0.0001220703
+     * Mean relative error:     0.0024223202
+     * Maximum abs. error:      0.0003834916
+     * Maximum rel. error:  32158.2473105283
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185307179586000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        1.570796314870016000000000
+     * Highest output rel:  32158.2473105283
+     * Worst output (hi):       0.0003834952 (0x3F3921FB49EE4A61)
+     * Correct output (hi):     0.0000000119 (0x3E499BC5C234C4C6)
+     * Worst input (abs):       1.574631277714864600000000
+     * Worst output (abs):     -0.0034514499 (0xBF6C463710FC08F3)
+     * Correct output (abs):   -0.0038349415 (0xBF6F6A748D21750C)
+     * Running cosNewTable
+     * Mean absolute error:     0.0000610352
+     * Mean relative error:     0.0006482048
+     * Maximum abs. error:      0.0001917456
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185307179586000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        4.712580684815542000000000
+     * Highest output rel:      1.0000000000
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):     0.0001917044 (0x3F292088830DE041)
+     * Worst input (abs):       1.574823025857107000000000
+     * Worst output (abs):     -0.0038349426 (0xBF6F6A751D67D785)
+     * Correct output (abs):   -0.0040266882 (0xBF707E49E0BEC15C)
+     * Running cosSmooth
+     * Mean absolute error:     0.0001498261
+     * Mean relative error:     0.0002467689
+     * Maximum abs. error:      0.0003547083
+     * Maximum rel. error:      0.0004103000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185307179586000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        3.693314377461568700000000
+     * Highest output rel:      0.0004103000
+     * Worst output (hi):      -0.8512739148 (0xBFEB3DA2CAFFF202)
+     * Correct output (hi):    -0.8516233358 (0xBFEB407F94FE668F)
+     * Worst input (abs):       5.779941383992330000000000
+     * Worst output (abs):      0.8756680193 (0x3FEC0578F020C341)
+     * Correct output (abs):    0.8760227276 (0x3FEC0860D0B0C784)
+     * Running cosSmoother
+     * Mean absolute error:     0.0000000078
+     * Mean relative error:     0.0000000123
+     * Maximum abs. error:      0.0000000184
+     * Maximum rel. error:      0.0000000377
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185307179586000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        4.712388936673300000000000
+     * Highest output rel:      0.0000000377
+     * Worst output (hi):      -0.0000000437 (0xBE6777A5C2D46000)
+     * Correct output (hi):    -0.0000000437 (0xBE6777A5D1A79393)
+     * Worst input (abs):       6.282993559037344000000000
+     * Worst output (abs):      0.9999999632 (0x3FEFFFFFEC42BF8F)
+     * Correct output (abs):    0.9999999816 (0x3FEFFFFFF6215DF1)
+     * Running floaty14
+     * Mean absolute error:     0.0000610352
+     * Mean relative error:     0.0006482048
+     * Maximum abs. error:      0.0001917456
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185307179586000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        4.712580684815542000000000
+     * Highest output rel:      1.0000000000
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):     0.0001917044 (0x3F292088830DE041)
+     * Worst input (abs):       1.574823025857107000000000
+     * Worst output (abs):     -0.0038349426 (0xBF6F6A751D67D785)
+     * Correct output (abs):   -0.0040266882 (0xBF707E49E0BEC15C)
+     * Running floaty15
+     * Mean absolute error:     0.0000610352
+     * Mean relative error:     0.0006482048
+     * Maximum abs. error:      0.0001917456
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185307179586000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        4.712580684815542000000000
+     * Highest output rel:      1.0000000000
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):     0.0001917044 (0x3F292088830DE041)
+     * Worst input (abs):       1.574823025857107000000000
+     * Worst output (abs):     -0.0038349426 (0xBF6F6A751D67D785)
+     * Correct output (abs):   -0.0040266882 (0xBF707E49E0BEC15C)
+     * Running floaty16
+     * Mean absolute error:     0.0000610352
+     * Mean relative error:     0.0006482048
+     * Maximum abs. error:      0.0001917456
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185307179586000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        4.712580684815542000000000
+     * Highest output rel:      1.0000000000
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):     0.0001917044 (0x3F292088830DE041)
+     * Worst input (abs):       1.574823025857107000000000
+     * Worst output (abs):     -0.0038349426 (0xBF6F6A751D67D785)
+     * Correct output (abs):   -0.0040266882 (0xBF707E49E0BEC15C)
+     * </pre>
+     */
+    @Test
+    public void testCosD() {
+        DoubleUnaryOperator[] coss = makeCosFloaty();
+
+        LinkedHashMap<String, DoubleUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("cosOldTable", OldTrigTools::cos);
+        functions.put("cos037Table", TrigTools037::cos);
+        functions.put("cosNewTable", TrigTools::cos);
+//        functions.put("cos00Prior", (f) -> cos(prior00, f));
+//        functions.put("cos05Prior", (f) -> cos(prior05, f));
+//        functions.put("cos05", (f) -> cos(table05, f));
+//        functions.put("cos025", (f) -> cos(table025, f));
+//        functions.put("cosPhi", (f) -> cos(tablePhi, f));
+//        functions.put("cos0625", (f) -> cos(table0625, f));
+//        functions.put("cos065625", (f) -> cos(table065625, f));
+//        functions.put("cos075", (f) -> cos(table075, f));
+        functions.put("cosSmooth", TrigTools::cosSmooth);
+        functions.put("cosSmoother", TrigTools::cosSmoother);
+        for (int i = 0; i < 3; i++) {
+            functions.put("floaty"+(i+14), coss[i]);
+        }
+
+        for (Map.Entry<String, DoubleUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final DoubleUnaryOperator op = ent.getValue();
+            double absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
+            double worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
+            long counter = 0L;
+            for (double x = PI2_D; x >= 0; x -= 0x1p-24) {
+
+                double tru = Math.cos(x),
+                        err = tru - op.applyAsDouble(x),
+                        ae = abs(err),
+                        re = Math.abs(err / Math.nextAfter(tru, Math.copySign(Double.MAX_VALUE, tru)));
+                relError += re;
+                if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                    highestRelX = x;
+                }
+                if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                    lowestRelX = x;
+                }
+                absError += ae;
+                if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
+                    worstAbsX = x;
+                }
+                ++counter;
+            }
+            double worstAbs = op.applyAsDouble(worstAbsX),
+                    worstTru = Math.cos(worstAbsX),
+                    highestTru = Math.cos(highestRelX),
+                    lowestTru = Math.cos(lowestRelX),
+                    lowestErr = lowestTru - op.applyAsDouble(lowestRelX),
+                    lowestRel = abs(lowestErr / Math.nextAfter(lowestTru, Math.copySign(Double.MAX_VALUE, lowestTru))),
+                    highestErr = highestTru - op.applyAsDouble(highestRelX),
+                    highestRel = abs(highestErr / Math.nextAfter(highestTru, Math.copySign(Double.MAX_VALUE, highestTru)));
+            System.out.printf(
+                    "Mean absolute error: %16.10f\n" +
+                            "Mean relative error: %16.10f\n" +
+                            "Maximum abs. error:  %16.10f\n" +
+                            "Maximum rel. error:  %16.10f\n" +
+                            "Lowest output rel:   %16.10f\n" +
+                            "Best input (lo):     %30.24f\n" +
+                            "Best output (lo):    %16.10f (0x%016X)\n" +
+                            "Correct output (lo): %16.10f (0x%016X)\n" +
+                            "Worst input (hi):    %30.24f\n" +
+                            "Highest output rel:  %16.10f\n" +
+                            "Worst output (hi):   %16.10f (0x%016X)\n" +
+                            "Correct output (hi): %16.10f (0x%016X)\n" +
+                            "Worst input (abs):   %30.24f\n" +
+                            "Worst output (abs):  %16.10f (0x%016X)\n" +
+                            "Correct output (abs):%16.10f (0x%016X)\n", absError / counter, relError / counter,
+                    maxAbsError, maxRelError,
+                    lowestRel, lowestRelX, op.applyAsDouble(lowestRelX), Double.doubleToLongBits(op.applyAsDouble(lowestRelX)), lowestTru, Double.doubleToLongBits(lowestTru),
+                    highestRelX, highestRel, op.applyAsDouble(highestRelX), Double.doubleToLongBits(op.applyAsDouble(highestRelX)), highestTru, Double.doubleToLongBits(highestTru),
+                    worstAbsX, worstAbs, Double.doubleToLongBits(worstAbs), worstTru, Double.doubleToLongBits(worstTru));
+        }
+    }
+
+    /**
      * Testing from PI2 to -PI2 in decrements of 0x1p-20f:
      * <pre>
      * Running cosOldTable
@@ -1334,6 +1545,7 @@ public class PrecisionTest {
         functions.put("cosNewTable", TrigTools::cos);
         functions.put("cosRound", PrecisionTest::cosRound);
         functions.put("cosFloaty", PrecisionTest::cosFloaty);
+        functions.put("cosNoAbs", PrecisionTest::cosNoAbs);
         functions.put("cosGdx", MathUtils::cos);
         functions.put("cosSmooth", TrigTools::cosSmooth);
         functions.put("cosSmoother", TrigTools::cosSmoother);
@@ -1994,11 +2206,24 @@ Worst input (abs):       4.205234527587891000000000
         return COS_TABLE[(int) (radians * radToIndex + 16384.5f) & TABLE_MASK];
     }
 
+    public static float cosNoAbs(final float radians) {
+        return COS_TABLE[((int)(radians * radToIndex)) & TABLE_MASK];
+    }
+
     public static DoubleUnaryOperator[] makeSinFloaty(){
         final DoubleUnaryOperator[] r = new DoubleUnaryOperator[40];
         for (int i = 0; i < 40; i++) {
             long pow2 = 1L << i + 14;
             r[i] = radians -> SIN_TABLE_D[(int) (radians * radToIndexD + (pow2 + 0.5)) & TABLE_MASK];
+        }
+        return r;
+    }
+
+    public static DoubleUnaryOperator[] makeCosFloaty(){
+        final DoubleUnaryOperator[] r = new DoubleUnaryOperator[40];
+        for (int i = 0; i < 40; i++) {
+            long pow2 = 1L << i + 14;
+            r[i] = radians -> COS_TABLE_D[(int) (radians * radToIndexD + (pow2 + 0.5)) & TABLE_MASK];
         }
         return r;
     }
