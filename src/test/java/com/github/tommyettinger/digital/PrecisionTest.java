@@ -1055,6 +1055,22 @@ public class PrecisionTest {
      * Worst input (abs):       4.712580744420187000000000
      * Worst output (abs):     -0.9999999632 (0xBFEFFFFFEC425456)
      * Correct output (abs):   -0.9999999816 (0xBFEFFFFFF620F2B6)
+     * Running sinSmoothly
+     * Mean absolute error:     0.0000000078
+     * Mean relative error:     0.0000000217
+     * Maximum abs. error:      0.0000000184
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         4.748821024094717000000000
+     * Best output (lo):       -0.9993364265 (0xBFEFFA9062B02CA3)
+     * Correct output (lo):    -0.9993364265 (0xBFEFFA9062B02CA6)
+     * Worst input (hi):        6.283185307179586000000000
+     * Highest output rel:      1.0000000000
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):    -0.0000000000 (0xBCB1A62633145C07)
+     * Worst input (abs):       4.712580744420187000000000
+     * Worst output (abs):     -0.9999999632 (0xBFEFFFFFEC425456)
+     * Correct output (abs):   -0.9999999816 (0xBFEFFFFFF620F2B6)
      * Running floaty14
      * Mean absolute error:     0.0000610352
      * Mean relative error:     0.0006482137
@@ -1115,12 +1131,15 @@ public class PrecisionTest {
 //        double[] table0625 = makeTableDouble(0.625);
 //        double[] table065625 = makeTableDouble(0.65625);
 //        double[] table075 = makeTableDouble(0.75);
-        DoubleUnaryOperator[] sins = makeSinFloaty();
+//        DoubleUnaryOperator[] sins = makeSinFloaty();
 
         LinkedHashMap<String, DoubleUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("sinOldTable", OldTrigTools::sin);
-        functions.put("sin037Table", TrigTools037::sin);
-        functions.put("sinNewTable", TrigTools::sin);
+//        functions.put("sinOldTable", OldTrigTools::sin);
+//        functions.put("sin037Table", TrigTools037::sin);
+//        functions.put("sinNewTable", TrigTools::sin);
+//        functions.put("sinSmooth", TrigTools::sinSmooth);
+        functions.put("sinSmoother", TrigTools::sinSmoother);
+        functions.put("sinSmoothly", PrecisionTest::sinSmoothly);
 //        functions.put("sin00Prior", (f) -> sin(prior00, f));
 //        functions.put("sin05Prior", (f) -> sin(prior05, f));
 //        functions.put("sin05", (f) -> sin(table05, f));
@@ -1129,11 +1148,9 @@ public class PrecisionTest {
 //        functions.put("sin0625", (f) -> sin(table0625, f));
 //        functions.put("sin065625", (f) -> sin(table065625, f));
 //        functions.put("sin075", (f) -> sin(table075, f));
-        functions.put("sinSmooth", TrigTools::sinSmooth);
-        functions.put("sinSmoother", TrigTools::sinSmoother);
-        for (int i = 0; i < 3; i++) {
-            functions.put("floaty"+(i+14), sins[i]);
-        }
+//        for (int i = 0; i < 3; i++) {
+//            functions.put("floaty"+(i+14), sins[i]);
+//        }
 
         for (Map.Entry<String, DoubleUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -1274,6 +1291,22 @@ public class PrecisionTest {
      * Worst input (abs):       6.282993559037344000000000
      * Worst output (abs):      0.9999999632 (0x3FEFFFFFEC42BF8F)
      * Correct output (abs):    0.9999999816 (0x3FEFFFFFF6215DF1)
+     * Running cosSmoothly
+     * Mean absolute error:     0.0000000078
+     * Mean relative error:     0.0000000123
+     * Maximum abs. error:      0.0000000184
+     * Maximum rel. error:      0.0000000757
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185307179586000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        1.570796314870016000000000
+     * Highest output rel:      0.0000000757
+     * Worst output (hi):       0.0000000119 (0x3E499BC5A1B20000)
+     * Correct output (hi):     0.0000000119 (0x3E499BC5C234C4C6)
+     * Worst input (abs):       6.282993559037344000000000
+     * Worst output (abs):      0.9999999632 (0x3FEFFFFFEC42BF8F)
+     * Correct output (abs):    0.9999999816 (0x3FEFFFFFF6215DF1)
      * Running floaty14
      * Mean absolute error:     0.0000610352
      * Mean relative error:     0.0006482048
@@ -1326,12 +1359,15 @@ public class PrecisionTest {
      */
     @Test
     public void testCosD() {
-        DoubleUnaryOperator[] coss = makeCosFloaty();
+//        DoubleUnaryOperator[] coss = makeCosFloaty();
 
         LinkedHashMap<String, DoubleUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("cosOldTable", OldTrigTools::cos);
-        functions.put("cos037Table", TrigTools037::cos);
-        functions.put("cosNewTable", TrigTools::cos);
+//        functions.put("cosOldTable", OldTrigTools::cos);
+//        functions.put("cos037Table", TrigTools037::cos);
+//        functions.put("cosNewTable", TrigTools::cos);
+//        functions.put("cosSmooth", TrigTools::cosSmooth);
+        functions.put("cosSmoother", TrigTools::cosSmoother);
+        functions.put("cosSmoothly", PrecisionTest::cosSmoothly);
 //        functions.put("cos00Prior", (f) -> cos(prior00, f));
 //        functions.put("cos05Prior", (f) -> cos(prior05, f));
 //        functions.put("cos05", (f) -> cos(table05, f));
@@ -1340,11 +1376,9 @@ public class PrecisionTest {
 //        functions.put("cos0625", (f) -> cos(table0625, f));
 //        functions.put("cos065625", (f) -> cos(table065625, f));
 //        functions.put("cos075", (f) -> cos(table075, f));
-        functions.put("cosSmooth", TrigTools::cosSmooth);
-        functions.put("cosSmoother", TrigTools::cosSmoother);
-        for (int i = 0; i < 3; i++) {
-            functions.put("floaty"+(i+14), coss[i]);
-        }
+//        for (int i = 0; i < 3; i++) {
+//            functions.put("floaty"+(i+14), coss[i]);
+//        }
 
         for (Map.Entry<String, DoubleUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -2374,6 +2408,22 @@ Worst input (abs):       4.205234527587891000000000
         final int floor = (int)(radians + 16384f) - 16384;
         final int masked = floor & TABLE_MASK;
         final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    public static double sinSmoothly(double radians) {
+        radians = radians * radToIndexD + 16384;
+        final int floor = (int)(radians);
+        final int masked = floor & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    public static double cosSmoothly(double radians) {
+        radians = radians * radToIndexD + 16384;
+        final int floor = (int)(radians);
+        final int masked = floor & TABLE_MASK;
+        final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
         return from + (to - from) * (radians - floor);
     }
 
