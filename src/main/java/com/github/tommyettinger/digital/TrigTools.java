@@ -402,8 +402,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static float sin(final float radians) {
-        return SIN_TABLE[(int) (radians * radToIndexD + 16384.5) - 16384 & TABLE_MASK];
-//        return COS_TABLE[((int)(Math.abs(radians - HALF_PI) * radToIndex + 0.5f)) & TABLE_MASK];
+        return SIN_TABLE[(int) (radians * radToIndex + 16384.5f) & TABLE_MASK];
     }
 
     /**
@@ -420,7 +419,7 @@ public final class TrigTools {
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
     public static float cos(final float radians) {
-        return COS_TABLE[((int)(Math.abs(radians) * radToIndex + 0.5f)) & TABLE_MASK];
+        return COS_TABLE[(int) (radians * radToIndex + 16384.5f) & TABLE_MASK];
     }
 
     /**
@@ -485,7 +484,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static float sinDeg(final float degrees) {
-        return SIN_TABLE[(int) (degrees * degToIndexD + 16384.5) - 16384 & TABLE_MASK];
+        return SIN_TABLE[(int) (degrees * degToIndex + 16384.5f) & TABLE_MASK];
     }
 
     /**
@@ -502,7 +501,7 @@ public final class TrigTools {
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
     public static float cosDeg(final float degrees) {
-        return COS_TABLE[((int)(Math.abs(degrees) * degToIndex + 0.5f)) & TABLE_MASK];
+        return COS_TABLE[(int) (degrees * degToIndex + 16384.5f) & TABLE_MASK];
     }
 
     /**
@@ -541,7 +540,7 @@ public final class TrigTools {
      * @return the sine of the given angle, between -1 and 1 inclusive
      */
     public static float sinTurns(final float turns) {
-        return SIN_TABLE[(int) (turns * turnToIndexD + 16384.5) - 16384 & TABLE_MASK];
+        return SIN_TABLE[(int) (turns * turnToIndex + 16384.5f) & TABLE_MASK];
     }
 
     /**
@@ -558,7 +557,7 @@ public final class TrigTools {
      * @return the cosine of the given angle, between -1 and 1 inclusive
      */
     public static float cosTurns(final float turns) {
-        return COS_TABLE[((int)(Math.abs(turns) * turnToIndex + 0.5f)) & TABLE_MASK];
+        return COS_TABLE[(int) (turns * turnToIndex + 16384.5f) & TABLE_MASK];
     }
 
     /**
