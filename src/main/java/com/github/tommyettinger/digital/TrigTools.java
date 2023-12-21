@@ -314,8 +314,7 @@ public final class TrigTools {
      * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of radians
      */
     public static int radiansToTableIndex(final float radians) {
-        final int idx = (int)(radians * radToIndex + 0.5f);
-        return (idx + (idx >> 31)) & TABLE_MASK;
+        return (int) (radians * radToIndex + 16384.5f) & TABLE_MASK;
     }
 
     /**
@@ -328,8 +327,7 @@ public final class TrigTools {
      * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of degrees
      */
     public static int degreesToTableIndex(final float degrees) {
-        final int idx = (int)(degrees * degToIndex + 0.5f);
-        return (idx + (idx >> 31)) & TABLE_MASK;
+        return (int)(degrees * degToIndex + 16384.5f) & TABLE_MASK;
     }
 
     /**
@@ -342,8 +340,7 @@ public final class TrigTools {
      * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of turns
      */
     public static int turnsToTableIndex(final float turns) {
-        final int idx = (int)(turns * turnToIndex + 0.5f);
-        return (idx + (idx >> 31)) & TABLE_MASK;
+        return (int)(turns * turnToIndex + 16384.5f) & TABLE_MASK;
     }
 
     /**
@@ -356,8 +353,7 @@ public final class TrigTools {
      * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of radians
      */
     public static int radiansToTableIndex(final double radians) {
-        final int idx = (int)(radians * radToIndexD + 0.5);
-        return (idx + (idx >> 31)) & TABLE_MASK;
+        return (int) (radians * radToIndexD + 16384.5) & TABLE_MASK;
     }
 
     /**
@@ -370,8 +366,7 @@ public final class TrigTools {
      * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of degrees
      */
     public static int degreesToTableIndex(final double degrees) {
-        final int idx = (int)(degrees * degToIndexD + 0.5);
-        return (idx + (idx >> 31)) & TABLE_MASK;
+        return (int)(degrees * degToIndexD + 16384.5) & TABLE_MASK;
     }
 
     /**
@@ -384,8 +379,7 @@ public final class TrigTools {
      * @return the index into {@link #SIN_TABLE} or {@link #SIN_TABLE_D} of the sine of turns
      */
     public static int turnsToTableIndex(final double turns) {
-        final int idx = (int)(turns * turnToIndexD + 0.5);
-        return (idx + (idx >> 31)) & TABLE_MASK;
+        return (int)(turns * turnToIndexD + 16384.5) & TABLE_MASK;
     }
 
     /**
