@@ -1030,10 +1030,6 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoother(float radians) {
-        //Mean absolute error:     0.0000000891
-        //Mean relative error:     0.0000014705
-        //Maximum abs. error:      0.0000005439
-        //Maximum rel. error:      1.0000000000
         radians = Math.abs(radians - HALF_PI) * radToIndex;
         final int floor = (int)radians;
         final int masked = floor & TABLE_MASK;
