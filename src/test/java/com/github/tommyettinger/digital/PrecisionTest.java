@@ -1071,6 +1071,22 @@ public class PrecisionTest {
      * Worst input (abs):       4.712580744420187000000000
      * Worst output (abs):     -0.9999999632 (0xBFEFFFFFEC425456)
      * Correct output (abs):   -0.9999999816 (0xBFEFFFFFF620F2B6)
+     * Running sinSmoothesque
+     * Mean absolute error:     0.0000000078
+     * Mean relative error:     0.0000000217
+     * Maximum abs. error:      0.0000000184
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         4.748821024094717000000000
+     * Best output (lo):       -0.9993364265 (0xBFEFFA9062B02CA2)
+     * Correct output (lo):    -0.9993364265 (0xBFEFFA9062B02CA6)
+     * Worst input (hi):        6.283185307179586000000000
+     * Highest output rel:      1.0000000000
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):    -0.0000000000 (0xBCB1A62633145C07)
+     * Worst input (abs):       4.712580744420187000000000
+     * Worst output (abs):     -0.9999999632 (0xBFEFFFFFEC425456)
+     * Correct output (abs):   -0.9999999816 (0xBFEFFFFFF620F2B6)
      * Running floaty14
      * Mean absolute error:     0.0000610352
      * Mean relative error:     0.0006482137
@@ -1140,6 +1156,7 @@ public class PrecisionTest {
 //        functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinSmoother", TrigTools::sinSmoother);
         functions.put("sinSmoothly", PrecisionTest::sinSmoothly);
+        functions.put("sinSmoothesque", PrecisionTest::sinSmoothesque);
 //        functions.put("sin00Prior", (f) -> sin(prior00, f));
 //        functions.put("sin05Prior", (f) -> sin(prior05, f));
 //        functions.put("sin05", (f) -> sin(table05, f));
@@ -2412,7 +2429,7 @@ Worst input (abs):       4.205234527587891000000000
     }
 
     public static double sinSmoothly(double radians) {
-        radians = radians * radToIndexD + 16384;
+        radians = radians * radToIndexD + 16384.0;
         final int floor = (int)(radians);
         final int masked = floor & TABLE_MASK;
         final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
@@ -2420,13 +2437,20 @@ Worst input (abs):       4.205234527587891000000000
     }
 
     public static double cosSmoothly(double radians) {
-        radians = radians * radToIndexD + 16384;
+        radians = radians * radToIndexD + 16384.0;
         final int floor = (int)(radians);
         final int masked = floor & TABLE_MASK;
         final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
         return from + (to - from) * (radians - floor);
     }
 
+    public static double sinSmoothesque(double radians) {
+        radians = Math.abs(radians) * radToIndexD;
+        final int floor = (int)radians;
+        final int masked = floor & TABLE_MASK;
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
 
     //tanNoTable (Soonts)
     //Mean absolute error:     0.0088905813
