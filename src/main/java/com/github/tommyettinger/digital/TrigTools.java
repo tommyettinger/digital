@@ -1126,8 +1126,8 @@ public final class TrigTools {
      * @return an approximation of tan()
      */
     public static double tanSmoother(double radians) {
-        radians *= radToIndexD;
-        final int floor = (int)Math.floor(radians);
+        radians = radians * radToIndexD + 16384.0;
+        final int floor = (int)(radians);
         final int masked = floor & TABLE_MASK;
         radians -= floor;
         final double fromS = SIN_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];
@@ -1242,8 +1242,8 @@ public final class TrigTools {
      * @return an approximation of tan()
      */
     public static double tanSmootherDeg(double degrees) {
-        degrees *= degToIndexD;
-        final int floor = (int)Math.floor(degrees);
+        degrees = degrees * degToIndexD + 16384.0;
+        final int floor = (int)(degrees);
         final int masked = floor & TABLE_MASK;
         degrees -= floor;
         final double fromS = SIN_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];
@@ -1358,8 +1358,8 @@ public final class TrigTools {
      * @return an approximation of tan()
      */
     public static double tanSmootherTurns(double turns) {
-        turns *= turnToIndexD;
-        final int floor = (int)Math.floor(turns);
+        turns = turns * turnToIndexD + 16384.0;
+        final int floor = (int)(turns);
         final int masked = floor & TABLE_MASK;
         turns -= floor;
         final double fromS = SIN_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];

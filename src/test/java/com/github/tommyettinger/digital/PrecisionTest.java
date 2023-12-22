@@ -1843,6 +1843,125 @@ public class PrecisionTest {
                 "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
 
+    /**
+     * Testing from -1.57 to 1.57 in increments of 0x1p-24:
+     * <pre>
+     * Running tanSmoother
+     * Mean absolute error:     0.0000000005
+     * Mean relative error:     0.0000000000
+     * Maximum abs. error:      0.0000012732
+     * Maximum rel. error:      0.0000000462
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -1.522092468738556000000000
+     * Best output (lo):      -20.5160171332 (0xC0348419B2E754F3)
+     * Correct output (lo):   -20.5160171332 (0xC0348419B2E754F3)
+     * Worst input (hi):       -0.000000007152557435219364
+     * Highest output rel:      0.0000000462
+     * Worst output (hi):      -0.0000000072 (0xBE3EB851D82B2E53)
+     * Correct output (hi):    -0.0000000072 (0xBE3EB851F0000000)
+     * Worst input (abs):      -1.569957561492920000000000
+     * Worst output (abs):  -1192.2283434975 (0xC092A0E9D2E0B8DF)
+     * Correct output (abs):-1192.2283422244 (0xC092A0E9D28B478D)
+     * Running tanSmoother037
+     * Mean absolute error:     0.0000000005
+     * Mean relative error:     0.0000000000
+     * Maximum abs. error:      0.0000012720
+     * Maximum rel. error:      0.0000000245
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -1.554306037425995000000000
+     * Best output (lo):      -60.6362528136 (0xC04E5170BB713611)
+     * Correct output (lo):   -60.6362528136 (0xC04E5170BB713611)
+     * Worst input (hi):       -0.000000007152557435219364
+     * Highest output rel:      0.0000000245
+     * Worst output (hi):      -0.0000000072 (0xBE3EB851E35E2E53)
+     * Correct output (hi):    -0.0000000072 (0xBE3EB851F0000000)
+     * Worst input (abs):      -1.569957621097564800000000
+     * Worst output (abs):  -1192.3130721210 (0xC092A14095FA6368)
+     * Correct output (abs):-1192.3130708489 (0xC092A14095A505E2)
+     * Running tanNoTable
+     * Mean absolute error:     0.0088965244
+     * Mean relative error:     0.0000339260
+     * Maximum abs. error:     17.8672924837
+     * Maximum rel. error:      0.0142282068
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -0.157722480297088690000000
+     * Best output (lo):       -0.1590434814 (0xBFC45B896B919697)
+     * Correct output (lo):    -0.1590434814 (0xBFC45B896B919697)
+     * Worst input (hi):       -1.570000000000000000000000
+     * Highest output rel:      0.0142282068
+     * Worst output (hi):   -1237.8982990170 (0xC0935797DBB29105)
+     * Correct output (hi): -1255.7655915008 (0xC0939F0FF737E7F3)
+     * Worst input (abs):      -1.570000000000000000000000
+     * Worst output (abs):  -1237.8982990170 (0xC0935797DBB29105)
+     * Correct output (abs):-1255.7655915008 (0xC0939F0FF737E7F3)
+     * </pre>
+     */
+    @Test
+    public void testTanD() {
+        LinkedHashMap<String, DoubleUnaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("tanSmoother", TrigTools::tanSmoother);
+        functions.put("tanSmoother037", TrigTools037::tanSmoother);
+        functions.put("tanNoTable", TrigTools::tan);
+
+        for (Map.Entry<String, DoubleUnaryOperator> ent : functions.entrySet()) {
+            System.out.println("Running " + ent.getKey());
+            final DoubleUnaryOperator op = ent.getValue();
+            double absError = 0.0, relError = 0.0, maxAbsError = 0.0, maxRelError = 0.0, minRelError = Double.MAX_VALUE;
+            double worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
+            long counter = 0L;
+            for (double x = -1.57; x <= 1.57; x += 0x1p-24) {
+
+                double tru = Math.tan(x),
+                        approx = op.applyAsDouble(x),
+                        err = tru - approx,
+                        ae = abs(err),
+                        re = MathTools.isZero(tru, 1E-10) ? 0f : Math.abs(err / tru);
+                if(!MathTools.isZero(tru, 1E-10)) {
+                    relError += re;
+                    if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                        highestRelX = x;
+                    }
+                    if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                        lowestRelX = x;
+                    }
+                }
+                absError += ae;
+                if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
+                    worstAbsX = x;
+                }
+                ++counter;
+            }
+            double worstAbs = op.applyAsDouble(worstAbsX),
+                    worstTru = Math.tan(worstAbsX),
+                    highestTru = Math.tan(highestRelX),
+                    lowestTru = Math.tan(lowestRelX),
+                    lowestErr = lowestTru - op.applyAsDouble(lowestRelX),
+                    lowestRel = abs(lowestErr / Math.nextAfter(lowestTru, Math.copySign(Double.MAX_VALUE, lowestTru))),
+                    highestErr = highestTru - op.applyAsDouble(highestRelX),
+                    highestRel = abs(highestErr / Math.nextAfter(highestTru, Math.copySign(Double.MAX_VALUE, highestTru)));
+            System.out.printf(
+                    "Mean absolute error: %16.10f\n" +
+                            "Mean relative error: %16.10f\n" +
+                            "Maximum abs. error:  %16.10f\n" +
+                            "Maximum rel. error:  %16.10f\n" +
+                            "Lowest output rel:   %16.10f\n" +
+                            "Best input (lo):     %30.24f\n" +
+                            "Best output (lo):    %16.10f (0x%016X)\n" +
+                            "Correct output (lo): %16.10f (0x%016X)\n" +
+                            "Worst input (hi):    %30.24f\n" +
+                            "Highest output rel:  %16.10f\n" +
+                            "Worst output (hi):   %16.10f (0x%016X)\n" +
+                            "Correct output (hi): %16.10f (0x%016X)\n" +
+                            "Worst input (abs):   %30.24f\n" +
+                            "Worst output (abs):  %16.10f (0x%016X)\n" +
+                            "Correct output (abs):%16.10f (0x%016X)\n", absError / counter, relError / counter,
+                    maxAbsError, maxRelError,
+                    lowestRel, lowestRelX, op.applyAsDouble(lowestRelX), Double.doubleToLongBits(op.applyAsDouble(lowestRelX)), lowestTru, Double.doubleToLongBits(lowestTru),
+                    highestRelX, highestRel, op.applyAsDouble(highestRelX), Double.doubleToLongBits(op.applyAsDouble(highestRelX)), highestTru, Double.doubleToLongBits(highestTru),
+                    worstAbsX, worstAbs, Double.doubleToLongBits(worstAbs), worstTru, Double.doubleToLongBits(worstTru));
+        }
+    }
+
     @Test
     public void testSinSquared() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
