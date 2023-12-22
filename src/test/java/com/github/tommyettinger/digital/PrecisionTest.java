@@ -606,6 +606,7 @@ public class PrecisionTest {
 //        functions.put("sinSmootherCTable", CosTools::sinSmoother);
         functions.put("sinSmooth", TrigTools::sinSmooth);
         functions.put("sinSmoothly", PrecisionTest::sinSmoothly);
+        functions.put("sinSmoothesque", PrecisionTest::sinSmoothesque);
 //        functions.put("sinSmootherAlternate", PrecisionTest::sinSmoother);
 //        functions.put("sinTable32", (f) -> sinVar(table32, f));
 //        functions.put("sinTable64", (f) -> sinVar(table64, f));
@@ -1154,8 +1155,8 @@ public class PrecisionTest {
 //        functions.put("sin037Table", TrigTools037::sin);
 //        functions.put("sinNewTable", TrigTools::sin);
 //        functions.put("sinSmooth", TrigTools::sinSmooth);
-        functions.put("sinSmoother", TrigTools::sinSmoother);
-        functions.put("sinSmoothly", PrecisionTest::sinSmoothly);
+//        functions.put("sinSmoother", TrigTools::sinSmoother);
+//        functions.put("sinSmoothly", PrecisionTest::sinSmoothly);
         functions.put("sinSmoothesque", PrecisionTest::sinSmoothesque);
 //        functions.put("sin00Prior", (f) -> sin(prior00, f));
 //        functions.put("sin05Prior", (f) -> sin(prior05, f));
@@ -1175,7 +1176,7 @@ public class PrecisionTest {
             double absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
             double worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
             long counter = 0L;
-            for (double x = PI2_D; x >= 0; x -= 0x1p-24) {
+            for (double x = PI2_D; x >= -PI2_D; x -= 0x1p-24) {
 
                 double tru = Math.sin(x),
                         err = tru - op.applyAsDouble(x),
@@ -1383,8 +1384,9 @@ public class PrecisionTest {
 //        functions.put("cos037Table", TrigTools037::cos);
 //        functions.put("cosNewTable", TrigTools::cos);
 //        functions.put("cosSmooth", TrigTools::cosSmooth);
-        functions.put("cosSmoother", TrigTools::cosSmoother);
+//        functions.put("cosSmoother", TrigTools::cosSmoother);
         functions.put("cosSmoothly", PrecisionTest::cosSmoothly);
+        functions.put("cosSmoothesque", PrecisionTest::cosSmoothesque);
 //        functions.put("cos00Prior", (f) -> cos(prior00, f));
 //        functions.put("cos05Prior", (f) -> cos(prior05, f));
 //        functions.put("cos05", (f) -> cos(table05, f));
@@ -2444,11 +2446,35 @@ Worst input (abs):       4.205234527587891000000000
         return from + (to - from) * (radians - floor);
     }
 
+    public static float sinSmoothesque(float radians) {
+        radians = radians * radToIndex + 16384;
+        final int floor = (int)radians;
+        final int masked = floor & TABLE_MASK;
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    public static float cosSmoothesque(float radians) {
+        radians = radians * radToIndex + 16384;
+        final int floor = (int)radians;
+        final int masked = floor & TABLE_MASK;
+        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
     public static double sinSmoothesque(double radians) {
-        radians = Math.abs(radians) * radToIndexD;
+        radians = radians * radToIndexD + 16384;
         final int floor = (int)radians;
         final int masked = floor & TABLE_MASK;
         final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
+    public static double cosSmoothesque(double radians) {
+        radians = radians * radToIndexD + 16384;
+        final int floor = (int)radians;
+        final int masked = floor & TABLE_MASK;
+        final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
         return from + (to - from) * (radians - floor);
     }
 
