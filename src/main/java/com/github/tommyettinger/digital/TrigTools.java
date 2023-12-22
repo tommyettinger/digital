@@ -1024,16 +1024,16 @@ public final class TrigTools {
      * {@link #sin(float)} or {@link #sinSmooth(float)}, but that is somewhat slower. This still offers about 2x to
      * 4x the throughput of {@link Math#sin(double)} (cast to float).
      * <br>
-     * Internally, this uses the same {@link #COS_TABLE} that {@link #sin(float)} uses, but interpolates between two
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sin(float)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param radians an angle in radians; optimally between {@code -PI2} and {@code PI2}
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoother(float radians) {
-        radians = Math.abs(radians - HALF_PI) * radToIndex;
-        final int floor = (int)radians;
+        radians *= radToIndex;
+        final int floor = (int)(radians + 16384f) - 16384;
         final int masked = floor & TABLE_MASK;
-        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
         return from + (to - from) * (radians - floor);
     }
 
@@ -1042,16 +1042,16 @@ public final class TrigTools {
      * {@link #sin(double)} or {@link #sinSmooth(double)}, but that is somewhat slower. This still offers better
      * throughput than {@link Math#sin(double)}.
      * <br>
-     * Internally, this uses the same {@link #COS_TABLE_D} that {@link #sin(double)} uses, but interpolates between two
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sin(double)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param radians an angle in radians; optimally between {@code -PI2_D} and {@code PI2_D}
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static double sinSmoother(double radians) {
-        radians = Math.abs(radians - HALF_PI_D) * radToIndexD;
-        final int floor = (int)radians;
+        radians = radians * radToIndexD + 16384.0;
+        final int floor = (int)(radians);
         final int masked = floor & TABLE_MASK;
-        final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
         return from + (to - from) * (radians - floor);
     }
 
@@ -1140,16 +1140,16 @@ public final class TrigTools {
      * {@link #sinDeg(float)} or {@link #sinSmoothDeg(float)}, but that is somewhat slower. This still offers about 2x
      * to 4x the throughput of {@link Math#sin(double)} (converted from degrees and cast to float).
      * <br>
-     * Internally, this uses the same {@link #COS_TABLE} that {@link #sinDeg(float)} uses, but interpolates between two
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinDeg(float)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param degrees an angle in degrees; optimally between -360 and 360
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmootherDeg(float degrees) {
-        degrees = Math.abs(degrees - 90) * degToIndex;
-        final int floor = (int)degrees;
+        degrees *= degToIndex;
+        final int floor = (int)(degrees + 16384f) - 16384;
         final int masked = floor & TABLE_MASK;
-        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
         return from + (to - from) * (degrees - floor);
     }
 
@@ -1158,16 +1158,16 @@ public final class TrigTools {
      * {@link #sinDeg(double)} or {@link #sinSmoothDeg(double)}, but that is somewhat slower. This still offers better
      * throughput than {@link Math#sin(double)} (converted from degrees).
      * <br>
-     * Internally, this uses the same {@link #COS_TABLE_D} that {@link #sinDeg(double)} uses, but interpolates between
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinDeg(double)} uses, but interpolates between
      * two adjacent entries in the table, rather than just using one entry unmodified.
      * @param degrees an angle in degrees; optimally between -360 and 360
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static double sinSmootherDeg(double degrees) {
-        degrees = Math.abs(degrees - 90) * degToIndexD;
-        final int floor = (int)degrees;
+        degrees = degrees * degToIndexD + 16384.0;
+        final int floor = (int)(degrees);
         final int masked = floor & TABLE_MASK;
-        final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
         return from + (to - from) * (degrees - floor);
     }
 
@@ -1256,16 +1256,16 @@ public final class TrigTools {
      * {@link #sinTurns(float)} or {@link #sinSmoothTurns(float)}, but that is somewhat slower. This still offers about 2x
      * to 4x the throughput of {@link Math#sin(double)} (converted from turns and cast to float).
      * <br>
-     * Internally, this uses the same {@link #COS_TABLE} that {@link #sinTurns(float)} uses, but interpolates between two
+     * Internally, this uses the same {@link #SIN_TABLE} that {@link #sinTurns(float)} uses, but interpolates between two
      * adjacent entries in the table, rather than just using one entry unmodified.
      * @param turns an angle in turns; optimally between -1 and 1
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmootherTurns(float turns) {
-        turns = Math.abs(turns - 0.25f) * turnToIndex;
-        final int floor = (int)turns;
+        turns *= turnToIndex;
+        final int floor = (int)(turns + 16384f) - 16384;
         final int masked = floor & TABLE_MASK;
-        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
+        final float from = SIN_TABLE[masked], to = SIN_TABLE[masked+1];
         return from + (to - from) * (turns - floor);
     }
 
@@ -1274,16 +1274,16 @@ public final class TrigTools {
      * {@link #sinTurns(double)} or {@link #sinSmoothTurns(double)}, but that is somewhat slower. This still offers better
      * throughput than {@link Math#sin(double)} (converted from turns).
      * <br>
-     * Internally, this uses the same {@link #COS_TABLE_D} that {@link #sinTurns(double)} uses, but interpolates between
+     * Internally, this uses the same {@link #SIN_TABLE_D} that {@link #sinTurns(double)} uses, but interpolates between
      * two adjacent entries in the table, rather than just using one entry unmodified.
      * @param turns an angle in turns; optimally between -1 and 1
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static double sinSmootherTurns(double turns) {
-        turns = Math.abs(turns - 0.25) * turnToIndexD;
-        final int floor = (int)turns;
+        turns = turns * turnToIndexD + 16384.0;
+        final int floor = (int)(turns);
         final int masked = floor & TABLE_MASK;
-        final double from = COS_TABLE_D[masked], to = COS_TABLE_D[masked+1];
+        final double from = SIN_TABLE_D[masked], to = SIN_TABLE_D[masked+1];
         return from + (to - from) * (turns - floor);
     }
 
