@@ -2696,7 +2696,7 @@ public class Base {
      * @return a long array of the numbers found in source
      */
     public long[] longSplit(String source, String delimiter, int startIndex, int endIndex) {
-        if (delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+        if (source == null || delimiter == null || delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return new long[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
@@ -2737,7 +2737,7 @@ public class Base {
      * @return an int array of the numbers found in source
      */
     public int[] intSplit(String source, String delimiter, int startIndex, int endIndex) {
-        if (delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+        if (source == null || delimiter == null || delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return new int[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
@@ -2778,7 +2778,7 @@ public class Base {
      * @return a short array of the numbers found in source
      */
     public short[] shortSplit(String source, String delimiter, int startIndex, int endIndex) {
-        if (delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+        if (source == null || delimiter == null || delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return new short[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
@@ -2819,7 +2819,7 @@ public class Base {
      * @return a byte array of the numbers found in source
      */
     public byte[] byteSplit(String source, String delimiter, int startIndex, int endIndex) {
-        if (delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+        if (source == null || delimiter == null || delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return new byte[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
@@ -2860,7 +2860,7 @@ public class Base {
      * @return a char array of the numbers found in source
      */
     public char[] charSplit(String source, String delimiter, int startIndex, int endIndex) {
-        if (delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+        if (source == null || delimiter == null || delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return new char[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
@@ -2948,7 +2948,7 @@ public class Base {
      * @return a double array of the numbers found in source
      */
     public double[] doubleSplit(String source, String delimiter, int startIndex, int endIndex) {
-        if (delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+        if (source == null || delimiter == null || delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return new double[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
@@ -3038,7 +3038,7 @@ public class Base {
      * @return a float array of the numbers found in source
      */
     public float[] floatSplit(String source, String delimiter, int startIndex, int endIndex) {
-        if (delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+        if (source == null || delimiter == null || delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return new float[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
@@ -3540,7 +3540,8 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
     public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, long[][] elements) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (elements.length == 0)
             return sb;
@@ -3564,7 +3565,8 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
     public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, int[][] elements) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (elements.length == 0)
             return sb;
@@ -3588,7 +3590,8 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
     public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, short[][] elements) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (elements.length == 0)
             return sb;
@@ -3612,7 +3615,8 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
     public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, byte[][] elements) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (elements.length == 0)
             return sb;
@@ -3636,7 +3640,8 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
     public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, char[][] elements) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (elements.length == 0)
             return sb;
@@ -3661,7 +3666,8 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
     public StringBuilder appendJoinedExact2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, double[][] elements) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (elements.length == 0)
             return sb;
@@ -3688,7 +3694,8 @@ public class Base {
      */
     public StringBuilder appendJoinedDecimal2D(StringBuilder sb, String majorDelimiter, String minorDelimiter,
                                                int lengthLimit, double[][] elements) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (elements.length == 0)
             return sb;
@@ -3713,7 +3720,8 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
     public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, double[][] elements) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (elements.length == 0)
             return sb;
@@ -3738,7 +3746,8 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
     public StringBuilder appendJoinedExact2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, float[][] elements) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (elements.length == 0)
             return sb;
@@ -3765,7 +3774,8 @@ public class Base {
      */
     public StringBuilder appendJoinedDecimal2D(StringBuilder sb, String majorDelimiter, String minorDelimiter,
                                                int lengthLimit, float[][] elements) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (elements.length == 0)
             return sb;
@@ -3790,7 +3800,8 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
     public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, float[][] elements) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (elements.length == 0)
             return sb;
@@ -3817,7 +3828,8 @@ public class Base {
      * @return a 2D long array of the numbers found in source
      */
     public long[][] longSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(source == null || majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return long2D;
@@ -3869,7 +3881,8 @@ public class Base {
      * @return a 2D int array of the numbers found in source
      */
     public int[][] intSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(source == null || majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return int2D;
@@ -3921,7 +3934,8 @@ public class Base {
      * @return a 2D short array of the numbers found in source
      */
     public short[][] shortSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(source == null || majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return short2D;
@@ -3973,7 +3987,8 @@ public class Base {
      * @return a 2D byte array of the numbers found in source
      */
     public byte[][] byteSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(source == null || majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return byte2D;
@@ -4025,7 +4040,8 @@ public class Base {
      * @return a 2D char array of the numbers found in source
      */
     public char[][] charSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(source == null || majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return char2D;
@@ -4081,7 +4097,8 @@ public class Base {
      * @return a 2D double array of the numbers found in source
      */
     public double[][] doubleSplitExact2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(source == null || majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return double2D;
@@ -4138,7 +4155,8 @@ public class Base {
      * @return a 2D double array of the numbers found in source
      */
     public double[][] doubleSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(source == null || majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return double2D;
@@ -4197,7 +4215,8 @@ public class Base {
      * @return a 2D float array of the numbers found in source
      */
     public float[][] floatSplitExact2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(source == null || majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return float2D;
@@ -4255,7 +4274,8 @@ public class Base {
      * @return a 2D float array of the numbers found in source
      */
     public float[][] floatSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
-        if (majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+        if(source == null || majorDelimiter == null || minorDelimiter == null ||
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return float2D;
@@ -4697,7 +4717,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, double[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
@@ -4856,7 +4876,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public static String joinReadable(String delimiter, long[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendReadable(sb, elements[0]);
@@ -4877,7 +4897,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, long[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendReadable(sb, elements[0]);
         for (int i = 1; i < elements.length; i++) {
@@ -4898,7 +4918,7 @@ public class Base {
      * @return a long array of the numbers found in source
      */
     public static long[] longSplitReadable(String source, String delimiter, int startIndex, int endIndex) {
-        if (delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+        if (source == null || delimiter == null || delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return new long[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
