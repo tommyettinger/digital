@@ -304,61 +304,6 @@ public final class TextTools {
         return f;
     }
 
-    /**
-     * Tries to find as much of the sequence {@code prefix search suffix} as it can in text, where prefix and suffix are
-     * CharSequences for some reason and search is a char array. Returns the length of the sequence it was able to
-     * match, up to {@code prefix.length() + search.length + suffix.length()}, or 0 if no part of the looked-for
-     * sequence could be found.
-     * <br>
-     * This is almost certainly too specific to be useful outside of a handful of cases.
-     * @param text a CharSequence to search in
-     * @param search a char array to look for, surrounded by prefix and suffix
-     * @param prefix a mandatory prefix before search, separated for some weird optimization reason
-     * @param suffix a mandatory suffix after search, separated for some weird optimization reason
-     * @return the length of the searched-for prefix+search+suffix that was found
-     */
-    public static int containsPart(CharSequence text, char[] search, CharSequence prefix, CharSequence suffix)
-    {
-        if(prefix == null) prefix = "";
-        if(suffix == null) suffix = "";
-        int bl = prefix.length(), el = suffix.length();
-        if(text == null || text.length() == 0 || search == null || (search.length + bl + el <= 0))
-            return 0;
-        int sl = bl + search.length + el, tl = text.length() - sl, f = 0, sl2 = sl - el;
-        char s = (bl == 0) ? (search.length == 0 ? suffix.charAt(0) : search[0]) : prefix.charAt(0);
-        PRIMARY:
-        for (int i = 0; i <= tl; i++) {
-            if(text.charAt(i) == s)
-            {
-                for (int j = i+1, x = 1; x < sl; j++, x++) {
-                    if(x < bl)
-                    {
-                        if (text.charAt(j) != prefix.charAt(x)) {
-                            f = Math.max(f, x);
-                            continue PRIMARY;
-                        }
-                    }
-                    else if(x < sl2)
-                    {
-                        if (text.charAt(j) != search[x-bl]) {
-                            f = Math.max(f, x);
-                            continue PRIMARY;
-                        }
-                    }
-                    else
-                    {
-                        if (text.charAt(j) != suffix.charAt(x - sl2)) {
-                            f = Math.max(f, x);
-                            continue PRIMARY;
-                        }
-                    }
-                }
-                return sl;
-            }
-        }
-        return f;
-    }
-
     public static String replace(CharSequence text, CharSequence before, CharSequence after) {
         String t = text.toString();
         return t.replace(before, after);
@@ -383,19 +328,19 @@ public final class TextTools {
     }
 
     /**
-     * Scans repeatedly in {@code source} for the codepoint {@code search} (which is usually a char literal), not
-     * scanning the same section twice, and returns the number of instances of search that were found, or 0 if source is
+     * Scans repeatedly in {@code source} for the codepoint {@code searchChar} (which is usually a char literal), not
+     * scanning the same section twice, and returns the number of instances of searchChar that were found, or 0 if source is
      * null.
      * @param source a String to look through
-     * @param search a codepoint or char to look for
-     * @return the number of times search was found in source
+     * @param searchChar a codepoint or char to look for
+     * @return the number of times searchChar was found in source
      */
-    public static int count(final String source, final int search)
+    public static int count(final String source, final int searchChar)
     {
         if(source == null || source.isEmpty())
             return 0;
         int amount = 0, idx = -1;
-        while ((idx = source.indexOf(search, idx+1)) >= 0)
+        while ((idx = source.indexOf(searchChar, idx+1)) >= 0)
             ++amount;
         return amount;
     }
@@ -424,22 +369,22 @@ public final class TextTools {
 
     /**
      * Scans repeatedly in {@code source} (only using the area from startIndex, inclusive, to endIndex, exclusive) for
-     * the codepoint {@code search} (which is usually a char literal), not scanning the same section twice, and returns
-     * the number of instances of search that were found, or 0 if source is null or if the searched area is empty.
+     * the codepoint {@code searchChar} (which is usually a char literal), not scanning the same section twice, and returns
+     * the number of instances of searchChar that were found, or 0 if source is null or if the searched area is empty.
      * If endIndex is negative, this will search from startIndex until the end of the source.
      * @param source a String to look through
-     * @param search a codepoint or char to look for
+     * @param searchChar a codepoint or char to look for
      * @param startIndex the first index to search through, inclusive
      * @param endIndex the last index to search through, exclusive; if negative this will search the rest of source
-     * @return the number of times search was found in source
+     * @return the number of times searchChar was found in source
      */
-    public static int count(final String source, final int search, final int startIndex, int endIndex)
+    public static int count(final String source, final int searchChar, final int startIndex, int endIndex)
     {
         if(endIndex < 0) endIndex = 0x7fffffff;
         if(source == null || source.isEmpty() || startIndex < 0 || startIndex >= endIndex)
             return 0;
         int amount = 0, idx = startIndex-1;
-        while ((idx = source.indexOf(search, idx+1)) >= 0 && idx < endIndex)
+        while ((idx = source.indexOf(searchChar, idx+1)) >= 0 && idx < endIndex)
             ++amount;
         return amount;
     }
@@ -633,5 +578,33 @@ public final class TextTools {
             c[i] = padChar;
         }
         return String.valueOf(c);
+    }
+
+
+    /**
+     * Creates a String made by repeating {@code item} {@code amount} times, with no delimiter.
+     * @param item any CharSequence, such as a String, to repeat
+     * @param amount how many times to repeat {@code item}
+     * @return a new String containing {@code item} {@code amount} times
+     */
+    public static String repeat(CharSequence item, int amount) {
+        if(item == null) return null;
+        return appendRepeated(new StringBuilder(item.length() * amount), item, amount).toString();
+    }
+
+    /**
+     * Appends the text {@code item} to the StringBuilder {@code sb} repeatedly, {@code amount} times.
+     * Returns {@code sb}.
+     * @param sb a non-null StringBuilder that will be appended to
+     * @param item any CharSequence, such as a String, to repeat
+     * @param amount how many times to repeat {@code item}
+     * @return {@code sb}, after modifications
+     */
+    public static StringBuilder appendRepeated(StringBuilder sb, CharSequence item, int amount) {
+        if(sb == null || item == null || amount <= 0) return sb;
+        for (int i = 0; i < amount; i++) {
+            sb.append(item);
+        }
+        return sb;
     }
 }
