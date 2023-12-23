@@ -438,7 +438,7 @@ public class Base {
      * @return the long that cs represents
      */
     public long readLong(final CharSequence cs) {
-        return readLong(cs, 0, cs.length());
+        return readLong(cs, 0, cs == null ? 0 : cs.length());
     }
 
     /**
@@ -518,7 +518,7 @@ public class Base {
      */
     public long readLong(final char[] cs, final int start, int end) {
         int len, h, lim;
-        if (start < 0 || end <= 0 || end - start <= 0 || (len = cs.length) - start <= 0 || end > len)
+        if (start < 0 || end <= 0 || end - start <= 0 || cs == null || (len = cs.length) - start <= 0 || end > len)
             return 0;
         char c = cs[start];
         if (c == negativeSign) {
@@ -654,7 +654,7 @@ public class Base {
      * @return the int that cs represents
      */
     public int readInt(final CharSequence cs) {
-        return readInt(cs, 0, cs.length());
+        return readInt(cs, 0, cs == null ? 0 : cs.length());
     }
 
     /**
@@ -734,7 +734,7 @@ public class Base {
      */
     public int readInt(final char[] cs, final int start, int end) {
         int len, h, lim;
-        if (start < 0 || end <= 0 || end - start <= 0 || (len = cs.length) - start <= 0 || end > len)
+        if (start < 0 || end <= 0 || end - start <= 0 || cs == null || (len = cs.length) - start <= 0 || end > len)
             return 0;
         char c = cs[start];
         if (c == negativeSign) {
@@ -870,7 +870,7 @@ public class Base {
      * @return the short that cs represents
      */
     public short readShort(final CharSequence cs) {
-        return readShort(cs, 0, cs.length());
+        return readShort(cs, 0, cs == null ? 0 : cs.length());
     }
 
     /**
@@ -950,7 +950,7 @@ public class Base {
      */
     public short readShort(final char[] cs, final int start, int end) {
         int len, h, lim;
-        if (start < 0 || end <= 0 || end - start <= 0 || (len = cs.length) - start <= 0 || end > len)
+        if (start < 0 || end <= 0 || end - start <= 0 || cs == null || (len = cs.length) - start <= 0 || end > len)
             return 0;
         char c = cs[start];
         if (c == negativeSign) {
@@ -1086,7 +1086,7 @@ public class Base {
      * @return the byte that cs represents
      */
     public byte readByte(final CharSequence cs) {
-        return readByte(cs, 0, cs.length());
+        return readByte(cs, 0, cs == null ? 0 : cs.length());
     }
 
     /**
@@ -1166,7 +1166,7 @@ public class Base {
      */
     public byte readByte(final char[] cs, final int start, int end) {
         int len, h, lim;
-        if (start < 0 || end <= 0 || end - start <= 0 || (len = cs.length) - start <= 0 || end > len)
+        if (start < 0 || end <= 0 || end - start <= 0 || cs == null || (len = cs.length) - start <= 0 || end > len)
             return 0;
         char c = cs[start];
         if (c == negativeSign) {
@@ -1431,7 +1431,7 @@ public class Base {
      * @return the double that cs represents
      */
     public double readDoubleExact(final CharSequence cs) {
-        return readDoubleExact(cs, 0, cs.length());
+        return readDoubleExact(cs, 0, cs == null ? 0 : cs.length());
     }
 
     /**
@@ -1454,7 +1454,7 @@ public class Base {
      * @return the double that cs represents
      */
     public double readDoubleExact(final CharSequence cs, final int start, int end) {
-        if(cs.length() == 0) return 0.0;
+        if(cs == null || cs.length() == 0) return 0.0;
         if(cs.charAt(start) == '.') return BitConversion.longBitsToDouble(readLong(cs, start+1, end));
         return BitConversion.reversedLongBitsToDouble(readLong(cs, start, end));
     }
@@ -1479,13 +1479,13 @@ public class Base {
      * @return the double that cs represents
      */
     public double readDoubleExact(final char[] cs, final int start, int end) {
-        if(cs.length == 0) return 0.0;
+        if(cs == null || cs.length == 0) return 0.0;
         if(cs[start] == '.') return BitConversion.longBitsToDouble(readLong(cs, start+1, end));
         return BitConversion.reversedLongBitsToDouble(readLong(cs, start, end));
     }
 
     /**
-     * Validates if the given {@code str} can be parsed as a valid double. If {@code str} is null
+     * Reads a double from the given {@code str}, stopping reading at the end of the number. If {@code str} is null
      * or empty, this returns {@code 0.0} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
      * This can read in the format produced by {@link #decimal(double)}, {@link #scientific(double)},
@@ -1507,9 +1507,9 @@ public class Base {
     }
 
     /**
-     * Validates if a range of the given {@code str} can be parsed as a valid double. Here, {@code begin} and
-     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If begin is
-     * negative, it will be clamped to be treated as {@code 0}. If end is greater
+     * Reads a double from as much as possible of the range from {@code begin} and {@code end} in {@code str}. Here,
+     * {@code begin} and {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin.
+     * If begin is negative, it will be clamped to be treated as {@code 0}. If end is greater
      * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
      * or empty, this returns {@code 0.0} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
@@ -1676,10 +1676,10 @@ public class Base {
     }
 
     /**
-     * Validates if a range of the given {@code str} can be parsed as a valid double. Here, {@code begin} and
-     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If begin is
-     * negative, it will be clamped to be treated as {@code 0}. If end is greater
-     * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
+     * Reads a double from as much as possible of the range from {@code begin} and {@code end} in {@code str}. Here,
+     * {@code begin} and {@code end} are indices in the given {@code char[]}, and end must be greater than begin.
+     * If begin is negative, it will be clamped to be treated as {@code 0}. If end is greater
+     * than the length of {@code str}, it will be clamped to be treated as {@code str.length}. If {@code str} is null
      * or empty, this returns {@code 0.0} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
      * This can read in the format produced by {@link #decimal(double)}, {@link #scientific(double)},
@@ -1693,7 +1693,7 @@ public class Base {
      * run on it. Reading in floating-point numbers without ever allocating seems to be a tremendous challenge, and this
      * library only does so with the (non-human-readable) {@link #readDoubleExact} methods.
      *
-     * @param str a CharSequence, such as a String, that may contain a valid double that can be parsed
+     * @param str a char array that may contain a valid double that can be parsed
      * @param begin the inclusive index to start reading at
      * @param end the exclusive index to stop reading before
      * @return the double parsed from as much of str this could read from, or 0.0 if no valid double could be read
@@ -2083,7 +2083,7 @@ public class Base {
      * @return the float that cs represents
      */
     public float readFloatExact(final CharSequence cs) {
-        return readFloatExact(cs, 0, cs.length());
+        return readFloatExact(cs, 0, cs == null ? 0 : cs.length());
     }
 
     /**
@@ -2106,7 +2106,7 @@ public class Base {
      * @return the float that cs represents
      */
     public float readFloatExact(final CharSequence cs, final int start, int end) {
-        if(cs.length() == 0) return 0f;
+        if(cs == null || cs.length() == 0) return 0f;
         if(cs.charAt(start) == '.') return BitConversion.intBitsToFloat(readInt(cs, start+1, end));
         return BitConversion.reversedIntBitsToFloat(readInt(cs, start, end));
     }
@@ -2131,13 +2131,13 @@ public class Base {
      * @return the float that cs represents
      */
     public float readFloatExact(final char[] cs, final int start, int end) {
-        if(cs.length == 0) return 0f;
+        if(cs == null || cs.length == 0) return 0f;
         if(cs[start] == '.') return BitConversion.intBitsToFloat(readInt(cs, start+1, end));
         return BitConversion.reversedIntBitsToFloat(readInt(cs, start, end));
     }
 
     /**
-     * Validates if the given {@code str} can be parsed as a valid float. If {@code str} is null
+     * Reads a float from the given {@code str}, stopping reading at the end of the number. If {@code str} is null
      * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
      * This can read in the format produced by {@link #decimal(float)}, {@link #scientific(float)},
@@ -2159,9 +2159,9 @@ public class Base {
     }
 
     /**
-     * Validates if a range of the given {@code str} can be parsed as a valid float. Here, {@code begin} and
-     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If begin is
-     * negative, it will be clamped to be treated as {@code 0}. If end is greater
+     * Reads a float from as much as possible of the range from {@code begin} and {@code end} in {@code str}. Here,
+     * {@code begin} and {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin.
+     * If begin is negative, it will be clamped to be treated as {@code 0}. If end is greater
      * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
      * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
@@ -2328,10 +2328,10 @@ public class Base {
     }
 
     /**
-     * Validates if a range of the given {@code str} can be parsed as a valid float. Here, {@code begin} and
-     * {@code end} are indices in the given {@code CharSequence}, and end must be greater than begin. If begin is
-     * negative, it will be clamped to be treated as {@code 0}. If end is greater
-     * than the length of {@code str}, it will be clamped to be treated as {@code str.length()}. If {@code str} is null
+     * Reads a float from as much as possible of the range from {@code begin} and {@code end} in {@code str}. Here,
+     * {@code begin} and {@code end} are indices in the given {@code char[]}, and end must be greater than begin.
+     * If begin is negative, it will be clamped to be treated as {@code 0}. If end is greater
+     * than the length of {@code str}, it will be clamped to be treated as {@code str.length}. If {@code str} is null
      * or empty, this returns {@code 0.0f} rather than throwing an exception. This only correctly handles decimal or
      * scientific notation formats (in a format string, "%f", "%e", and "%g" will work, but "%a" will not).
      * This can read in the format produced by {@link #decimal(float)}, {@link #scientific(float)},
@@ -2586,7 +2586,7 @@ public class Base {
      * @return the char that cs represents
      */
     public char readChar(final CharSequence cs) {
-        return readChar(cs, 0, cs.length());
+        return readChar(cs, 0, cs == null ? 0 : cs.length());
     }
 
     /**
@@ -2658,7 +2658,7 @@ public class Base {
      */
     public char readChar(final char[] cs, final int start, int end) {
         int len, h, lim;
-        if (start < 0 || end <= 0 || end - start <= 0 || (len = cs.length) - start <= 0 || end > len)
+        if (start < 0 || end <= 0 || end - start <= 0 || cs == null || (len = cs.length) - start <= 0 || end > len)
             return 0;
         char c = cs[start];
         if (c == negativeSign) {
@@ -2723,7 +2723,7 @@ public class Base {
      * @return a long array of the numbers found in source
      */
     public long[] longSplit(String source, String delimiter) {
-        return longSplit(source, delimiter, 0, source.length());
+        return longSplit(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -2764,7 +2764,7 @@ public class Base {
      * @return an int array of the numbers found in source
      */
     public int[] intSplit(String source, String delimiter) {
-        return intSplit(source, delimiter, 0, source.length());
+        return intSplit(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -2805,7 +2805,7 @@ public class Base {
      * @return a short array of the numbers found in source
      */
     public short[] shortSplit(String source, String delimiter) {
-        return shortSplit(source, delimiter, 0, source.length());
+        return shortSplit(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -2846,7 +2846,7 @@ public class Base {
      * @return a byte array of the numbers found in source
      */
     public byte[] byteSplit(String source, String delimiter) {
-        return byteSplit(source, delimiter, 0, source.length());
+        return byteSplit(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -2887,7 +2887,7 @@ public class Base {
      * @return a char array of the numbers found in source
      */
     public char[] charSplit(String source, String delimiter) {
-        return charSplit(source, delimiter, 0, source.length());
+        return charSplit(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -2932,7 +2932,7 @@ public class Base {
      * @return a double array of the numbers found in source
      */
     public double[] doubleSplitExact(String source, String delimiter) {
-        return doubleSplitExact(source, delimiter, 0, source.length());
+        return doubleSplitExact(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -2977,7 +2977,7 @@ public class Base {
      * @return a double array of the numbers found in source
      */
     public double[] doubleSplit(String source, String delimiter) {
-        return doubleSplit(source, delimiter, 0, source.length());
+        return doubleSplit(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -3022,7 +3022,7 @@ public class Base {
      * @return a float array of the numbers found in source
      */
     public float[] floatSplitExact(String source, String delimiter) {
-        return floatSplitExact(source, delimiter, 0, source.length());
+        return floatSplitExact(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -3067,7 +3067,7 @@ public class Base {
      * @return a float array of the numbers found in source
      */
     public float[] floatSplit(String source, String delimiter) {
-        return floatSplit(source, delimiter, 0, source.length());
+        return floatSplit(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -3862,7 +3862,7 @@ public class Base {
      * @return a 2D long array of the numbers found in source
      */
     public long[][] longSplit2D(String source, String majorDelimiter, String minorDelimiter) {
-        return longSplit2D(source, majorDelimiter, minorDelimiter, 0, source.length());
+        return longSplit2D(source, majorDelimiter, minorDelimiter, 0, source == null ? 0 : source.length());
     }
 
     private static final int[][] int2D = new int[0][0];
@@ -3915,7 +3915,7 @@ public class Base {
      * @return a 2D int array of the numbers found in source
      */
     public int[][] intSplit2D(String source, String majorDelimiter, String minorDelimiter) {
-        return intSplit2D(source, majorDelimiter, minorDelimiter, 0, source.length());
+        return intSplit2D(source, majorDelimiter, minorDelimiter, 0, source == null ? 0 : source.length());
     }
 
     private static final short[][] short2D = new short[0][0];
@@ -3968,7 +3968,7 @@ public class Base {
      * @return a 2D short array of the numbers found in source
      */
     public short[][] shortSplit2D(String source, String majorDelimiter, String minorDelimiter) {
-        return shortSplit2D(source, majorDelimiter, minorDelimiter, 0, source.length());
+        return shortSplit2D(source, majorDelimiter, minorDelimiter, 0, source == null ? 0 : source.length());
     }
 
     private static final byte[][] byte2D = new byte[0][0];
@@ -4021,7 +4021,7 @@ public class Base {
      * @return a 2D byte array of the numbers found in source
      */
     public byte[][] byteSplit2D(String source, String majorDelimiter, String minorDelimiter) {
-        return byteSplit2D(source, majorDelimiter, minorDelimiter, 0, source.length());
+        return byteSplit2D(source, majorDelimiter, minorDelimiter, 0, source == null ? 0 : source.length());
     }
 
     private static final char[][] char2D = new char[0][0];
@@ -4075,7 +4075,7 @@ public class Base {
      * @return a 2D char array of the numbers found in source
      */
     public char[][] charSplit2D(String source, String majorDelimiter, String minorDelimiter) {
-        return charSplit2D(source, majorDelimiter, minorDelimiter, 0, source.length());
+        return charSplit2D(source, majorDelimiter, minorDelimiter, 0, source == null ? 0 : source.length());
     }
 
     private static final double[][] double2D = new double[0][0];
@@ -4134,7 +4134,7 @@ public class Base {
      * @return a 2D double array of the numbers found in source
      */
     public double[][] doubleSplitExact2D(String source, String majorDelimiter, String minorDelimiter) {
-        return doubleSplitExact2D(source, majorDelimiter, minorDelimiter, 0, source.length());
+        return doubleSplitExact2D(source, majorDelimiter, minorDelimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -4193,7 +4193,7 @@ public class Base {
      * @return a 2D double array of the numbers found in source
      */
     public double[][] doubleSplit2D(String source, String majorDelimiter, String minorDelimiter) {
-        return doubleSplit2D(source, majorDelimiter, minorDelimiter, 0, source.length());
+        return doubleSplit2D(source, majorDelimiter, minorDelimiter, 0, source == null ? 0 : source.length());
     }
 
     private static final float[][] float2D = new float[0][0];
@@ -4253,7 +4253,7 @@ public class Base {
      * @return a 2D float array of the numbers found in source
      */
     public float[][] floatSplitExact2D(String source, String majorDelimiter, String minorDelimiter) {
-        return floatSplitExact2D(source, majorDelimiter, minorDelimiter, 0, source.length());
+        return floatSplitExact2D(source, majorDelimiter, minorDelimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -4311,7 +4311,7 @@ public class Base {
      * @return a 2D float array of the numbers found in source
      */
     public float[][] floatSplit2D(String source, String majorDelimiter, String minorDelimiter) {
-        return floatSplit2D(source, majorDelimiter, minorDelimiter, 0, source.length());
+        return floatSplit2D(source, majorDelimiter, minorDelimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
@@ -4945,7 +4945,7 @@ public class Base {
      * @return a long array of the numbers found in source
      */
     public static long[] longSplitReadable(String source, String delimiter) {
-        return longSplitReadable(source, delimiter, 0, source.length());
+        return longSplitReadable(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
     /**
