@@ -480,6 +480,15 @@ public class BaseTest {
 		}
 	}
 
+	@Test
+	public void testReadable() {
+		Assert.assertEquals("0L", Base.readable(0));
+		Assert.assertEquals("1L", Base.readable(1));
+		Assert.assertEquals("-1L", Base.readable(-1));
+		Assert.assertEquals(Long.MAX_VALUE + "L", Base.readable(Long.MAX_VALUE));
+		Assert.assertEquals(Long.MIN_VALUE + "L", Base.readable(Long.MIN_VALUE));
+	}
+
 	public static void main(String[] args) {
 		for (Base b : BASES) {
 			System.out.println(b.serializeToString());
