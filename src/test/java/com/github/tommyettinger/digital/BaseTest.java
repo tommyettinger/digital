@@ -482,13 +482,20 @@ public class BaseTest {
 
 	@Test
 	public void testReadable() {
-		Assert.assertEquals("0L", Base.readable(0));
-		Assert.assertEquals("1L", Base.readable(1));
-		Assert.assertEquals("-1L", Base.readable(-1));
+		Assert.assertEquals("0", Base.readable(0));
+		Assert.assertEquals("1", Base.readable(1));
+		Assert.assertEquals("-1", Base.readable(-1));
+		Assert.assertEquals(String.valueOf(Integer.MAX_VALUE), Base.readable(Integer.MAX_VALUE));
+		Assert.assertEquals(String.valueOf(Integer.MIN_VALUE), Base.readable(Integer.MIN_VALUE));
+		Assert.assertEquals("0L", Base.readable(0L));
+		Assert.assertEquals("1L", Base.readable(1L));
+		Assert.assertEquals("-1L", Base.readable(-1L));
 		Assert.assertEquals(Long.MAX_VALUE + "L", Base.readable(Long.MAX_VALUE));
 		Assert.assertEquals(Long.MIN_VALUE + "L", Base.readable(Long.MIN_VALUE));
-		long[] items = {0L, 1L, -1L, Long.MAX_VALUE, Long.MIN_VALUE};
-		Assert.assertArrayEquals(items, Base.longSplitReadable(Base.joinReadable(", ", items), ", "));
+		int[] ints = {0, 1, -1, Integer.MAX_VALUE, Integer.MIN_VALUE};
+		Assert.assertArrayEquals(ints, Base.intSplitReadable(Base.joinReadable(", ", ints), ", "));
+		long[] longs = {0L, 1L, -1L, Long.MAX_VALUE, Long.MIN_VALUE};
+		Assert.assertArrayEquals(longs, Base.longSplitReadable(Base.joinReadable(", ", longs), ", "));
 	}
 
 	public static void main(String[] args) {

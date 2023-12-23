@@ -417,66 +417,6 @@ public class Base {
     }
 
     /**
-     * Converts the given {@code number} to a String that Java can read in as a literal.
-     * This can vary in how many chars it uses, since it does not show leading zeroes and may use a {@code -} sign.
-     *
-     * @param number any long
-     * @return a new String containing {@code number} in base 10 with 'L' appended
-     */
-    public static String readable(long number) {
-        final int length8Byte = Base.BASE10.length8Byte;
-        final int base = 10;
-        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE10.toEncoded;
-        final char negativeSign = '-';
-        int run = length8Byte;
-        final long sign = number >> -1;
-        // number is made negative because 0x8000000000000000L and -(0x8000000000000000L) are both negative.
-        // then modulus later will also return a negative number or 0, and we can negate that to get a good index.
-        number = -(number + sign ^ sign);
-        for (; ; run--) {
-            progress[run] = toEncoded[(int) -(number % base)];
-            if ((number /= 10) == 0)
-                break;
-        }
-        if (sign != 0) {
-            progress[--run] = negativeSign;
-        }
-        progress[length8Byte+1] = 'L';
-        return String.valueOf(progress, run, length8Byte + 2 - run);
-    }
-
-    /**
-     * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
-     * {@code builder}. This can vary in how many chars it uses, since it does not show leading zeroes and may use a
-     * {@code -} sign.
-     *
-     * @param builder a non-null StringBuilder that will be modified (appended to)
-     * @param number  any long
-     * @return {@code builder}, with the encoded {@code number} and 'L' appended
-     */
-    public static StringBuilder appendReadable(StringBuilder builder, long number) {
-        final int length8Byte = Base.BASE10.length8Byte;
-        final int base = 10;
-        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE10.toEncoded;
-        final char negativeSign = '-';
-        int run = length8Byte;
-        final long sign = number >> -1;
-        // number is made negative because 0x8000000000000000L and -(0x8000000000000000L) are both negative.
-        // then modulus later will also return a negative number or 0, and we can negate that to get a good index.
-        number = -(number + sign ^ sign);
-        for (; ; run--) {
-            progress[run] = toEncoded[(int) -(number % base)];
-            if ((number /= base) == 0)
-                break;
-        }
-        if (sign != 0) {
-            progress[--run] = negativeSign;
-        }
-        progress[length8Byte+1] = 'L';
-        return builder.append(progress, run, length8Byte + 2 - run);
-    }
-
-    /**
      * Reads in a CharSequence containing only the digits present in this Base, with an optional sign at the
      * start, and returns the long they represent, or 0 if nothing could be read. The leading sign can be the
      * {@link #positiveSign} or {@link #negativeSign} if present; these are almost always '+' and '-'.
@@ -2787,47 +2727,6 @@ public class Base {
     }
 
     /**
-     * Given a String containing long items in Java syntax, separated by instances of delimiter, returns those numbers
-     * as a long array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
-     *
-     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
-     * @param delimiter  the String that separates numbers in the source
-     * @param startIndex the first index, inclusive, in source to split from
-     * @param endIndex   the last index, exclusive, in source to split from
-     * @return a long array of the numbers found in source
-     */
-    public static long[] longSplitReadable(String source, String delimiter, int startIndex, int endIndex) {
-        if (delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
-            return new long[0];
-        int amount = count(source, delimiter, startIndex, endIndex);
-        if (amount <= 0)
-            return new long[]{Base.BASE10.readLong(source, startIndex, endIndex)};
-        long[] splat = new long[amount + 1];
-        int dl = delimiter.length()+1, idx = startIndex - dl, idx2;
-        for (int i = 0; i < amount; i++) {
-            splat[i] = Base.BASE10.readLong(source, idx + dl, idx = source.indexOf('L', idx + dl));
-        }
-        if ((idx2 = source.indexOf('L', idx + dl)) < 0 || idx2 >= endIndex) {
-            splat[amount] = Base.BASE10.readLong(source, idx + dl, Math.min(source.length(), endIndex));
-        } else {
-            splat[amount] = Base.BASE10.readLong(source, idx + dl, idx2);
-        }
-        return splat;
-    }
-
-    /**
-     * Given a String containing long items in Java syntax, separated by instances of delimiter, returns those number
-     * as a long array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
-     *
-     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
-     * @param delimiter the String that separates numbers in the source
-     * @return a long array of the numbers found in source
-     */
-    public static long[] longSplitReadable(String source, String delimiter) {
-        return longSplitReadable(source, delimiter, 0, source.length());
-    }
-
-    /**
      * Given a String containing numbers in this Base, separated by instances of delimiter, returns those numbers as an
      * int array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      *
@@ -3207,45 +3106,6 @@ public class Base {
         for (int i = 1; i < elements.length; i++) {
             sb.append(delimiter);
             appendSigned(sb, elements[i]);
-        }
-        return sb;
-    }
-    /**
-     * Given a long array and a delimiter to separate the items of that array, produces a String containing all longs
-     * from elements, in a way Java can read each item as a literal, separated by delimiter.
-     *
-     * @param delimiter the separator to put between numbers
-     * @param elements  a long array; if null, this returns an empty String
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
-     */
-    public static String joinReadable(String delimiter, long[] elements) {
-        if (elements.length == 0)
-            return "";
-        StringBuilder sb = new StringBuilder(elements.length << 3);
-        appendReadable(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendReadable(sb, elements[i]);
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Given a long array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
-     * the StringBuilder all longs from elements, in a way Java can read each item as a literal, separated by delimiter.
-     *
-     * @param sb        the StringBuilder to append to; if null, this returns null
-     * @param delimiter the separator to put between numbers
-     * @param elements  a long array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
-     */
-    public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, long[] elements) {
-        if (elements.length == 0)
-            return sb;
-        appendReadable(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendReadable(sb, elements[i]);
         }
         return sb;
     }
@@ -4846,6 +4706,226 @@ public class Base {
             appendSigned(sb, elements[start]);
         }
         return sb;
+    }
+    /**
+     * Converts the given {@code number} to a String that Java can read in as a literal.
+     * This can vary in how many chars it uses, since it does not show leading zeroes and may use a {@code -} sign.
+     * This is identical to calling {@link #signed(int)} on {@link #BASE10}.
+     *
+     * @param number any int
+     * @return a new String containing {@code number} in base 10
+     */
+    public static String readable(int number) {
+        return BASE10.signed(number);
+    }
+
+    /**
+     * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
+     * {@code builder}. This can vary in how many chars it uses, since it does not show leading zeroes and may use a
+     * {@code -} sign. This is identical to calling {@link #appendSigned(StringBuilder, int)} on {@link #BASE10}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any long
+     * @return {@code builder}, with the encoded {@code number} appended in base 10
+     */
+    public static StringBuilder appendReadable(StringBuilder builder, int number) {
+        return BASE10.appendSigned(builder, number);
+    }
+
+    /**
+     * Converts the given {@code number} to a String that Java can read in as a literal.
+     * This can vary in how many chars it uses, since it does not show leading zeroes and may use a {@code -} sign.
+     *
+     * @param number any long
+     * @return a new String containing {@code number} in base 10 with 'L' appended
+     */
+    public static String readable(long number) {
+        final int length8Byte = Base.BASE10.length8Byte;
+        final int base = 10;
+        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE10.toEncoded;
+        final char negativeSign = '-';
+        int run = length8Byte;
+        final long sign = number >> -1;
+        // number is made negative because 0x8000000000000000L and -(0x8000000000000000L) are both negative.
+        // then modulus later will also return a negative number or 0, and we can negate that to get a good index.
+        number = -(number + sign ^ sign);
+        for (; ; run--) {
+            progress[run] = toEncoded[(int) -(number % base)];
+            if ((number /= 10) == 0)
+                break;
+        }
+        if (sign != 0) {
+            progress[--run] = negativeSign;
+        }
+        progress[length8Byte+1] = 'L';
+        return String.valueOf(progress, run, length8Byte + 2 - run);
+    }
+
+    /**
+     * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
+     * {@code builder}. This can vary in how many chars it uses, since it does not show leading zeroes and may use a
+     * {@code -} sign.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any long
+     * @return {@code builder}, with the encoded {@code number} and 'L' appended
+     */
+    public static StringBuilder appendReadable(StringBuilder builder, long number) {
+        final int length8Byte = Base.BASE10.length8Byte;
+        final int base = 10;
+        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE10.toEncoded;
+        final char negativeSign = '-';
+        int run = length8Byte;
+        final long sign = number >> -1;
+        // number is made negative because 0x8000000000000000L and -(0x8000000000000000L) are both negative.
+        // then modulus later will also return a negative number or 0, and we can negate that to get a good index.
+        number = -(number + sign ^ sign);
+        for (; ; run--) {
+            progress[run] = toEncoded[(int) -(number % base)];
+            if ((number /= base) == 0)
+                break;
+        }
+        if (sign != 0) {
+            progress[--run] = negativeSign;
+        }
+        progress[length8Byte+1] = 'L';
+        return builder.append(progress, run, length8Byte + 2 - run);
+    }
+
+    /**
+     * Given an int array and a delimiter to separate the items of that array, produces a String containing all ints
+     * from elements, in a way Java can read each item as a literal, separated by delimiter.
+     * This is identical to calling {@link #join(String, long[])} on {@link #BASE10}.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  an int array; if null, this returns an empty String
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public static String joinReadable(String delimiter, int[] elements) {
+        return BASE10.join(delimiter, elements);
+    }
+
+    /**
+     * Given an int array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all ints from elements, in a way Java can read each item as a literal, separated by delimiter.
+     * This is identical to calling {@link #appendJoined(StringBuilder, String, int[])} on {@link #BASE10}.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  an int array; if null, this returns sb without changes
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, int[] elements) {
+        return BASE10.appendJoined(sb, delimiter, elements);
+    }
+
+    /**
+     * Given a String containing int items in Java syntax, separated by instances of delimiter, returns those numbers
+     * as an int array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This is identical to calling {@link #intSplit(String, String, int, int)} on {@link #BASE10}.
+     *
+     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter  the String that separates numbers in the source
+     * @param startIndex the first index, inclusive, in source to split from
+     * @param endIndex   the last index, exclusive, in source to split from
+     * @return an int array of the numbers found in source
+     */
+    public static int[] intSplitReadable(String source, String delimiter, int startIndex, int endIndex) {
+        return BASE10.intSplit(source, delimiter, startIndex, endIndex);
+    }
+
+    /**
+     * Given a String containing int items in Java syntax, separated by instances of delimiter, returns those number
+     * as an int array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This is identical to calling {@link #intSplit(String, String)} on {@link #BASE10}.
+     *
+     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter the String that separates numbers in the source
+     * @return an int array of the numbers found in source
+     */
+    public static int[] intSplitReadable(String source, String delimiter) {
+        return BASE10.intSplit(source, delimiter);
+    }
+
+    /**
+     * Given a long array and a delimiter to separate the items of that array, produces a String containing all longs
+     * from elements, in a way Java can read each item as a literal, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a long array; if null, this returns an empty String
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public static String joinReadable(String delimiter, long[] elements) {
+        if (elements.length == 0)
+            return "";
+        StringBuilder sb = new StringBuilder(elements.length << 3);
+        appendReadable(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendReadable(sb, elements[i]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a long array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all longs from elements, in a way Java can read each item as a literal, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a long array; if null, this returns sb without changes
+     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     */
+    public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, long[] elements) {
+        if (elements.length == 0)
+            return sb;
+        appendReadable(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendReadable(sb, elements[i]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a String containing long items in Java syntax, separated by instances of delimiter, returns those numbers
+     * as a long array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     *
+     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter  the String that separates numbers in the source
+     * @param startIndex the first index, inclusive, in source to split from
+     * @param endIndex   the last index, exclusive, in source to split from
+     * @return a long array of the numbers found in source
+     */
+    public static long[] longSplitReadable(String source, String delimiter, int startIndex, int endIndex) {
+        if (delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+            return new long[0];
+        int amount = count(source, delimiter, startIndex, endIndex);
+        if (amount <= 0)
+            return new long[]{Base.BASE10.readLong(source, startIndex, endIndex)};
+        long[] splat = new long[amount + 1];
+        int dl = delimiter.length()+1, idx = startIndex - dl, idx2;
+        for (int i = 0; i < amount; i++) {
+            splat[i] = Base.BASE10.readLong(source, idx + dl, idx = source.indexOf('L', idx + dl));
+        }
+        if ((idx2 = source.indexOf('L', idx + dl)) < 0 || idx2 >= endIndex) {
+            splat[amount] = Base.BASE10.readLong(source, idx + dl, Math.min(source.length(), endIndex));
+        } else {
+            splat[amount] = Base.BASE10.readLong(source, idx + dl, idx2);
+        }
+        return splat;
+    }
+
+    /**
+     * Given a String containing long items in Java syntax, separated by instances of delimiter, returns those number
+     * as a long array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     *
+     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter the String that separates numbers in the source
+     * @return a long array of the numbers found in source
+     */
+    public static long[] longSplitReadable(String source, String delimiter) {
+        return longSplitReadable(source, delimiter, 0, source.length());
     }
 
     /**
