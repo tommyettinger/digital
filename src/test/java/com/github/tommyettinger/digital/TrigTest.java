@@ -12,12 +12,15 @@ public class TrigTest {
             System.out.printf("Math % 6.2f:          , sin %.10f, cos %.10f\n", i,
                     Math.sin(i),
                     Math.cos(i));
-            System.out.printf("Trig % 6.2f: idx %05d, sin %.10f, cos %.10f\n", i, TrigTools.radiansToTableIndex(i),
+            System.out.printf("Plus % 6.2f: idx %05d, sin %.10f, cos %.10f\n", i, TrigTools.radiansToTableIndex(i),
                     SIN_TABLE[TrigTools.radiansToTableIndex(i)],
                     SIN_TABLE[TrigTools.radiansToTableIndex(i) + TrigTools.SIN_TO_COS & TABLE_MASK]);
-            System.out.printf("Cos  % 6.2f: idx %05d, sin %.10f, cos %.10f\n", i, CosTools.radiansToTableIndex(i),
+            System.out.printf("Tabs % 6.2f: idx %05d, sin %.10f, cos %.10f\n", i, TrigTools.radiansToTableIndex(i),
                     SIN_TABLE[TrigTools.radiansToTableIndex(i)],
                     COS_TABLE[TrigTools.radiansToTableIndex(i)]);
+
+            Assert.assertEquals("Failed with i="+i, Math.sin(i), SIN_TABLE_D[TrigTools.radiansToTableIndex(i)], 0.001);
+            Assert.assertEquals("Failed with i="+i, Math.cos(i), COS_TABLE_D[TrigTools.radiansToTableIndex(i)], 0.001);
         }
     }
     @Test
@@ -45,9 +48,10 @@ public class TrigTest {
             Assert.assertEquals(Math.cos(Math.toRadians(i)), TrigTools.cosSmoothDeg(i), 0.0005f);
             Assert.assertEquals(Math.sin(Math.toRadians(i)), TrigTools.sinSmootherDeg(i), 0.000001f);
             Assert.assertEquals(Math.cos(Math.toRadians(i)), TrigTools.cosSmootherDeg(i), 0.000001f);
-            if (Math.abs(((i) % 180.0 + 180.0) % 180.0 - 180.0 * 0.5) > 1.0) {
-                Assert.assertEquals("with i = " + i + ", limit = " + Math.abs(((i) % 180.0 + 180.0) % 180.0 - 180.0 * 0.5), Math.tan(Math.toRadians(i)), TrigTools.tanDeg(i), 0.05f);
-                Assert.assertEquals("with i = " + i + ", limit = " + Math.abs(((i) % 180.0 + 180.0) % 180.0 - 180.0 * 0.5), Math.tan(Math.toRadians(i)), TrigTools.tanSmootherDeg(i), 0.001f);
+            double limit = Math.abs(((i) % 180.0 + 180.0) % 180.0 - 180.0 * 0.5);
+            if (limit > 1.0) {
+                Assert.assertEquals("with i = " + i + ", limit = " + limit, Math.tan(Math.toRadians(i)), TrigTools.tanDeg(i), 0.05f);
+                Assert.assertEquals("with i = " + i + ", limit = " + limit, Math.tan(Math.toRadians(i)), TrigTools.tanSmootherDeg(i), 0.001f);
             }
         }
     }
@@ -60,10 +64,28 @@ public class TrigTest {
             Assert.assertEquals(Math.cos((i * PI2_D)), TrigTools.cosSmoothTurns(i), 0.0005f);
             Assert.assertEquals(Math.sin((i * PI2_D)), TrigTools.sinSmootherTurns(i), 0.000001f);
             Assert.assertEquals(Math.cos((i * PI2_D)), TrigTools.cosSmootherTurns(i), 0.000001f);
-            if (Math.abs(((i) % 0.50 + 0.50) % 0.50 - 0.50 * 0.5) > 0.01) {
-                Assert.assertEquals("with i = " + i + ", limit = " + Math.abs(((i) % 0.50 + 0.50) % 0.50 - 0.50 * 0.5), Math.tan((i * PI2_D)), TrigTools.tanTurns(i), 0.05f);
-                Assert.assertEquals("with i = " + i + ", limit = " + Math.abs(((i) % 0.50 + 0.50) % 0.50 - 0.50 * 0.5), Math.tan((i * PI2_D)), TrigTools.tanSmootherTurns(i), 0.001f);
+            double limit = Math.abs(((i) % 0.50 + 0.50) % 0.50 - 0.50 * 0.5);
+            if (limit > 0.01) {
+                Assert.assertEquals("with i = " + i + ", limit = " + limit, Math.tan((i * PI2_D)), TrigTools.tanTurns(i), 0.05f);
+                Assert.assertEquals("with i = " + i + ", limit = " + limit, Math.tan((i * PI2_D)), TrigTools.tanSmootherTurns(i), 0.001f);
             }
+        }
+    }
+
+    @Test
+    public void testInverse() {
+        for (double i = -1.0; i <= 1.0; i+=0x1p-5) {
+            Assert.assertEquals(Math.asin(i), TrigTools.asin(i), 0.0001f);
+            Assert.assertEquals(Math.acos(i), TrigTools.acos(i), 0.0001f);
+            Assert.assertEquals(Math.asin(i), TrigTools.asinDeg(i) * degreesToRadiansD, 0.0001f);
+            Assert.assertEquals(Math.acos(i), TrigTools.acosDeg(i) * degreesToRadiansD, 0.0001f);
+            Assert.assertEquals(Math.asin(i), TrigTools.asinTurns(i) * PI2_D, 0.0001f);
+            Assert.assertEquals(Math.acos(i), TrigTools.acosTurns(i) * PI2_D, 0.0001f);
+        }
+        for (double i = -10.0; i <= 10.0; i+= 0x1p-5) {
+            Assert.assertEquals(Math.atan(i), TrigTools.atan(i), 0.00001f);
+            Assert.assertEquals(Math.atan(i), TrigTools.atanDeg(i) * degreesToRadiansD, 0.00001f);
+            Assert.assertEquals(Math.atan(i), TrigTools.atanTurns(i) * PI2_D, 0.00001f);
         }
     }
 }
