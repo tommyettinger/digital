@@ -417,6 +417,66 @@ public class Base {
     }
 
     /**
+     * Converts the given {@code number} to a String that Java can read in as a literal.
+     * This can vary in how many chars it uses, since it does not show leading zeroes and may use a {@code -} sign.
+     *
+     * @param number any long
+     * @return a new String containing {@code number} in base 10 with 'L' appended
+     */
+    public static String readable(long number) {
+        final int length8Byte = Base.BASE10.length8Byte;
+        final int base = 10;
+        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE10.toEncoded;
+        final char negativeSign = '-';
+        int run = length8Byte;
+        final long sign = number >> -1;
+        // number is made negative because 0x8000000000000000L and -(0x8000000000000000L) are both negative.
+        // then modulus later will also return a negative number or 0, and we can negate that to get a good index.
+        number = -(number + sign ^ sign);
+        for (; ; run--) {
+            progress[run] = toEncoded[(int) -(number % base)];
+            if ((number /= 10) == 0)
+                break;
+        }
+        if (sign != 0) {
+            progress[--run] = negativeSign;
+        }
+        progress[length8Byte+1] = 'L';
+        return String.valueOf(progress, run, length8Byte + 2 - run);
+    }
+
+    /**
+     * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
+     * {@code builder}. This can vary in how many chars it uses, since it does not show leading zeroes and may use a
+     * {@code -} sign.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any long
+     * @return {@code builder}, with the encoded {@code number} and 'L' appended
+     */
+    public static StringBuilder appendReadable(StringBuilder builder, long number) {
+        final int length8Byte = Base.BASE10.length8Byte;
+        final int base = 10;
+        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE10.toEncoded;
+        final char negativeSign = '-';
+        int run = length8Byte;
+        final long sign = number >> -1;
+        // number is made negative because 0x8000000000000000L and -(0x8000000000000000L) are both negative.
+        // then modulus later will also return a negative number or 0, and we can negate that to get a good index.
+        number = -(number + sign ^ sign);
+        for (; ; run--) {
+            progress[run] = toEncoded[(int) -(number % base)];
+            if ((number /= base) == 0)
+                break;
+        }
+        if (sign != 0) {
+            progress[--run] = negativeSign;
+        }
+        progress[length8Byte+1] = 'L';
+        return builder.append(progress, run, length8Byte + 2 - run);
+    }
+
+    /**
      * Reads in a CharSequence containing only the digits present in this Base, with an optional sign at the
      * start, and returns the long they represent, or 0 if nothing could be read. The leading sign can be the
      * {@link #positiveSign} or {@link #negativeSign} if present; these are almost always '+' and '-'.
