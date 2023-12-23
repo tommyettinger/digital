@@ -487,6 +487,8 @@ public class BaseTest {
 		Assert.assertEquals("-1L", Base.readable(-1));
 		Assert.assertEquals(Long.MAX_VALUE + "L", Base.readable(Long.MAX_VALUE));
 		Assert.assertEquals(Long.MIN_VALUE + "L", Base.readable(Long.MIN_VALUE));
+		long[] items = {0L, 1L, -1L, Long.MAX_VALUE, Long.MIN_VALUE};
+		Assert.assertArrayEquals(items, Base.longSplitReadable(Base.joinReadable(", ", items), ", "));
 	}
 
 	public static void main(String[] args) {
