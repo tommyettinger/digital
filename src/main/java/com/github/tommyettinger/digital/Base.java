@@ -3079,7 +3079,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, long[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendSigned(sb, elements[0]);
@@ -3100,7 +3100,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, long[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
         for (int i = 1; i < elements.length; i++) {
@@ -3119,7 +3119,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, int[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendSigned(sb, elements[0]);
@@ -3140,7 +3140,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, int[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
         for (int i = 1; i < elements.length; i++) {
@@ -3159,7 +3159,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, short[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendSigned(sb, elements[0]);
@@ -3180,7 +3180,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, short[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
         for (int i = 1; i < elements.length; i++) {
@@ -3199,7 +3199,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, byte[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendSigned(sb, elements[0]);
@@ -3220,7 +3220,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, byte[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
         for (int i = 1; i < elements.length; i++) {
@@ -3239,7 +3239,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, char[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendSigned(sb, elements[0]);
@@ -3260,7 +3260,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, char[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
         for (int i = 1; i < elements.length; i++) {
@@ -3280,7 +3280,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String joinExact(String delimiter, double[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendSigned(sb, elements[0]);
@@ -3302,7 +3302,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, double[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
         for (int i = 1; i < elements.length; i++) {
@@ -3322,7 +3322,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String joinExact(String delimiter, float[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendSigned(sb, elements[0]);
@@ -3344,7 +3344,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, float[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
         for (int i = 1; i < elements.length; i++) {
@@ -3364,7 +3364,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
      */
     public String join(String delimiter, double[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendGeneral(sb, elements[0]);
@@ -3387,7 +3387,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, double[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendGeneral(sb, elements[0]);
         for (int i = 1; i < elements.length; i++) {
@@ -3408,7 +3408,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
      */
     public String joinDecimal(String delimiter, int lengthLimit, double[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendDecimal(sb, elements[0], lengthLimit);
@@ -3431,7 +3431,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
      */
     public StringBuilder appendJoinedDecimal(StringBuilder sb, String delimiter, int lengthLimit, double[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendDecimal(sb, elements[0], lengthLimit);
         for (int i = 1; i < elements.length; i++) {
@@ -3451,7 +3451,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
      */
     public String join(String delimiter, float[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendGeneral(sb, elements[0]);
@@ -3474,7 +3474,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, float[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendGeneral(sb, elements[0]);
         for (int i = 1; i < elements.length; i++) {
@@ -3494,7 +3494,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
      */
     public String joinDecimal(String delimiter, int lengthLimit, float[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
         appendDecimal(sb, elements[0], lengthLimit);
@@ -3517,7 +3517,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
      */
     public StringBuilder appendJoinedDecimal(StringBuilder sb, String delimiter, int lengthLimit, float[] elements) {
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         appendDecimal(sb, elements[0], lengthLimit);
         for (int i = 1; i < elements.length; i++) {
@@ -3543,7 +3543,7 @@ public class Base {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(majorDelimiter);
@@ -3568,7 +3568,7 @@ public class Base {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(majorDelimiter);
@@ -3593,7 +3593,7 @@ public class Base {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(majorDelimiter);
@@ -3618,7 +3618,7 @@ public class Base {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(majorDelimiter);
@@ -3643,7 +3643,7 @@ public class Base {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(majorDelimiter);
@@ -3669,7 +3669,7 @@ public class Base {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(majorDelimiter);
@@ -3697,7 +3697,7 @@ public class Base {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(majorDelimiter);
@@ -3723,7 +3723,7 @@ public class Base {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(majorDelimiter);
@@ -3749,7 +3749,7 @@ public class Base {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(majorDelimiter);
@@ -3777,7 +3777,7 @@ public class Base {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(majorDelimiter);
@@ -3803,7 +3803,7 @@ public class Base {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements.length == 0)
+        if (elements == null || elements.length == 0)
             return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(majorDelimiter);
@@ -4948,7 +4948,6 @@ public class Base {
     public static long[] longSplitReadable(String source, String delimiter) {
         return longSplitReadable(source, delimiter, 0, source == null ? 0 : source.length());
     }
-
 
     /**
      * Converts the given {@code number} to a String that Java can read in as a literal.
