@@ -485,17 +485,38 @@ public class BaseTest {
 		Assert.assertEquals("0", Base.readable(0));
 		Assert.assertEquals("1", Base.readable(1));
 		Assert.assertEquals("-1", Base.readable(-1));
-		Assert.assertEquals(String.valueOf(Integer.MAX_VALUE), Base.readable(Integer.MAX_VALUE));
-		Assert.assertEquals(String.valueOf(Integer.MIN_VALUE), Base.readable(Integer.MIN_VALUE));
+		Assert.assertEquals(Integer.MAX_VALUE + "", Base.readable(Integer.MAX_VALUE));
+		Assert.assertEquals(Integer.MIN_VALUE + "", Base.readable(Integer.MIN_VALUE));
+		int[] ints = {0, 1, -1, Integer.MAX_VALUE, Integer.MIN_VALUE};
+		Assert.assertArrayEquals(ints, Base.intSplitReadable(Base.joinReadable(", ", ints), ", "));
+
 		Assert.assertEquals("0L", Base.readable(0L));
 		Assert.assertEquals("1L", Base.readable(1L));
 		Assert.assertEquals("-1L", Base.readable(-1L));
 		Assert.assertEquals(Long.MAX_VALUE + "L", Base.readable(Long.MAX_VALUE));
 		Assert.assertEquals(Long.MIN_VALUE + "L", Base.readable(Long.MIN_VALUE));
-		int[] ints = {0, 1, -1, Integer.MAX_VALUE, Integer.MIN_VALUE};
-		Assert.assertArrayEquals(ints, Base.intSplitReadable(Base.joinReadable(", ", ints), ", "));
 		long[] longs = {0L, 1L, -1L, Long.MAX_VALUE, Long.MIN_VALUE};
 		Assert.assertArrayEquals(longs, Base.longSplitReadable(Base.joinReadable(", ", longs), ", "));
+
+		Assert.assertEquals("0.0", Base.readable(0.0));
+		Assert.assertEquals("1.0", Base.readable(1.0));
+		Assert.assertEquals("-1.0", Base.readable(-1.0));
+		Assert.assertEquals("1.23", Base.readable(1.23));
+		Assert.assertEquals("-1.23", Base.readable(-1.23));
+		Assert.assertEquals(Double.MAX_VALUE + "", Base.readable(Double.MAX_VALUE));
+		Assert.assertEquals(Double.MIN_VALUE + "", Base.readable(Double.MIN_VALUE));
+		double[] doubles = {0., 1., -1., 1.23, -1.23, Double.MAX_VALUE, Double.MIN_VALUE};
+		Assert.assertArrayEquals(doubles, Base.doubleSplitReadable(Base.joinReadable(", ", doubles), ", "), 0.00001);
+
+		Assert.assertEquals("0.0f", Base.readable(0.0f));
+		Assert.assertEquals("1.0f", Base.readable(1.0f));
+		Assert.assertEquals("-1.0f", Base.readable(-1.0f));
+		Assert.assertEquals("1.23f", Base.readable(1.23f));
+		Assert.assertEquals("-1.23f", Base.readable(-1.23f));
+		Assert.assertEquals(Float.MAX_VALUE + "f", Base.readable(Float.MAX_VALUE));
+		Assert.assertEquals(Float.MIN_VALUE + "f", Base.readable(Float.MIN_VALUE));
+		float[] floats = {0.f, 1.f, -1.f, 1.23f, -1.23f, Float.MAX_VALUE, Float.MIN_VALUE};
+		Assert.assertArrayEquals(floats, Base.floatSplitReadable(Base.joinReadable(", ", floats), ", "), 0.00001f);
 	}
 
 	public static void main(String[] args) {
