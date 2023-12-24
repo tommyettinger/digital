@@ -5031,6 +5031,118 @@ public class Base {
 
 
     /**
+     * Converts the given {@code number} to a String that Java can read in as a literal.
+     * This can vary in how many chars it uses.
+     *
+     * @param number any float
+     * @return a new String containing {@code number} in base 10
+     */
+    public static String readable(float number) {
+        int i = RyuFloat.general(number, Base.BASE2.progress);
+        Base.BASE2.progress[i] = 'f';
+        return String.valueOf(Base.BASE2.progress, 0, i+1);
+    }
+
+    /**
+     * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
+     * {@code builder}. This can vary in how many chars it uses.
+     * This is identical to calling {@link #appendGeneral(StringBuilder, float)} on {@link #BASE10} and then calling
+     * {@link StringBuilder#append(char)} on that to append {@code 'f'}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any float
+     * @return {@code builder}, with the encoded {@code number} appended in base 10
+     */
+    public static StringBuilder appendReadable(StringBuilder builder, float number) {
+        return BASE10.appendGeneral(builder, number).append('f');
+    }
+
+    /**
+     * Given a float array and a delimiter to separate the items of that array, produces a String containing all floats
+     * from elements, in a way Java can read each item as a literal, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a float array; if null, this returns an empty String
+     * @return a String containing all numbers in elements, written in base-10, separated by delimiter
+     */
+    public static String joinReadable(String delimiter, float[] elements) {
+        if (elements == null || elements.length == 0)
+            return "";
+        StringBuilder sb = new StringBuilder(elements.length << 3);
+        appendReadable(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendReadable(sb, elements[i]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all floats from elements, in a way Java can read each item as a literal, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a float array; if null, this returns sb without changes
+     * @return a String containing all numbers in elements, written in base-10, separated by delimiter
+     */
+    public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, float[] elements) {
+        if (elements == null || elements.length == 0)
+            return sb;
+        appendReadable(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendReadable(sb, elements[i]);
+        }
+        return sb;
+
+    }
+
+    /**
+     * Given a String containing float items in Java syntax, separated by instances of delimiter, returns those numbers
+     * as a float array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This is identical to calling {@link #floatSplit(String, String, int, int)} on {@link #BASE10}.
+     *
+     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter  the String that separates numbers in the source
+     * @param startIndex the first index, inclusive, in source to split from
+     * @param endIndex   the last index, exclusive, in source to split from
+     * @return a float array of the numbers found in source
+     */
+    public static float[] floatSplitReadable(String source, String delimiter, int startIndex, int endIndex) {
+        if (source == null || delimiter == null || delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+            return new float[0];
+        int amount = count(source, delimiter, startIndex, endIndex);
+        if (amount <= 0)
+            return new float[]{Base.BASE10.readFloat(source, startIndex, endIndex)};
+        float[] splat = new float[amount + 1];
+        int dl = delimiter.length()+1, idx = startIndex - dl, idx2;
+        for (int i = 0; i < amount; i++) {
+            splat[i] = Base.BASE10.readFloat(source, idx + dl, idx = source.indexOf('f', idx + dl));
+        }
+        if ((idx2 = source.indexOf('f', idx + dl)) < 0 || idx2 >= endIndex) {
+            splat[amount] = Base.BASE10.readFloat(source, idx + dl, Math.min(source.length(), endIndex));
+        } else {
+            splat[amount] = Base.BASE10.readFloat(source, idx + dl, idx2);
+        }
+        return splat;
+    }
+
+    /**
+     * Given a String containing float items in Java syntax, separated by instances of delimiter, returns those number
+     * as a float array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * This is identical to calling {@link #floatSplit(String, String)} on {@link #BASE10}.
+     *
+     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter the String that separates numbers in the source
+     * @return a float array of the numbers found in source
+     */
+    public static float[] floatSplitReadable(String source, String delimiter) {
+        return floatSplitReadable(source, delimiter, 0, source == null ? 0 : source.length());
+    }
+
+
+    /**
      * Scans repeatedly in {@code source} (only using the area from startIndex, inclusive, to endIndex, exclusive) for
      * the String {@code search}, not scanning the same char twice except as part of a larger String, and returns the
      * number of instances of search that were found, or 0 if source or search is null or if the searched area is empty.
