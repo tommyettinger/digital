@@ -68,7 +68,14 @@ can also combine the String representations of an array of
 primitives (or part of such an array, since 0.3.1) using
 `join()` or `appendJoined()`, and split apart Strings into 
 arrays of primitives with methods like `longSplit()`,
-`intSplit()`, and `floatSplit()`.
+`intSplit()`, and `floatSplit()`. There are also now static
+methods with `readable` in their names; these output text
+that can be used in Java source code as numeric or character
+literals, for code generation. The `Base.BASE10.readLong()`
+method can read a long produced by `Base.readable(long)` just
+fine, because readLong() ignores invalid characters after the
+number (such as `L` in longs). Reading in the char literals
+this can produce requires using `Base.readCharReadable()`.
 
 TrigTools tries to be as complete as possible at covering
 trigonometric functions, offering sin, cos, tan, asin, acos,
@@ -228,14 +235,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.4.5"
+api "com.github.tommyettinger:digital:0.4.6"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.4.5:sources"
+api "com.github.tommyettinger:digital:0.4.6:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
