@@ -5249,25 +5249,61 @@ public class Base {
     }
 
     /**
-     * Weird, ugly method that only exists to special-case four char values that cannot be given hex-quartet Unicode
+     * Acts much like {@link #readChar(CharSequence, int, int)}, but reads around the initial single quote and backslash
+     * and special-cases four char values that cannot be given hex-quartet Unicode
      * escapes: carriage return, line feed, apostrophe, and backslash. If it doesn't find one of those escapes, it falls
-     * back to {@link #readChar(CharSequence, int, int)} on {@link #BASE16}.
-     * @param source a CharSequence, such as a String, containing one of ({@code u} followed by 4 hex digits), (r), (n), ('), or (\)
-     * @param start  the (inclusive) first character position in cs to read
-     * @param end    the (exclusive) last character position in cs to read (this after reading 'u' and then enough chars to represent the largest possible value, or an escaped char)
-     * @return the char that cs represents
+     * back to {@link #readChar(CharSequence, int, int)} on {@link #BASE16}, still skipping the initial quote-backslash.
+     * @param source a CharSequence, such as a String, containing a single quote, then one of ({@code u} followed by 4 hex digits), (r), (n), ('), or (\)
+     * @return the char that source represents
      */
-    private static char readCharReadably(CharSequence source, int start, int end) {
+    public static char readCharReadable(final CharSequence source) {
+        return readCharReadable(source, 0, source == null ? 0 : source.length());
+    }
+
+    /**
+     * Acts much like {@link #readChar(CharSequence, int, int)}, but reads around the initial single quote and backslash
+     * and special-cases four char values that cannot be given hex-quartet Unicode
+     * escapes: carriage return, line feed, apostrophe, and backslash. If it doesn't find one of those escapes, it falls
+     * back to {@link #readChar(CharSequence, int, int)} on {@link #BASE16}, still skipping the initial quote-backslash.
+     * @param source a CharSequence, such as a String, containing a single quote, then one of ({@code u} followed by 4 hex digits), (r), (n), ('), or (\)
+     * @param start  the (inclusive) first character position in source to read
+     * @param end    the (exclusive) last character position in source to read (this after reading 'u' and then enough chars to represent the largest possible value, or an escaped char)
+     * @return the char that source represents
+     */
+    public static char readCharReadable(CharSequence source, int start, int end) {
         int len;
-        if (source == null || start < 0 || end <= 0 || end - start <= 0 || (len = source.length()) - start <= 0 || end > len)
+        if (source == null || start < 0 || end <= 2 || end - start <= 2 || (len = source.length()) - start <= 2 || end > len)
             return '\u0000';
-        switch (source.charAt(start)) {
+        switch (source.charAt(start + 2)) {
             case 'r': return '\r';
             case 'n': return '\n';
             case '\'': return '\'';
             case '\\': return '\\';
         }
-        return Base.BASE16.readChar(source, start+1, end);
+        return Base.BASE16.readChar(source, start+3, end);
+    }
+
+    /**
+     * Acts much like {@link #readChar(char[], int, int)}, but reads around the initial single quote and backslash
+     * and special-cases four char values that cannot be given hex-quartet Unicode
+     * escapes: carriage return, line feed, apostrophe, and backslash. If it doesn't find one of those escapes, it falls
+     * back to {@link #readChar(char[], int, int)} on {@link #BASE16}, still skipping the initial quote-backslash.
+     * @param source a char array containing a single quote, then one of ({@code u} followed by 4 hex digits), (r), (n), ('), or (\)
+     * @param start  the (inclusive) first character position in source to read
+     * @param end    the (exclusive) last character position in source to read (this after reading 'u' and then enough chars to represent the largest possible value, or an escaped char)
+     * @return the char that source represents
+     */
+    public static char readCharReadable(char[] source, int start, int end) {
+        int len;
+        if (source == null || start < 0 || end <= 2 || end - start <= 2 || (len = source.length) - start <= 2 || end > len)
+            return '\u0000';
+        switch (source[start + 2]) {
+            case 'r': return '\r';
+            case 'n': return '\n';
+            case '\'': return '\'';
+            case '\\': return '\\';
+        }
+        return Base.BASE16.readChar(source, start+3, end);
     }
 
     /**
@@ -5290,16 +5326,16 @@ public class Base {
             return new char[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
-            return new char[]{readCharReadably(source, startIndex+2, endIndex)};
+            return new char[]{readCharReadable(source, startIndex, endIndex)};
         char[] splat = new char[amount + 1];
         int dl = delimiter.length(), idx = startIndex - dl, idx2;
         for (int i = 0; i < amount; i++) {
-            splat[i] = readCharReadably(source, idx + dl + 2, idx = source.indexOf(delimiter, idx + dl + 2));
+            splat[i] = readCharReadable(source, idx + dl, idx = source.indexOf(delimiter, idx + dl));
         }
-        if ((idx2 = source.indexOf(delimiter, idx + dl + 2)) < 0 || idx2 >= endIndex) {
-            splat[amount] = readCharReadably(source, idx + dl + 2, Math.min(source.length(), endIndex));
+        if ((idx2 = source.indexOf(delimiter, idx + dl)) < 0 || idx2 >= endIndex) {
+            splat[amount] = readCharReadable(source, idx + dl, Math.min(source.length(), endIndex));
         } else {
-            splat[amount] = readCharReadably(source, idx + dl + 2, idx2);
+            splat[amount] = readCharReadable(source, idx + dl, idx2);
         }
         return splat;
     }
