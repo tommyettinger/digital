@@ -4734,7 +4734,7 @@ public class Base {
      * This is identical to calling {@link #signed(int)} on {@link #BASE10}.
      *
      * @param number any int
-     * @return a new String containing {@code number} in base 10
+     * @return a new String containing {@code number} in base-10
      */
     public static String readable(int number) {
         return BASE10.signed(number);
@@ -4747,7 +4747,7 @@ public class Base {
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any int
-     * @return {@code builder}, with the encoded {@code number} appended in base 10
+     * @return {@code builder}, with the encoded {@code number} appended in base-10
      */
     public static StringBuilder appendReadable(StringBuilder builder, int number) {
         return BASE10.appendSigned(builder, number);
@@ -4785,7 +4785,7 @@ public class Base {
      * as an int array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      * This is identical to calling {@link #intSplit(String, String, int, int)} on {@link #BASE10}.
      *
-     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param source     a String of number literals (as in Java source code), separated by a delimiter, with no trailing delimiter
      * @param delimiter  the String that separates numbers in the source
      * @param startIndex the first index, inclusive, in source to split from
      * @param endIndex   the last index, exclusive, in source to split from
@@ -4800,7 +4800,7 @@ public class Base {
      * as an int array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      * This is identical to calling {@link #intSplit(String, String)} on {@link #BASE10}.
      *
-     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param source    a String of number literals (as in Java source code), separated by a delimiter, with no trailing delimiter
      * @param delimiter the String that separates numbers in the source
      * @return an int array of the numbers found in source
      */
@@ -4813,7 +4813,7 @@ public class Base {
      * This can vary in how many chars it uses, since it does not show leading zeroes and may use a {@code -} sign.
      *
      * @param number any long
-     * @return a new String containing {@code number} in base 10 with 'L' appended
+     * @return a new String containing {@code number} in base-10 with 'L' appended
      */
     public static String readable(long number) {
         final int length8Byte = Base.BASE10.length8Byte;
@@ -4912,7 +4912,7 @@ public class Base {
      * Given a String containing long items in Java syntax, separated by instances of delimiter, returns those numbers
      * as a long array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      *
-     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param source     a String of number literals (as in Java source code), separated by a delimiter, with no trailing delimiter
      * @param delimiter  the String that separates numbers in the source
      * @param startIndex the first index, inclusive, in source to split from
      * @param endIndex   the last index, exclusive, in source to split from
@@ -4941,7 +4941,7 @@ public class Base {
      * Given a String containing long items in Java syntax, separated by instances of delimiter, returns those number
      * as a long array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      *
-     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param source    a String of number literals (as in Java source code), separated by a delimiter, with no trailing delimiter
      * @param delimiter the String that separates numbers in the source
      * @return a long array of the numbers found in source
      */
@@ -4955,7 +4955,7 @@ public class Base {
      * This is identical to calling {@link #general(double)} on {@link #BASE10}.
      *
      * @param number any double
-     * @return a new String containing {@code number} in base 10
+     * @return a new String containing {@code number} in base-10
      */
     public static String readable(double number) {
         return BASE10.general(number);
@@ -4968,7 +4968,7 @@ public class Base {
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any double
-     * @return {@code builder}, with the encoded {@code number} appended in base 10
+     * @return {@code builder}, with the encoded {@code number} appended in base-10
      */
     public static StringBuilder appendReadable(StringBuilder builder, double number) {
         return BASE10.appendGeneral(builder, number);
@@ -5006,7 +5006,7 @@ public class Base {
      * as a double array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      * This is identical to calling {@link #doubleSplit(String, String, int, int)} on {@link #BASE10}.
      *
-     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param source     a String of number literals (as in Java source code), separated by a delimiter, with no trailing delimiter
      * @param delimiter  the String that separates numbers in the source
      * @param startIndex the first index, inclusive, in source to split from
      * @param endIndex   the last index, exclusive, in source to split from
@@ -5021,7 +5021,7 @@ public class Base {
      * as a double array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      * This is identical to calling {@link #doubleSplit(String, String)} on {@link #BASE10}.
      *
-     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param source    a String of number literals (as in Java source code), separated by a delimiter, with no trailing delimiter
      * @param delimiter the String that separates numbers in the source
      * @return a double array of the numbers found in source
      */
@@ -5035,7 +5035,7 @@ public class Base {
      * This can vary in how many chars it uses.
      *
      * @param number any float
-     * @return a new String containing {@code number} in base 10
+     * @return a new String containing {@code number} in base-10
      */
     public static String readable(float number) {
         int i = RyuFloat.general(number, Base.BASE2.progress);
@@ -5051,7 +5051,7 @@ public class Base {
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any float
-     * @return {@code builder}, with the encoded {@code number} appended in base 10
+     * @return {@code builder}, with the encoded {@code number} appended in base-10
      */
     public static StringBuilder appendReadable(StringBuilder builder, float number) {
         return BASE10.appendGeneral(builder, number).append('f');
@@ -5103,7 +5103,7 @@ public class Base {
      * as a float array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      * This is identical to calling {@link #floatSplit(String, String, int, int)} on {@link #BASE10}.
      *
-     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param source     a String of number literals (as in Java source code), separated by a delimiter, with no trailing delimiter
      * @param delimiter  the String that separates numbers in the source
      * @param startIndex the first index, inclusive, in source to split from
      * @param endIndex   the last index, exclusive, in source to split from
@@ -5133,7 +5133,7 @@ public class Base {
      * as a float array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      * This is identical to calling {@link #floatSplit(String, String)} on {@link #BASE10}.
      *
-     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param source    a String of number literals (as in Java source code), separated by a delimiter, with no trailing delimiter
      * @param delimiter the String that separates numbers in the source
      * @return a float array of the numbers found in source
      */
@@ -5141,13 +5141,15 @@ public class Base {
         return floatSplitReadable(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
-
     /**
      * Converts the given {@code number} to a String that Java can read in as a literal.
      * This writes a char literal as a Unicode escape every time, in single quotes.
+     * Because the quartets {@code 000A}, {@code 000D}, {@code 0027}, and {@code 005C} aren't valid after a backslash-u
+     * pair, this must write them using their escaped forms {@code \ n }, {@code \ r }, {@code \ ' }, and {@code \ \ }
+     * (without any spaces).
      *
      * @param number any char
-     * @return a new String containing {@code number} as a Unicode-escaped char literal in single quotes
+     * @return a new String containing {@code number} as a char literal in single quotes
      */
     public static String readable(char number) {
         switch (number) {
@@ -5172,10 +5174,13 @@ public class Base {
     /**
      * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
      * {@code builder}. This writes a char literal as a Unicode escape every time, in single quotes.
+     * Because the quartets {@code 000A}, {@code 000D}, {@code 0027}, and {@code 005C} aren't valid after a backslash-u
+     * pair, this must write them using their escaped forms {@code \ n }, {@code \ r }, {@code \ ' }, and {@code \ \ }
+     * (without any spaces).
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any char
-     * @return {@code builder}, with the encoded {@code number} appended as a Unicode-escaped char literal in single quotes
+     * @return {@code builder}, with the encoded {@code number} appended as a char literal in single quotes
      */
     public static StringBuilder appendReadable(StringBuilder builder, char number) {
         switch (number) {
@@ -5200,6 +5205,9 @@ public class Base {
     /**
      * Given a char array and a delimiter to separate the items of that array, produces a String containing all chars
      * from elements, in a way Java can read each item as a literal, separated by delimiter.
+     * Because the quartets {@code 000A}, {@code 000D}, {@code 0027}, and {@code 005C} aren't valid after a backslash-u
+     * pair, this must write them using their escaped forms {@code \ n }, {@code \ r }, {@code \ ' }, and {@code \ \ }
+     * (without any spaces).
      *
      * @param delimiter the separator to put between numbers
      * @param elements  a char array; if null, this returns an empty String
@@ -5220,6 +5228,9 @@ public class Base {
     /**
      * Given a char array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all chars from elements, in a way Java can read each item as a literal, separated by delimiter.
+     * Because the quartets {@code 000A}, {@code 000D}, {@code 0027}, and {@code 005C} aren't valid after a backslash-u
+     * pair, this must write them using their escaped forms {@code \ n }, {@code \ r }, {@code \ ' }, and {@code \ \ }
+     * (without any spaces).
      *
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
@@ -5243,7 +5254,7 @@ public class Base {
      * back to {@link #readChar(CharSequence, int, int)} on {@link #BASE16}.
      * @param source a CharSequence, such as a String, containing one of ({@code u} followed by 4 hex digits), (r), (n), ('), or (\)
      * @param start  the (inclusive) first character position in cs to read
-     * @param end    the (exclusive) last character position in cs to read (this after reading enough chars to represent the largest possible value)
+     * @param end    the (exclusive) last character position in cs to read (this after reading 'u' and then enough chars to represent the largest possible value, or an escaped char)
      * @return the char that cs represents
      */
     private static char readCharReadably(CharSequence source, int start, int end) {
@@ -5264,12 +5275,15 @@ public class Base {
      * as a char array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      * Note that this reads in chars as a specific subset of Java source code: single-quoted hex quartets escaped with a
      * backslash and {@code u}, separated by {@code delimiter} (which is almost always {@code ","} or {@code ", "}).
+     * Because the quartets {@code 000A}, {@code 000D}, {@code 0027}, and {@code 005C} aren't valid after a backslash-u
+     * pair, this must read them using their escaped forms {@code \ n }, {@code \ r }, {@code \ ' }, and {@code \ \ }
+     * (without any spaces).
      *
-     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param source     a String of char literals (as in source code), separated by a delimiter, with no trailing delimiter
      * @param delimiter  the String that separates numbers in the source
      * @param startIndex the first index, inclusive, in source to split from
      * @param endIndex   the last index, exclusive, in source to split from
-     * @return a char array of the numbers found in source
+     * @return a char array of the chars found in source
      */
     public static char[] charSplitReadable(String source, String delimiter, int startIndex, int endIndex) {
         if (source == null || delimiter == null || delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
@@ -5295,10 +5309,13 @@ public class Base {
      * as a char array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      * Note that this reads in chars as a specific subset of Java source code: single-quoted hex quartets escaped with a
      * backslash and {@code u}, separated by {@code delimiter} (which is almost always {@code ","} or {@code ", "}).
+     * Because the quartets {@code 000A}, {@code 000D}, {@code 0027}, and {@code 005C} aren't valid after a backslash-u
+     * pair, this must read them using their escaped forms {@code \ n }, {@code \ r }, {@code \ ' }, and {@code \ \ }
+     * (without any spaces).
      *
-     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param source    a String of char literals (as in source code), separated by a delimiter, with no trailing delimiter
      * @param delimiter the String that separates numbers in the source
-     * @return a char array of the numbers found in source
+     * @return a char array of the chars found in source
      */
     public static char[] charSplitReadable(String source, String delimiter) {
         return charSplitReadable(source, delimiter, 0, source == null ? 0 : source.length());

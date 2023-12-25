@@ -173,6 +173,13 @@ public final class TrigTools {
      * If you add this to an index used in {@link #SIN_TABLE}, you get the result of the cosine instead of the sine.
      */
     public static final int SIN_TO_COS = TABLE_SIZE >>> 2;
+
+    /**
+     * The change in angle required to go a quarter of the way around a circle, as measured in table indices for use
+     * with {@link #SIN_TABLE} and {@link #COS_TABLE}. Equivalent to {@link #SIN_TO_COS}.
+     */
+    public static final int QUARTER_CIRCLE_INDEX = SIN_TO_COS;
+
     /**
      * The bitmask that can be used to confine any int to wrap within {@link #TABLE_SIZE}. Any accesses to
      * {@link #SIN_TABLE} with an index that could be out of bounds should probably be wrapped using this, as with
@@ -273,34 +280,74 @@ public final class TrigTools {
     public static final double[] COS_TABLE_D = new double[TABLE_SIZE+1];
 
     static {
-        for (int i = 0; i < TABLE_SIZE; i++) {
+        for (int i = 0; i <= TABLE_SIZE; i++) {
             double theta = ((double)i) / TABLE_SIZE * PI2_D;
             SIN_TABLE[i] = (float) (SIN_TABLE_D[i] = Math.sin(theta));
             COS_TABLE[i] = (float) (COS_TABLE_D[i] = Math.cos(theta));
         }
+
+/*
+ // This section can be uncommented to check how precise the 90-degree-angle increments are.
+ // Surprisingly, the angles corresponding to 180 degrees (for sine) or 270 degrees (for cosine) are not exactly 0.
+        float[] debug;
+        double[] debugD;
+        debug = new float[]{
+        SIN_TABLE[0]                       ,
+        SIN_TABLE[QUARTER_CIRCLE_INDEX]    ,
+        SIN_TABLE[QUARTER_CIRCLE_INDEX * 2],
+        SIN_TABLE[QUARTER_CIRCLE_INDEX * 3],
+        SIN_TABLE[QUARTER_CIRCLE_INDEX * 4],
+        };
+        for(float f : debug) System.out.printf("%f %08X\n", f, BitConversion.floatToIntBits(f));
+        debugD = new double[]{
+        SIN_TABLE_D[0]                       ,
+        SIN_TABLE_D[QUARTER_CIRCLE_INDEX]    ,
+        SIN_TABLE_D[QUARTER_CIRCLE_INDEX * 2],
+        SIN_TABLE_D[QUARTER_CIRCLE_INDEX * 3],
+        SIN_TABLE_D[QUARTER_CIRCLE_INDEX * 4],
+        };
+        for(double f : debugD) System.out.printf("%f %016X\n", f, BitConversion.doubleToLongBits(f));
+        debug = new float[]{
+        COS_TABLE[0]                       ,
+        COS_TABLE[QUARTER_CIRCLE_INDEX]    ,
+        COS_TABLE[QUARTER_CIRCLE_INDEX * 2],
+        COS_TABLE[QUARTER_CIRCLE_INDEX * 3],
+        COS_TABLE[QUARTER_CIRCLE_INDEX * 4],
+        };
+        for(float f : debug) System.out.printf("%f %08X\n", f, BitConversion.floatToIntBits(f));
+        debugD = new double[]{
+        COS_TABLE_D[0]                       ,
+        COS_TABLE_D[QUARTER_CIRCLE_INDEX]    ,
+        COS_TABLE_D[QUARTER_CIRCLE_INDEX * 2],
+        COS_TABLE_D[QUARTER_CIRCLE_INDEX * 3],
+        COS_TABLE_D[QUARTER_CIRCLE_INDEX * 4],
+        };
+        for(double f : debugD) System.out.printf("%f %016X\n", f, BitConversion.doubleToLongBits(f));
+*/
         // The four right angles get extra-precise values, because they are
         // the most likely to need to be correct.
-        SIN_TABLE[0] = 0f;
-        SIN_TABLE[TABLE_SIZE] = 0f;
-        SIN_TABLE[(int) (90 * degToIndex) & TABLE_MASK] = 1f;
-        SIN_TABLE[(int) (180 * degToIndex) & TABLE_MASK] = 0f;
-        SIN_TABLE[(int) (270 * degToIndex) & TABLE_MASK] = -1.0f;
-        SIN_TABLE_D[0] = 0.0;
-        SIN_TABLE_D[TABLE_SIZE] = 0.0;
-        SIN_TABLE_D[(int) (90 * degToIndexD) & TABLE_MASK] = 1.0;
-        SIN_TABLE_D[(int) (180 * degToIndexD) & TABLE_MASK] = 0.0;
-        SIN_TABLE_D[(int) (270 * degToIndexD) & TABLE_MASK] = -1.0;
 
-        COS_TABLE[0] = 1f;
-        COS_TABLE[TABLE_SIZE] = 1f;
-        COS_TABLE[(int) (90 * degToIndex) & TABLE_MASK] = 0f;
-        COS_TABLE[(int) (180 * degToIndex) & TABLE_MASK] = -1f;
-        COS_TABLE[(int) (270 * degToIndex) & TABLE_MASK] = 0f;
-        COS_TABLE_D[0] = 1.0;
-        COS_TABLE_D[TABLE_SIZE] = 1.0;
-        COS_TABLE_D[(int) (90 * degToIndexD) & TABLE_MASK] = 0.0;
-        COS_TABLE_D[(int) (180 * degToIndexD) & TABLE_MASK] = -1.0;
-        COS_TABLE_D[(int) (270 * degToIndexD) & TABLE_MASK] = 0.0;
+        SIN_TABLE[0]                          = 0f;
+        SIN_TABLE[QUARTER_CIRCLE_INDEX]       = 1f;
+        SIN_TABLE[QUARTER_CIRCLE_INDEX * 2]   = 0f;
+        SIN_TABLE[QUARTER_CIRCLE_INDEX * 3]   = -1.0f;
+        SIN_TABLE[QUARTER_CIRCLE_INDEX * 4]   = 0f;
+        SIN_TABLE_D[0]                        = 0.0;
+        SIN_TABLE_D[QUARTER_CIRCLE_INDEX]     = 1.0;
+        SIN_TABLE_D[QUARTER_CIRCLE_INDEX * 2] = 0.0;
+        SIN_TABLE_D[QUARTER_CIRCLE_INDEX * 3] = -1.0;
+        SIN_TABLE_D[QUARTER_CIRCLE_INDEX * 4] = 0.0;
+
+        COS_TABLE[0]                          = 1f;
+        COS_TABLE[QUARTER_CIRCLE_INDEX]       = 0f;
+        COS_TABLE[QUARTER_CIRCLE_INDEX * 2]   = -1f;
+        COS_TABLE[QUARTER_CIRCLE_INDEX * 3]   = 0f;
+        COS_TABLE[QUARTER_CIRCLE_INDEX * 4]   = 1f;
+        COS_TABLE_D[0]                        = 1.0;
+        COS_TABLE_D[QUARTER_CIRCLE_INDEX]     = 0.0;
+        COS_TABLE_D[QUARTER_CIRCLE_INDEX * 2] = -1.0;
+        COS_TABLE_D[QUARTER_CIRCLE_INDEX * 3] = 0.0;
+        COS_TABLE_D[QUARTER_CIRCLE_INDEX * 4] = 1.0;
 
     }
 
