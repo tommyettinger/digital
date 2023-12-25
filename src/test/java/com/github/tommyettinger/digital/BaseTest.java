@@ -517,6 +517,15 @@ public class BaseTest {
 		Assert.assertEquals(Float.MIN_VALUE + "f", Base.readable(Float.MIN_VALUE));
 		float[] floats = {0.f, 1.f, -1.f, 1.23f, -1.23f, Float.MAX_VALUE, Float.MIN_VALUE};
 		Assert.assertArrayEquals(floats, Base.floatSplitReadable(Base.joinReadable(", ", floats), ", "), 0.00001f);
+
+		Assert.assertEquals("'\\u0000'", Base.readable('\u0000'));
+		Assert.assertEquals("'\\u0001'", Base.readable('\u0001'));
+		Assert.assertEquals("'\\u0020'", Base.readable('\u0020'));
+		Assert.assertEquals("'\\n'", Base.readable('\n'));
+		Assert.assertEquals("'\\''", Base.readable('\''));
+		Assert.assertEquals("'\\\\'", Base.readable('\\'));
+		char[] chars = "\u0000\u0001\u0020\n\'\\".toCharArray();
+		Assert.assertArrayEquals(chars, Base.charSplitReadable(Base.joinReadable(", ", chars), ", "));
 	}
 
 	public static void main(String[] args) {

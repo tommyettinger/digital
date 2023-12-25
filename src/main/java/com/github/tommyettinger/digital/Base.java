@@ -5150,6 +5150,12 @@ public class Base {
      * @return a new String containing {@code number} as a Unicode-escaped char literal in single quotes
      */
     public static String readable(char number) {
+        switch (number) {
+            case '\r': return "'\\r'";
+            case '\n': return "'\\n'";
+            case '\'': return "'\\''";
+            case '\\': return "'\\\\'";
+        }
         final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE16.toEncoded;
         final int len = 3;
         for (int i = 0; i <= len; i++) {
@@ -5172,6 +5178,12 @@ public class Base {
      * @return {@code builder}, with the encoded {@code number} appended as a Unicode-escaped char literal in single quotes
      */
     public static StringBuilder appendReadable(StringBuilder builder, char number) {
+        switch (number) {
+            case '\r': return builder.append("'\\r'");
+            case '\n': return builder.append("'\\n'");
+            case '\'': return builder.append("'\\''");
+            case '\\': return builder.append("'\\\\'");
+        }
         final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE16.toEncoded;
         final int len = 3;
         for (int i = 0; i <= len; i++) {
@@ -5226,6 +5238,28 @@ public class Base {
     }
 
     /**
+     * Weird, ugly method that only exists to special-case four char values that cannot be given hex-quartet Unicode
+     * escapes: carriage return, line feed, apostrophe, and backslash. If it doesn't find one of those escapes, it falls
+     * back to {@link #readChar(CharSequence, int, int)} on {@link #BASE16}.
+     * @param source a CharSequence, such as a String, containing one of ({@code u} followed by 4 hex digits), (r), (n), ('), or (\)
+     * @param start  the (inclusive) first character position in cs to read
+     * @param end    the (exclusive) last character position in cs to read (this after reading enough chars to represent the largest possible value)
+     * @return the char that cs represents
+     */
+    private static char readCharReadably(CharSequence source, int start, int end) {
+        int len;
+        if (source == null || start < 0 || end <= 0 || end - start <= 0 || (len = source.length()) - start <= 0 || end > len)
+            return '\u0000';
+        switch (source.charAt(start)) {
+            case 'r': return '\r';
+            case 'n': return '\n';
+            case '\'': return '\'';
+            case '\\': return '\\';
+        }
+        return Base.BASE16.readChar(source, start+1, end);
+    }
+
+    /**
      * Given a String containing char items in Java syntax, separated by instances of delimiter, returns those numbers
      * as a char array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
      * Note that this reads in chars as a specific subset of Java source code: single-quoted hex quartets escaped with a
@@ -5242,16 +5276,16 @@ public class Base {
             return new char[0];
         int amount = count(source, delimiter, startIndex, endIndex);
         if (amount <= 0)
-            return new char[]{Base.BASE16.readChar(source, startIndex+3, endIndex)};
+            return new char[]{readCharReadably(source, startIndex+2, endIndex)};
         char[] splat = new char[amount + 1];
-        int dl = delimiter.length()+1, idx = startIndex - dl, idx2;
+        int dl = delimiter.length(), idx = startIndex - dl, idx2;
         for (int i = 0; i < amount; i++) {
-            splat[i] = Base.BASE16.readChar(source, idx + dl + 3, idx = source.indexOf('\'', idx + dl));
+            splat[i] = readCharReadably(source, idx + dl + 2, idx = source.indexOf(delimiter, idx + dl + 2));
         }
-        if ((idx2 = source.indexOf('\'', idx + dl)) < 0 || idx2 >= endIndex) {
-            splat[amount] = Base.BASE16.readChar(source, idx + dl + 3, Math.min(source.length(), endIndex));
+        if ((idx2 = source.indexOf(delimiter, idx + dl + 2)) < 0 || idx2 >= endIndex) {
+            splat[amount] = readCharReadably(source, idx + dl + 2, Math.min(source.length(), endIndex));
         } else {
-            splat[amount] = Base.BASE16.readChar(source, idx + dl + 3, idx2);
+            splat[amount] = readCharReadably(source, idx + dl + 2, idx2);
         }
         return splat;
     }
