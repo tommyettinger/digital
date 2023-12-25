@@ -5186,6 +5186,91 @@ public class Base {
     }
 
     /**
+     * Given a char array and a delimiter to separate the items of that array, produces a String containing all chars
+     * from elements, in a way Java can read each item as a literal, separated by delimiter.
+     *
+     * @param delimiter the separator to put between numbers
+     * @param elements  a char array; if null, this returns an empty String
+     * @return a String containing all numbers in elements, written as literals, separated by delimiter
+     */
+    public static String joinReadable(String delimiter, char[] elements) {
+        if (elements == null || elements.length == 0)
+            return "";
+        StringBuilder sb = new StringBuilder(elements.length * 10);
+        appendReadable(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendReadable(sb, elements[i]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Given a char array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * the StringBuilder all chars from elements, in a way Java can read each item as a literal, separated by delimiter.
+     *
+     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param delimiter the separator to put between numbers
+     * @param elements  a char array; if null, this returns sb without changes
+     * @return a String containing all numbers in elements, written as literals, separated by delimiter
+     */
+    public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, char[] elements) {
+        if (elements == null || elements.length == 0)
+            return sb;
+        appendReadable(sb, elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter);
+            appendReadable(sb, elements[i]);
+        }
+        return sb;
+    }
+
+    /**
+     * Given a String containing char items in Java syntax, separated by instances of delimiter, returns those numbers
+     * as a char array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * Note that this reads in chars as a specific subset of Java source code: single-quoted hex quartets escaped with a
+     * backslash and {@code u}, separated by {@code delimiter} (which is almost always {@code ","} or {@code ", "}).
+     *
+     * @param source     a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter  the String that separates numbers in the source
+     * @param startIndex the first index, inclusive, in source to split from
+     * @param endIndex   the last index, exclusive, in source to split from
+     * @return a char array of the numbers found in source
+     */
+    public static char[] charSplitReadable(String source, String delimiter, int startIndex, int endIndex) {
+        if (source == null || delimiter == null || delimiter.isEmpty() || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
+            return new char[0];
+        int amount = count(source, delimiter, startIndex, endIndex);
+        if (amount <= 0)
+            return new char[]{Base.BASE16.readChar(source, startIndex+3, endIndex)};
+        char[] splat = new char[amount + 1];
+        int dl = delimiter.length()+1, idx = startIndex - dl, idx2;
+        for (int i = 0; i < amount; i++) {
+            splat[i] = Base.BASE16.readChar(source, idx + dl + 3, idx = source.indexOf('\'', idx + dl));
+        }
+        if ((idx2 = source.indexOf('\'', idx + dl)) < 0 || idx2 >= endIndex) {
+            splat[amount] = Base.BASE16.readChar(source, idx + dl + 3, Math.min(source.length(), endIndex));
+        } else {
+            splat[amount] = Base.BASE16.readChar(source, idx + dl + 3, idx2);
+        }
+        return splat;
+    }
+
+    /**
+     * Given a String containing char items in Java syntax, separated by instances of delimiter, returns those number
+     * as a char array. If source or delimiter is null, or if source or delimiter is empty, this returns an empty array.
+     * Note that this reads in chars as a specific subset of Java source code: single-quoted hex quartets escaped with a
+     * backslash and {@code u}, separated by {@code delimiter} (which is almost always {@code ","} or {@code ", "}).
+     *
+     * @param source    a String of numbers in this base, separated by a delimiter, with no trailing delimiter
+     * @param delimiter the String that separates numbers in the source
+     * @return a char array of the numbers found in source
+     */
+    public static char[] charSplitReadable(String source, String delimiter) {
+        return charSplitReadable(source, delimiter, 0, source == null ? 0 : source.length());
+    }
+
+    /**
      * Scans repeatedly in {@code source} (only using the area from startIndex, inclusive, to endIndex, exclusive) for
      * the String {@code search}, not scanning the same char twice except as part of a larger String, and returns the
      * number of instances of search that were found, or 0 if source or search is null or if the searched area is empty.
