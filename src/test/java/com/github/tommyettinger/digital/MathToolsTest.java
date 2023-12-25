@@ -72,6 +72,9 @@ public class MathToolsTest {
         assertEquals(10/360f, MathTools.lerpAngleTurns(10/360f, 350/360f, 0.0f), 0.01f);
         assertEquals(0, MathTools.lerpAngleTurns(10/360f, 350/360f, 0.5f), 0.01f);
         assertEquals(350/360f, MathTools.lerpAngleTurns(10/360f, 350/360f, 1.0f), 0.01f);
+        assertEquals(10/360.0, MathTools.lerpAngleTurns(10/360.0, 350/360.0, 0.0), 0.01);
+        assertEquals(0, MathTools.lerpAngleTurns(10/360.0, 350/360.0, 0.5), 0.01);
+        assertEquals(350/360.0, MathTools.lerpAngleTurns(10/360.0, 350/360.0, 1.0), 0.01);
     }
 
     @Test
