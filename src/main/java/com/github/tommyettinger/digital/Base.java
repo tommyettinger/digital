@@ -4760,7 +4760,7 @@ public class Base {
      *
      * @param delimiter the separator to put between numbers
      * @param elements  an int array; if null, this returns an empty String
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
     public static String joinReadable(String delimiter, int[] elements) {
         return BASE10.join(delimiter, elements);
@@ -4774,7 +4774,7 @@ public class Base {
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  an int array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
     public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, int[] elements) {
         return BASE10.appendJoined(sb, delimiter, elements);
@@ -4874,7 +4874,7 @@ public class Base {
      *
      * @param delimiter the separator to put between numbers
      * @param elements  a long array; if null, this returns an empty String
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
     public static String joinReadable(String delimiter, long[] elements) {
         if (elements == null || elements.length == 0)
@@ -4895,7 +4895,7 @@ public class Base {
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a long array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
     public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, long[] elements) {
         if (elements == null || elements.length == 0)
@@ -4981,7 +4981,7 @@ public class Base {
      *
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns an empty String
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
     public static String joinReadable(String delimiter, double[] elements) {
         return BASE10.join(delimiter, elements);
@@ -4995,7 +4995,7 @@ public class Base {
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
     public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, double[] elements) {
         return BASE10.appendJoined(sb, delimiter, elements);
@@ -5141,6 +5141,49 @@ public class Base {
         return floatSplitReadable(source, delimiter, 0, source == null ? 0 : source.length());
     }
 
+
+    /**
+     * Converts the given {@code number} to a String that Java can read in as a literal.
+     * This writes a char literal as a Unicode escape every time, in single quotes.
+     *
+     * @param number any char
+     * @return a new String containing {@code number} as a Unicode-escaped char literal in single quotes
+     */
+    public static String readable(char number) {
+        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE16.toEncoded;
+        final int len = 3;
+        for (int i = 0; i <= len; i++) {
+            int quotient = number >>> 4;
+            progress[len - i + 3] = toEncoded[(number & 0xFFFF) - (quotient << 4)];
+            number = (char) quotient;
+        }
+        progress[1] = '\\';
+        progress[2] = 'u';
+        progress[0] = progress[7] = '\'';
+        return String.valueOf(progress, 0, 8);
+    }
+
+    /**
+     * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
+     * {@code builder}. This writes a char literal as a Unicode escape every time, in single quotes.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any char
+     * @return {@code builder}, with the encoded {@code number} appended as a Unicode-escaped char literal in single quotes
+     */
+    public static StringBuilder appendReadable(StringBuilder builder, char number) {
+        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE16.toEncoded;
+        final int len = 3;
+        for (int i = 0; i <= len; i++) {
+            int quotient = number >>> 4;
+            progress[len - i + 3] = toEncoded[(number & 0xFFFF) - (quotient << 4)];
+            number = (char) quotient;
+        }
+        progress[1] = '\\';
+        progress[2] = 'u';
+        progress[0] = progress[7] = '\'';
+        return builder.append(progress, 0, 8);
+    }
 
     /**
      * Scans repeatedly in {@code source} (only using the area from startIndex, inclusive, to endIndex, exclusive) for
