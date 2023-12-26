@@ -31,6 +31,41 @@ public final class TextTools {
      */
     private TextTools(){
     }
+
+    /**
+     * Returns a String made from every {@code char[]} item in {@code elements}, with each {@code char[]} separated by
+     * {@code delimiter}. Each {@code char[]} is written using the rules of {@link String#valueOf(char[])}.
+     * @param delimiter a CharSequence to place between each {@code char[]}
+     * @param elements an array or varargs of char arrays; if null, this returns the empty String
+     * @return the items in {@code elements}, joined by {@code delimiter}
+     */
+    public static String joinArrays(CharSequence delimiter, char[]... elements) {
+        if (elements == null || elements.length == 0) return "";
+        StringBuilder sb = new StringBuilder(64);
+        sb.append(elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter).append(elements[i]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Appends every {@code char[]} item in {@code elements} to {@code sb}, with each {@code char[]} separated by
+     * {@code delimiter}. Each {@code char[]} is written using the rules of {@link String#valueOf(char[])}.
+     * @param sb a StringBuilder that will be modified in-place
+     * @param delimiter a CharSequence to place between each {@code char[]}
+     * @param elements an array or varargs of char arrays; if null, this returns the empty String
+     * @return {@code sb}, after having {@code elements} appended
+     */
+    public static StringBuilder appendJoinedArrays(StringBuilder sb, CharSequence delimiter, char[]... elements) {
+        if (sb == null || elements == null || elements.length == 0) return sb;
+        sb.append(elements[0]);
+        for (int i = 1; i < elements.length; i++) {
+            sb.append(delimiter).append(elements[i]);
+        }
+        return sb;
+    }
+
     /**
      * Joins the boolean array {@code elements} without delimiters into a String, using "1" for true and "0" for false.
      * This is "dense" because it doesn't have any delimiters between elements.
@@ -304,9 +339,16 @@ public final class TextTools {
         return f;
     }
 
+    /**
+     * Really simple; just returns {@code text.toString().replace(before, after)}.
+     * It's only here for convenience, really.
+     * @param text optimally a String, but may be any non-null CharSequence
+     * @param before the CharSequence (often a String) to search for
+     * @param after the CharSequence (often a String) to replace with
+     * @return a String resulting from replacing occurrences of before in text with after
+     */
     public static String replace(CharSequence text, CharSequence before, CharSequence after) {
-        String t = text.toString();
-        return t.replace(before, after);
+        return text.toString().replace(before, after);
     }
 
     /**
@@ -437,7 +479,7 @@ public final class TextTools {
      * @param delimiter the literal String to split on (not a regex); will not be included in the returned String array
      * @param startIndex the first index, inclusive, in source to split from
      * @param endIndex   the last index, exclusive, in source to split from
-     * @return a String array consisting of at least one String (the entirety of Source if nothing was split)
+     * @return a String array consisting of at least one String (the span of Source between startIndex and endIndex if nothing was split)
      */
     public static String[] split(String source, String delimiter, int startIndex, int endIndex) {
         if (source == null || delimiter == null || endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
