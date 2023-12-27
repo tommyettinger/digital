@@ -17,7 +17,9 @@ public class TextToolsTest {
         splat = TextTools.split(csv, ", ", 9, csv.length() - 7);
 //        for(String s : splat) System.out.println(">>>" + s + "<<<");
         Assert.assertEquals(4, splat.length);
-        String bd = "10001101";
+        boolean[] booleans = {true, true, false, false, false, true, true, false, true, true, true, true, false, true};
+//        String bd = "10001101";
+        String bd = TextTools.joinDense(booleans, 1, 8);
         boolean[] full = TextTools.booleanSplitDense(bd);
         Assert.assertTrue(full[0]);
         Assert.assertFalse(full[1]);

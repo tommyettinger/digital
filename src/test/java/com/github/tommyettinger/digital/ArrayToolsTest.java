@@ -64,8 +64,8 @@ public class ArrayToolsTest {
 
     @Test
     public void testStringSection() {
-        String[][] words = new String[9][16];
-        ArrayTools.sequentialFill(words, ArrayTools.stringSpan(48 + 144, 144));
+        String[][] words = new String[12][12];
+        ArrayTools.sequentialFill(words, ArrayTools.chemicalElements(0, 118, false));
         for (int i = 0; i < words.length; i++) {
             System.out.println(String.join(", ", words[i]));
         }
