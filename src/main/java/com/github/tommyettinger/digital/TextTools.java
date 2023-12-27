@@ -575,6 +575,7 @@ public final class TextTools {
 
     /**
      * Like {@link String#split(String)} but doesn't use any regex for splitting (the delimiter is a literal String).
+     * This can be used to split groups of Strings joined by {@link #join(CharSequence, Object[])}.
      * @param source the String to get split-up substrings from
      * @param delimiter the literal String to split on (not a regex); will not be included in the returned String array
      * @return a String array consisting of at least one String (the entirety of Source if nothing was split)
@@ -601,6 +602,7 @@ public final class TextTools {
     /**
      * Like {@link String#split(String)} but doesn't use any regex for splitting (the delimiter is a literal String).
      * This overload allows specifying an (inclusive) start index and (exclusive) end index.
+     * This can be used to split groups of Strings joined by {@link #join(CharSequence, Object[])}.
      * @param source the String to get split-up substrings from
      * @param delimiter the literal String to split on (not a regex); will not be included in the returned String array
      * @param startIndex the first index, inclusive, in source to split from

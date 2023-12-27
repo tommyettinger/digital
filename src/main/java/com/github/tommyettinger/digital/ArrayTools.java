@@ -386,6 +386,48 @@ public final class ArrayTools {
     }
 
     /**
+     * Gets up to 24 Strings from a set of 24 names of Greek letters, in upper case if {@code upperCase}
+     * is true, otherwise in lower case. The {@code start} refers to the index of the first String in the set. The
+     * {@code length} can change the number of Strings returned to less than 24, but not greater than 24.
+     * @param start the index of the first String in the set to return; typically non-negative and less than 24
+     * @param length how many String items to return; at most 24, and if 0 or less this returns an empty array
+     * @param upperCase if true, each String will be in UPPER CASE.
+     * @return up to 24 distinct String items
+     */
+    public static String[] greekLetters(int start, int length, boolean upperCase) {
+        start = (start % 24 + 24) % 24;
+        return stringSpan(start + (upperCase ? 24 : 0), Math.min(length, 24 - start));
+    }
+
+    /**
+     * Gets up to 72 Strings from a set of 72 names of demons from the Ars Goetia, in upper case if {@code upperCase}
+     * is true, otherwise in lower case. The {@code start} refers to the index of the first String in the set. The
+     * {@code length} can change the number of Strings returned to less than 72, but not greater than 72.
+     * @param start the index of the first String in the set to return; typically non-negative and less than 72
+     * @param length how many String items to return; at most 72, and if 0 or less this returns an empty array
+     * @param upperCase if true, each String will be in UPPER CASE.
+     * @return up to 72 distinct String items
+     */
+    public static String[] demonNames(int start, int length, boolean upperCase) {
+        start = (start % 72 + 72) % 72;
+        return stringSpan(start + (upperCase ? 72 : 0) + 48, Math.min(length, 72 - start));
+    }
+
+    /**
+     * Gets up to 118 Strings from a set of 118 names of chemical elements, in upper case if {@code upperCase}
+     * is true, otherwise in lower case. The {@code start} refers to the index of the first String in the set. The
+     * {@code length} can change the number of Strings returned to less than 118, but not greater than 118.
+     * @param start the index of the first String in the set to return; typically non-negative and less than 118
+     * @param length how many String items to return; at most 118, and if 0 or less this returns an empty array
+     * @param upperCase if true, each String will be in UPPER CASE.
+     * @return up to 118 distinct String items
+     */
+    public static String[] chemicalElements(int start, int length, boolean upperCase) {
+        start = (start % 118 + 118) % 118;
+        return stringSpan(start + (upperCase ? 118 : 0) + 48 + 144, Math.min(length, 118 - start));
+    }
+
+    /**
      * Gets a copy of the 2D char array, source, that has the same data but shares no references with source.
      *
      * @param source a 2D char array
