@@ -1157,17 +1157,26 @@ public final class MathTools {
 
     /**
      * Like the fract() function available in GLSL shaders, this gets the fractional part of the float
-     * input {@code t} by returning a result equivalent to {@code t - MathTools.fastFloor(t)} . For
+     * input {@code t} by returning a result similar to {@code t - Math.floor(t)}, as a float. For
      * negative inputs, this doesn't behave differently than for positive; both will always return a
-     * float that is <code>0 &lt;= t &lt; 1</code> . Like {@link #fastFloor(float)}, this method will
-     * only work for finite floats from {@code -16384} to {@code Integer.MAX_VALUE - 16384}, or
-     * {@code 2147467263}.
-     * @param t a float from -16384 to 2147467263 (both inclusive)
+     * float that is <code>0 &lt;= t &lt; 1</code> . This is implemented differently from what appears
+     * to be the most straightforward way (just subtracting the floor). Because very small values for
+     * {@code t} that are negative can floor to -1, and subtracting -1 from a very small value can
+     * make the float just round to 1, we need to use a different approach. The code used here currently
+     * is: <code>
+     *     t -= (int)t - 1;
+     *     return t - (int)t;
+     *     </code>
+     * Any suggestions for improvements that still pass tests here are welcome.
+     * @param t a finite float that should be between about {@code -Math.pow(2, 23)} and {@code Math.pow(2, 23)}
      * @return the fractional part of t, as a float <code>0 &lt;= result &lt; 1</code>
      */
-    public static float fastFract(final float t) {
-        return t - ((int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT);
+    public static float fastFract(float t) {
+        t -= (int)t - 1;
+        return t - (int)t;
     }
+
+//        return t - ((int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT);
 
     /**
      * Like {@link Math#floor}, but returns a long.
@@ -1296,15 +1305,18 @@ public final class MathTools {
 
     /**
      * Like the fract() function available in GLSL shaders, this gets the fractional part of the float
-     * input {@code t} by returning a result equivalent to {@code t - Math.floor(t)} . For
+     * input {@code t} by returning a result similar to {@code t - Math.floor(t)} . For
      * negative inputs, this doesn't behave differently than for positive; both will always return a
-     * float that is <code>0 &lt;= t &lt; 1</code> .
-     * @see #fastFract(float)
+     * float that is <code>0 &lt;= t &lt; 1</code> . This code is currently the same as
+     * {@link #fastFract(float)}. If another implementation is introduced, this method will be the more
+     * accurate and probably slower version.
+     * @see #fastFract(float) (the code here is currently the same as fastFract())
      * @param t a finite float that should be between about {@code -Math.pow(2, 23)} and {@code Math.pow(2, 23)}
      * @return the fractional part of t, as a float <code>0 &lt;= result &lt; 1</code>
      */
-    public static float fract(final float t) {
-        return (float) (t - Math.floor(t));
+    public static float fract(float t) {
+        t -= (int)t - 1;
+        return t - (int)t;
     }
 
     /**
@@ -1315,9 +1327,13 @@ public final class MathTools {
      * @param t a finite double that should be between about {@code -Math.pow(2, 52)} and {@code Math.pow(2, 52)}
      * @return the fractional part of t, as a double <code>0 &lt;= result &lt; 1</code>
      */
-    public static double fract(final double t) {
-        return t - Math.floor(t);
+    public static double fract(double t) {
+        t -= (long)t - 1L;
+        return t - (long)t;
     }
+
+    // note: just using {@code t - Math.floor(t)} fails when t is negative and very small, such as:
+    // fract(-Double.MIN_NORMAL) == 1
 
     /**
      * Forces precision loss on the given float so very small fluctuations away from an integer will be erased.
@@ -1459,10 +1475,14 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, 1)
      */
     public static float lerpAngleTurns(float fromTurns, float toTurns, float progress){
-        float delta = ((toTurns - fromTurns) % 1f + 1.5f) % 1f - 0.5f;
-        return ((fromTurns + delta * progress) % 1f + 1f) % 1f;
+        return fract(fromTurns + (((toTurns - fromTurns) % 1f + 1.5f) % 1f - 0.5f) * progress);
     }
 
+    //// only used briefly, in 0.4.6, but did not show issues other than maybe being longer than necessary
+//    public static float lerpAngleTurns(float fromTurns, float toTurns, float progress){
+//        float delta = ((toTurns - fromTurns) % 1f + 1.5f) % 1f - 0.5f;
+//        return ((fromTurns + delta * progress) % 1f + 1f) % 1f;
+//    }
     //// Older, and less correct when going backwards across 0.
 //    public static float lerpAngleTurns(float fromTurns, float toTurns, float progress){
 //        float d = toTurns - fromTurns;
@@ -1526,10 +1546,14 @@ public final class MathTools {
      * @return the interpolated angle in the range [0, 1)
      */
     public static double lerpAngleTurns(double fromTurns, double toTurns, double progress) {
-        double delta = ((toTurns - fromTurns) % 1.0 + 1.5) % 1.0 - 0.5;
-        return ((fromTurns + delta * progress) % 1.0 + 1.0) % 1.0;
+        return fract(fromTurns + (((toTurns - fromTurns) % 1.0 + 1.5) % 1.0 - 0.5) * progress);
     }
 
+    //// only used briefly, in 0.4.6, but did not show issues other than maybe being longer than necessary
+//    public static double lerpAngleTurns(double fromTurns, double toTurns, double progress) {
+//        double delta = ((toTurns - fromTurns) % 1.0 + 1.5) % 1.0 - 0.5;
+//        return ((fromTurns + delta * progress) % 1.0 + 1.0) % 1.0;
+//    }
     //// older, has issues crossing zero
 // public static double lerpAngleTurns(double fromTurns, double toTurns, double progress) {
 //        double d = toTurns - fromTurns;
