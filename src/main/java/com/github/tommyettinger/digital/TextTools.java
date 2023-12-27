@@ -82,13 +82,47 @@ public final class TextTools {
      * @param t the char to write for true values
      * @param f the char to write for false values
      * @param elements an array or vararg of booleans
-     * @return a String using 1 for true elements and 0 for false, or the empty string if elements is null or empty
+     * @return a String using t for true elements and f for false, or the empty string if elements is null or empty
      */
     public static String joinDense(char t, char f, boolean... elements) {
         if (elements == null || elements.length == 0) return "";
         StringBuilder sb = new StringBuilder(64);
         for (int i = 0; i < elements.length; i++) {
             sb.append(elements[i] ? t : f);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Joins the part of the boolean array {@code elements} starting at {@code start} and extending for {@code length}
+     * items, without delimiters, into a String, using the char {@code '1'} for true and the char {@code '0'} for false.
+     * This is "dense" because it doesn't have any delimiters between elements.
+     * @param elements an array or vararg of booleans
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String using 1 for true elements and 0 for false, or the empty string if elements is null or empty
+     */
+    public static String joinDense(boolean[] elements, int start, int length) {
+        return joinDense('1', '0', elements, start, length);
+    }
+
+    /**
+     * Joins the part of the boolean array {@code elements} starting at {@code start} and extending for {@code length}
+     * items, without delimiters, into a String, using the char {@code t} for true and the char {@code f} for false.
+     * This is "dense" because it doesn't have any delimiters between elements.
+     * @param t the char to write for true values
+     * @param f the char to write for false values
+     * @param elements an array or vararg of booleans
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return a String using t for true elements and f for false, or the empty string if elements is null or empty
+     */
+    public static String joinDense(char t, char f, boolean[] elements, int start, int length) {
+        if (elements == null || elements.length <= start || length <= 0)
+            return "";
+        StringBuilder sb = new StringBuilder(length);
+        for (int c = 0; c < length && start < elements.length; start++, c++) {
+            sb.append(elements[start] ? t : f);
         }
         return sb.toString();
     }
@@ -119,6 +153,39 @@ public final class TextTools {
         if(elements.length == 0) return sb;
         for (int i = 0; i < elements.length; i++) {
             sb.append(elements[i] ? t : f);
+        }
+        return sb;
+    }
+
+    /**
+     * Joins the part of the boolean array {@code elements} starting at {@code start} and extending for {@code length}
+     * items, without delimiters, into a String, using the char {@code '1'} for true and the char {@code '0'} for false.
+     * This is "dense" because it doesn't have any delimiters between elements.
+     * @param elements an array or vararg of booleans
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return sb, with at most length items appended
+     */
+    public static StringBuilder appendJoinedDense(StringBuilder sb, boolean[] elements, int start, int length) {
+        return appendJoinedDense(sb, '1', '0', elements, start, length);
+    }
+
+    /**
+     * Joins the part of the boolean array {@code elements} starting at {@code start} and extending for {@code length}
+     * items, without delimiters, into a String, using the char {@code t} for true and the char {@code f} for false.
+     * This is "dense" because it doesn't have any delimiters between elements.
+     * @param t the char to write for true values
+     * @param f the char to write for false values
+     * @param elements an array or vararg of booleans
+     * @param start the first index in elements to use
+     * @param length how many items to use from elements, at most
+     * @return sb, with at most length items appended
+     */
+    public static StringBuilder appendJoinedDense(StringBuilder sb, char t, char f, boolean[] elements, int start, int length) {
+        if (elements == null || elements.length <= start || length <= 0)
+            return sb;
+        for (int c = 0; c < length && start < elements.length; start++, c++) {
+            sb.append(elements[start] ? t : f);
         }
         return sb;
     }

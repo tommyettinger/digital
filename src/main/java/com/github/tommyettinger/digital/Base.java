@@ -3097,7 +3097,7 @@ public class Base {
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a long array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, long[] elements) {
         if (elements == null || elements.length == 0)
@@ -3137,7 +3137,7 @@ public class Base {
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  an int array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, int[] elements) {
         if (elements == null || elements.length == 0)
@@ -3177,7 +3177,7 @@ public class Base {
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a short array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, short[] elements) {
         if (elements == null || elements.length == 0)
@@ -3217,7 +3217,7 @@ public class Base {
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a byte array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, byte[] elements) {
         if (elements == null || elements.length == 0)
@@ -3257,7 +3257,7 @@ public class Base {
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a char array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, char[] elements) {
         if (elements == null || elements.length == 0)
@@ -3299,7 +3299,7 @@ public class Base {
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with items appended
      */
     public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, double[] elements) {
         if (elements == null || elements.length == 0)
@@ -3341,7 +3341,7 @@ public class Base {
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with items appended
      */
     public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, float[] elements) {
         if (elements == null || elements.length == 0)
@@ -4325,7 +4325,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, long[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
@@ -4346,10 +4346,10 @@ public class Base {
      * @param elements  a long array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with at most length items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, long[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
@@ -4371,7 +4371,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, int[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
@@ -4392,10 +4392,10 @@ public class Base {
      * @param elements  a int array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with at most length items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, int[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
@@ -4417,7 +4417,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, short[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
@@ -4438,10 +4438,10 @@ public class Base {
      * @param elements  a short array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with at most length items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, short[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
@@ -4463,7 +4463,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, char[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
@@ -4484,10 +4484,10 @@ public class Base {
      * @param elements  a char array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with at most length items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, char[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
@@ -4509,7 +4509,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, byte[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
@@ -4530,10 +4530,10 @@ public class Base {
      * @param elements  a byte array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with at most length items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, byte[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
@@ -4555,7 +4555,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, float[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendGeneral(sb, elements[start]);
@@ -4576,10 +4576,10 @@ public class Base {
      * @param elements  a float array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with at most length items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, float[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendGeneral(sb, elements[start]);
         ++start;
@@ -4601,7 +4601,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, double[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendGeneral(sb, elements[start]);
@@ -4622,10 +4622,10 @@ public class Base {
      * @param elements  a double array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with at most length items appended
      */
     public StringBuilder appendJoined(StringBuilder sb, String delimiter, double[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendGeneral(sb, elements[start]);
         ++start;
@@ -4647,7 +4647,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String joinExact(String delimiter, float[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
@@ -4668,10 +4668,10 @@ public class Base {
      * @param elements  a float array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with at most length items appended
      */
     public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, float[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
@@ -4693,7 +4693,7 @@ public class Base {
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
     public String joinExact(String delimiter, double[] elements, int start, int length) {
-        if (elements.length <= start || length <= 0)
+        if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
         appendSigned(sb, elements[start]);
@@ -4714,7 +4714,7 @@ public class Base {
      * @param elements  a double array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return sb, with at most length items appended
      */
     public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, double[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
