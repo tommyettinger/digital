@@ -86,7 +86,7 @@ public final class TextTools {
      */
     public static String joinDense(char t, char f, boolean... elements) {
         if (elements == null || elements.length == 0) return "";
-        StringBuilder sb = new StringBuilder(64);
+        StringBuilder sb = new StringBuilder(elements.length);
         for (int i = 0; i < elements.length; i++) {
             sb.append(elements[i] ? t : f);
         }
@@ -216,6 +216,23 @@ public final class TextTools {
     }
 
     /**
+     * Given a CharSequence that may contain the char {@code '1'}, gets a boolean array where an occurrence of '1' in
+     * the CharSequence produces true and any other char produces false. If source is null, or if source is empty, this
+     * returns an empty array. This starts reading at {@code startIndex} and stops reading before {@code endIndex}. The
+     * endIndex can safely be given as {@link Integer#MAX_VALUE} if you don't have or know an ending boundary; in that
+     * case, this simply uses {@code source.length()} as endIndex.
+     *
+     * @param source     a CharSequence; if null, this returns an empty array
+     * @param startIndex the first index, inclusive, in source to split from
+     * @param endIndex   the last index, exclusive, in source to split from
+     * @return a boolean array that has true values where {@code '1'} was encountered in source
+     */
+    public static boolean[] booleanSplitDense(CharSequence source, int startIndex, int endIndex) {
+        return booleanSplitDense(source, '1', startIndex, endIndex);
+    }
+
+
+    /**
      * Given a CharSequence that may contain the char {@code t}, gets a boolean array where an occurrence of t in the
      * CharSequence produces true and any other char produces false. If source is null, or if source is empty, this
      * returns an empty array. This starts reading at {@code startIndex} and stops reading before {@code endIndex}. The
@@ -253,7 +270,7 @@ public final class TextTools {
      */
     public static String join(CharSequence delimiter, Object[] elements) {
         if (elements == null || elements.length == 0) return "";
-        StringBuilder sb = new StringBuilder(elements.length << 2);
+        StringBuilder sb = new StringBuilder(elements.length << 3);
         sb.append(elements[0]);
         if(delimiter == null) delimiter = "";
         for (int i = 1; i < elements.length; i++) {
@@ -261,6 +278,20 @@ public final class TextTools {
         }
         return sb.toString();
     }
+
+    public String join(CharSequence delimiter, Object[] elements, int start, int length) {
+        if (elements == null || elements.length <= start || length <= 0)
+            return "";
+        StringBuilder sb = new StringBuilder(elements.length << 3);
+        sb.append(elements[start]);
+        if(delimiter == null) delimiter = "";
+        ++start;
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter).append(elements[start]);
+        }
+        return sb.toString();
+    }
+
     /**
      * Joins the items in {@code elements} by calling their toString method on them (or just using the String "null" for
      * null items), and separating each item with {@code delimiter}. This can take any Iterable of any type for its
@@ -303,6 +334,34 @@ public final class TextTools {
         }
         return sb;
     }
+
+    /**
+     * Joins the items in {@code elements} by calling their toString method on them (or just using the String "null" for
+     * null items), and separating each item with {@code delimiter}.
+     * <br>
+     * Unlike other join methods in this class, this does
+     * not take a vararg of Object items, since that would cause confusion with the overloads that take one object, such
+     * as {@link #join(CharSequence, Iterable)}; it takes a non-vararg Object array instead.
+     * @param sb a StringBuilder that will be modified in-place
+     * @param delimiter the String or other CharSequence to separate items in elements with; if null, uses ""
+     * @param elements  the Object items to stringify and join into one String; if the array is null or empty, this
+     *                  returns an empty String, and if items are null, they are shown as "null"
+     * @param start     the first index, inclusive, in elements to read from
+     * @param length    the number of items, at most, to join together
+     * @return sb after modifications (if elements was non-null)
+     */
+    public StringBuilder appendJoined(StringBuilder sb, CharSequence delimiter, Object[] elements, int start, int length) {
+        if (sb == null || elements == null || elements.length <= start || length <= 0)
+            return sb;
+        sb.append(elements[start]);
+        if(delimiter == null) delimiter = "";
+        ++start;
+        for (int c = 1; c < length && start < elements.length; start++, c++) {
+            sb.append(delimiter).append(elements[start]);
+        }
+        return sb;
+    }
+
 
     /**
      * Joins the items in {@code elements} by calling their toString method on them (or just using the String "null" for

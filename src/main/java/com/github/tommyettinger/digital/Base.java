@@ -4322,7 +4322,7 @@ public class Base {
      * @param elements  a long array; if null, this returns an empty String
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, long[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
@@ -4368,7 +4368,7 @@ public class Base {
      * @param elements  a int array; if null, this returns an empty String
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, int[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
@@ -4414,7 +4414,7 @@ public class Base {
      * @param elements  a short array; if null, this returns an empty String
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, short[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
@@ -4460,7 +4460,7 @@ public class Base {
      * @param elements  a char array; if null, this returns an empty String
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, char[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
@@ -4506,7 +4506,7 @@ public class Base {
      * @param elements  a byte array; if null, this returns an empty String
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, byte[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
@@ -4552,7 +4552,7 @@ public class Base {
      * @param elements  a float array; if null, this returns an empty String
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, float[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
@@ -4598,7 +4598,7 @@ public class Base {
      * @param elements  a double array; if null, this returns an empty String
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
     public String join(String delimiter, double[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
@@ -4644,7 +4644,7 @@ public class Base {
      * @param elements  a float array; if null, this returns an empty String
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
     public String joinExact(String delimiter, float[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
@@ -4690,7 +4690,7 @@ public class Base {
      * @param elements  a double array; if null, this returns an empty String
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return a String containing all numbers in elements, written in this Base, separated by delimiter
+     * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
     public String joinExact(String delimiter, double[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
