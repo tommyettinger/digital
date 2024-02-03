@@ -250,6 +250,19 @@ public final class MathTools {
     }
 
     /**
+     * A rough approximation of {@link Math#exp(double)} for float arguments, meant to be faster than Math's version
+     * at the expense of accuracy. This is not especially accurate, but it gets the general shape of the function right.
+     * <br>
+     * Based on <a href="https://gist.github.com/Alrecenk/55be1682fe46cdd89663">this gist by Alrecenk</a>, but without
+     * any table lookup.
+     * @param power what exponent to raise {@link #E} to
+     * @return a rough approximation of E raised to the given power
+     */
+    public static float exp(float power) {
+        return BitConversion.intBitsToFloat(1065353216 +
+                (int)((12102203 - 0x1.6p-14f * BitConversion.floatToIntBits(power)) * power));
+    }
+    /**
      * Equivalent to libGDX's isEqual() method in MathUtils; this compares two doubles for equality and allows the given
      * tolerance during comparison. An example is {@code 0.3 - 0.2 == 0.1} vs. {@code isEqual(0.3 - 0.2, 0.1, 0.000001)};
      * the first is incorrectly false, while the second is correctly true.
@@ -439,6 +452,14 @@ public final class MathTools {
         x = BitConversion.imul(x, 2 - BitConversion.imul(a, x));
         return x;
     }
+
+//    public static int mmi(final int a) {
+//        int x = 2 ^ a * 3;
+//        x = x * (2 - (a * x));
+//        x = x * (2 - (a * x));
+//        x = x * (2 - (a * x));
+//        return x;
+//    }
 
     /**
      * Given any odd long {@code a}, this finds another odd long {@code b} such that {@code a * b == 1L}.
