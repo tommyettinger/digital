@@ -284,6 +284,19 @@ public final class MathTools {
     }
 
     /**
+     * The same as {@link #gaussian2D(float, float)} except that its minimum is reduced to 0.0, while its maximum is
+     * still 1.0 . This is not precisely a Gaussian function, because it won't keep slowly decreasing given rising
+     * inputs, but being able to know the outside is 0 may be useful for various tasks.
+     * @param x typically the difference between two x positions; will be squared, so may be positive or negative
+     * @param y typically the difference between two y positions; will be squared, so may be positive or negative
+     * @return the positive result of the "Gaussian" function in 2D for the given parameters; between 0.0 and 1.0
+     */
+    public static float gaussianFinite2D(float x, float y) {
+        x = Math.max(-3.4060497f, (x * x + y * y) * -0.5f);
+        x = (12 + x * (6 + x))/(12 + x * (-6 + x));
+        return (x * x - 0.00516498f) * 1.0051918f;
+    }
+    /**
      * Equivalent to libGDX's isEqual() method in MathUtils; this compares two doubles for equality and allows the given
      * tolerance during comparison. An example is {@code 0.3 - 0.2 == 0.1} vs. {@code isEqual(0.3 - 0.2, 0.1, 0.000001)};
      * the first is incorrectly false, while the second is correctly true.
