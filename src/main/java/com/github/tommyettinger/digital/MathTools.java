@@ -251,7 +251,7 @@ public final class MathTools {
 
     /**
      * A rough approximation of {@link Math#exp(double)} for float arguments, meant to be faster than Math's version
-     * at the expense of accuracy. This is not especially accurate, but it gets the general shape of the function right.
+     * at the expense of accuracy. This is not at all accurate, but it gets the general shape of the function right.
      * <br>
      * Based on <a href="https://gist.github.com/Alrecenk/55be1682fe46cdd89663">this gist by Alrecenk</a>, but without
      * any table lookup.
@@ -262,6 +262,27 @@ public final class MathTools {
         return BitConversion.intBitsToFloat(1065353216 +
                 (int)((12102203 - 0x1.6p-14f * BitConversion.floatToIntBits(power)) * power));
     }
+
+    /**
+     * A relatively close approximation of {@code Math.exp(-x * x - y * y)}, the Gaussian function in 2D. This returns
+     * 1.0f when x and y are both 0, and goes as low as 0.0051585725 when either or both of x or y are very significant.
+     * The Gaussian function is useful for making circular "bump" shapes, among lots of other things.
+     * <br>
+     * This uses the 2/2 Padé approximant to {@code Math.exp(-x*x-y*y)}, but halves the argument to exp() before
+     * approximating, ensures that that argument is at least -3.5f (to avoid major issues with larger inputs), runs the
+     * approximation, and squares the result. The halving/squaring keeps the calculation in a more precise span for a
+     * larger domain.
+     *
+     * @param x typically the difference between two x positions; will be squared, so may be positive or negative
+     * @param y typically the difference between two y positions; will be squared, so may be positive or negative
+     * @return the positive result of the Gaussian function in 2D for the given parameters; between 0.0051585725 and 1.0
+     */
+    public static float gaussian2D(float x, float y) {
+        x = Math.max(-3.5f, (x * x + y * y) * -0.5f);
+        x = (12 + x * (6 + x))/(12 + x * (-6 + x));
+        return x * x;
+    }
+
     /**
      * Equivalent to libGDX's isEqual() method in MathUtils; this compares two doubles for equality and allows the given
      * tolerance during comparison. An example is {@code 0.3 - 0.2 == 0.1} vs. {@code isEqual(0.3 - 0.2, 0.1, 0.000001)};
