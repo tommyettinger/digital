@@ -255,12 +255,33 @@ public final class MathTools {
      * <br>
      * Based on <a href="https://gist.github.com/Alrecenk/55be1682fe46cdd89663">this gist by Alrecenk</a>, but without
      * any table lookup.
+     *
+     * @see #exp(float) A different exp() provides a higher-precision approximation.
+     * @param power what exponent to raise {@link #E} to
+     * @return a rough approximation of E raised to the given power
+     */
+    public static float expHasty(float power) {
+        return BitConversion.intBitsToFloat(1065353216 +
+                (int)((12102203 - 0x1.6p-14f * BitConversion.floatToIntBits(power)) * power));
+    }
+
+    /**
+     * A decent approximation of {@link Math#exp(double)} for small float arguments, meant to be faster than Math's
+     * version for floats at the expense of accuracy. Like {@link #gaussian2D(float, float)}, this uses the 2/2 Padé
+     * approximant to {@code Math.exp(power)}, but halves the argument to exp() before approximating, and squares it
+     * before returning.The halving/squaring keeps the calculation in a more precise span for a larger domain. You
+     * should not use this if your {@code power} inputs will be much higher than about 3 or lower than -3 .
+     * <br>
+     * Pretty much all the work for this was done by Wolfram Alpha.
+     *
+     * @see #expHasty(float) A different exp() provides a lower-precision approximation that may be faster.
      * @param power what exponent to raise {@link #E} to
      * @return a rough approximation of E raised to the given power
      */
     public static float exp(float power) {
-        return BitConversion.intBitsToFloat(1065353216 +
-                (int)((12102203 - 0x1.6p-14f * BitConversion.floatToIntBits(power)) * power));
+        power *= 0.5f;
+        power = (12 + power * (6 + power)) / (12 + power * (-6 + power));
+        return power * power;
     }
 
     /**
@@ -338,6 +359,35 @@ public final class MathTools {
         final double x = -delta/halfLife;
         return b + (a - b) * (-275.988 + x * (-90.6997 + (-11.6318 - 0.594604 * x) * x))/(-275.988 + x * (100.601 + (-15.0623 + x) * x));
     }
+
+    /**
+     * The cumulative distribution function for the normal distribution, with the range expanded to {@code [-1,1]}
+     * instead of the usual {@code [0,1]} . This might be useful to bring noise functions (which sometimes have a range
+     * of {@code -1,1}) from a very-centrally-biased form to a more uniformly-distributed form. The math here doesn't
+     * exactly match the normal distribution's CDF because the goal was to handle inputs between -1 and 1, not the full
+     * range of a normal-distributed variate (which is infinite).
+     * @param x a float between -1 and 1; will be clamped if outside that domain
+     * @return a more-uniformly distributed value between -1 and 1
+     */
+    public static float redistributeNormal(float x) {
+        final float xx = Math.min(x * x * 6.03435f, 6.03435f), axx = 0.1400122886866665f * xx;
+        return Math.copySign((float) Math.sqrt(1f - exp(xx * (-1.2732395447351628f - axx) / (1f + axx))), x);
+    }
+
+    /**
+     * The cumulative distribution function for the normal distribution, with the range expanded to {@code [-1,1]}
+     * instead of the usual {@code [0,1]} . This might be useful to bring noise functions (which sometimes have a range
+     * of {@code -1,1}) from a very-centrally-biased form to a more uniformly-distributed form. The math here doesn't
+     * exactly match the normal distribution's CDF because the goal was to handle inputs between -1 and 1, not the full
+     * range of a normal-distributed variate (which is infinite).
+     * @param x a double between -1 and 1; will be clamped if outside that domain
+     * @return a more-uniformly distributed value between -1 and 1
+     */
+    public static double redistributeNormal(double x) {
+        final double xx = Math.min(x * x * 6.03435, 6.03435), axx = 0.1400122886866665 * xx;
+        return Math.copySign(Math.sqrt(1.0 - Math.exp(xx * (-1.2732395447351628 - axx) / (1.0 + axx))), x);
+    }
+
     /**
      * Equivalent to libGDX's isEqual() method in MathUtils; this compares two doubles for equality and allows the given
      * tolerance during comparison. An example is {@code 0.3 - 0.2 == 0.1} vs. {@code isEqual(0.3 - 0.2, 0.1, 0.000001)};
@@ -1272,6 +1322,7 @@ public final class MathTools {
         t -= (int)t - 1;
         return t - (int)t;
     }
+//    int ti = (int)t; return t - ti + (int)(ti + 1 - t);
 
 //        return t - ((int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT);
 
