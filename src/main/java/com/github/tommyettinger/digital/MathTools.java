@@ -365,13 +365,16 @@ public final class MathTools {
      * instead of the usual {@code [0,1]} . This might be useful to bring noise functions (which sometimes have a range
      * of {@code -1,1}) from a very-centrally-biased form to a more uniformly-distributed form. The math here doesn't
      * exactly match the normal distribution's CDF because the goal was to handle inputs between -1 and 1, not the full
-     * range of a normal-distributed variate (which is infinite).
+     * range of a normal-distributed variate (which is infinite). The distribution is very slightly different here from
+     * the double-based overload, because this clamps inputs that would produce incorrect results from its approximation
+     * of {@link Math#exp(double)} otherwise, whereas the double-based method uses the actual Math.exp().
+     *
      * @param x a float between -1 and 1; will be clamped if outside that domain
      * @return a more-uniformly distributed value between -1 and 1
      */
     public static float redistributeNormal(float x) {
         final float xx = Math.min(x * x * 6.03435f, 6.03435f), axx = 0.1400122886866665f * xx;
-        return Math.copySign((float) Math.sqrt(1f - exp(xx * (-1.2732395447351628f - axx) / (1f + axx))), x);
+        return Math.copySign((float) Math.sqrt(1.0051551f - exp(xx * (-1.2732395447351628f - axx) / (0.9952389057917015f + axx))), x);
     }
 
     /**
@@ -379,12 +382,15 @@ public final class MathTools {
      * instead of the usual {@code [0,1]} . This might be useful to bring noise functions (which sometimes have a range
      * of {@code -1,1}) from a very-centrally-biased form to a more uniformly-distributed form. The math here doesn't
      * exactly match the normal distribution's CDF because the goal was to handle inputs between -1 and 1, not the full
-     * range of a normal-distributed variate (which is infinite).
-     * @param x a double between -1 and 1; will be clamped if outside that domain
+     * range of a normal-distributed variate (which is infinite). The distribution is very slightly different here from
+     * the float-based overload, because that method clamps inputs that would produce incorrect results from its
+     * approximation of {@link Math#exp(double)} otherwise, whereas this uses the actual Math.exp().
+     * 
+     * @param x a double usually between -1 and 1; will change only very slowly outside that domain
      * @return a more-uniformly distributed value between -1 and 1
      */
     public static double redistributeNormal(double x) {
-        final double xx = Math.min(x * x * 6.03435, 6.03435), axx = 0.1400122886866665 * xx;
+        final double xx = x * x * 6.03435, axx = 0.1400122886866665 * xx;
         return Math.copySign(Math.sqrt(1.0 - Math.exp(xx * (-1.2732395447351628 - axx) / (1.0 + axx))), x);
     }
 
