@@ -49,6 +49,8 @@ public final class RoughMath {
     private RoughMath() {
     }
 
+    // EXPONENTIAL AND LOGARITHMIC FUNCTIONS
+
     /**
      * Approximates {@code Math.pow(2.0, p)} with single-precision, somewhat roughly.
      * @param p the power to raise 2 to
@@ -100,8 +102,8 @@ public final class RoughMath {
      */
     public static float log2Rough (float x)
     {
-        final int vx = Float.floatToIntBits(x);
-        final float mx = Float.intBitsToFloat((vx & 0x007FFFFF) | 0x3f000000);
+        final int vx = BitConversion.floatToIntBits(x);
+        final float mx = BitConversion.intBitsToFloat((vx & 0x007FFFFF) | 0x3f000000);
         return vx * 1.1920928955078125e-7f - 124.22551499f - 1.498030302f * mx - 1.72587999f / (0.3520887068f + mx);
     }
 
@@ -112,9 +114,95 @@ public final class RoughMath {
      */
     public static float logRough (float x)
     {
-        final int vx = Float.floatToIntBits(x);
-        final float mx = Float.intBitsToFloat((vx & 0x007FFFFF) | 0x3f000000);
+        final int vx = BitConversion.floatToIntBits(x);
+        final float mx = BitConversion.intBitsToFloat((vx & 0x007FFFFF) | 0x3f000000);
         return (vx * 1.1920928955078125e-7f - 124.22551499f - 1.498030302f * mx - 1.72587999f / (0.3520887068f + mx)) * 0.69314718f;
+    }
+
+    /**
+     * Approximates the logarithm of {@code x} with base 2, using single-precision, very roughly.
+     * @param x the argument to the logarithm
+     * @return an approximation of the logarithm of x with base 2
+     */
+    public static float log2Rougher (float x){
+        return BitConversion.floatToIntBits(x) * 1.1920928955078125e-7f - 126.94269504f;
+    }
+
+    /**
+     * Approximates the natural logarithm of {@code x} (that is, with base E), using single-precision, very roughly.
+     * @param x the argument to the logarithm
+     * @return an approximation of the logarithm of x with base E
+     */
+    public static float logRougher (float x){
+        return Float.floatToIntBits(x) * 8.2629582881927490e-8f - 87.989971088f;
+    }
+
+    // HYPERBOLIC TRIGONOMETRIC FUNCTIONS
+
+    /**
+     * Approximates {@code Math.sinh(p)}, somewhat roughly.
+     * <a href="https://en.wikipedia.org/wiki/Hyperbolic_functions">Wikipedia's page on hyperbolic functions</a> may be useful.
+     * @param p the argument to sinh
+     * @return an approximation of the hyperbolic sine of p
+     */
+    public static float sinhRough (float p)
+    {
+        return 0.5f * (expRough (p) - expRough (-p));
+    }
+
+    /**
+     * Approximates {@code Math.sinh(p)}, very roughly.
+     * <a href="https://en.wikipedia.org/wiki/Hyperbolic_functions">Wikipedia's page on hyperbolic functions</a> may be useful.
+     * @param p the argument to sinh
+     * @return an approximation of the hyperbolic sine of p
+     */
+    public static float sinhRougher (float p)
+    {
+        return 0.5f * (expRougher (p) - expRougher (-p));
+    }
+
+    /**
+     * Approximates {@code Math.cosh(p)}, somewhat roughly.
+     * <a href="https://en.wikipedia.org/wiki/Hyperbolic_functions">Wikipedia's page on hyperbolic functions</a> may be useful.
+     * @param p the argument to cosh
+     * @return an approximation of the hyperbolic cosine of p
+     */
+    public static float coshRough (float p)
+    {
+        return 0.5f * (expRough (p) + expRough (-p));
+    }
+
+    /**
+     * Approximates {@code Math.cosh(p)}, very roughly.
+     * <a href="https://en.wikipedia.org/wiki/Hyperbolic_functions">Wikipedia's page on hyperbolic functions</a> may be useful.
+     * @param p the argument to cosh
+     * @return an approximation of the hyperbolic cosine of p
+     */
+    public static float coshRougher (float p)
+    {
+        return 0.5f * (expRougher (p) + expRougher (-p));
+    }
+
+    /**
+     * Approximates {@code Math.tanh(p)}, somewhat roughly.
+     * <a href="https://en.wikipedia.org/wiki/Hyperbolic_functions">Wikipedia's page on hyperbolic functions</a> may be useful.
+     * @param p the argument to tanh
+     * @return an approximation of the hyperbolic tangent of p
+     */
+    public static float tanhRough (float p)
+    {
+        return -1.0f + 2.0f / (1.0f + expRough (-2.0f * p));
+    }
+
+    /**
+     * Approximates {@code Math.tanh(p)}, very roughly.
+     * <a href="https://en.wikipedia.org/wiki/Hyperbolic_functions">Wikipedia's page on hyperbolic functions</a> may be useful.
+     * @param p the argument to tanh
+     * @return an approximation of the hyperbolic tangent of p
+     */
+    public static float tanhRougher (float p)
+    {
+        return -1.0f + 2.0f / (1.0f + expRougher (-2.0f * p));
     }
 
 }
