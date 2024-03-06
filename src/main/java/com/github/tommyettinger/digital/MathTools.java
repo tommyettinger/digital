@@ -385,7 +385,7 @@ public final class MathTools {
      * range of a normal-distributed variate (which is infinite). The distribution is very slightly different here from
      * the float-based overload, because that method clamps inputs that would produce incorrect results from its
      * approximation of {@link Math#exp(double)} otherwise, whereas this uses the actual Math.exp().
-     * 
+     *
      * @param x a double usually between -1 and 1; will change only very slowly outside that domain
      * @return a more-uniformly distributed value between -1 and 1
      */
