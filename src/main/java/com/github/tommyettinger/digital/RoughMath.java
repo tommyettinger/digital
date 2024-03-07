@@ -205,6 +205,8 @@ public final class RoughMath {
         return -1.0f + 2.0f / (1.0f + expRougher (-2.0f * p));
     }
 
+    // LOGISTIC FUNCTION
+
     /**
      * Approximates the <a href="https://en.wikipedia.org/wiki/Logistic_function">standard logistic function</a>, somewhat roughly.
      * This is also called the sigmoid function, or expit. It is the same as {@link #tanhRough(float)}, scaled, with an offset.
@@ -227,4 +229,50 @@ public final class RoughMath {
         return 1.0f / (1.0f + expRougher (-x));
     }
 
+    // TRIGONOMETRIC FUNCTIONS
+
+    public static final float FOUR_OVER_PI = 1.2732395447351627f;
+    public static final float FOUR_OVER_PI_SQUARED = 0.40528473456935109f;
+    public static final float PI2 = 6.2831853071795865f;
+    public static final float PI2_INVERSE = 0.15915494309189534f;
+
+    /**
+     * Approximates {@code Math.sin(x)} in the domain between {@code -PI} and {@code PI}, somewhat roughly.
+     *
+     * @see TrigTools#sin(float)
+     * @param x the argument to sin; must be between {@code -PI} and {@code PI}
+     * @return an approximation of the sine of x; between -1 and 1 inclusive
+     */
+    public static float sinRoughLimited (float x)
+    {
+        final float q = 0.78444488374548933f;
+        int p = 0x3E5086D7; // bits of 0.20363937680730309f;
+        int r = 0x3C77CE9A; // bits of 0.015124940802184233f;
+        int s = 0x3B533217; // bits of 0.0032225901625579573f;
+        int vx = BitConversion.floatToIntBits(x);
+        int sign = vx & 0x80000000;
+        vx &= 0x7FFFFFFF;
+
+        float approx = FOUR_OVER_PI * x - FOUR_OVER_PI_SQUARED * x * BitConversion.intBitsToFloat(vx);
+        float approxSquared = approx * approx;
+
+        p |= sign;
+        r |= sign;
+        s |= sign;
+
+        return q * approx + approxSquared * (BitConversion.intBitsToFloat(p) + approxSquared * (BitConversion.intBitsToFloat(r) + approxSquared * BitConversion.intBitsToFloat(s)));
+    }
+
+    /**
+     * Approximates {@code Math.sin(x)} over its full domain, somewhat roughly.
+     *
+     * @see TrigTools#sin(float)
+     * @param x the argument to sin; can be any float
+     * @return an approximation of the sine of x; between -1 and 1 inclusive
+     */
+    public static float sinRough (float x)
+    {
+        final float half = (x < 0) ? -0.5f : 0.5f;
+        return sinRoughLimited ((half + (int)(x * PI2_INVERSE)) * PI2 - x);
+    }
 }
