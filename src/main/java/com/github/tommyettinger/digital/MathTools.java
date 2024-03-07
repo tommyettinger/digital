@@ -235,13 +235,15 @@ public final class MathTools {
      *
      * @param base  the logarithm base to use
      * @param value what value to get the logarithm of, using the given base
-     * @return the logarithm of value with the given base
+     * @return The log of {@code arg} in the specified {@code base}.
      */
     public static float log(float base, float value) {
         return (float) (Math.log(value) / Math.log(base));
     }
 
     /**
+     * Gets the logarithm of {@code value} with base 2.
+     * @see RoughMath#log2Rough(float) A lower-precision, but probably faster, approximation.
      * @param value what value to get the logarithm of, using base 2
      * @return the logarithm of value with base 2
      */
@@ -257,6 +259,7 @@ public final class MathTools {
      * any table lookup.
      *
      * @see #exp(float) A different exp() provides a higher-precision approximation.
+     * @see RoughMath#expRough(float) Yet another exp() variation that may have higher precision.
      * @param power what exponent to raise {@link #E} to
      * @return a rough approximation of E raised to the given power
      */
@@ -275,6 +278,7 @@ public final class MathTools {
      * Pretty much all the work for this was done by Wolfram Alpha.
      *
      * @see #expHasty(float) A different exp() provides a lower-precision approximation that may be faster.
+     * @see RoughMath#expRough(float) Yet another exp() variation that may be faster and/or higher-precision.
      * @param power what exponent to raise {@link #E} to
      * @return a rough approximation of E raised to the given power
      */
@@ -392,6 +396,51 @@ public final class MathTools {
     public static double redistributeNormal(double x) {
         final double xx = x * x * 6.03435, axx = 0.1400122886866665 * xx;
         return Math.copySign(Math.sqrt(1.0 - Math.exp(xx * (-1.2732395447351628 - axx) / (1.0 + axx))), x);
+    }
+
+    /**
+     * Redistributes a noise value {@code n} using the given {@code mul} and {@code mix} parameters. This is meant to
+     * push high-octave noise results from being centrally biased to being closer to uniform. Getting the values right
+     * probably requires tweaking them manually; for Simplex Noise, mul=2.3f and mix=0.75f works well with 2 or more
+     * octaves (and not at all well for one octave, which can use mix=0.0f to avoid redistributing at all). This
+     * variation takes n in the 0f to 1f range, inclusive, and returns a value in the same range.
+     *
+     * @param n a float between 0f and 1f inclusive
+     * @param mul a positive multiplier where higher values make extreme results more likely; often around 2.3f
+     * @param mix a blending amount between 0f and 1f where lower values keep {@code n} more; often around 0.75f
+     * @return a float between 0f and 1f inclusive
+     */
+    public static float redistribute(float n, float mul, float mix) {
+        final float x = (n - 0.5f) * 2f, xx = x * x * mul, axx = 0.1400122886866665f * xx;
+        final float denormal = Math.copySign((float) Math.sqrt(1.0f - Math.exp(xx * (-1.2732395447351628f - axx) / (1.0f + axx))), x);
+        return lerp(n, denormal * 0.5f + 0.5f, mix);
+    }
+
+    /**
+     * Redistributes a noise value {@code n} using the given {@code mul}, {@code mix}, and {@code bias} parameters. This
+     * is meant to push high-octave noise results from being centrally biased to being closer to uniform. Getting the
+     * values right probably requires tweaking them manually; for Simplex Noise, using mul=2.3f, mix=0.75f, and
+     * bias=1f works well with 2 or more octaves (and not at all well for one octave, which can use mix=0.0f to avoid
+     * redistributing at all). This variation takes n in the 0f to 1f range, inclusive, and returns a value in the same
+     * range. You can give different bias values at different times to make noise that is more often high (when bias is
+     * above 1) or low (when bias is between 0 and 1). Using negative bias has undefined results. Bias should typically
+     * be calculated only when its value needs to change. If you have a variable {@code favor} that can have
+     * any float value and high values for favor should produce higher results from this function, you can get bias with
+     * {@code bias = (float)Math.exp(-favor);} .
+     * <br>
+     * If you don't need a bias parameter, you can either pass 1 here for bias, or call the overload
+     * {@link #redistribute(float, float, float)} instead (which is typically faster).
+     *
+     * @param n a float between 0f and 1f inclusive
+     * @param mul a positive multiplier where higher values make extreme results more likely; often around 2.3f
+     * @param mix a blending amount between 0f and 1f where lower values keep {@code n} more; often around 0.75f
+     * @param bias should be 1 to have no bias, between 0 and 1 for lower results, and above 1 for higher results
+     * @return a float between 0f and 1f inclusive
+     */
+    public static float redistribute(float n, float mul, float mix, float bias) {
+        final float x = (n - 0.5f) * 2f, xx = x * x * mul, axx = 0.1400122886866665f * xx;
+        final float denormal = Math.copySign((float) Math.sqrt(1.0f - Math.exp(xx * (-1.2732395447351628f - axx) / (1.0f + axx))), x);
+        return (float) Math.pow(lerp(n, denormal * 0.5f + 0.5f, mix), bias);
     }
 
     /**

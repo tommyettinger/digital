@@ -79,8 +79,7 @@ public final class RoughMath {
      */
     public static float expRough (float p)
     {
-        p *= 1.442695040f;
-        final float clip = Math.max(-126.0f, p);
+        final float clip = Math.max(-126.0f, p * 1.442695040f);
         final float z = clip - (int)(clip + 126.0f) + 126.0f;
         return BitConversion.intBitsToFloat((int) ( (1 << 23) * (clip + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z)));
     }
@@ -134,7 +133,7 @@ public final class RoughMath {
      * @return an approximation of the logarithm of x with base E; can be any float
      */
     public static float logRougher (float x){
-        return Float.floatToIntBits(x) * 8.2629582881927490e-8f - 87.989971088f;
+        return BitConversion.floatToIntBits(x) * 8.2629582881927490e-8f - 87.989971088f;
     }
 
     // HYPERBOLIC TRIGONOMETRIC FUNCTIONS
@@ -211,7 +210,7 @@ public final class RoughMath {
      * Approximates the <a href="https://en.wikipedia.org/wiki/Logistic_function">standard logistic function</a>, somewhat roughly.
      * This is also called the sigmoid function, or expit. It is the same as {@link #tanhRough(float)}, scaled, with an offset.
      * @param x the parameter to the standard logistic function; can be any float
-     * @return an approximation of the logistic function of x; between -1 and 1 inclusive
+     * @return an approximation of the logistic function of x; between 0 and 1 inclusive
      */
     public static float logisticRough (float x)
     {
@@ -222,7 +221,7 @@ public final class RoughMath {
      * Approximates the <a href="https://en.wikipedia.org/wiki/Logistic_function">standard logistic function</a>, very roughly.
      * This is also called the sigmoid function, or expit. It is the same as {@link #tanhRough(float)}, scaled, with an offset.
      * @param x the parameter to the standard logistic function; can be any float
-     * @return an approximation of the logistic function of x; between -1 and 1 inclusive
+     * @return an approximation of the logistic function of x; between 0 and 1 inclusive
      */
     public static float logisticRougher (float x)
     {
