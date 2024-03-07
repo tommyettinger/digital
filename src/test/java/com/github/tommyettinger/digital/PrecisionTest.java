@@ -13,7 +13,7 @@ import static com.github.tommyettinger.digital.TrigTools.*;
 import static java.lang.Math.abs;
 
 // REMOVE the @Ignore if you want to run any tests! They take a while to run as a whole, though.
-@Ignore
+//@Ignore
 public class PrecisionTest {
 
     public static final int PI_BITS = Float.floatToIntBits(TrigTools.PI);
@@ -547,6 +547,22 @@ public class PrecisionTest {
      * Worst input (abs):       6.156139850616455000000000
      * Worst output (abs):     -0.1267044097 (0xBE01BECD)
      * Correct output (abs):   -0.1267039627 (0xBE01BEAF)
+     * Running sinRough
+     * Mean absolute error:     0.0021535610
+     * Mean relative error:     0.0024209579
+     * Maximum abs. error:      0.0064319372
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.077738285064697000000000
+     * Best output (lo):       -0.2040047944 (0xBE50E6A2)
+     * Correct output (lo):    -0.2040047944 (0xBE50E6A2)
+     * Worst input (hi):        6.283185482025146500000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000001748 (0x343BBD2E)
+     * Worst input (abs):       4.713915348052978500000000
+     * Worst output (abs):     -1.0064307451 (0xBF80D2B9)
+     * Correct output (abs):   -0.9999988079 (0xBF7FFFEC)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -572,7 +588,7 @@ public class PrecisionTest {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
 //        functions.put("sinOldTable", OldTrigTools::sin);
 //        functions.put("sin037Table", TrigTools037::sin);
-//        functions.put("sinNewTable", TrigTools::sin);
+        functions.put("sinNewTable", TrigTools::sin);
 //        functions.put("sinRound", PrecisionTest::sinRound);
 //        functions.put("sinFloaty", PrecisionTest::sinFloaty);
 //        functions.put("sinGdx", MathUtils::sin);
@@ -586,8 +602,8 @@ public class PrecisionTest {
 //        functions.put("sinCTable", CosTools::sin);
 //        functions.put("sinOldShifty", OldTrigTools::sinShifty);
 //        functions.put("sinNewShifty", PrecisionTest::sinShifty);
-        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
-        functions.put("sinSmoother037Table", TrigTools037::sinSmoother);
+//        functions.put("sinSmootherOldTable", OldTrigTools::sinSmoother);
+//        functions.put("sinSmoother037Table", TrigTools037::sinSmoother);
         functions.put("sinSmootherNewTable", TrigTools::sinSmoother);
 //        functions.put("sinSmootherFF", (radians) -> {
 //            final double r = radians * radToIndexD;
@@ -605,8 +621,8 @@ public class PrecisionTest {
 //        });
 //        functions.put("sinSmootherCTable", CosTools::sinSmoother);
         functions.put("sinSmooth", TrigTools::sinSmooth);
-        functions.put("sinSmoothly", PrecisionTest::sinSmoothly);
-        functions.put("sinSmoothesque", PrecisionTest::sinSmoothesque);
+//        functions.put("sinSmoothly", PrecisionTest::sinSmoothly);
+//        functions.put("sinSmoothesque", PrecisionTest::sinSmoothesque);
 //        functions.put("sinSmootherAlternate", PrecisionTest::sinSmoother);
 //        functions.put("sinTable32", (f) -> sinVar(table32, f));
 //        functions.put("sinTable64", (f) -> sinVar(table64, f));
@@ -621,7 +637,7 @@ public class PrecisionTest {
 //        functions.put("sinSmootherTable1024", (f) -> sinSmootherVar(table1024, f));
 //        functions.put("sinSmootherTable4096", (f) -> sinSmootherVar(table4096, f));
 
-
+        functions.put("sinRough", RoughMath::sinRough);
 
 //        functions.put("sinReallyOld", OldNumberTools::sin);
 

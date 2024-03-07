@@ -238,10 +238,11 @@ public final class RoughMath {
 
     /**
      * Approximates {@code Math.sin(x)} in the domain between {@code -PI} and {@code PI}, somewhat roughly.
+     * This can produce results that are outside the correct range of sine.
      *
-     * @see TrigTools#sin(float)
+     * @see TrigTools#sin(float) TrigTools has several sine approximations, and all are more precise than this.
      * @param x the argument to sin; must be between {@code -PI} and {@code PI}
-     * @return an approximation of the sine of x; between -1 and 1 inclusive
+     * @return an approximation of the sine of x; between -1 and 1 inclusive (this can go out of range)
      */
     public static float sinRoughLimited (float x)
     {
@@ -265,10 +266,11 @@ public final class RoughMath {
 
     /**
      * Approximates {@code Math.sin(x)} over its full domain, somewhat roughly.
+     * This can produce results that are outside the correct range of sine.
      *
-     * @see TrigTools#sin(float)
+     * @see TrigTools#sin(float) TrigTools has several sine approximations, and all are more precise than this.
      * @param x the argument to sin; can be any float
-     * @return an approximation of the sine of x; between -1 and 1 inclusive
+     * @return an approximation of the sine of x; between -1 and 1 inclusive (this can go out of range)
      */
     public static float sinRough (float x)
     {
