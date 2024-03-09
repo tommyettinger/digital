@@ -3692,4 +3692,26 @@ public class Hasher {
             return 0;
         return (int)(mum(data.hashCode() ^ b2, b3 - seed) ^ seed);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Hasher hasher = (Hasher) o;
+
+        return seed == hasher.seed;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (seed ^ (seed >>> 32));
+    }
+
+    @Override
+    public String toString() {
+        return "Hasher{" +
+                "seed=" + seed +
+                '}';
+    }
 }

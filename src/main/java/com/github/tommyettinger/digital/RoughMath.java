@@ -190,7 +190,10 @@ public final class RoughMath {
      */
     public static float tanhRough (float p)
     {
-        return -1.0f + 2.0f / (1.0f + expRough (-2.0f * p));
+        // -1f + 2f / (1f + exp(-2f * x))
+        final float clip = Math.max(-126.0f, -2.885390043258667f * p);
+        final float z = clip - (int)(clip + 126.0f) + 126.0f;
+        return -1.0f + 2.0f / (1.0f + BitConversion.intBitsToFloat((int) (0x800000 * (clip + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z))));
     }
 
     /**
@@ -201,7 +204,8 @@ public final class RoughMath {
      */
     public static float tanhRougher (float p)
     {
-        return -1.0f + 2.0f / (1.0f + expRougher (-2.0f * p));
+        // -1f + 2f / (1f + exp(-2f * x))
+        return -1.0f + 2.0f / (1.0f + BitConversion.intBitsToFloat( (int)(0x800000 * (Math.max(-126.0f, -2.885390043258667f * p) + 126.94269504f))));
     }
 
     // LOGISTIC FUNCTION
@@ -214,7 +218,10 @@ public final class RoughMath {
      */
     public static float logisticRough (float x)
     {
-        return 1.0f / (1.0f + expRough (-x));
+        // 1f / (1f + exp(-x))
+        final float clip = Math.max(-126.0f, x * -1.442695040f);
+        final float z = clip - (int)(clip + 126.0f) + 126.0f;
+        return 1.0f / (1.0f + BitConversion.intBitsToFloat((int) (0x800000 * (clip + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z))));
     }
 
     /**
@@ -225,7 +232,8 @@ public final class RoughMath {
      */
     public static float logisticRougher (float x)
     {
-        return 1.0f / (1.0f + expRougher (-x));
+        // 1f / (1f + exp(-x))
+        return 1.0f / (1.0f + BitConversion.intBitsToFloat( (int)(0x800000 * (Math.max(-126.0f, -1.442695040f * x) + 126.94269504f))));
     }
 
     // TRIGONOMETRIC FUNCTIONS

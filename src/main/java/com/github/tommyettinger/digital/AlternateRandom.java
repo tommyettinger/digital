@@ -278,4 +278,39 @@ public class AlternateRandom extends Random {
     public AlternateRandom copy() {
         return new AlternateRandom(stateA, stateB, stateC, stateD, stateE);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AlternateRandom random = (AlternateRandom) o;
+
+        if (stateA != random.stateA) return false;
+        if (stateB != random.stateB) return false;
+        if (stateC != random.stateC) return false;
+        if (stateD != random.stateD) return false;
+        return stateE == random.stateE;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (stateA ^ (stateA >>> 32));
+        result = 31 * result + (int) (stateB ^ (stateB >>> 32));
+        result = 31 * result + (int) (stateC ^ (stateC >>> 32));
+        result = 31 * result + (int) (stateD ^ (stateD >>> 32));
+        result = 31 * result + (int) (stateE ^ (stateE >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "AlternateRandom{" +
+                "stateA=" + stateA +
+                ", stateB=" + stateB +
+                ", stateC=" + stateC +
+                ", stateD=" + stateD +
+                ", stateE=" + stateE +
+                '}';
+    }
 }

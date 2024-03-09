@@ -5403,4 +5403,16 @@ public class Base {
                 + positiveSign * 107
                 + negativeSign;
     }
+
+    @Override
+    public String toString() {
+        return "Base{" +
+                "toEncoded=" + String.valueOf(toEncoded) +
+                ", paddingChar=" + paddingChar +
+                ", positiveSign=" + positiveSign +
+                ", negativeSign=" + negativeSign +
+                ", caseInsensitive=" + caseInsensitive +
+                ", base=" + base +
+                '}';
+    }
 }
