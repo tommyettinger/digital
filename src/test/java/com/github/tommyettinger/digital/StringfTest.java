@@ -32,4 +32,19 @@ public class StringfTest {
                     Stringf.format(fmt, ent.getKey(), ent.getValue()));
         }
     }
+
+    @Test
+    public void testFloatConversion() {
+        String fmt = "Sensor readings: %.2f%% oxygen, %.4f%% helium.";
+        LinkedHashMap<Double, Double> pairs = new LinkedHashMap<>();
+        pairs.put(10.3618, 0.0014);
+        pairs.put(5.4, 2.3);
+        pairs.put(0.0, 70.9830);
+        for(Map.Entry<Double, Double> ent : pairs.entrySet()) {
+//            Assert.assertEquals(String.format(fmt, ent.getKey(), ent.getValue()),
+//                    Stringf.format(fmt, ent.getKey(), ent.getValue()));
+            System.out.println("STRING  : " + String.format(fmt, ent.getKey(), ent.getValue()));
+            System.out.println("STRINGF : " + Stringf.format(fmt, ent.getKey(), ent.getValue()));
+        }
+    }
 }
