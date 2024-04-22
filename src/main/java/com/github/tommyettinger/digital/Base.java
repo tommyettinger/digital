@@ -1379,6 +1379,29 @@ public class Base {
     public String decimal(double number, int lengthLimit) {
         return RyuDouble.decimal(number, lengthLimit);
     }
+    /**
+     * Converts the given {@code number} to a base-10 representation that uses decimal notation.
+     * Returns a new String. This allocates a temporary StringBuilder internally, and you may instead want to reuse a
+     * StringBuilder with {@link #appendDecimal(StringBuilder, double, int, int)}.
+     * You can specify how long the returned String is permitted to be using {@code lengthLimit}. The length limit
+     * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
+     * (though this should never actually return a String that long on its own, it will add padding to meet the limit).
+     * If the output would normally be shorter than {@code lengthLimit}, then this will pad the output with zeros at the
+     * end. If the output would normally be longer than {@code lengthLimit}, this truncates trailing digits rather
+     * than rounding (sorry). You can limit the amount of digits after the decimal point with {@code precision}. If
+     * precision is negative, the digits will not be limited; if precision is greater than 0,
+     * then it will be used to limit decimal digits.
+     * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact} .
+     *
+     * @param number any double
+     * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the returned String
+     * @param precision how many decimal places to show; if negative, they will not be limited
+     * @return a new String containing {@code number} in decimal notation, always base-10
+     */
+    public String decimal(double number, int lengthLimit, int precision) {
+        return RyuDouble.decimal(number, lengthLimit, precision);
+    }
+
 
     /**
      * Converts the given {@code number} to a base-10 representation that uses decimal notation,
@@ -2053,6 +2076,29 @@ public class Base {
      */
     public String decimal(float number, int lengthLimit) {
         return RyuFloat.decimal(number, lengthLimit);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that uses decimal notation.
+     * Returns a new String. This allocates a temporary StringBuilder internally, and you may instead want to reuse a
+     * StringBuilder with {@link #appendDecimal(StringBuilder, float, int, int)}.
+     * You can specify how long the returned String is permitted to be using {@code lengthLimit}. The length limit
+     * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
+     * (though this should never actually return a String that long on its own, it will add padding to meet the limit).
+     * If the output would normally be shorter than {@code lengthLimit}, then this will pad the output with zeros at the
+     * end. If the output would normally be longer than {@code lengthLimit}, this truncates trailing digits rather
+     * than rounding (sorry). You can limit the amount of digits after the decimal point with {@code precision}. If
+     * precision is negative, the digits will not be limited; if precision is greater than 0,
+     * then it will be used to limit decimal digits.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param number any float
+     * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the returned String
+     * @param precision how many decimal places to show; if negative, they will not be limited
+     * @return a new String containing {@code number} in decimal notation, always base-10
+     */
+    public String decimal(float number, int lengthLimit, int precision) {
+        return RyuFloat.decimal(number, lengthLimit, precision);
     }
 
     /**

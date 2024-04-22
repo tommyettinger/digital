@@ -363,7 +363,9 @@ final class RyuFloat {
   public static String decimal(float value, int lengthLimit) {
     return appendDecimal(new StringBuilder(), value, lengthLimit).toString();
   }
-
+  public static String decimal(float value, int lengthLimit, int precision) {
+    return appendDecimal(new StringBuilder(), value, lengthLimit, precision).toString();
+  }
   public static StringBuilder appendDecimal(StringBuilder builder, float value) {
     return appendDecimal(builder, value, -10000);
   }

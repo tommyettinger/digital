@@ -385,7 +385,9 @@ final class RyuDouble {
   public static String decimal(double value, int lengthLimit) {
     return appendDecimal(new StringBuilder(), value, lengthLimit).toString();
   }
-
+  public static String decimal(double value, int lengthLimit, int precision) {
+    return appendDecimal(new StringBuilder(), value, lengthLimit, precision).toString();
+  }
   public static StringBuilder appendDecimal(StringBuilder builder, double value) {
     return appendDecimal(builder, value, -10000);
   }
