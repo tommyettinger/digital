@@ -63,7 +63,8 @@ use a scrambled base (a random one, as mentioned before), then
 you need to use `signed()`/`unsigned()`/`readFloatExact()`/
 `readDoubleExact()` to use the right scrambled digits.
 `decimal()` can take an exact length to limit large output to,
-or zero-pad small output to. Base
+or zero-pad small output to, as well as a precision for how
+many digits to show after the decimal point. Base
 can also combine the String representations of an array of
 primitives (or part of such an array, since 0.3.1) using
 `join()` or `appendJoined()`, and split apart Strings into 
@@ -80,14 +81,21 @@ this can produce requires using `Base.readCharReadable()`.
 TrigTools tries to be as complete as possible at covering
 trigonometric functions, offering sin, cos, tan, asin, acos,
 atan, and atan2 in radians, degrees, and turns. It also allows
-access to the lookup table used by sin and cos. Much of
+access to the lookup tables used by sin and cos. Much of
 TrigTools can be seen as similar to what libGDX's MathUtils
 class offers, but allowing access to the lookup tables permits
 a few novel features (see its docs). It supports float and
 double arguments/returns for all functions. It also provides
 "smooth" sin and cos approximations that aren't table-based,
 and "smoother" sin/cos/tan versions that interpolate between
-entries in the lookup table for very high precision.
+entries in the lookup table for very high precision. It should
+be pointed out that very few libraries support trigonometric
+functions that take angles in turns, but turns can be very
+useful for a variety of cases. For example, if you want to
+store a hue (which is essentially an angle) into a limited
+format such as one channel of a color to be sent to the GPU,
+storing the hue as an angle in turns keeps it in the 0.0
+to 1.0 range, but using radians or degrees would not.
 
 MathTools offers a wild grab bag of math functions and
 constants, from simple lerp, floor, ceil, and clamp methods to
@@ -109,7 +117,9 @@ the bits of two numbers (also called a Morton code, or a
 position on the Z-Order Curve). There are ways to bring a
 float or double closer to 0.0 by the smallest possible amount.
 There's the fract() methods, familiar to shader programmers,
-that get the fractional part of a float or double.
+that get the fractional part of a float or double. There's
+Freya Holmer's recently-discovered method to make a float
+approach another value at an even rate using interpolation.
 In general, if you need a math function that isn't
 trigonometry-related and doesn't do something with text, you
 may want to look here first.
@@ -123,7 +133,11 @@ There are also some "filler supplies" in ArrayTools -- methods
 for filling up char, int, or String arrays with contents that
 are guaranteed to be distinct up to a certain limit. The same
 data that can be used to fill up arrays with ArrayTools also
-gets used by Hasher for seeding its predefined instances.
+gets used by Hasher for seeding its predefined instances. The
+filler supplies include the names of Greek letters, the chemical
+elements of the periodic table, and the listing of names of
+demons from the Ars Goetia (many of which are familiar names
+from games that also used that list).
 
 Hasher is... large. It provides fast, high-quality hashing
 functions for primitive arrays (and arrays of objects, if they
@@ -178,7 +192,7 @@ a `java.util.Random` object, but that can't produce as many
 possible shuffles of mid-size arrays, and is slower, both of which
 AlternateRandom solves to some extent. If you don't use juniper,
 then AlternateRandom is a pretty good replacement for `Random`;
-if you do use juniper, then its `WhiskerRandom` or `PasarRandom`
+if you do use juniper, then its `AceRandom` or `PasarRandom`
 generators are similar to or the same as AlternateRandom's
 algorithm, and offer many more features.
 
@@ -212,6 +226,8 @@ Interpolator, an InterpolationFunction, with methods in
 Interpolations. This makes creating new Interpolators with different
 parameters as easy as assigning a name to the generated function.
 [Here's a sample page that shows how each Interpolator looks graphed.](https://tommyettinger.github.io/digital/interpolators.html)
+Using that page of graphs is a good idea when you're deciding which
+of the many Interpolator varieties to use.
 
 ## How do I get it?
 
@@ -235,14 +251,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.4.7"
+api "com.github.tommyettinger:digital:0.4.8"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.4.7:sources"
+api "com.github.tommyettinger:digital:0.4.8:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
