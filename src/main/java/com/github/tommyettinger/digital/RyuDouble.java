@@ -434,7 +434,7 @@ final class RyuDouble {
     if (bits == 0) {
       int startLimiting = builder.length();
       builder.append("0.0");
-      if(precision != -10000){
+      if(precision >= 0) {
         int ideal = builder.indexOf(".", startLimiting) + precision;
         while (builder.length() <= ideal){
           builder.append('0');
@@ -637,7 +637,7 @@ final class RyuDouble {
         output /= 10;
       }
     }
-    if(precision != -10000){
+    if(precision >= 0){
       int ideal = builder.indexOf(".", startLimiting) + precision;
       while (builder.length() <= ideal){
         builder.append('0');

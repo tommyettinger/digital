@@ -368,6 +368,9 @@ final class RyuFloat {
     return appendDecimal(builder, value, -10000);
   }
   public static StringBuilder appendDecimal(StringBuilder builder, float value, int lengthLimit) {
+    return appendDecimal(builder, value, lengthLimit, -10000);
+  }
+  public static StringBuilder appendDecimal(StringBuilder builder, float value, int lengthLimit, int precision) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Float.isNaN(value)) {
@@ -409,6 +412,12 @@ final class RyuFloat {
     if (bits == 0) {
       int startLimiting = builder.length();
       builder.append("0.0");
+      if(precision >= 0){
+        int ideal = builder.indexOf(".", startLimiting) + precision;
+        while (builder.length() <= ideal){
+          builder.append('0');
+        }
+      }
       if(lengthLimit != -10000) {
         if((long)startLimiting + lengthLimit < builder.length()) {
           builder.setLength(startLimiting + lengthLimit);
@@ -560,11 +569,12 @@ final class RyuFloat {
     if (exp < 0) {
       // Decimal dot is before any of the digits.
       builder.append("0.");
-      for (int i = -1; i > exp; i--) {
+      int decimalPlaces = precision;
+      for (int i = -1; i > exp && decimalPlaces != 0; i--, decimalPlaces--) {
         builder.append('0');
       }
       int current = builder.length();
-      for (int i = 0; i < olength; i++) {
+      for (int i = 0; i < olength && decimalPlaces != 0; i++, decimalPlaces--) {
         builder.insert(current, (char) ('0' + output % 10));
         output /= 10;
         index++;
@@ -587,8 +597,16 @@ final class RyuFloat {
         if (olength - i - 1 == exp) {
           builder.insert(current, '.');
         }
-        builder.insert(current, (char) ('0' + output % 10));
+        if (olength - i - 1 <= exp + precision) {
+          builder.insert(current, (char) ('0' + output % 10));
+        } else removed++;
         output /= 10;
+      }
+    }
+    if(precision >= 0){
+      int ideal = builder.indexOf(".", startLimiting) + precision;
+      while (builder.length() <= ideal){
+        builder.append('0');
       }
     }
     if(lengthLimit != -10000) {
