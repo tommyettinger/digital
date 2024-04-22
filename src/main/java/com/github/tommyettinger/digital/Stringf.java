@@ -25,7 +25,7 @@ package com.github.tommyettinger.digital;
  * time and date formatting.
  * <br>
  * Some useful features here are that {@link #appendf(StringBuilder, String, Object...)} allows reusing a StringBuilder,
- * {@link #printf(String, Object...)} acts like method on OutputStream (which is typically not provided if
+ * {@link #printf(String, Object...)} acts like a method on OutputStream (which is typically not provided if
  * String.format() isn't), and {@link #printfn(String, Object...)} acts like printf() with a newline like println().
  */
 public final class Stringf {
@@ -103,13 +103,13 @@ public final class Stringf {
                         Base.BASE10.appendDecimal(sb, ((Number) args[arg++]).doubleValue());
                     }
                     else {
-                        int precision = Base.BASE10.readInt(fmt, i, len) + 2;
+                        int precision = Base.BASE10.readInt(fmt, i, len);
                         while ((curr = fmt.charAt(++i)) >= '0' && curr <= '9'){
                         }
                         if(curr == 'f')
                         {
                             double d = ((Number) args[arg++]).doubleValue();
-                            Base.BASE10.appendDecimal(sb, d, d < 0.0 ? precision + 1 : precision);
+                            Base.BASE10.appendDecimal(sb, d, -10000, precision);
                         }
                     }
                 } else if (curr >= '1' && curr <= '9') {

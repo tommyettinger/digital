@@ -1414,6 +1414,27 @@ public class Base {
     }
 
     /**
+     * Converts the given {@code number} to a base-10 representation that uses decimal notation,
+     * appending the result to {@code builder}.
+     * You can specify how long the appended text is permitted to be using {@code lengthLimit}. The length limit
+     * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
+     * (though this should never actually append that much on its own, it will add padding to meet the limit).
+     * If the output would normally be shorter than {@code lengthLimit}, then this will pad the output with zeros at the
+     * end. If the output would normally be longer than {@code lengthLimit}, this truncates trailing digits rather
+     * than rounding (sorry).
+     * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any double
+     * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the appended section
+     * @param precision how many decimal places to show; if negative, they will not be limited
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendDecimal(StringBuilder builder, double number, int lengthLimit, int precision) {
+        return RyuDouble.appendDecimal(builder, number, lengthLimit, precision);
+    }
+
+    /**
      * Reads in a CharSequence containing only the digits present in this Base, with an optional sign at the
      * start, and returns the double those bits represent, or 0.0 if nothing could be read. The leading sign can be
      * {@link #positiveSign} or {@link #negativeSign} if present, and is almost always '+' or '-'.

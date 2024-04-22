@@ -390,6 +390,9 @@ final class RyuDouble {
     return appendDecimal(builder, value, -10000);
   }
   public static StringBuilder appendDecimal(StringBuilder builder, double value, int lengthLimit) {
+    return appendDecimal(builder, value, lengthLimit, -10000);
+  }
+  public static StringBuilder appendDecimal(StringBuilder builder, double value, int lengthLimit, int precision) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Double.isNaN(value)) {
@@ -431,6 +434,12 @@ final class RyuDouble {
     if (bits == 0) {
       int startLimiting = builder.length();
       builder.append("0.0");
+      if(precision != -10000){
+        int ideal = builder.indexOf(".", startLimiting) + precision;
+        while (builder.length() <= ideal){
+          builder.append('0');
+        }
+      }
       if(lengthLimit != -10000) {
         if((long)startLimiting + lengthLimit < builder.length()) {
           builder.setLength(startLimiting + lengthLimit);
@@ -589,17 +598,17 @@ final class RyuDouble {
     if (sign) {
       builder.append('-');
     }
-
     // Values in the interval [1E-3, 1E7) are special.
     // Otherwise, follow the Java spec for values in the interval [1E-3, 1E7).
     if (exp < 0) {
       // Decimal dot is before any of the digits.
       builder.append("0.");
-      for (int i = -1; i > exp; i--) {
+      int decimalPlaces = precision;
+      for (int i = -1; i > exp && decimalPlaces != 0; i--, decimalPlaces--) {
         builder.append('0');
       }
       int current = builder.length();
-      for (int i = 0; i < olength; i++) {
+      for (int i = 0; i < olength && decimalPlaces != 0; i++, decimalPlaces--) {
         builder.insert(current, (char) ('0' + output % 10));
         output /= 10;
         index++;
@@ -622,8 +631,16 @@ final class RyuDouble {
         if (olength - i - 1 == exp) {
           builder.insert(current, '.');
         }
-        builder.insert(current, (char) ('0' + output % 10));
+        if (olength - i - 1 <= exp + precision) {
+          builder.insert(current, (char) ('0' + output % 10));
+        } else removed++;
         output /= 10;
+      }
+    }
+    if(precision != -10000){
+      int ideal = builder.indexOf(".", startLimiting) + precision;
+      while (builder.length() <= ideal){
+        builder.append('0');
       }
     }
     if(lengthLimit != -10000) {
