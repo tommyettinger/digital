@@ -106,9 +106,99 @@ public class QuaternionTest {
 			q.mul(rot);
 			q.setEulerAngles(q.getYaw(), q.getPitch(), q.getRoll());
 		}
-		System.out.println(r.getYaw() + " vs. " + q.getYaw());
-		System.out.println(r.getPitch() + " vs. " + q.getPitch());
-		System.out.println(r.getRoll() + " vs. " + q.getRoll());
+		System.out.println(r.getYaw() + " vs. " + q.getYaw() + ", with a difference of " + (r.getYaw() - q.getYaw()));
+		System.out.println(r.getPitch() + " vs. " + q.getPitch() + ", with a difference of " + (r.getPitch() - q.getPitch()));
+		System.out.println(r.getRoll() + " vs. " + q.getRoll() + ", with a difference of " + (r.getRoll() - q.getRoll()));
+	}
+
+
+	@Test
+	public void testComparison() {
+		AlternateRandom random = new AlternateRandom(123456789);
+		Quaternion rg = new Quaternion();
+		Quaternion qg = new Quaternion();
+		Quaternion rotg = new Quaternion().setEulerAngles(4f, 8f, 16f);
+
+		QuaternionDouble rd = new QuaternionDouble();
+		QuaternionDouble qd = new QuaternionDouble();
+		QuaternionDouble rotd = new QuaternionDouble().setEulerAngles(4f, 8f, 16f);
+
+		QuaternionX rx = new QuaternionX();
+		QuaternionX qx = new QuaternionX();
+		QuaternionX rotx = new QuaternionX().setEulerAngles(4f, 8f, 16f);
+
+		for (int i = 0; i < 335; i++) {
+			float yaw = random.nextFloat() * 32 - 16;
+			float pitch = random.nextFloat() * 32 - 16;
+			float roll = random.nextFloat() * 32 - 16;
+			rotg.setEulerAngles(yaw, pitch, roll);
+			rotd.setEulerAngles(yaw, pitch, roll);
+			rotx.setEulerAngles(yaw, pitch, roll);
+
+			rg.mulLeft(rotg);
+			qg.mulLeft(rotg);
+			qg.setEulerAngles(qg.getYaw(), qg.getPitch(), qg.getRoll());
+
+			rd.mulLeft(rotd);
+			qd.mulLeft(rotd);
+			qd.setEulerAngles(qd.getYaw(), qd.getPitch(), qd.getRoll());
+
+			rx.mulLeft(rotx);
+			qx.mulLeft(rotx);
+			qx.setEulerAngles(qx.getYaw(), qx.getPitch(), qx.getRoll());
+		}
+		System.out.println("Quaternion (libGDX):");
+		System.out.println(rg.getYaw() + " vs. " + qg.getYaw() + ", with a difference of " + (rg.getYaw() - qg.getYaw()));
+		System.out.println(rg.getPitch() + " vs. " + qg.getPitch() + ", with a difference of " + (rg.getPitch() - qg.getPitch()));
+		System.out.println(rg.getRoll() + " vs. " + qg.getRoll() + ", with a difference of " + (rg.getRoll() - qg.getRoll()));
+
+		System.out.println("QuaternionDouble:");
+		System.out.println(rd.getYaw() + " vs. " + qd.getYaw() + ", with a difference of " + (rd.getYaw() - qd.getYaw()));
+		System.out.println(rd.getPitch() + " vs. " + qd.getPitch() + ", with a difference of " + (rd.getPitch() - qd.getPitch()));
+		System.out.println(rd.getRoll() + " vs. " + qd.getRoll() + ", with a difference of " + (rd.getRoll() - qd.getRoll()));
+
+		System.out.println("QuaternionX:");
+		System.out.println(rx.getYaw() + " vs. " + qx.getYaw() + ", with a difference of " + (rx.getYaw() - qx.getYaw()));
+		System.out.println(rx.getPitch() + " vs. " + qx.getPitch() + ", with a difference of " + (rx.getPitch() - qx.getPitch()));
+		System.out.println(rx.getRoll() + " vs. " + qx.getRoll() + ", with a difference of " + (rx.getRoll() - qx.getRoll()));
+
+		for (int i = 335; i < 360; i++) {
+			System.out.println("ITERATION " + i);
+			float yaw = random.nextFloat() * 32 - 16;
+			float pitch = random.nextFloat() * 32 - 16;
+			float roll = random.nextFloat() * 32 - 16;
+			System.out.println("yaw, pitch, roll: " + yaw + ", " + pitch + ", " + roll);
+			rotg.setEulerAngles(yaw, pitch, roll);
+			rotd.setEulerAngles(yaw, pitch, roll);
+			rotx.setEulerAngles(yaw, pitch, roll);
+
+			rg.mulLeft(rotg);
+			qg.mulLeft(rotg);
+			qg.setEulerAngles(qg.getYaw(), qg.getPitch(), qg.getRoll());
+
+			rd.mulLeft(rotd);
+			qd.mulLeft(rotd);
+			qd.setEulerAngles(qd.getYaw(), qd.getPitch(), qd.getRoll());
+
+			rx.mulLeft(rotx);
+			qx.mulLeft(rotx);
+			qx.setEulerAngles(qx.getYaw(), qx.getPitch(), qx.getRoll());
+
+			System.out.println("Quaternion (libGDX):");
+			System.out.println(rg.getYaw() + " vs. " + qg.getYaw() + ", with a difference of " + (rg.getYaw() - qg.getYaw()));
+			System.out.println(rg.getPitch() + " vs. " + qg.getPitch() + ", with a difference of " + (rg.getPitch() - qg.getPitch()));
+			System.out.println(rg.getRoll() + " vs. " + qg.getRoll() + ", with a difference of " + (rg.getRoll() - qg.getRoll()));
+
+			System.out.println("QuaternionDouble:");
+			System.out.println(rd.getYaw() + " vs. " + qd.getYaw() + ", with a difference of " + (rd.getYaw() - qd.getYaw()));
+			System.out.println(rd.getPitch() + " vs. " + qd.getPitch() + ", with a difference of " + (rd.getPitch() - qd.getPitch()));
+			System.out.println(rd.getRoll() + " vs. " + qd.getRoll() + ", with a difference of " + (rd.getRoll() - qd.getRoll()));
+
+			System.out.println("QuaternionX:");
+			System.out.println(rx.getYaw() + " vs. " + qx.getYaw() + ", with a difference of " + (rx.getYaw() - qx.getYaw()));
+			System.out.println(rx.getPitch() + " vs. " + qx.getPitch() + ", with a difference of " + (rx.getPitch() - qx.getPitch()));
+			System.out.println(rx.getRoll() + " vs. " + qx.getRoll() + ", with a difference of " + (rx.getRoll() - qx.getRoll()));
+		}
 	}
 
 	/**
