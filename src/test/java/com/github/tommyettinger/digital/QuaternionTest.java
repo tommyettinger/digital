@@ -228,6 +228,55 @@ public class QuaternionTest {
 	}
 
 	/**
+	 * OK, this one is interesting.
+	 * Gimbal lock is detected here (equal to 1), but the angles assigned by libGDX
+	 * go to the wrong variables.
+	 * <br>
+	 * <pre>
+	 * Quaternion (libGDX): [0.22436826|0.22436826|0.6705661|0.6705661]
+	 * Gimbal pole: 1
+	 * 0.0, should be 37
+	 * 90.0, should be 0
+	 * 37.00013, should be 90
+	 * QuaternionDouble: [0.2243682742461081|0.22436827424610814|0.6705660873559168|0.6705660873559169]
+	 * Gimbal pole: 1
+	 * 37.0, should be 37
+	 * 0.0, should be 0
+	 * 89.99999999999999, should be 90
+	 * QuaternionX: [0.22436826|0.22436826|0.6705661|0.6705661]
+	 * Gimbal pole: 1
+	 * 37.000084, should be 37
+	 * 0.0, should be 0
+	 * 90.0, should be 90
+	 * </pre>
+	 */
+	@Test
+	public void testGimbal2() {
+		Quaternion qg = new Quaternion().setEulerAngles(37, 0, 90);
+		QuaternionDouble qd = new QuaternionDouble().setEulerAngles(37, 0, 90);
+		QuaternionX qx = new QuaternionX().setEulerAngles(37, 0, 90);
+
+		System.out.println("Quaternion (libGDX): " + qg);
+		System.out.println("Gimbal pole: " + qg.getGimbalPole());
+		System.out.println(qg.getYaw() + ", should be 37");
+		System.out.println(qg.getPitch() + ", should be 0");
+		System.out.println(qg.getRoll() + ", should be 90");
+
+		System.out.println("QuaternionDouble: " + qd);
+		System.out.println("Gimbal pole: " + qd.getGimbalPole());
+		System.out.println(qd.getYaw() + ", should be 37");
+		System.out.println(qd.getPitch() + ", should be 0");
+		System.out.println(qd.getRoll() + ", should be 90");
+
+		System.out.println("QuaternionX: " + qx);
+		System.out.println("Gimbal pole: " + qx.getGimbalPole());
+		System.out.println(qx.getYaw() + ", should be 37");
+		System.out.println(qx.getPitch() + ", should be 0");
+		System.out.println(qx.getRoll() + ", should be 90");
+
+	}
+
+	/**
 	 * With 360 rotations:
 	 * <br>
 	 * On libGDX 1.9.11:
