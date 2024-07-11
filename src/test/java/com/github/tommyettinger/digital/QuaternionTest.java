@@ -201,6 +201,32 @@ public class QuaternionTest {
 		}
 	}
 
+	@Test
+	public void testGimbal() {
+		Quaternion qg = new Quaternion().setEulerAngles(37, 90, 17);
+		QuaternionDouble qd = new QuaternionDouble().setEulerAngles(37, 90, 17);
+		QuaternionX qx = new QuaternionX().setEulerAngles(37, 90, 17);
+
+		System.out.println("Quaternion (libGDX): " + qg);
+		System.out.println("Gimbal pole: " + qg.getGimbalPole());
+		System.out.println(qg.getYaw() + ", should be 37");
+		System.out.println(qg.getPitch() + ", should be 90");
+		System.out.println(qg.getRoll() + ", should be 17");
+
+		System.out.println("QuaternionDouble: " + qd);
+		System.out.println("Gimbal pole: " + qd.getGimbalPole());
+		System.out.println(qd.getYaw() + ", should be 37");
+		System.out.println(qd.getPitch() + ", should be 90");
+		System.out.println(qd.getRoll() + ", should be 17");
+
+		System.out.println("QuaternionX: " + qx);
+		System.out.println("Gimbal pole: " + qx.getGimbalPole());
+		System.out.println(qx.getYaw() + ", should be 37");
+		System.out.println(qx.getPitch() + ", should be 90");
+		System.out.println(qx.getRoll() + ", should be 17");
+
+	}
+
 	/**
 	 * With 360 rotations:
 	 * <br>
