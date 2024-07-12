@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.QuaternionDouble;
+import com.badlogic.gdx.math.experimental.QuaternionE;
 import com.badlogic.gdx.math.experimental.QuaternionX;
 import org.junit.Test;
 
@@ -255,6 +256,7 @@ public class QuaternionTest {
 		Quaternion qg = new Quaternion().setEulerAngles(37, 0, 90);
 		QuaternionDouble qd = new QuaternionDouble().setEulerAngles(37, 0, 90);
 		QuaternionX qx = new QuaternionX().setEulerAngles(37, 0, 90);
+		QuaternionE qe = new QuaternionE().setEulerAngles(37, 0, 90);
 
 		System.out.println("Quaternion (libGDX): " + qg);
 		System.out.println("Gimbal pole: " + qg.getGimbalPole());
@@ -274,6 +276,11 @@ public class QuaternionTest {
 		System.out.println(qx.getPitch() + ", should be 0");
 		System.out.println(qx.getRoll() + ", should be 90");
 
+		System.out.println("QuaternionE: " + qe);
+		System.out.println("Gimbal pole: " + qe.getGimbalPole());
+		System.out.println(qe.getYaw() + ", should be 37");
+		System.out.println(qe.getPitch() + ", should be 0");
+		System.out.println(qe.getRoll() + ", should be 90");
 	}
 
 	/**
