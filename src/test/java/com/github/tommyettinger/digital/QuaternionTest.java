@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.QuaternionDouble;
 import com.badlogic.gdx.math.experimental.QuaternionE;
+import com.badlogic.gdx.math.experimental.QuaternionET;
 import com.badlogic.gdx.math.experimental.QuaternionX;
 import org.junit.Test;
 
@@ -119,18 +120,27 @@ public class QuaternionTest {
 		Quaternion rg = new Quaternion();
 		Quaternion qg = new Quaternion();
 		Quaternion rotg = new Quaternion().setEulerAngles(4f, 8f, 16f);
+		int gimbalg = 0;
 
 		QuaternionDouble rd = new QuaternionDouble();
 		QuaternionDouble qd = new QuaternionDouble();
 		QuaternionDouble rotd = new QuaternionDouble().setEulerAngles(4f, 8f, 16f);
+		int gimbald = 0;
 
 		QuaternionX rx = new QuaternionX();
 		QuaternionX qx = new QuaternionX();
 		QuaternionX rotx = new QuaternionX().setEulerAngles(4f, 8f, 16f);
+		int gimbalx = 0;
 
 		QuaternionE re = new QuaternionE();
 		QuaternionE qe = new QuaternionE();
 		QuaternionE rote = new QuaternionE().setEulerAngles(4f, 8f, 16f);
+		int gimbale = 0;
+
+		QuaternionET ret = new QuaternionET();
+		QuaternionET qet = new QuaternionET();
+		QuaternionET rotet = new QuaternionET().setEulerAngles(4f, 8f, 16f);
+		int gimbalet = 0;
 
 		for (int i = 0; i < 335; i++) {
 			float yaw = random.nextFloat() * 32 - 16;
@@ -140,42 +150,62 @@ public class QuaternionTest {
 			rotd.setEulerAngles(yaw, pitch, roll);
 			rotx.setEulerAngles(yaw, pitch, roll);
 			rote.setEulerAngles(yaw, pitch, roll);
+			rotet.setEulerAngles(yaw, pitch, roll);
 
 			rg.mulLeft(rotg);
 			qg.mulLeft(rotg);
+			gimbalg += Math.abs(qg.getGimbalPole());
 			qg.setEulerAngles(qg.getYaw(), qg.getPitch(), qg.getRoll());
 
 			rd.mulLeft(rotd);
 			qd.mulLeft(rotd);
+			gimbald += Math.abs(qd.getGimbalPole());
 			qd.setEulerAngles(qd.getYaw(), qd.getPitch(), qd.getRoll());
 
 			rx.mulLeft(rotx);
 			qx.mulLeft(rotx);
+			gimbalx += Math.abs(qx.getGimbalPole());
 			qx.setEulerAngles(qx.getYaw(), qx.getPitch(), qx.getRoll());
 
 			re.mulLeft(rote);
 			qe.mulLeft(rote);
+			gimbale += Math.abs(qe.getGimbalPole());
 			qe.setEulerAngles(qe.getYaw(), qe.getPitch(), qe.getRoll());
+
+			ret.mulLeft(rotet);
+			qet.mulLeft(rotet);
+			gimbalet += Math.abs(qet.getGimbalPole());
+			qet.setEulerAngles(qet.getYaw(), qet.getPitch(), qet.getRoll());
 		}
 		System.out.println("Quaternion (libGDX):");
+		System.out.println("Gimbal sum: " + gimbalg);
 		System.out.println(rg.getYaw() + " vs. " + qg.getYaw() + ", with a difference of " + (rg.getYaw() - qg.getYaw()));
 		System.out.println(rg.getPitch() + " vs. " + qg.getPitch() + ", with a difference of " + (rg.getPitch() - qg.getPitch()));
 		System.out.println(rg.getRoll() + " vs. " + qg.getRoll() + ", with a difference of " + (rg.getRoll() - qg.getRoll()));
 
 		System.out.println("QuaternionDouble:");
+		System.out.println("Gimbal sum: " + gimbald);
 		System.out.println(rd.getYaw() + " vs. " + qd.getYaw() + ", with a difference of " + (rd.getYaw() - qd.getYaw()));
 		System.out.println(rd.getPitch() + " vs. " + qd.getPitch() + ", with a difference of " + (rd.getPitch() - qd.getPitch()));
 		System.out.println(rd.getRoll() + " vs. " + qd.getRoll() + ", with a difference of " + (rd.getRoll() - qd.getRoll()));
 
 		System.out.println("QuaternionX:");
+		System.out.println("Gimbal sum: " + gimbalx);
 		System.out.println(rx.getYaw() + " vs. " + qx.getYaw() + ", with a difference of " + (rx.getYaw() - qx.getYaw()));
 		System.out.println(rx.getPitch() + " vs. " + qx.getPitch() + ", with a difference of " + (rx.getPitch() - qx.getPitch()));
 		System.out.println(rx.getRoll() + " vs. " + qx.getRoll() + ", with a difference of " + (rx.getRoll() - qx.getRoll()));
 
 		System.out.println("QuaternionE:");
+		System.out.println("Gimbal sum: " + gimbale);
 		System.out.println(re.getYaw() + " vs. " + qe.getYaw() + ", with a difference of " + (re.getYaw() - qe.getYaw()));
 		System.out.println(re.getPitch() + " vs. " + qe.getPitch() + ", with a difference of " + (re.getPitch() - qe.getPitch()));
 		System.out.println(re.getRoll() + " vs. " + qe.getRoll() + ", with a difference of " + (re.getRoll() - qe.getRoll()));
+
+		System.out.println("QuaternionET:");
+		System.out.println("Gimbal sum: " + gimbalet);
+		System.out.println(ret.getYaw() + " vs. " + qet.getYaw() + ", with a difference of " + (ret.getYaw() - qet.getYaw()));
+		System.out.println(ret.getPitch() + " vs. " + qet.getPitch() + ", with a difference of " + (ret.getPitch() - qet.getPitch()));
+		System.out.println(ret.getRoll() + " vs. " + qet.getRoll() + ", with a difference of " + (ret.getRoll() - qet.getRoll()));
 
 		for (int i = 335; i < 360; i++) {
 			System.out.println("ITERATION " + i);
@@ -187,42 +217,63 @@ public class QuaternionTest {
 			rotd.setEulerAngles(yaw, pitch, roll);
 			rotx.setEulerAngles(yaw, pitch, roll);
 			rote.setEulerAngles(yaw, pitch, roll);
+			rotet.setEulerAngles(yaw, pitch, roll);
 
 			rg.mulLeft(rotg);
 			qg.mulLeft(rotg);
+			gimbalg += Math.abs(qg.getGimbalPole());
 			qg.setEulerAngles(qg.getYaw(), qg.getPitch(), qg.getRoll());
 
 			rd.mulLeft(rotd);
 			qd.mulLeft(rotd);
+			gimbald += Math.abs(qd.getGimbalPole());
 			qd.setEulerAngles(qd.getYaw(), qd.getPitch(), qd.getRoll());
 
 			rx.mulLeft(rotx);
 			qx.mulLeft(rotx);
+			gimbalx += Math.abs(qx.getGimbalPole());
 			qx.setEulerAngles(qx.getYaw(), qx.getPitch(), qx.getRoll());
 
 			re.mulLeft(rote);
 			qe.mulLeft(rote);
+			gimbale += Math.abs(qe.getGimbalPole());
 			qe.setEulerAngles(qe.getYaw(), qe.getPitch(), qe.getRoll());
 
+			ret.mulLeft(rotet);
+			qet.mulLeft(rotet);
+			gimbalet += Math.abs(qet.getGimbalPole());
+			qet.setEulerAngles(qet.getYaw(), qet.getPitch(), qet.getRoll());
+
 			System.out.println("Quaternion (libGDX):");
+			System.out.println("Gimbal sum: " + gimbalg);
 			System.out.println(rg.getYaw() + " vs. " + qg.getYaw() + ", with a difference of " + (rg.getYaw() - qg.getYaw()));
 			System.out.println(rg.getPitch() + " vs. " + qg.getPitch() + ", with a difference of " + (rg.getPitch() - qg.getPitch()));
 			System.out.println(rg.getRoll() + " vs. " + qg.getRoll() + ", with a difference of " + (rg.getRoll() - qg.getRoll()));
 
 			System.out.println("QuaternionDouble:");
+			System.out.println("Gimbal sum: " + gimbald);
 			System.out.println(rd.getYaw() + " vs. " + qd.getYaw() + ", with a difference of " + (rd.getYaw() - qd.getYaw()));
 			System.out.println(rd.getPitch() + " vs. " + qd.getPitch() + ", with a difference of " + (rd.getPitch() - qd.getPitch()));
 			System.out.println(rd.getRoll() + " vs. " + qd.getRoll() + ", with a difference of " + (rd.getRoll() - qd.getRoll()));
 
 			System.out.println("QuaternionX:");
+			System.out.println("Gimbal sum: " + gimbalx);
 			System.out.println(rx.getYaw() + " vs. " + qx.getYaw() + ", with a difference of " + (rx.getYaw() - qx.getYaw()));
 			System.out.println(rx.getPitch() + " vs. " + qx.getPitch() + ", with a difference of " + (rx.getPitch() - qx.getPitch()));
 			System.out.println(rx.getRoll() + " vs. " + qx.getRoll() + ", with a difference of " + (rx.getRoll() - qx.getRoll()));
 
 			System.out.println("QuaternionE:");
+			System.out.println("Gimbal sum: " + gimbale);
 			System.out.println(re.getYaw() + " vs. " + qe.getYaw() + ", with a difference of " + (re.getYaw() - qe.getYaw()));
 			System.out.println(re.getPitch() + " vs. " + qe.getPitch() + ", with a difference of " + (re.getPitch() - qe.getPitch()));
 			System.out.println(re.getRoll() + " vs. " + qe.getRoll() + ", with a difference of " + (re.getRoll() - qe.getRoll()));
+
+			System.out.println("QuaternionET:");
+			System.out.println("Gimbal sum: " + gimbalet);
+			System.out.println(ret.getYaw() + " vs. " + qet.getYaw() + ", with a difference of " + (ret.getYaw() - qet.getYaw()));
+			System.out.println(ret.getPitch() + " vs. " + qet.getPitch() + ", with a difference of " + (ret.getPitch() - qet.getPitch()));
+			System.out.println(ret.getRoll() + " vs. " + qet.getRoll() + ", with a difference of " + (ret.getRoll() - qet.getRoll()));
+		
 		}
 	}
 
@@ -232,6 +283,7 @@ public class QuaternionTest {
 		QuaternionDouble qd = new QuaternionDouble().setEulerAngles(37, 90, 17);
 		QuaternionX qx = new QuaternionX().setEulerAngles(37, 90, 17);
 		QuaternionE qe = new QuaternionE().setEulerAngles(37, 90, 17);
+		QuaternionET qet = new QuaternionET().setEulerAngles(37, 90, 17);
 
 		System.out.println("Quaternion (libGDX): " + qg);
 		System.out.println("Gimbal pole: " + qg.getGimbalPole());
@@ -256,6 +308,12 @@ public class QuaternionTest {
 		System.out.println(qe.getYaw() + ", should be 37");
 		System.out.println(qe.getPitch() + ", should be 90");
 		System.out.println(qe.getRoll() + ", should be 17");
+		
+		System.out.println("QuaternionET: " + qet);
+		System.out.println("Gimbal pole: " + qet.getGimbalPole());
+		System.out.println(qet.getYaw() + ", should be 37");
+		System.out.println(qet.getPitch() + ", should be 90");
+		System.out.println(qet.getRoll() + ", should be 17");
 	}
 
 	/**
@@ -287,6 +345,7 @@ public class QuaternionTest {
 		QuaternionDouble qd = new QuaternionDouble().setEulerAngles(37, 0, 90);
 		QuaternionX qx = new QuaternionX().setEulerAngles(37, 0, 90);
 		QuaternionE qe = new QuaternionE().setEulerAngles(37, 0, 90);
+		QuaternionET qet = new QuaternionET().setEulerAngles(37, 0, 90);
 
 		System.out.println("Quaternion (libGDX): " + qg);
 		System.out.println("Gimbal pole: " + qg.getGimbalPole());
@@ -311,6 +370,12 @@ public class QuaternionTest {
 		System.out.println(qe.getYaw() + ", should be 37");
 		System.out.println(qe.getPitch() + ", should be 0");
 		System.out.println(qe.getRoll() + ", should be 90");
+
+		System.out.println("QuaternionET: " + qet);
+		System.out.println("Gimbal pole: " + qet.getGimbalPole());
+		System.out.println(qet.getYaw() + ", should be 37");
+		System.out.println(qet.getPitch() + ", should be 0");
+		System.out.println(qet.getRoll() + ", should be 90");
 	}
 
 	/**
