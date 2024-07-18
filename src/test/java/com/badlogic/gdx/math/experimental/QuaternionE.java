@@ -134,14 +134,14 @@ public class QuaternionE implements Serializable {
 	 * @return this quaternion */
 	public QuaternionE setEulerAnglesRad (float yaw, float pitch, float roll) {
 		final float hr = roll * 0.5f;
-		final float shr = (float)Math.sin(hr);
-		final float chr = (float)Math.cos(hr);
+		final float shr = MathUtils.sin(hr);
+		final float chr = MathUtils.cos(hr);
 		final float hp = pitch * 0.5f;
-		final float shp = (float)Math.sin(hp);
-		final float chp = (float)Math.cos(hp);
+		final float shp = MathUtils.sin(hp);
+		final float chp = MathUtils.cos(hp);
 		final float hy = yaw * 0.5f;
-		final float shy = (float)Math.sin(hy);
-		final float chy = (float)Math.cos(hy);
+		final float shy = MathUtils.sin(hy);
+		final float chy = MathUtils.cos(hy);
 		final float chy_shp = chy * shp;
 		final float shy_chp = shy * chp;
 		final float chy_chp = chy * chp;
@@ -426,9 +426,9 @@ public class QuaternionE implements Serializable {
 		float d = Vector3.len(x, y, z);
 		if (d == 0f) return idt();
 		d = 1f / d;
-		float l_ang = radians < 0 ? MathUtils.PI2 - (-radians % MathUtils.PI2) : radians % MathUtils.PI2;
-		float l_sin = (float)Math.sin(l_ang / 2);
-		float l_cos = (float)Math.cos(l_ang / 2);
+		float l_ang = (radians < 0 ? MathUtils.PI2 - (-radians % MathUtils.PI2) : radians % MathUtils.PI2) * 0.5f;
+		float l_sin = MathUtils.sin(l_ang);
+		float l_cos = MathUtils.cos(l_ang);
 		return this.set(d * x * l_sin, d * y * l_sin, d * z * l_sin, l_cos).nor();
 	}
 
@@ -596,12 +596,12 @@ public class QuaternionE implements Serializable {
 		if ((1 - absDot) > 0.1) {// Get the angle between the 2 quaternions,
 			// and then store the sin() of that angle
 			final float angle = (float)Math.acos(absDot);
-			final float invSinTheta = 1f / (float)Math.sin(angle);
+			final float invSinTheta = 1f / MathUtils.sin(angle);
 
 			// Calculate the scale for q1 and q2, according to the angle and
 			// it's sine value
-			scale0 = ((float)Math.sin((1f - alpha) * angle) * invSinTheta);
-			scale1 = ((float)Math.sin((alpha * angle)) * invSinTheta);
+			scale0 = (MathUtils.sin((1f - alpha) * angle) * invSinTheta);
+			scale1 = (MathUtils.sin((alpha * angle)) * invSinTheta);
 		}
 
 		if (d < 0.f) scale1 = -scale1;
@@ -667,10 +667,10 @@ public class QuaternionE implements Serializable {
 // value
 			coeff = normExp * alpha / norm;
 		else
-			coeff = (float)(normExp * Math.sin(alpha * theta) / (norm * Math.sin(theta)));
+			coeff = normExp * MathUtils.sin(alpha * theta) / (norm * MathUtils.sin(theta));
 
 		// Write results
-		w = (float)(normExp * Math.cos(alpha * theta));
+		w = (normExp * MathUtils.cos(alpha * theta));
 		x *= coeff;
 		y *= coeff;
 		z *= coeff;
