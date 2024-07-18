@@ -1750,12 +1750,11 @@ public final class TrigTools {
      * @param a asin is defined only when a is between -1f and 1f, inclusive
      * @return between {@code -HALF_PI} and {@code HALF_PI} when a is in the defined range
      */
-    public static float asin(float a) {
-        float a2 = a * a; // a squared
-        float a3 = a * a2; // a cubed
+    public static float asin(final float a) {
+        final float a2 = a * a;
+        final float a3 = a * a2;
         if (a >= 0f) {
-            return HALF_PI
-                    - (float) Math.sqrt(1f - a) * (1.5707288f - 0.2121144f * a + 0.0742610f * a2 - 0.0187293f * a3);
+            return HALF_PI - (float) Math.sqrt(1f - a) * (1.5707288f - 0.2121144f * a + 0.0742610f * a2 - 0.0187293f * a3);
         }
         return (float) Math.sqrt(1f + a) * (1.5707288f + 0.2121144f * a + 0.0742610f * a2 + 0.0187293f * a3) - HALF_PI;
     }

@@ -169,7 +169,7 @@ public class QuaternionET implements Serializable {
 	 * @return the rotation around the z axis in radians (between -PI and +PI) */
 	public float getRollRad () {
 		final int pole = getGimbalPole();
-		return pole == 0 ? atan2(2f * (w * z + y * x), 1f - 2f * (x * x + z * z))
+		return pole == 0 ? atan2((w * z + y * x), 0.5f - (x * x + z * z))
 			: pole * MathUtils.HALF_PI;
 	}
 
@@ -195,7 +195,7 @@ public class QuaternionET implements Serializable {
 	 * @return the rotation around the y axis in radians (between -PI and +PI) */
 	public float getYawRad () {
 		final int pole = getGimbalPole();
-		return pole == 0 ? atan2(2f * (y * w + x * z), 1f - 2f * (y * y + x * x)) : (float)pole * 2f * atan2(y, w);
+		return pole == 0 ? atan2((y * w + x * z), 0.5f - (y * y + x * x)) : (pole * 2f * atan2(y, w) + MathUtils.PI) % MathUtils.PI2 - MathUtils.PI;
 	}
 
 	/** Get the yaw euler angle in degrees, which is the rotation around the y axis. Requires that this quaternion is normalized.

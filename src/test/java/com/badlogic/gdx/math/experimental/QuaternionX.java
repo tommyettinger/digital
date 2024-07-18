@@ -24,6 +24,9 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.NumberUtils;
 
+import static java.lang.Math.acos;
+import static java.lang.Math.asin;
+
 /** A simple quaternion class.
  * @see <a href="http://en.wikipedia.org/wiki/Quaternion">http://en.wikipedia.org/wiki/Quaternion</a>
  * @author badlogicgames@gmail.com
@@ -179,7 +182,8 @@ public class QuaternionX implements Serializable {
 	/** Get the pitch euler angle in radians, which is the rotation around the x axis. Requires that this quaternion is normalized.
 	 * @return the rotation around the x axis in radians (between -(PI/2) and +(PI/2)) */
 	public float getPitchRad () {
-		return (float)Math.asin(Math.min(Math.max(2f * (w * x - z * y), -1f), 1f));
+//		return (float)Math.asin(Math.min(Math.max(2f * (w * x - z * y), -1f), 1f));
+		return (float) asin(Math.min(Math.max(2f * (w * x - z * y), -1f), 1f));
 //		final int pole = getGimbalPole();
 //		return pole == 0 ? (float)Math.asin(MathUtils.clamp(2f * (w * x - z * y), -1f, 1f)) : (float)pole * MathUtils.PI * 0.5f;
 	}
@@ -562,7 +566,7 @@ public class QuaternionX implements Serializable {
 	 * @return This quaternion for chaining */
 	public QuaternionX setFromCross (final Vector3 v1, final Vector3 v2) {
 		final float dot = MathUtils.clamp(v1.dot(v2), -1f, 1f);
-		final float angle = (float)Math.acos(dot);
+		final float angle = (float)acos(dot);
 		return setFromAxisRad(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x, angle);
 	}
 
@@ -577,7 +581,7 @@ public class QuaternionX implements Serializable {
 	public QuaternionX setFromCross (final float x1, final float y1, final float z1, final float x2, final float y2,
 									 final float z2) {
 		final float dot = MathUtils.clamp(Vector3.dot(x1, y1, z1, x2, y2, z2), -1f, 1f);
-		final float angle = (float)Math.acos(dot);
+		final float angle = (float)acos(dot);
 		return setFromAxisRad(y1 * z2 - z1 * y2, z1 * x2 - x1 * z2, x1 * y2 - y1 * x2, angle);
 	}
 
@@ -598,7 +602,7 @@ public class QuaternionX implements Serializable {
 		// warrant such calculations
 		if ((1 - absDot) > 0.1) {// Get the angle between the 2 quaternions,
 			// and then store the sin() of that angle
-			final float angle = (float)Math.acos(absDot);
+			final float angle = (float)acos(absDot);
 			final float invSinTheta = 1f / (float)Math.sin(angle);
 
 			// Calculate the scale for q1 and q2, according to the angle and
@@ -662,7 +666,7 @@ public class QuaternionX implements Serializable {
 		float normExp = (float)Math.pow(norm, alpha);
 
 		// Calculate theta
-		float theta = (float)Math.acos(w / norm);
+		float theta = (float)acos(w / norm);
 
 		// Calculate coefficient of basis elements
 		float coeff = 0;
@@ -784,7 +788,7 @@ public class QuaternionX implements Serializable {
 	 * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle">calculation</a> */
 	public float getAxisAngleRad (Vector3 axis) {
 		if (this.w > 1) this.nor(); // if w>1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
-		float angle = (float)(2.0 * Math.acos(this.w));
+		float angle = (float)(2.0 * acos(this.w));
 		double s = Math.sqrt(1 - this.w * this.w); // assuming quaternion normalised then w is less than 1, so term always positive.
 		if (s < MathUtils.FLOAT_ROUNDING_ERROR) { // test to avoid divide by zero, s is always positive due to sqrt
 			// if s close to zero then direction of axis not important
@@ -805,7 +809,7 @@ public class QuaternionX implements Serializable {
 	 * {@link #getAngleAroundRad(Vector3)} to get the angle around a specific axis.
 	 * @return the angle in radians of the rotation */
 	public float getAngleRad () {
-		return (float)(2.0 * Math.acos((this.w > 1) ? (this.w / len()) : this.w));
+		return (float)(2.0 * acos((this.w > 1) ? (this.w / len()) : this.w));
 	}
 
 	/** Get the angle in degrees of the rotation this quaternion represents. Use {@link #getAxisAngle(Vector3)} to get both the
@@ -858,7 +862,7 @@ public class QuaternionX implements Serializable {
 		final float d = Vector3.dot(this.x, this.y, this.z, axisX, axisY, axisZ);
 		final float l2 = QuaternionX.len2(axisX * d, axisY * d, axisZ * d, this.w);
 		return MathUtils.isZero(l2) ? 0f
-			: (float)(2.0 * Math.acos(MathUtils.clamp((float)((d < 0 ? -this.w : this.w) / Math.sqrt(l2)), -1f, 1f)));
+			: (float)(2.0 * acos(MathUtils.clamp((float)((d < 0 ? -this.w : this.w) / Math.sqrt(l2)), -1f, 1f)));
 	}
 
 	/** Get the angle in radians of the rotation around the specified axis. The axis must be normalized.
