@@ -183,6 +183,8 @@ public class QuaternionDouble implements Serializable {
 	/** Get the pitch euler angle in radians, which is the rotation around the x axis. Requires that this quaternion is normalized.
 	 * @return the rotation around the x axis in radians (between -(PI/2) and +(PI/2)) */
 	public double getPitchRad () {
+//		final double det = 2.0 * (w * x - z * y);
+//		return 2.0 * Math.atan2(Math.sqrt(1.0 + det), Math.sqrt(1.0 - det)) - (Math.PI * 0.5);
 		return Math.asin(Math.min(Math.max(2.0 * (w * x - z * y), -1.0), 1.0));
 //		final int pole = getGimbalPole();
 //		return pole == 0 ? Math.asin(Math.min(Math.max(2.0 * (w * x - z * y), -1.0), 1.0)) : pole * Math.PI * 0.5;

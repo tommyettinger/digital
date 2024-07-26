@@ -18,7 +18,7 @@ import com.badlogic.gdx.math.QuaternionDouble;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 /** Render a basic scene in a FrameBufferCubemap and displays it in a rotating cube. */
-public class FrameBufferCubemapTest extends Basic3DSceneTest {
+public class FrameBufferCubemapTest2 extends Basic3DSceneTest {
 	protected PerspectiveCamera camFb;
 	protected PerspectiveCamera camCube;
 	protected FrameBufferCubemap fb;
@@ -113,9 +113,9 @@ public class FrameBufferCubemapTest extends Basic3DSceneTest {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		quat.setEulerAngles(
-				yaw += 45 * Gdx.graphics.getDeltaTime(),
-				pitch += 25 * Gdx.graphics.getDeltaTime(),
-				roll =+ 10 * Gdx.graphics.getDeltaTime()
+				quat.getYaw() + 45 * Gdx.graphics.getDeltaTime(),
+				quat.getPitch() + 25 * Gdx.graphics.getDeltaTime(),
+				quat.getRoll() + 10 * Gdx.graphics.getDeltaTime()
 				);
 		System.out.println("Yaw: " + quat.getYaw() + ", Pitch: " + quat.getPitch() + ", Roll: " + quat.getRoll());
 		cubeInstance.transform.set((float) quat.x, (float) quat.y, (float) quat.z, (float) quat.w);
@@ -131,6 +131,6 @@ public class FrameBufferCubemapTest extends Basic3DSceneTest {
 		config.disableAudio(true);
 		config.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
 		config.useVsync(true);
-		new Lwjgl3Application(new FrameBufferCubemapTest(), config);
+		new Lwjgl3Application(new FrameBufferCubemapTest2(), config);
 	}
 }
