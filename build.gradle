@@ -81,4 +81,11 @@ repositories {
 dependencies {
     testImplementation "com.badlogicgames.gdx:gdx:1.12.1"
     testImplementation "junit:junit:4.13.2"
+    // don't require audio if a test doesn't need it; we don't use audio here.
+    testImplementation ("com.badlogicgames.gdx:gdx-backend-lwjgl3:1.12.1"){
+        exclude group: "org.jcraft", module: "jorbis"
+        exclude group: "org.lwjgl", module: "lwjgl-openal"
+    }
+    testImplementation "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-desktop"
+
 }
