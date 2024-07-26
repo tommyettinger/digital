@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.CubemapAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.FrameBufferCubemap;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 /** Render a basic scene in a FrameBufferCubemap and displays it in a rotating cube. */
@@ -25,10 +26,13 @@ public class FrameBufferCubemapTest extends Basic3DSceneTest {
 	protected Model cubeMesh;
 	protected ModelInstance cubeInstance;
 	protected ModelBatch cubeBatch;
+	protected Quaternion quatGdx;
 
 	@Override
 	public void create () {
 		super.create();
+
+		quatGdx = new Quaternion();
 
 		camFb = new PerspectiveCamera(90, 800, 800);
 		camFb.position.set(10f, 10f, 10f);
@@ -98,8 +102,8 @@ public class FrameBufferCubemapTest extends Basic3DSceneTest {
 		int h = Gdx.graphics.getBackBufferHeight();
 		int x = (int)(w - w * 0.5f);
 		int y = (int)(h - h * 0.5f);
-		w *= 0.5f;
-		h *= 0.5f;
+		w >>= 1;
+		h >>= 1;
 
 		Gdx.gl.glViewport(x, y, w, h);
 		Gdx.gl.glEnable(GL20.GL_SCISSOR_TEST);
@@ -107,10 +111,12 @@ public class FrameBufferCubemapTest extends Basic3DSceneTest {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-		pitch += 25 * Gdx.graphics.getDeltaTime();
-		yaw += 45 * Gdx.graphics.getDeltaTime();
-		roll += 10 * Gdx.graphics.getDeltaTime();
-		cubeInstance.transform.setFromEulerAngles(yaw, pitch, roll);
+		quatGdx.setEulerAngles(
+				quatGdx.getYaw() + 45 * Gdx.graphics.getDeltaTime(),
+				quatGdx.getPitch() + 25 * Gdx.graphics.getDeltaTime(),
+				quatGdx.getRoll() + 10 * Gdx.graphics.getDeltaTime()
+				);
+		cubeInstance.transform.set(quatGdx);
 		cubeBatch.begin(camCube);
 		cubeBatch.render(cubeInstance);
 		cubeBatch.end();
