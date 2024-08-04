@@ -1065,11 +1065,28 @@ public final class Interpolations {
      * 10, bounces are 6, and scale is 1.
      */
     public static final Interpolator elasticIn = new Interpolator("elasticIn", elasticInFunction(2f, 10f, 6, 1f));
+
     /**
-     * Acts like {@link #elastic}, but flipped, using {@link #elasticFunction(float, float, int, float)}. Value is 2,
-     * power is 10, bounces are 7, scale is 1, and {@link InterpolationFunction#flip()} is used.
+     * Produces an InterpolationFunction that uses the given value, power, bounces, and scale variables.
+     * This accelerates near-instantly, wiggles in to settle near the middle of the range, accelerates again near the
+     * end, and finishes returning 1.0. Negative parameters are not supported.
+     * <br>
+     * The functions this method produces are not well-behaved when their {@code a} parameter is less than 0 or greater
+     * than 1.
+     * @return an InterpolationFunction that will use the given configuration
      */
-    public static final Interpolator elasticOutIn = new Interpolator("elasticOutIn", elastic.fn.flip());
+    public static Interpolations.InterpolationFunction elasticOutInFunction(final float value, final float power, final int bounces,
+                                                                            final float scale) {
+        final float bounce = bounces * (0.5f - (bounces & 1)) - 0.25f;
+        return a -> (a > 0.5f)
+                ? (float)Math.pow(value, power * ((a += a - 1) - 1f)) * TrigTools.sinTurns(a * bounce) * scale * 0.5f + 0.5f
+                : 0.5f - (float)Math.pow(value, power * ((a = 1f - a - a) - 1f)) * TrigTools.sinTurns(a * bounce) * scale * 0.5f;
+    }
+    /**
+     * Stays within the mid-range, using {@link #elasticOutInFunction(float, float, int, float)}. Value is 2, power
+     * is 10, bounces are 7, and scale is 1.
+     */
+    public static final Interpolator elasticOutIn = new Interpolator("elasticOutIn", elasticOutInFunction(2f, 10f, 7, 1f));
 
 
     // Aliases
