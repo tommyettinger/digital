@@ -849,6 +849,28 @@ public final class Interpolations {
     public static final Interpolator bounce5In = new Interpolator("bounce5In", bounceInFunction(0.61f, 1f, 0.31f, 0.45f, 0.21f, 0.3f, 0.11f, 0.15f, 0.06f, 0.06f));
 
     /**
+     * Accelerates and decelerates using {@link #bounceFunction(float...)}, with 2 bounces, but flipped.
+     */
+    public static final Interpolator bounce2OutIn = new Interpolator("bounce2OutIn", bounce2.fn.flip());
+    /**
+     * Accelerates and decelerates using {@link #bounceFunction(float...)}, with 3 bounces, but flipped.
+     */
+    public static final Interpolator bounce3OutIn = new Interpolator("bounce3OutIn", bounce3.fn.flip());
+    /**
+     * Accelerates and decelerates using {@link #bounceFunction(float...)}, with 4 bounces, but flipped.
+     */
+    public static final Interpolator bounce4OutIn = new Interpolator("bounce4OutIn", bounce4.fn.flip());
+    /**
+     * Accelerates and decelerates using {@link #bounceFunction(float...)}, with 4 bounces, but flipped.
+     * While both this and {@link #bounce4OutIn} use 4 bounces, this matches the behavior of bounce in libGDX (flipped).
+     */
+    public static final Interpolator bounceOutIn = new Interpolator("bounceOutIn", bounce.fn.flip());
+    /**
+     * Accelerates and decelerates using {@link #bounceFunction(float...)}, with 5 bounces, but flipped.
+     */
+    public static final Interpolator bounce5OutIn = new Interpolator("bounce5OutIn", bounce5.fn.flip());
+
+    /**
      * Produces an InterpolationFunction that uses the given scale variable.
      * This drops below 0.0 at the start of the range, accelerates very rapidly, exceeds 1.0 at the middle of the input
      * range, and ends returning 1.0. Negative parameters are not supported.
@@ -953,6 +975,27 @@ public final class Interpolations {
      * Goes extra-low, using {@link #swingInFunction(float)} and scale of 0.5.
      */
     public static final Interpolator swing0_5In = new Interpolator("swing0_5In", swingInFunction(0.5f));
+
+    /**
+     * Should stay in-range, using {@link #swingFunction(float)} and scale of 2, but flipped.
+     */
+    public static final Interpolator swing2OutIn = new Interpolator("swing2OutIn", swing2.fn.flip());
+    /**
+     * Should stay in-range, using {@link #swingFunction(float)} and scale of 1.5, but flipped.
+     */
+    public static final Interpolator swingOutIn = new Interpolator("swingOutIn", swing.fn.flip());
+    /**
+     * Should stay in-range, using {@link #swingFunction(float)} and scale of 3, but flipped.
+     */
+    public static final Interpolator swing3OutIn = new Interpolator("swing3OutIn", swing3.fn.flip());
+    /**
+     * Should stay in-range, using {@link #swingFunction(float)} and scale of 0.75, but flipped.
+     */
+    public static final Interpolator swing0_75OutIn = new Interpolator("swing0_75OutIn", swing0_75.fn.flip());
+    /**
+     * Should stay in-range, using {@link #swingFunction(float)} and scale of 0.5, but flipped.
+     */
+    public static final Interpolator swing0_5OutIn = new Interpolator("swing0_5OutIn", swing0_5.fn.flip());
 
     /**
      * Produces an InterpolationFunction that uses the given value, power, bounces, and scale variables.
