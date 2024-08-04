@@ -19,6 +19,7 @@ package com.github.tommyettinger.digital;
 import java.util.LinkedHashMap;
 
 import static com.github.tommyettinger.digital.MathTools.barronSpline;
+import static com.github.tommyettinger.digital.MathTools.fract;
 import static com.github.tommyettinger.digital.TrigTools.*;
 
 /**
@@ -86,6 +87,22 @@ public final class Interpolations {
          */
         default float apply(float start, float end, float alpha) {
             return start + apply(alpha) * (end - start);
+        }
+
+        /**
+         * Effectively splits the interpolation function at its midway point (where alpha is 0.5) and returns a new
+         * InterpolationFunction that interpolates like the first half when alpha is greater than 0.5, and interpolates
+         * like the second half when alpha is less than 0.5. In both cases, the returned function will be offset so that
+         * it starts at 0 when alpha is 0, ends at 1 when alpha is 1, and returns 0.5 when alpha is 0.5, but only so
+         * long as this original InterpolationFunction also has those behaviors. If this InterpolationFunction does not
+         * return 0 at 0, 1 at 1, and 0.5 at 0.5, then the InterpolationFunction this returns may not be continuous.
+         * <br>
+         * This is meant to create variants on "In, Out" interpolation functions that instead go "Out, In."
+         *
+         * @return a new InterpolationFunction that acts like this one, but with its starting and ending halves switched
+         */
+        default InterpolationFunction flip() {
+            return a -> apply(fract(a+0.5f)) - Math.copySign(0.5f, a - 0.5f);
         }
     }
 
