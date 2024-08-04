@@ -1065,4 +1065,128 @@ public final class Interpolations {
      * 10, bounces are 6, and scale is 1.
      */
     public static final Interpolator elasticIn = new Interpolator("elasticIn", elasticInFunction(2f, 10f, 6, 1f));
+    /**
+     * Acts like {@link #elastic}, but flipped, using {@link #elasticFunction(float, float, int, float)}. Value is 2,
+     * power is 10, bounces are 7, scale is 1, and {@link InterpolationFunction#flip()} is used.
+     */
+    public static final Interpolator elasticOutIn = new Interpolator("elasticOutIn", elastic.fn.flip());
+
+
+    // Aliases
+    /**
+     * Alias for {@link #pow2}.
+     */
+    public static final Interpolator quadInOut = new Interpolator("quadInOut", pow2.fn);
+    /**
+     * Alias for {@link #pow2In}.
+     */
+    public static final Interpolator quadIn = new Interpolator("quadIn", pow2In.fn);
+    /**
+     * Alias for {@link #pow2Out}.
+     */
+    public static final Interpolator quadOut = new Interpolator("quadOut", pow2Out.fn);
+    /**
+     * Alias for {@link #pow2OutIn}.
+     */
+    public static final Interpolator quadOutIn = new Interpolator("quadOutIn", pow2OutIn.fn);
+    /**
+     * Alias for {@link #pow3}.
+     */
+    public static final Interpolator cubicInOut = new Interpolator("cubicInOut", pow3.fn);
+    /**
+     * Alias for {@link #pow3In}.
+     */
+    public static final Interpolator cubicIn = new Interpolator("cubicIn", pow3In.fn);
+    /**
+     * Alias for {@link #pow3Out}.
+     */
+    public static final Interpolator cubicOut = new Interpolator("cubicOut", pow3Out.fn);
+    /**
+     * Alias for {@link #pow3OutIn}.
+     */
+    public static final Interpolator cubicOutIn = new Interpolator("cubicOutIn", pow3OutIn.fn);
+    /**
+     * Alias for {@link #pow4}.
+     */
+    public static final Interpolator quartInOut = new Interpolator("quartInOut", pow4.fn);
+    /**
+     * Alias for {@link #pow4In}.
+     */
+    public static final Interpolator quartIn = new Interpolator("quartIn", pow4In.fn);
+    /**
+     * Alias for {@link #pow4Out}.
+     */
+    public static final Interpolator quartOut = new Interpolator("quartOut", pow4Out.fn);
+    /**
+     * Alias for {@link #pow4OutIn}.
+     */
+    public static final Interpolator quartOutIn = new Interpolator("quartOutIn", pow4OutIn.fn);
+    /**
+     * Alias for {@link #pow5}.
+     */
+    public static final Interpolator quintInOut = new Interpolator("quintInOut", pow5.fn);
+    /**
+     * Alias for {@link #pow5In}.
+     */
+    public static final Interpolator quintIn = new Interpolator("quintIn", pow5In.fn);
+    /**
+     * Alias for {@link #pow5Out}.
+     */
+    public static final Interpolator quintOut = new Interpolator("quintOut", pow5Out.fn);
+    /**
+     * Alias for {@link #pow5OutIn}.
+     */
+    public static final Interpolator quintOutIn = new Interpolator("quintOutIn", pow5OutIn.fn);
+
+    /**
+     * Alias for {@link #exp10}.
+     */
+    public static final Interpolator expoInOut = new Interpolator("expoInOut", exp10.fn);
+    /**
+     * Alias for {@link #exp10In}.
+     */
+    public static final Interpolator expoIn = new Interpolator("expoIn", exp10In.fn);
+    /**
+     * Alias for {@link #exp10Out}.
+     */
+    public static final Interpolator expoOut = new Interpolator("expoOut", exp10Out.fn);
+    /**
+     * Alias for {@link #exp10OutIn}.
+     */
+    public static final Interpolator expoOutIn = new Interpolator("expoOutIn", exp10OutIn.fn);
+
+    /**
+     * Alias for {@link #circle}.
+     */
+    public static final Interpolator circInOut = new Interpolator("circInOut", circle.fn);
+    /**
+     * Alias for {@link #circleIn}.
+     */
+    public static final Interpolator circIn = new Interpolator("circIn", circleIn.fn);
+    /**
+     * Alias for {@link #circleOut}.
+     */
+    public static final Interpolator circOut = new Interpolator("circOut", circleOut.fn);
+    /**
+     * Alias for {@link #circleOutIn}.
+     */
+    public static final Interpolator circOutIn = new Interpolator("circOutIn", circleOutIn.fn);
+    
+    /**
+     * Alias for {@link #swing}. Probably not an exact duplicate of the similarly-named Penner easing function.
+     */
+    public static final Interpolator backInOut = new Interpolator("backInOut", swing.fn);
+    /**
+     * Alias for {@link #swingIn}. Probably not an exact duplicate of the similarly-named Penner easing function.
+     */
+    public static final Interpolator backIn = new Interpolator("backIn", swingIn.fn);
+    /**
+     * Alias for {@link #swingOut}. Probably not an exact duplicate of the similarly-named Penner easing function.
+     */
+    public static final Interpolator backOut = new Interpolator("backOut", swingOut.fn);
+    /**
+     * Alias for {@link #swingOutIn}. Probably not an exact duplicate of the similarly-named Penner easing function.
+     */
+    public static final Interpolator backOutIn = new Interpolator("backOutIn", swingOutIn.fn);
+
 }
