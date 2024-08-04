@@ -100,4 +100,19 @@ public class InterpolationsTest {
         System.out.println("0x1p-24f: Out of " + 0x1000000 + " tested floats, there were " + failures + " failures in monotonicity and " + boundFailures + " violations of the bounds.");
         System.out.println("Ended with 1.0 producing " + next);
     }
+
+    @Test
+    public void testOutIn() {
+        String[] tags = Interpolations.getTagArray();
+        for(String tag : tags) {
+            if(tag.contains("OutIn")){
+                System.out.println("With tag " + tag);
+                Interpolations.Interpolator interp = Interpolations.get(tag);
+                float r = interp.apply(0.49f);
+                Assert.assertTrue("OH NO! apply(0.49f) == " + r, 0f < r && r < 1f);
+                r = interp.apply(0.51f);
+                Assert.assertTrue("OH NO! apply(0.51f) == " + r, 0f < r && r < 1f);
+            }
+        }
+    }
 }
