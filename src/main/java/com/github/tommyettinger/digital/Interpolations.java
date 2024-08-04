@@ -17,6 +17,7 @@
 package com.github.tommyettinger.digital;
 
 import java.util.LinkedHashMap;
+import java.util.function.DoubleUnaryOperator;
 
 import static com.github.tommyettinger.digital.MathTools.barronSpline;
 import static com.github.tommyettinger.digital.MathTools.fract;
@@ -266,6 +267,22 @@ public final class Interpolations {
             return (float) Math.pow(2f - a - a, power) * -0.5f + 1f;
         };
     }
+    /**
+     * Produces an InterpolationFunction that uses the given power variable.
+     * When power is greater than 1, this starts quickly, slows down in the middle and speeds up at the end. The
+     * rate of acceleration and deceleration changes based on the parameter. Non-integer parameters are supported,
+     * unlike the Pow in libGDX. Negative powers are not supported.
+     * <br>
+     * The functions this method produces are not well-behaved when their {@code a} parameter is less than 0 or greater
+     * than 1.
+     * @return an InterpolationFunction that will use the given configuration
+     */
+    public static InterpolationFunction powOutInFunction(final float power) {
+        return a -> {
+            if (a > 0.5f) return (float) Math.pow(a + a - 1f, power) * 0.5f + 0.5f;
+            return (float) Math.pow(1f - a - a, power) * -0.5f + 0.5f;
+        };
+    }
 
     /**
      * Produces an InterpolationFunction that uses the given power variable.
@@ -334,8 +351,8 @@ public final class Interpolations {
 //
 //    // This might make more sense as a replacement, since it allows non-integer powers.
 //    public static float aPow(float a, float power){
-//        if (a <= 0.5f) return (float) Math.pow(a * 2, power) * 0.5f;
-//        return (float) Math.pow((1 - a) * 2, power) * -0.5f + 1;
+//        if (a <= 0.5f) return (float) Math.pow(a + a, power) * 0.5f;
+//        return (float) Math.pow(2 - a - a, power) * -0.5f + 1;
 //    }
 
     /**
@@ -345,7 +362,7 @@ public final class Interpolations {
     /**
      * Slow, then fast. This uses the same function as {@link #pow2In}.
      */
-    public static final Interpolator slowFast = new Interpolator("slowFast", powInFunction(2f));
+    public static final Interpolator slowFast = new Interpolator("slowFast", pow2In.fn);
     /**
      * Accelerates using {@link #powInFunction(float)} and power of 3.
      */
@@ -387,7 +404,7 @@ public final class Interpolations {
     /**
      * Fast, then slow. This uses the same function as {@link #pow2Out}.
      */
-    public static final Interpolator fastSlow = new Interpolator("fastSlow", powOutFunction(2f));
+    public static final Interpolator fastSlow = new Interpolator("fastSlow", pow2Out.fn);
     /**
      * Decelerates using {@link #powOutFunction(float)} and power of 3.
      */
@@ -420,6 +437,39 @@ public final class Interpolations {
      * This is the inverse for {@link #pow3Out}. Optimized with {@link MathTools#cbrt(float)}.
      */
     public static final Interpolator pow3OutInverse = new Interpolator("pow3OutInverse", a -> 1f - MathTools.cbrt(1f - a));
+
+    /**
+     * Accelerates/decelerates using {@link #powOutInFunction(float)} and power of 2.
+     */
+    public static final Interpolator pow2OutIn = new Interpolator("pow2OutIn", powOutInFunction(2f));
+    /**
+     * Fast, then slow, then fast. This uses the same function as {@link #pow2OutIn}.
+     */
+    public static final Interpolator fastSlowFast = new Interpolator("fastSlowFast", pow2OutIn.fn);
+    /**
+     * Accelerates/decelerates using {@link #powOutInFunction(float)} and power of 3.
+     */
+    public static final Interpolator pow3OutIn = new Interpolator("pow3OutIn", powOutInFunction(3f));
+    /**
+     * Accelerates/decelerates using {@link #powOutInFunction(float)} and power of 4.
+     */
+    public static final Interpolator pow4OutIn = new Interpolator("pow4OutIn", powOutInFunction(4f));
+    /**
+     * Accelerates/decelerates using {@link #powOutInFunction(float)} and power of 5.
+     */
+    public static final Interpolator pow5OutIn = new Interpolator("pow5OutIn", powOutInFunction(5f));
+    /**
+     * Accelerates/decelerates using {@link #powOutInFunction(float)} and power of 0.75.
+     */
+    public static final Interpolator pow0_75OutIn = new Interpolator("pow0_75OutIn", powOutInFunction(0.75f));
+    /**
+     * Accelerates/decelerates using {@link #powOutInFunction(float)} and power of 0.5.
+     */
+    public static final Interpolator pow0_5OutIn = new Interpolator("pow0_5OutIn", powOutInFunction(0.5f));
+    /**
+     * Accelerates/decelerates using {@link #powOutInFunction(float)} and power of 0.25.
+     */
+    public static final Interpolator pow0_25OutIn = new Interpolator("pow0_25OutIn", powOutInFunction(0.25f));
 
     /**
      * Produces an InterpolationFunction that uses the given value and power variables.
@@ -835,7 +885,7 @@ public final class Interpolations {
      * Goes extra-high, using {@link #swingOutFunction(float)} and scale of 2. This uses the same function as
      * {@link #swing2Out}.
      */
-    public static final Interpolator swingOut = new Interpolator("swingOut", swingOutFunction(2f));
+    public static final Interpolator swingOut = new Interpolator("swingOut", swing2Out.fn);
     /**
      * Goes extra-high, using {@link #swingOutFunction(float)} and scale of 3.
      */
@@ -870,7 +920,7 @@ public final class Interpolations {
      * Goes extra-low, using {@link #swingInFunction(float)} and scale of 2. This uses the same function as
      * {@link #swing2In}.
      */
-    public static final Interpolator swingIn = new Interpolator("swingIn", swingInFunction(2f));
+    public static final Interpolator swingIn = new Interpolator("swingIn", swing2In.fn);
     /**
      * Goes extra-low, using {@link #swingInFunction(float)} and scale of 3.
      */
