@@ -548,6 +548,17 @@ public final class Interpolations {
 
 
     /**
+     * Accelerates and decelerates using {@link #expFunction(float, float)}, value of 2 and power of 5, but flipped.
+     */
+    public static final Interpolator exp5OutIn = new Interpolator("exp5OutIn", exp5.fn.flip());
+
+    /**
+     * Accelerates and decelerates using {@link #expFunction(float, float)}, value of 2 and power of 10, but flipped.
+     */
+    public static final Interpolator exp10OutIn = new Interpolator("exp10OutIn", exp10.fn.flip());
+
+
+    /**
      * Produces an InterpolationFunction that uses the possible shapes of the Kumaraswamy distribution, but without
      * involving a random component. This can produce a wide range of shapes for the interpolation, and may require
      * generating several during development to get a particular shape you want. The a and b parameters must be greater
@@ -659,6 +670,10 @@ public final class Interpolations {
      * Moves like a sine wave does; starts quickly and slows down.
      */
     public static final Interpolator sineOut = new Interpolator("sineOut", a -> SIN_TABLE[(int) (a * SIN_TO_COS) & TABLE_MASK]);
+    /**
+     * Moves like a sine wave does, but flipped; starts quickly, rises slowly, then ends quickly.
+     */
+    public static final Interpolator sineOutIn = new Interpolator("sineOutIn", sine.fn.flip());
 
 // This is here so that we can validate the old circle output against the new.
 //    public static final Interpolator circleOld = new Interpolator("circle", a -> {
@@ -686,6 +701,11 @@ public final class Interpolations {
      * When graphed, forms one circular arc, starting rapidly and decelerating at the end.
      */
     public static final Interpolator circleOut = new Interpolator("circleOut", a -> ((float)Math.sqrt(a * (2f - a))));
+    /**
+     * When graphed, forms two circular arcs; it starts quickly, decelerating towards the middle, then speeds up
+     * towards the end.
+     */
+    public static final Interpolator circleOutIn = new Interpolator("circleOutIn", circle.fn.flip());
 
     /**
      * Produces an InterpolationFunction that uses the given {@code width, height, width, height, ...} float array.
