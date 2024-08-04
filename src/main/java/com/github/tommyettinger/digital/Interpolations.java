@@ -211,9 +211,17 @@ public final class Interpolations {
      */
     public static final Interpolator smooth = new Interpolator("smooth", a -> a * a * (3 - 2 * a));
     /**
-     * "Smoothstep" or a cubic Hermite spline applied twice.
+     * "Smoothstep" or a cubic Hermite spline, but flipped.
+     */
+    public static final Interpolator smoothOutIn = new Interpolator("smoothOutIn", smooth.fn.flip());
+    /**
+     * "Smoothstep" or a cubic Hermite spline, applied twice.
      */
     public static final Interpolator smooth2 = new Interpolator("smooth2", a -> (a *= a * (3 - 2 * a)) * a * (3 - 2 * a));
+    /**
+     * "Smoothstep" or a cubic Hermite spline, applied twice, but flipped.
+     */
+    public static final Interpolator smooth2OutIn = new Interpolator("smooth2OutIn", smooth2.fn.flip());
     /**
      * A quintic Hermite spline by Ken Perlin.
      * <br>
@@ -223,13 +231,25 @@ public final class Interpolations {
      */
     public static final Interpolator smoother = new Interpolator("smoother", a -> a * a * a * (a * (a * 6f - 15f) + 9.999998f));
     /**
+     * A quintic Hermite spline by Ken Perlin, but flipped.
+     * <br>
+     * This was modified; see {@link #smoother}.
+     */
+    public static final Interpolator smootherOutIn = new Interpolator("smootherOutIn", smoother.fn.flip());
+    /**
      * A quintic Hermite spline by Ken Perlin; this uses the same function as {@link #smoother}.
      * <br>
      * This was modified slightly because the original constants were meant for doubles, and here we use floats. Without
      * this tiny change (the smallest possible change here, from 10.0f to 9.999998f), giving an input of 0.99999994f, or
      * one of thousands of other inputs, would unexpectedly produce an output greater than 1.0f .
      */
-    public static final Interpolator fade = new Interpolator("fade", a -> a * a * a * (a * (a * 6f - 15f) + 9.999998f));
+    public static final Interpolator fade = new Interpolator("fade", smoother.fn);
+    /**
+     * A quintic Hermite spline by Ken Perlin, but flipped; this uses the same function as {@link #smootherOutIn}.
+     * <br>
+     * This was modified; see {@link #fade}.
+     */
+    public static final Interpolator fadeOutIn = new Interpolator("fadeOutIn", smootherOutIn.fn);
     /**
      * Produces an InterpolationFunction that uses the given power variable.
      * When power is greater than 1, this starts slowly, speeds up in the middle and slows down at the end. The
