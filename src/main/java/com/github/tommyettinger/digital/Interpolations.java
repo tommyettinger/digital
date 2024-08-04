@@ -103,7 +103,7 @@ public final class Interpolations {
          * @return a new InterpolationFunction that acts like this one, but with its starting and ending halves switched
          */
         default InterpolationFunction flip() {
-            return a -> apply(fract(a+0.5f)) - Math.copySign(0.5f, a - 0.5f);
+            return a -> apply(fract(a+0.5f)) + Math.copySign(0.5f, a - 0.5f);
         }
     }
 
