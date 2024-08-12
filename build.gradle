@@ -6,7 +6,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.25.3'
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.29.0'
     }
 }
 
@@ -14,10 +14,17 @@ apply plugin: 'java-library'
 apply plugin: 'com.vanniktech.maven.publish'
 
 def projectName = 'digital'
-
 group 'com.github.tommyettinger'
-
 version "$VERSION_NAME"
+
+import com.vanniktech.maven.publish.JavaLibrary
+import com.vanniktech.maven.publish.JavadocJar
+
+mavenPublishing {
+    configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
+}
+
+mavenPlainJavadocJar.archiveBaseName.set(projectName)
 
 [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 

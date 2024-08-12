@@ -830,18 +830,18 @@ public final class TrigTools {
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static float cosSmooth(float radians) {
-        //Absolute error:   0.00014983
-        //Relative error:   -0.00000004
-        //Maximum error:    0.00035512
-        //Worst input:      5.77527666
-        //Worst approx output: 0.87340844
-        //Correct output:      0.87376356
         radians = radians * (TrigTools.PI_INVERSE * 2f) + 1f;
         final int ceil = (int) Math.ceil(radians) & -2;
         radians -= ceil;
         final float x2 = radians * radians, x3 = radians * x2;
         return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
     }
+    //Absolute error:   0.00014983
+    //Relative error:   -0.00000004
+    //Maximum error:    0.00035512
+    //Worst input:      5.77527666
+    //Worst approx output: 0.87340844
+    //Correct output:      0.87376356
 
     /**
      * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
