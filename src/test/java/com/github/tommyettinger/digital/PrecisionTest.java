@@ -2467,18 +2467,18 @@ Worst input (abs):       4.205234527587891000000000
 
     /**
      * Running cosPade
-     * Mean absolute error:     0.0000165818
+     * Mean absolute error:     0.0000165813
      * Mean relative error:     0.0000220270
      * Maximum abs. error:      0.0000989437
-     * Maximum rel. error:      1.0000000000
+     * Maximum rel. error:      0.6110966206
      * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.145657062530518000000000
-     * Best output (lo):        0.9905579090 (0x3F7D9534)
-     * Correct output (lo):     0.9905579090 (0x3F7D9534)
-     * Worst input (hi):        4.712389469146728500000000
-     * Highest output rel:      0.9999998808
-     * Worst output (hi):       0.0000000000 (0x00000000)
-     * Correct output (hi):     0.0000004888 (0x35033379)
+     * Best input (lo):         6.145555973052978500000000
+     * Best output (lo):        0.9905440211 (0x3F7D944B)
+     * Correct output (lo):     0.9905440211 (0x3F7D944B)
+     * Worst input (hi):        4.712388515472412000000000
+     * Highest output rel:      0.6110966206
+     * Worst output (hi):      -0.0000007490 (0xB549102B)
+     * Correct output (hi):    -0.0000004649 (0xB4F9990F)
      * Worst input (abs):       6.283184528350830000000000
      * Worst output (abs):      0.9999010563 (0x3F7FF984)
      * Correct output (abs):    1.0000000000 (0x3F800000)
@@ -2488,11 +2488,11 @@ Worst input (abs):       4.205234527587891000000000
      * @return
      */
     public static float cosPade(float x) {
-        x = x * (TrigTools.PI_INVERSE * 2f) + 1f;
-        final int ceil = (int) Math.ceil(x) & -2;
+        x = x * (TrigTools.PI_INVERSE * 2f);
+        final int ceil = (int) Math.floor(x) | 1;
         x -= ceil;
         final float x2 = x * x;
-        return (x * (137.9199f + x2 * -35.84f)) / (87.802f + x2 * (13.288f + x2)) * (1 - (ceil & 2));
+        return (x * (137.9199f + x2 * -35.84f)) / (87.802f + x2 * (13.288f + x2)) * ((ceil & 2) - 1);
     }
 
     /**
