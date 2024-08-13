@@ -1633,20 +1633,22 @@ public class PrecisionTest {
     @Test
     public void testCos() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
+//        functions.put("cosNewTable", TrigTools::cos);
+//        functions.put("cosSmooth", TrigTools::cosSmooth);
+//        functions.put("cosSmoother", TrigTools::cosSmoother);
+
 //        functions.put("cosOldTable", OldTrigTools::cos);
 //        functions.put("cos037Table", TrigTools037::cos);
-        functions.put("cosNewTable", TrigTools::cos);
 //        functions.put("cosRound", PrecisionTest::cosRound);
 //        functions.put("cosFloaty", PrecisionTest::cosFloaty);
 //        functions.put("cosNoAbs", PrecisionTest::cosNoAbs);
 //        functions.put("cosGdx", MathUtils::cos);
-        functions.put("cosSmooth", TrigTools::cosSmooth);
-        functions.put("cosSmoother", TrigTools::cosSmoother);
-        functions.put("cosPade", PrecisionTest::cosPade);
 //        functions.put("cosSmoothly", PrecisionTest::cosSmoothly);
 
 //        functions.put("cosShifty", PrecisionTest::cosShifty);
 //        functions.put("cosShifty2", PrecisionTest::cosShifty2);
+
+        functions.put("cosPade", PrecisionTest::cosPade);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -2488,11 +2490,11 @@ Worst input (abs):       4.205234527587891000000000
      * @return
      */
     public static float cosPade(float x) {
-        x = x * (TrigTools.PI_INVERSE * 2f);
-        final int ceil = (int) Math.floor(x) | 1;
-        x -= ceil;
+        x = Math.abs(x * (TrigTools.PI_INVERSE * 2f));
+        final int floor = (int)x | 1;
+        x -= floor;
         final float x2 = x * x;
-        return (x * (137.9199f + x2 * -35.84f)) / (87.802f + x2 * (13.288f + x2)) * ((ceil & 2) - 1);
+        return (x * (137.9199f + x2 * -35.84f)) / (87.802f + x2 * (13.288f + x2)) * ((floor & 2) - 1);
     }
 
     /**
