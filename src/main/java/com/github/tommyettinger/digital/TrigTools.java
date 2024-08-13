@@ -858,7 +858,7 @@ public final class TrigTools {
      * A smooth cosine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
      * improved slightly by hand. This takes an input in radians, and takes and returns doubles. This has better
      * accuracy for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned
-     * value is slightly less than 1.0 (it is 0.9999010563). You may want to
+     * value is slightly less than 1.0 (it is about 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of cos(); in particular, only 16384
      * outputs are possible from {@link TrigTools#cos(float)}, and about half of those are duplicates, so if you need
      * more possible results in-between the roughly 8192 possible cos() returns, you can use this or
@@ -877,14 +877,16 @@ public final class TrigTools {
     }
 
     /**
-     * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
-     * This takes an input in degrees, and takes and returns floats.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth sine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in degrees, and takes and returns floats. This has better accuracy
+     * for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned value is
+     * slightly less than 1.0 (it is 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of sinDeg(); in particular, only 16384
      * outputs are possible from {@link TrigTools#sinDeg(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this or {@link #sinSmootherDeg(float)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this or
+     * {@link #sinSmootherDeg(float)}. Somewhat surprisingly, sinSmootherDeg is both more accurate and faster than this,
+     * but in case you don't want to use a lookup table, sinSmoothDeg is here for that purpose.
+     *
      * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
@@ -892,71 +894,74 @@ public final class TrigTools {
         degrees = degrees * (1f / 90f);
         final int ceil = (int) Math.ceil(degrees) & -2;
         degrees -= ceil;
-        final float x2 = degrees * degrees, x3 = degrees * x2;
-        return (((11 * degrees - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        final float x2 = degrees * degrees;
+        return (degrees * (137.9199f + x2 * -35.84f)) / (87.802f + x2 * (13.288f + x2)) * (1 - (ceil & 2));
     }
 
     /**
-     * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
-     * century. This takes an input in degrees, and takes and returns floats.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth cosine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in degrees, and takes and returns floats. This has better accuracy
+     * for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned value is
+     * slightly less than 1.0 (it is 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of cosDeg(); in particular, only 16384
      * outputs are possible from {@link TrigTools#cosDeg(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this or {@link #cosSmootherDeg(float)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this or
+     * {@link #cosSmootherDeg(float)}. Somewhat surprisingly, cosSmootherDeg is both more accurate and faster than this,
+     * but in case you don't want to use a lookup table, cosSmoothDeg is here for that purpose.
+     *
      * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static float cosSmoothDeg(float degrees) {
-        //
-        degrees = degrees * (1f / 90f) + 1f;
-        final int ceil = (int) Math.ceil(degrees) & -2;
-        degrees -= ceil;
-        final float x2 = degrees * degrees, x3 = degrees * x2;
-        return (((11 * degrees - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        degrees = Math.abs(degrees * (1f / 90f));
+        final int floor = (int)degrees | 1;
+        degrees -= floor;
+        final float x2 = degrees * degrees;
+        return (degrees * (137.9199f + x2 * -35.84f)) / (87.802f + x2 * (13.288f + x2)) * ((floor & 2) - 1);
     }
 
     /**
-     * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
-     * This takes an input in degrees, and takes and returns doubles.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth sine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in degrees, and takes and returns doubles. This has better accuracy
+     * for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned value is
+     * slightly less than 1.0 (it is about 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of sinDeg(); in particular, only 16384
-     * outputs are possible from {@link TrigTools#sinDeg(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this or {@link #sinSmootherDeg(double)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * outputs are possible from {@link TrigTools#sinDeg(double)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible sinDeg() returns, you can use this or
+     * {@link #sinSmootherDeg(double)}. Somewhat surprisingly, sinSmootherDeg is both more accurate and faster than this,
+     * but in case you don't want to use a lookup table, sinSmoothDeg is here for that purpose.
+     *
      * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static double sinSmoothDeg(double degrees) {
-        //
         degrees = degrees * (1.0 / 90.0);
-        final long ceil = (long) Math.ceil(degrees) & -2L;
+        final int ceil = (int) Math.ceil(degrees) & -2;
         degrees -= ceil;
-        final double x2 = degrees * degrees, x3 = degrees * x2;
-        return (((11 * degrees - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        final double x2 = degrees * degrees;
+        return (degrees * (137.9199 + x2 * -35.84)) / (87.802 + x2 * (13.288 + x2)) * (1 - (ceil & 2));
     }
 
     /**
-     * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
-     * century. This takes an input in degrees, and takes and returns doubles.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth cosine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in degrees, and takes and returns doubles. This has better accuracy
+     * for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned value is
+     * slightly less than 1.0 (it is about 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of cosDeg(); in particular, only 16384
-     * outputs are possible from {@link TrigTools#cosDeg(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this or {@link #cosSmootherDeg(double)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * outputs are possible from {@link TrigTools#cosDeg(double)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible cosDeg() returns, you can use this or
+     * {@link #cosSmootherDeg(double)}. Somewhat surprisingly, cosSmootherDeg is both more accurate and faster than this,
+     * but in case you don't want to use a lookup table, cosSmoothDeg is here for that purpose.
+     *
      * @param degrees an angle in degrees; most precise between -360 and 360
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static double cosSmoothDeg(double degrees) {
-        //
-        degrees = degrees * (1.0 / 90.0) + 1.0;
-        final long ceil = (long) Math.ceil(degrees) & -2L;
-        degrees -= ceil;
-        final double x2 = degrees * degrees, x3 = degrees * x2;
-        return (((11 * degrees - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        degrees = Math.abs(degrees * (1.0 / 90.0));
+        final int floor = (int)degrees | 1;
+        degrees -= floor;
+        final double x2 = degrees * degrees;
+        return (degrees * (137.9199 + x2 * -35.84)) / (87.802 + x2 * (13.288 + x2)) * (1 - (floor & 2));
     }
 
     /**
