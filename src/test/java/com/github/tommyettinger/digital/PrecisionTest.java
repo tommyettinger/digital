@@ -1633,16 +1633,17 @@ public class PrecisionTest {
     @Test
     public void testCos() {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("cosOldTable", OldTrigTools::cos);
-        functions.put("cos037Table", TrigTools037::cos);
+//        functions.put("cosOldTable", OldTrigTools::cos);
+//        functions.put("cos037Table", TrigTools037::cos);
         functions.put("cosNewTable", TrigTools::cos);
 //        functions.put("cosRound", PrecisionTest::cosRound);
 //        functions.put("cosFloaty", PrecisionTest::cosFloaty);
 //        functions.put("cosNoAbs", PrecisionTest::cosNoAbs);
-        functions.put("cosGdx", MathUtils::cos);
+//        functions.put("cosGdx", MathUtils::cos);
         functions.put("cosSmooth", TrigTools::cosSmooth);
         functions.put("cosSmoother", TrigTools::cosSmoother);
-        functions.put("cosSmoothly", PrecisionTest::cosSmoothly);
+        functions.put("cosPade", PrecisionTest::cosPade);
+//        functions.put("cosSmoothly", PrecisionTest::cosSmoothly);
 
 //        functions.put("cosShifty", PrecisionTest::cosShifty);
 //        functions.put("cosShifty2", PrecisionTest::cosShifty2);
@@ -2458,6 +2459,36 @@ Worst input (abs):       4.205234527587891000000000
      */
     public static float sinPade(float x) {
         x = x * (TrigTools.PI_INVERSE * 2f);
+        final int ceil = (int) Math.ceil(x) & -2;
+        x -= ceil;
+        final float x2 = x * x;
+        return (x * (137.9199f + x2 * -35.84f)) / (87.802f + x2 * (13.288f + x2)) * (1 - (ceil & 2));
+    }
+
+    /**
+     * Running cosPade
+     * Mean absolute error:     0.0000165818
+     * Mean relative error:     0.0000220270
+     * Maximum abs. error:      0.0000989437
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.145657062530518000000000
+     * Best output (lo):        0.9905579090 (0x3F7D9534)
+     * Correct output (lo):     0.9905579090 (0x3F7D9534)
+     * Worst input (hi):        4.712389469146728500000000
+     * Highest output rel:      0.9999998808
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000004888 (0x35033379)
+     * Worst input (abs):       6.283184528350830000000000
+     * Worst output (abs):      0.9999010563 (0x3F7FF984)
+     * Correct output (abs):    1.0000000000 (0x3F800000)
+     *
+     *
+     * @param x
+     * @return
+     */
+    public static float cosPade(float x) {
+        x = x * (TrigTools.PI_INVERSE * 2f) + 1f;
         final int ceil = (int) Math.ceil(x) & -2;
         x -= ceil;
         final float x2 = x * x;

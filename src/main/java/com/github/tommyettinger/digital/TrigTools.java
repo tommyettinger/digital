@@ -492,11 +492,6 @@ public final class TrigTools {
      * @return a float approximation of tan()
      */
     public static float tan(float radians) {
-        // on the -1.57 to 1.57 range:
-        //Mean absolute error:     0.0088905813
-        //Mean relative error:     0.0000341421
-        //Maximum abs. error:     17.9890136719
-        //Maximum rel. error:      0.0575221963
         radians *= TrigTools.PI_INVERSE;
         radians += 0.5f;
         radians -= (int)(radians + 16384.0) - 16384;
@@ -806,10 +801,6 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmooth(float radians) {
-        //Mean absolute error:     0.0000037685
-        //Mean relative error:     0.0000075369
-        //Maximum abs. error:      0.0003550053
-        //Maximum rel. error:      1.0000000000
         radians = radians * (TrigTools.PI_INVERSE * 2f);
         final int ceil = (int) Math.ceil(radians) & -2;
         radians -= ceil;
@@ -836,12 +827,6 @@ public final class TrigTools {
         final float x2 = radians * radians, x3 = radians * x2;
         return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
     }
-    //Absolute error:   0.00014983
-    //Relative error:   -0.00000004
-    //Maximum error:    0.00035512
-    //Worst input:      5.77527666
-    //Worst approx output: 0.87340844
-    //Correct output:      0.87376356
 
     /**
      * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
@@ -856,12 +841,6 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static double sinSmooth(double radians) {
-        //Absolute error:   0.00014983
-        //Relative error:   -0.00000000
-        //Maximum error:    0.00035471
-        //Worst input:      -5.21563292
-        //Worst approx output: 0.87566801
-        //Correct output:      0.87602272
         radians = radians * (TrigTools.PI_INVERSE_D * 2.0);
         final long ceil = (long) Math.ceil(radians) & -2L;
         radians -= ceil;
@@ -903,10 +882,6 @@ public final class TrigTools {
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoothDeg(float degrees) {
-        //Mean absolute error:     0.0001496345
-        //Mean relative error:     0.0002429262
-        //Maximum abs. error:      0.0003549457
-        //Maximum rel. error:      0.2965919971
         degrees = degrees * (1f / 90f);
         final int ceil = (int) Math.ceil(degrees) & -2;
         degrees -= ceil;
@@ -996,12 +971,6 @@ public final class TrigTools {
         final float x2 = turns * turns, x3 = turns * x2;
         return (((11 * turns - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
     }
-    //Absolute error:   0.00014983
-    //Relative error:   0.00024772
-    //Maximum error:    0.00035477
-    //Worst input:      -0.83077192
-    //Worst approx output: 0.87360507
-    //Correct output:      0.87395984
 
     /**
      * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
