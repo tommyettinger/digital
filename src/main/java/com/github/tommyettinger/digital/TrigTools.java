@@ -789,14 +789,16 @@ public final class TrigTools {
     }
 
     /**
-     * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
-     * This takes an input in radians, and takes and returns floats.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth sine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in radians, and takes and returns floats. This has better accuracy
+     * for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned value is
+     * slightly less than 1.0 (it is 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of sin(); in particular, only 16384
      * outputs are possible from {@link TrigTools#sin(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible sin() returns, you can use this or {@link #sinSmoother(float)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * more possible results in-between the roughly 8192 possible sin() returns, you can use this or
+     * {@link #sinSmoother(float)}. Somewhat surprisingly, sinSmoother is both more accurate and faster than this, but
+     * in case you don't want to use a lookup table, sinSmooth is here for that purpose.
+     *
      * @param radians an angle in radians; most precise between -PI2 and PI2
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
@@ -804,69 +806,74 @@ public final class TrigTools {
         radians = radians * (TrigTools.PI_INVERSE * 2f);
         final int ceil = (int) Math.ceil(radians) & -2;
         radians -= ceil;
-        final float x2 = radians * radians, x3 = radians * x2;
-        return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        final float x2 = radians * radians;
+        return (radians * (137.9199f + x2 * -35.84f)) / (87.802f + x2 * (13.288f + x2)) * (1 - (ceil & 2));
     }
 
     /**
-     * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
-     * century. This takes an input in radians, and takes and returns floats.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth cosine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in radians, and takes and returns floats. This has better accuracy
+     * for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned value is
+     * slightly less than 1.0 (it is 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of cos(); in particular, only 16384
      * outputs are possible from {@link TrigTools#cos(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible cos() returns, you can use this or {@link #cosSmoother(float)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * more possible results in-between the roughly 8192 possible cos() returns, you can use this or
+     * {@link #cosSmoother(float)}. Somewhat surprisingly, cosSmoother is both more accurate and faster than this, but
+     * in case you don't want to use a lookup table, cosSmooth is here for that purpose.
+     *
      * @param radians an angle in radians; most precise between -PI2 and PI2
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static float cosSmooth(float radians) {
-        radians = radians * (TrigTools.PI_INVERSE * 2f) + 1f;
-        final int ceil = (int) Math.ceil(radians) & -2;
-        radians -= ceil;
-        final float x2 = radians * radians, x3 = radians * x2;
-        return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        radians = Math.abs(radians * (TrigTools.PI_INVERSE * 2f));
+        final int floor = (int)radians | 1;
+        radians -= floor;
+        final float x2 = radians * radians;
+        return (radians * (137.9199f + x2 * -35.84f)) / (87.802f + x2 * (13.288f + x2)) * ((floor & 2) - 1);
     }
 
     /**
-     * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
-     * This takes an input in radians, and takes and returns doubles.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth sine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in radians, and takes and returns doubles. This has better
+     * accuracy for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned
+     * value is slightly less than 1.0 (it is about 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of sin(); in particular, only 16384
      * outputs are possible from {@link TrigTools#sin(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible sin() returns, you can use this or {@link #sinSmoother(double)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * more possible results in-between the roughly 8192 possible sin() returns, you can use this or
+     * {@link #sinSmoother(double)}. Somewhat surprisingly, sinSmoother is both more accurate and faster than this, but
+     * in case you don't want to use a lookup table, sinSmooth is here for that purpose.
+     *
      * @param radians an angle in radians; most precise between -PI2 and PI2
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static double sinSmooth(double radians) {
         radians = radians * (TrigTools.PI_INVERSE_D * 2.0);
-        final long ceil = (long) Math.ceil(radians) & -2L;
+        final int ceil = (int) Math.ceil(radians) & -2;
         radians -= ceil;
-        final double x2 = radians * radians, x3 = radians * x2;
-        return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        final double x2 = radians * radians;
+        return (radians * (137.9199 + x2 * -35.84)) / (87.802 + x2 * (13.288 + x2)) * (1 - (ceil & 2));
     }
 
     /**
-     * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
-     * century. This takes an input in radians, and takes and returns doubles.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth cosine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in radians, and takes and returns doubles. This has better
+     * accuracy for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned
+     * value is slightly less than 1.0 (it is 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of cos(); in particular, only 16384
      * outputs are possible from {@link TrigTools#cos(float)}, and about half of those are duplicates, so if you need
-     * more possible results in-between the roughly 8192 possible cos() returns, you can use this or {@link #cosSmoother(double)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * more possible results in-between the roughly 8192 possible cos() returns, you can use this or
+     * {@link #cosSmoother(double)}. Somewhat surprisingly, cosSmoother is both more accurate and faster than this, but
+     * in case you don't want to use a lookup table, cosSmooth is here for that purpose.
+     *
      * @param radians an angle in radians; most precise between -PI2 and PI2
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static double cosSmooth(double radians) {
-        //
-        radians = radians * (TrigTools.PI_INVERSE_D * 2.0) + 1.0;
-        final long ceil = (long) Math.ceil(radians) & -2L;
-        radians -= ceil;
-        final double x2 = radians * radians, x3 = radians * x2;
-        return (((11 * radians - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        radians = Math.abs(radians * (TrigTools.PI_INVERSE_D * 2.0));
+        final int floor = (int)radians | 1;
+        radians -= floor;
+        final double x2 = radians * radians;
+        return (radians * (137.9199 + x2 * -35.84)) / (87.802 + x2 * (13.288 + x2)) * ((floor & 2) - 1);
     }
 
     /**
