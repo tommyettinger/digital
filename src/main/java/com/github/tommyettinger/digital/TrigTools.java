@@ -965,86 +965,91 @@ public final class TrigTools {
     }
 
     /**
-     * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
-     * This takes an input in turns, and takes and returns floats.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth sine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in turns, and takes and returns floats. This has better accuracy
+     * for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned value is
+     * slightly less than 1.0 (it is 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of sinTurns(); in particular, only 16384
-     * outputs are possible from {@link TrigTools#sinTurns(float)}, and about half of those are duplicates, so if you
-     * need more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this or {@link #sinSmootherTurns(float)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * outputs are possible from {@link TrigTools#sinTurns(float)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this or
+     * {@link #sinSmootherTurns(float)}. Somewhat surprisingly, sinSmootherTurns is both more accurate and faster than this,
+     * but in case you don't want to use a lookup table, sinSmoothTurns is here for that purpose.
+     *
      * @param turns an angle in turns; most precise between -1 and 1
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static float sinSmoothTurns(float turns) {
-        turns = turns * 4f;
+        turns = turns * 4.0f;
         final int ceil = (int) Math.ceil(turns) & -2;
         turns -= ceil;
-        final float x2 = turns * turns, x3 = turns * x2;
-        return (((11 * turns - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        final float x2 = turns * turns;
+        return (turns * (137.9199f + x2 * -35.84f)) / (87.802f + x2 * (13.288f + x2)) * (1 - (ceil & 2));
     }
 
     /**
-     * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
-     * century. This takes an input in turns, and takes and returns floats.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth cosine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in turns, and takes and returns floats. This has better accuracy
+     * for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned value is
+     * slightly less than 1.0 (it is 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of cosTurns(); in particular, only 16384
-     * outputs are possible from {@link TrigTools#cosTurns(float)}, and about half of those are duplicates, so if you
-     * need more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this or {@link #cosSmootherTurns(float)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * outputs are possible from {@link TrigTools#cosTurns(float)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this or
+     * {@link #cosSmootherTurns(float)}. Somewhat surprisingly, cosSmootherTurns is both more accurate and faster than this,
+     * but in case you don't want to use a lookup table, cosSmoothTurns is here for that purpose.
+     *
      * @param turns an angle in turns; most precise between -1 and 1
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static float cosSmoothTurns(float turns) {
-        //
-        turns = turns * 4f + 1f;
-        final int ceil = (int) Math.ceil(turns) & -2;
-        turns -= ceil;
-        final float x2 = turns * turns, x3 = turns * x2;
-        return (((11 * turns - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        turns = Math.abs(turns * 4.0f);
+        final int floor = (int)turns | 1;
+        turns -= floor;
+        final float x2 = turns * turns;
+        return (turns * (137.9199f + x2 * -35.84f)) / (87.802f + x2 * (13.288f + x2)) * ((floor & 2) - 1);
     }
 
     /**
-     * A smooth sine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th century.
-     * This takes an input in turns, and takes and returns doubles.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth sine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in turns, and takes and returns doubles. This has better accuracy
+     * for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned value is
+     * slightly less than 1.0 (it is about 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of sinTurns(); in particular, only 16384
-     * outputs are possible from {@link TrigTools#sinTurns(float)}, and about half of those are duplicates, so if you
-     * need more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this or {@link #sinSmootherTurns(double)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * outputs are possible from {@link TrigTools#sinTurns(double)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible sinTurns() returns, you can use this or
+     * {@link #sinSmootherTurns(double)}. Somewhat surprisingly, sinSmootherTurns is both more accurate and faster than this,
+     * but in case you don't want to use a lookup table, sinSmoothTurns is here for that purpose.
+     *
      * @param turns an angle in turns; most precise between -1 and 1
      * @return the approximate sine of the given angle, from -1 to 1 inclusive
      */
     public static double sinSmoothTurns(double turns) {
-        //
         turns = turns * 4.0;
-        final long ceil = (long) Math.ceil(turns) & -2L;
+        final int ceil = (int) Math.ceil(turns) & -2;
         turns -= ceil;
-        final double x2 = turns * turns, x3 = turns * x2;
-        return (((11 * turns - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        final double x2 = turns * turns;
+        return (turns * (137.9199 + x2 * -35.84)) / (87.802 + x2 * (13.288 + x2)) * (1 - (ceil & 2));
     }
 
     /**
-     * A smooth cosine approximation (not table-based) built around Bhaskara I's sine approximation from the 7th
-     * century. This takes an input in turns, and takes and returns doubles.
-     * This was updated more recently than the 7th century, and has better precision than the original. You may want to
+     * A smooth cosine approximation (not table-based) built around a Padé approximant calculated by Wolfram Alpha and
+     * improved slightly by hand. This takes an input in turns, and takes and returns doubles. This has better accuracy
+     * for most inputs relative to earlier implementations (before version 0.5.0), but its maximum returned value is
+     * slightly less than 1.0 (it is about 0.9999010563). You may want to
      * use this if you notice statistical issues with the tabular approximation of cosTurns(); in particular, only 16384
-     * outputs are possible from {@link TrigTools#cosTurns(float)}, and about half of those are duplicates, so if you
-     * need more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this or {@link #cosSmootherTurns(double)}.
-     * <br>
-     * Credit to <a href="https://math.stackexchange.com/a/3886664">This Stack Exchange answer by WimC</a>.
+     * outputs are possible from {@link TrigTools#cosTurns(double)}, and about half of those are duplicates, so if you need
+     * more possible results in-between the roughly 8192 possible cosTurns() returns, you can use this or
+     * {@link #cosSmootherTurns(double)}. Somewhat surprisingly, cosSmootherTurns is both more accurate and faster than this,
+     * but in case you don't want to use a lookup table, cosSmoothTurns is here for that purpose.
+     *
      * @param turns an angle in turns; most precise between -1 and 1
      * @return the approximate cosine of the given angle, from -1 to 1 inclusive
      */
     public static double cosSmoothTurns(double turns) {
-        //
-        turns = turns * 4.0 + 1.0;
-        final long ceil = (long) Math.ceil(turns) & -2L;
-        turns -= ceil;
-        final double x2 = turns * turns, x3 = turns * x2;
-        return (((11 * turns - 3 * x3) / (7 + x2)) * (1 - (ceil & 2)));
+        turns = Math.abs(turns * 4.0);
+        final int floor = (int)turns | 1;
+        turns -= floor;
+        final double x2 = turns * turns;
+        return (turns * (137.9199 + x2 * -35.84)) / (87.802 + x2 * (13.288 + x2)) * (1 - (floor & 2));
     }
 
     /**
