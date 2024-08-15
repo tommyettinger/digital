@@ -571,7 +571,7 @@ final class RyuFloat {
     if (exp < 0) {
       // Decimal dot is before any of the digits.
       builder.append("0.");
-      int decimalPlaces = precision;
+      int decimalPlaces = precision < 0 ? Float.MAX_EXPONENT : precision;
       for (int i = -1; i > exp && decimalPlaces != 0; i--, decimalPlaces--) {
         builder.append('0');
       }
@@ -595,11 +595,12 @@ final class RyuFloat {
     } else {
       // Decimal dot is somewhere between the digits.
       int current = builder.length();
+      int postDot = precision < 0 ? Float.MAX_EXPONENT : exp + precision;
       for (int i = 0; i < olength; i++) {
         if (olength - i - 1 == exp) {
           builder.insert(current, '.');
         }
-        if (olength - i - 1 <= exp + precision) {
+        if (olength - i - 1 <= postDot) {
           builder.insert(current, (char) ('0' + output % 10));
         } else removed++;
         output /= 10;

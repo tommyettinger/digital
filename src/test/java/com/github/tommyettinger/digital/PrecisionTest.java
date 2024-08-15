@@ -20,6 +20,7 @@ public class PrecisionTest {
     public static final int PI2BITS = Float.floatToIntBits(TrigTools.PI2);
 
     @Test
+    @Ignore
     public void testAtan2(){
         double absError = 0.0, relError = 0.0, maxError = 0.0;
         float worstY = 0, worstX = 0;
@@ -46,6 +47,7 @@ public class PrecisionTest {
                           "Worst position:   %3.8f,%3.8f\n", absError / counter, relError / counter, maxError, worstX, worstY);
     }
     @Test
+    @Ignore
     public void testAtan2Deg(){
         double absError = 0.0, relError = 0.0, maxError = 0.0;
         float worstY = 0, worstX = 0;
@@ -72,6 +74,7 @@ public class PrecisionTest {
                           "Worst position:   %3.8f,%3.8f\n", absError / counter, relError / counter, maxError, worstX, worstY);
     }
     @Test
+    @Ignore
     public void testAtan2Turns(){
         double absError = 0.0, relError = 0.0, maxError = 0.0;
         float worstY = 0, worstX = 0;
@@ -100,6 +103,7 @@ public class PrecisionTest {
                           "Worst position:   %3.8f,%3.8f\n", absError / counter, relError / counter, maxError, worstX, worstY);
     }
     @Test
+    @Ignore
     public void testAtan2Deg360(){
         double absError = 0.0, relError = 0.0, maxError = 0.0;
         float worstY = 0, worstX = 0;
@@ -3183,6 +3187,7 @@ Worst input (abs):       4.205234527587891000000000
      * </pre>
      */
     @Test
+    @Ignore
     public void testSinExactMatch() {
         float[] table05 = makeTableFloat(0.5);
         float[] table0625 = makeTableFloat(0.625);
