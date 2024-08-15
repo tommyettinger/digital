@@ -37,7 +37,11 @@ places and is supposed to be fast, so having an alternative to
 is more than welcome. There's also `countTrailingZeros()` for
 int and long arguments, which compiles into a single call to
 `Integer.numberOfTrailingZeros()` (or using `Long`) on most
-platforms, or a JS two-liner on GWT that uses `Math.clz32()`. 
+platforms, or a JS two-liner on GWT that uses `Math.clz32()`.
+Also purely for GWT support, `lowestOneBit()` works around a
+bug that was present in GWT 2.8.2 and may still be present,
+where its built-in `Long.lowestOneBit()` method could return
+very wrong results for larger inputs.
 
 Base is much larger, and allows converting any Java primitive
 number type to a specific base/radix/number-system. Here,
@@ -95,7 +99,11 @@ useful for a variety of cases. For example, if you want to
 store a hue (which is essentially an angle) into a limited
 format such as one channel of a color to be sent to the GPU,
 storing the hue as an angle in turns keeps it in the 0.0
-to 1.0 range, but using radians or degrees would not.
+to 1.0 range, but using radians or degrees would not. There's
+also a few extra methods, such as `atan2Deg360()`, which acts
+like the degree version of atan2, but always returns an angle
+between 0 (inclusive) and 360 (exclusive), since negative
+angles are less intuitive and sometimes not supported.
 
 MathTools offers a wild grab bag of math functions and
 constants, from simple lerp, floor, ceil, and clamp methods to
@@ -229,6 +237,26 @@ parameters as easy as assigning a name to the generated function.
 Using that page of graphs is a good idea when you're deciding which
 of the many Interpolator varieties to use.
 
+RoughMath has a variety of "rough" and "rougher" approximations to a
+variety of functions. These tend to be faster but less precise.
+The logistic functions `logisticRough()` and `logisticRougher()` are
+actually not that imprecise for small-ish inputs, and are a handy
+tool that is only available in RoughMath. There's also hyperbolic
+trigonometric functions, which aren't anywhere else either, plus
+`expRough()` and a variant `pow2Rough()`. MathTools also has
+approximations to `Math.exp()`, including one that has a limited
+domain (it returns 0 outside that domain, instead of returning
+gradually smaller numbers; this can sometimes be useful).
+
+Stringf is a somewhat experimental class that exists mostly to be a
+partial polyfill for the missing `String.format()` method on GWT and
+on some versions of TeaVM. It doesn't have anywhere near the full
+functionality of `String.format()`, or even the functionality of
+[Formic](https://github.com/tommyettinger/formic)'s `Stringf.format()`,
+but unlike Formic it should work on TeaVM. It does have enough support
+for the simpler usages of `%d` and `%f`, as well as common conveniences
+such as `%08X` to print a 32-bit int as 8 hex digits, and always 8.
+
 ## How do I get it?
 
 This library needs Java language level 8, but does not rely on any
@@ -243,9 +271,11 @@ from Java 8.
 
 In a libGDX project, **you must make sure** the sourceCompatibility is
 8 or higher in your core module and any other modules that use digital.
-This is currently not the default for gdx-setup projects, but is the
-default for [gdx-liftoff](https://github.com/tommyettinger/gdx-liftoff)
-projects. Liftoff also lets you just check a box to depend on digital.
+This is currently not the default for gdx-setup projects (which is no
+longer the official setup tool), but is the default for
+[gdx-liftoff](https://github.com/libgdx/gdx-liftoff) projects (which is
+the offical setup tool). Liftoff also lets you just check a box to
+depend on digital.
 
 To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
@@ -269,8 +299,8 @@ file. For digital 0.1.7 and later, use:
 ```
 
 If you are using 0.1.6 or older, **there are probably some GWT
-compatibility issues**, but you can try using this, or preferably
-updating to 0.1.7 or later:
+compatibility issues**, though you can try using this. You should
+**update to 0.1.7 or later instead of using this**:
 
 ```xml
 <inherits name="digital" />
@@ -289,6 +319,7 @@ This also has instructions for Maven and other build tools.
 [Uncommon Maths](https://maths.uncommons.org/),
 [wyhash](https://github.com/wangyi-fudan/wyhash),
 [Apache Commons Lang](https://github.com/apache/commons-lang),
+[fastapprox](https://code.google.com/archive/p/fastapprox/),
 and [Ryu](https://github.com/ulfjack/ryu). More code
 is not from a particular repository (for example, some is from
 Wikipedia); see each file for specific author credits. The Ryu

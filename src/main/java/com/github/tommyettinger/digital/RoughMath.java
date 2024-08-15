@@ -244,13 +244,15 @@ public final class RoughMath {
     public static final float PI2_INVERSE = 0.15915494309189534f;
 
     /**
-     * Approximates {@code Math.sin(x)} in the domain between {@code -PI} and {@code PI}, somewhat roughly.
+     * Approximates {@code Math.sin(x)} in the domain between {@code -PI} and {@code PI}, very roughly.
      * This can produce results that are outside the correct range of sine.
      *
      * @see TrigTools#sin(float) TrigTools has several sine approximations, and all are more precise than this.
      * @param x the argument to sin; must be between {@code -PI} and {@code PI}
      * @return an approximation of the sine of x; between -1 and 1 inclusive (this can go out of range)
+     * @deprecated Use {@link TrigTools#sin(float)} instead, for any input range.
      */
+    @Deprecated
     public static float sinRoughLimited (float x)
     {
         final float q = 0.78444488374548933f;
@@ -272,13 +274,15 @@ public final class RoughMath {
     }
 
     /**
-     * Approximates {@code Math.sin(x)} over its full domain, somewhat roughly.
+     * Approximates {@code Math.sin(x)} over its full domain, very roughly.
      * This can produce results that are outside the correct range of sine.
      *
      * @see TrigTools#sin(float) TrigTools has several sine approximations, and all are more precise than this.
      * @param x the argument to sin; can be any float
      * @return an approximation of the sine of x; between -1 and 1 inclusive (this can go out of range)
+     * @deprecated Use {@link TrigTools#sin(float)} if you need very fast sine approximation.
      */
+    @Deprecated
     public static float sinRough (float x)
     {
         final float half = (x < 0) ? -0.5f : 0.5f;
