@@ -19,6 +19,12 @@ public class PrecisionTest {
     public static final int PI_BITS = Float.floatToIntBits(TrigTools.PI);
     public static final int PI2BITS = Float.floatToIntBits(TrigTools.PI2);
 
+    /**
+     * Absolute error:   0.00000105
+     * Relative error:   0.00000961
+     * Maximum error:    0.00000180
+     * Worst position:   -0.21211123,0.42976010
+     */
     @Test
     @Ignore
     public void testAtan2(){
@@ -46,6 +52,78 @@ public class PrecisionTest {
                           "Maximum error:    %3.8f\n" +
                           "Worst position:   %3.8f,%3.8f\n", absError / counter, relError / counter, maxError, worstX, worstY);
     }
+
+    /**
+     * TrigTools.atan2 :
+     * Absolute error:   0.00000105
+     * Relative error:   0.00000961
+     * Maximum error :   0.00000180
+     * Worst result  :   2.02927470
+     * True result   :   2.02927651
+     * Worst position:   -0.21211123,0.42976010
+     *
+     * PrecisionTest.atan2Gilcher :
+     * Absolute error:   0.00002242
+     * Relative error:   0.00012146
+     * Maximum error :   0.78539825
+     * Worst result  :   -3.14159274
+     * True result   :   -2.35619449
+     * Worst position:   -0.00006282,-0.00006282
+     */
+    @Test
+    public void testAtan2Comparison() {
+        LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("TrigTools.atan2", TrigTools::atan2);
+        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
+        for (Map.Entry<String, FloatBinaryOperator> entry : functions.entrySet()) {
+            FloatBinaryOperator func = entry.getValue();
+            double absError = 0.0, relError = 0.0, maxError = 0.0, shouldBe = 0.0, worstResult = 0.0;
+            float worstY = 0, worstX = 0;
+            long counter = 0L;
+            for (int i = Float.floatToIntBits(1f), n = Float.floatToIntBits(2f); i < n; i += 511) {
+                float x = Float.intBitsToFloat(i) - 1.5f;
+                for (int j = Float.floatToIntBits(1f); j < n; j += 511) {
+                    float y = Float.intBitsToFloat(j) - 1.5f;
+                    double tru = Math.atan2(y, x),
+                            result = func.applyAsFloat(y, x),
+                            err = result - tru,
+                            ae = abs(err);
+                    relError += Math.abs(ae / Math.nextAfter(tru, Math.copySign(Float.POSITIVE_INFINITY, tru)));
+                    absError += ae;
+                    if (maxError != (maxError = Math.max(maxError, ae))) {
+                        worstX = x;
+                        worstY = y;
+                        worstResult = result;
+                        shouldBe = tru;
+                    }
+                    counter++;
+                }
+            }
+            System.out.printf("\n%s :\n" +
+                    "Absolute error:   %3.8f\n" +
+                    "Relative error:   %3.8f\n" +
+                    "Maximum error :   %3.8f\n" +
+                    "Worst result  :   %3.8f\n" +
+                    "True result   :   %3.8f\n" +
+                    "Worst position:   %3.8f,%3.8f\n", entry.getKey(), absError / counter, relError / counter, maxError, worstResult, shouldBe, worstX, worstY);
+        }
+    }
+
+    /**
+     * "newfastatan2" by P. Gilcher, <a href="https://www.shadertoy.com/view/flSXRV">see ShaderToy</a>.
+     * MIT licensed.
+     * @param y
+     * @param x
+     * @return
+     */
+    public static float atan2Gilcher(float y, float x) {
+        if(MathTools.isZero(y, 6.3E-5f)) return Math.copySign(Math.abs(x) < Math.abs(y) ? HALF_PI : Math.copySign(HALF_PI, x) - HALF_PI, y);
+        double cat = x / Math.sqrt(x * x + y * y);
+        float t = (float) acos(cat);
+        return Math.copySign(t, y);
+
+    }
+
     @Test
     @Ignore
     public void testAtan2Deg(){
@@ -265,6 +343,10 @@ public class PrecisionTest {
     @FunctionalInterface
     public interface FloatUnaryOperator {
         float applyAsFloat(float x);
+    }
+    @FunctionalInterface
+    public interface FloatBinaryOperator {
+        float applyAsFloat(float a, float b);
     }
 
     /**

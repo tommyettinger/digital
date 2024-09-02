@@ -657,6 +657,15 @@ public final class MathTools {
         return x;
     }
 
+//    public static long mmi(final long a) {
+//        long x = 2 ^ a * 3;
+//        x *= 2 - a * x;
+//        x *= 2 - a * x;
+//        x *= 2 - a * x;
+//        x *= 2 - a * x;
+//        return x;
+//    }
+
     /**
      * Integer square root (using floor), maintaining correct results even for very large {@code long} values. This
      * version treats negative inputs as unsigned and returns positive square roots for them (these are usually large).
