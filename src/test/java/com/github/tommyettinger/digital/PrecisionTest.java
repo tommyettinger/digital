@@ -63,20 +63,62 @@ public class PrecisionTest {
      * Worst position:   -0.21211123,0.42976010
      *
      * PrecisionTest.atan2Gilcher :
-     * Absolute error:   0.00002242
-     * Relative error:   0.00012146
-     * Maximum error :   0.78539825
-     * Worst result  :   -3.14159274
+     * Absolute error:   0.00000003
+     * Relative error:   0.00000003
+     * Maximum error :   0.00006103
+     * Worst result  :   -2.35613346
      * True result   :   -2.35619449
-     * Worst position:   -0.00006282,-0.00006282
+     * Worst position:   -0.00000191,-0.00000191
+     *
+     * PrecisionTest.atan2Gilcher2 :
+     * Absolute error:   0.05835590
+     * Relative error:   2.18065146
+     * Maximum error :   0.37079254
+     * Worst result  :   -2.77079630
+     * True result   :   -3.14158884
+     * Worst position:   -0.50000000,-0.00000191
+     *
+     * PrecisionTest.atan2Gilcher3 :
+     * Absolute error:   0.03017152
+     * Relative error:   1.54958105
+     * Maximum error :   0.26776221
+     * Worst result  :   -0.26776603
+     * True result   :   -0.00000381
+     * Worst position:   0.49999619,-0.00000191
+     *
+     * PrecisionTest.atan2GilcherHand :
+     * Absolute error:   0.00002225
+     * Relative error:   0.00001983
+     * Maximum error :   0.00007367
+     * Worst result  :   -2.35612082
+     * True result   :   -2.35619449
+     * Worst position:   -0.00000191,-0.00000191
+     *
+     * PrecisionTest.atan2GilcherRuud :
+     * Absolute error:   0.00923482
+     * Relative error:   0.01912464
+     * Maximum error :   0.01676460
+     * Worst result  :   3.12210035
+     * True result   :   3.10533576
+     * Worst position:   -0.35093868,0.01272953
+     *
+     * PrecisionTest.atan2GilcherTT :
+     * Absolute error:   0.00002225
+     * Relative error:   0.00001983
+     * Maximum error :   0.00007367
+     * Worst result  :   -2.35612082
+     * True result   :   -2.35619449
+     * Worst position:   -0.00000191,-0.00000191
      */
     @Test
     public void testAtan2Comparison() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2", TrigTools::atan2);
-//        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
+        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
         functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
         functions.put("PrecisionTest.atan2Gilcher3", PrecisionTest::atan2Gilcher3);
+        functions.put("PrecisionTest.atan2GilcherHand", PrecisionTest::atan2GilcherHand);
+        functions.put("PrecisionTest.atan2GilcherRuud", PrecisionTest::atan2GilcherRuud);
         functions.put("PrecisionTest.atan2GilcherTT", PrecisionTest::atan2GilcherTT);
         for (Map.Entry<String, FloatBinaryOperator> entry : functions.entrySet()) {
             FloatBinaryOperator func = entry.getValue();
@@ -128,6 +170,36 @@ public class PrecisionTest {
         //(34 x^3 - 27 π x^2 - 120 x + 60 π)/(120 - 54 x^2)
         //(60 Pi - 120 x - 27 Pi x^2 + 34 x^3)/(120 - 54 x^2)
     }
+    public static double acosHand(double a) {
+        double x = abs(a);
+        double ret = -0.0187293;
+        ret = ret * x;
+        ret = ret + 0.0742610;
+        ret = ret * x;
+        ret = ret - 0.2121144;
+        ret = ret * x;
+        ret = ret + 1.5707288;
+        ret = ret * Math.sqrt(1.0-x);
+        return (a >= 0) ? ret : 3.14159265358979 - ret;
+    }
+
+    /**
+     * <a href="https://stackoverflow.com/a/36387954">From here</a>.
+     * @param x
+     * @return
+     */
+    public static double acosRuud(double x) {
+        final double a = -0.939115566365855;
+        final double b =  0.9217841528914573;
+        final double c = -1.2845906244690837;
+        final double d =  0.295624144969963174;
+        final double x2 = x * x;
+        final double x3 = x * x2;
+        final double x4 = x2 * x2;
+        return HALF_PI_D + (a * x + b * x3) / (1.0 + c * x2 + d * x4);
+                //acos(x) ≈ π/2 + (ax + bx³) / (1 + cx² + dx⁴)
+    }
+
     /**
      * "newfastatan2" by P. Gilcher, <a href="https://www.shadertoy.com/view/flSXRV">see ShaderToy</a>.
      * MIT licensed.
@@ -136,28 +208,40 @@ public class PrecisionTest {
      * @return
      */
     public static float atan2Gilcher(double y, double x) {
-        double dot = x * x + y * y + 1E-25;
+        double dot = x * x + y * y + 0x1p-50;
 //        if(MathTools.isZero(dot, 1E-10)) return (float)Math.copySign(Math.abs(x) < Math.abs(y) ? HALF_PI_D : Math.copySign(HALF_PI_D, x) - HALF_PI_D, y);//, 6.3E-5
         double cat = x / Math.sqrt(dot);
         double t = Math.acos(cat);
         return (float) Math.copySign(t, y);
     }
     public static float atan2GilcherTT(double y, double x) {
-        double dot = x * x + y * y + 1E-25;
+        double dot = x * x + y * y + 0x1p-50;
         double cat = x / Math.sqrt(dot);
         double t = acosTT(cat);
         return (float) Math.copySign(t, y);
     }
     public static float atan2Gilcher2(double y, double x) {
-        double dot = x * x + y * y + 1E-25;
+        double dot = x * x + y * y + 0x1p-50;
         double cat = x / Math.sqrt(dot);
         double t = acos2(cat);
         return (float) Math.copySign(t, y);
     }
     public static float atan2Gilcher3(double y, double x) {
-        double dot = x * x + y * y + 1E-25;
+        double dot = x * x + y * y + 0x1p-50;
         double cat = x / Math.sqrt(dot);
         double t = acos3(cat);
+        return (float) Math.copySign(t, y);
+    }
+    public static float atan2GilcherHand(double y, double x) {
+        double dot = x * x + y * y + 0x1p-50;
+        double cat = x / Math.sqrt(dot);
+        double t = acosHand(cat);
+        return (float) Math.copySign(t, y);
+    }
+    public static float atan2GilcherRuud(double y, double x) {
+        double dot = x * x + y * y + 0x1p-50;
+        double cat = x / Math.sqrt(dot);
+        double t = acosRuud(cat);
         return (float) Math.copySign(t, y);
     }
 
