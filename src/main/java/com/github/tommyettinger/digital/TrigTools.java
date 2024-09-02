@@ -1788,13 +1788,11 @@ public final class TrigTools {
      * @return between {@code 0} and {@code PI} when a is in the defined range
      */
     public static float acos(float a) {
-        float a2 = a * a; // a squared
-        float a3 = a * a2; // a cubed
         if (a >= 0f) {
-            return (float) Math.sqrt(1f - a) * (1.5707288f - 0.2121144f * a + 0.0742610f * a2 - 0.0187293f * a3);
+            return (float) (Math.sqrt(1.0 - a) * (1.5707288 + a * (-0.2121144 + a * (0.0742610 + a * -0.0187293))));
         }
-        return PI
-                - (float) Math.sqrt(1f + a) * (1.5707288f + 0.2121144f * a + 0.0742610f * a2 + 0.0187293f * a3);
+        return (float) (Math.PI
+                - Math.sqrt(1.0 + a) * (1.5707288 + a * (0.2121144 + a * (0.0742610 + a * 0.0187293))));
     }
 
     /**
@@ -1805,13 +1803,11 @@ public final class TrigTools {
      * @return between {@code 0} and {@code 180} when a is in the defined range
      */
     public static float acosDeg(float a) {
-        float a2 = a * a; // a squared
-        float a3 = a * a2; // a cubed
         if (a >= 0f) {
-            return (float) Math.sqrt(1f - a) * (89.99613099964837f - 12.153259533621753f * a + 4.254842010910525f * a2 - 1.0731098035209208f * a3);
+            return (float) (Math.sqrt(1.0 - a) * (89.99613099964837 + a * (-12.153259533621753 + a * (4.254842010910525 + a * -1.0731098035209208))));
         }
-        return 180f
-                - (float) Math.sqrt(1f + a) * (89.99613099964837f + 12.153259533621753f * a + 4.254842010910525f * a2 + 1.0731098035209208f * a3);
+        return (float) (180.0
+                - Math.sqrt(1.0 + a) * (89.99613099964837 + a * (12.153259533621753 + a * (4.254842010910525 + a * 1.0731098035209208))));
     }
 
     /**
@@ -1822,12 +1818,10 @@ public final class TrigTools {
      * @return between {@code 0} and {@code 0.5} when a is in the defined range
      */
     public static float acosTurns(float a) {
-        float a2 = a * a; // a squared
-        float a3 = a * a2; // a cubed
         if (a >= 0f) {
-            return (float) (Math.sqrt(1.0 - a) * (0.24998925277680104 - 0.033759055260971525 * a + 0.011819005228947238 * a2 - 0.0029808606756510357 * a3));
+            return (float)(Math.sqrt(1.0 - a) * (0.24998925277680104 + a * (-0.033759055260971525 + a * (0.011819005228947238 + a * -0.0029808606756510357))));
         }
-        return (float) (0.5 - Math.sqrt(1.0 + a) * (0.24998925277680104 + 0.033759055260971525 * a + 0.011819005228947238 * a2 + 0.0029808606756510357 * a3));
+        return (float)(0.5 - Math.sqrt(1.0 + a) * (0.24998925277680104 + a * (0.033759055260971525 + a * (0.011819005228947238 + a * 0.0029808606756510357))));
     }
 
     /**
@@ -1891,13 +1885,11 @@ public final class TrigTools {
      * @return between {@code 0} and {@code PI} when a is in the defined range
      */
     public static double acos(double a) {
-        double a2 = a * a; // a squared
-        double a3 = a * a2; // a cubed
         if (a >= 0.0) {
-            return Math.sqrt(1.0 - a) * (1.5707288 - 0.2121144 * a + 0.0742610 * a2 - 0.0187293 * a3);
+            return Math.sqrt(1.0 - a) * (1.5707288 + a * (-0.2121144 + a * (0.0742610 + a * -0.0187293)));
         }
         return Math.PI
-                - Math.sqrt(1.0 + a) * (1.5707288 + 0.2121144 * a + 0.0742610 * a2 + 0.0187293 * a3);
+                - Math.sqrt(1.0 + a) * (1.5707288 + a * (0.2121144 + a * (0.0742610 + a * 0.0187293)));
     }
 
     /**
@@ -1908,13 +1900,11 @@ public final class TrigTools {
      * @return between {@code 0} and {@code 180} when a is in the defined range
      */
     public static double acosDeg(double a) {
-        double a2 = a * a; // a squared
-        double a3 = a * a2; // a cubed
         if (a >= 0.0) {
-            return Math.sqrt(1.0 - a) * (89.99613099964837 - 12.153259533621753 * a + 4.254842010910525 * a2 - 1.0731098035209208 * a3);
+            return Math.sqrt(1.0 - a) * (89.99613099964837 + a * (-12.153259533621753 + a * (4.254842010910525 + a * -1.0731098035209208)));
         }
         return 180.0
-                - Math.sqrt(1.0 + a) * (89.99613099964837 + 12.153259533621753 * a + 4.254842010910525 * a2 + 1.0731098035209208 * a3);
+                - Math.sqrt(1.0 + a) * (89.99613099964837 + a * (12.153259533621753 + a * (4.254842010910525 + a * 1.0731098035209208)));
     }
 
     /**
@@ -1925,12 +1915,10 @@ public final class TrigTools {
      * @return between {@code 0} and {@code 0.5} when a is in the defined range
      */
     public static double acosTurns(double a) {
-        double a2 = a * a; // a squared
-        double a3 = a * a2; // a cubed
         if (a >= 0.0) {
-            return Math.sqrt(1.0 - a) * (0.24998925277680104 - 0.033759055260971525 * a + 0.011819005228947238 * a2 - 0.0029808606756510357 * a3);
+            return Math.sqrt(1.0 - a) * (0.24998925277680104 + a * (-0.033759055260971525 + a * (0.011819005228947238 + a * -0.0029808606756510357)));
         }
-        return 0.5 - Math.sqrt(1.0 + a) * (0.24998925277680104 + 0.033759055260971525 * a + 0.011819005228947238 * a2 + 0.0029808606756510357 * a3);
+        return 0.5 - Math.sqrt(1.0 + a) * (0.24998925277680104 + a * (0.033759055260971525 + a * (0.011819005228947238 + a * 0.0029808606756510357)));
     }
 
     /**
