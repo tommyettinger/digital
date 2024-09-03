@@ -30,6 +30,16 @@ public class PrecisionTest {
      * Worst result  :   2.02927470
      * True result   :   2.02927651
      * Worst position:   -0.21211123,0.42976010
+     * Took 13.4951845 s
+     *
+     * Math.atan2 :
+     * Absolute error:   0.00000003
+     * Relative error:   0.00000002
+     * Maximum error :   0.00000012
+     * Worst result  :   2.21243620
+     * True result   :   2.21243608
+     * Worst position:   -0.14016950,0.18761921
+     * Took 26.3899404 s
      *
      * PrecisionTest.atan2Gilcher :
      * Absolute error:   0.00000003
@@ -38,6 +48,7 @@ public class PrecisionTest {
      * Worst result  :   -2.35613346
      * True result   :   -2.35619449
      * Worst position:   -0.00000191,-0.00000191
+     * Took 78.41480870000001 s
      *
      * PrecisionTest.atan2Gilcher2 :
      * Absolute error:   0.05835590
@@ -46,6 +57,7 @@ public class PrecisionTest {
      * Worst result  :   -2.77079630
      * True result   :   -3.14158884
      * Worst position:   -0.50000000,-0.00000191
+     * Took 13.8825128 s
      *
      * PrecisionTest.atan2Gilcher3 :
      * Absolute error:   0.03017152
@@ -54,6 +66,7 @@ public class PrecisionTest {
      * Worst result  :   -0.26776603
      * True result   :   -0.00000381
      * Worst position:   0.49999619,-0.00000191
+     * Took 13.900070900000001 s
      *
      * PrecisionTest.atan2GilcherHand :
      * Absolute error:   0.00002225
@@ -62,6 +75,7 @@ public class PrecisionTest {
      * Worst result  :   -2.35612082
      * True result   :   -2.35619449
      * Worst position:   -0.00000191,-0.00000191
+     * Took 14.033064000000001 s
      *
      * PrecisionTest.atan2GilcherRuud :
      * Absolute error:   0.00923482
@@ -70,6 +84,7 @@ public class PrecisionTest {
      * Worst result  :   3.12210035
      * True result   :   3.10533576
      * Worst position:   -0.35093868,0.01272953
+     * Took 13.922539 s
      *
      * PrecisionTest.atan2GilcherTT :
      * Absolute error:   0.00002225
@@ -78,22 +93,35 @@ public class PrecisionTest {
      * Worst result  :   -2.35612082
      * True result   :   -2.35619449
      * Worst position:   -0.00000191,-0.00000191
+     * Took 13.956294000000002 s
+     *
+     * PrecisionTest.atan2GilcherA :
+     * Absolute error:   0.04317880
+     * Relative error:   0.06340295
+     * Maximum error :   0.07168073
+     * Worst result  :   2.76060724
+     * True result   :   2.83228798
+     * Worst position:   -0.00018466,0.00005901
+     * Took 13.9918274 s
      */
     @Test
     public void testAtan2() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2", TrigTools::atan2);
+        functions.put("Math.atan2", (y, x) -> (float) Math.atan2(y, x));
         functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
         functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
         functions.put("PrecisionTest.atan2Gilcher3", PrecisionTest::atan2Gilcher3);
         functions.put("PrecisionTest.atan2GilcherHand", PrecisionTest::atan2GilcherHand);
         functions.put("PrecisionTest.atan2GilcherRuud", PrecisionTest::atan2GilcherRuud);
         functions.put("PrecisionTest.atan2GilcherTT", PrecisionTest::atan2GilcherTT);
+        functions.put("PrecisionTest.atan2GilcherA", PrecisionTest::atan2GilcherA);
         for (Map.Entry<String, FloatBinaryOperator> entry : functions.entrySet()) {
             FloatBinaryOperator func = entry.getValue();
             double absError = 0.0, relError = 0.0, maxError = 0.0, shouldBe = 0.0, worstResult = 0.0;
             float worstY = 0, worstX = 0;
             long counter = 0L;
+            long time = System.nanoTime();
             for (int i = Float.floatToIntBits(1f), n = Float.floatToIntBits(2f); i < n; i += 511) {
                 float x = Float.intBitsToFloat(i) - 1.5f;
                 for (int j = Float.floatToIntBits(1f); j < n; j += 511) {
@@ -120,6 +148,7 @@ public class PrecisionTest {
                     "Worst result  :   %3.8f\n" +
                     "True result   :   %3.8f\n" +
                     "Worst position:   %3.8f,%3.8f\n", entry.getKey(), absError / counter, relError / counter, maxError, worstResult, shouldBe, worstX, worstY);
+            System.out.println("Took " + (System.nanoTime() - time) * 1E-9 + " s");
         }
     }
     public static double acosTT(double a) {
@@ -169,6 +198,13 @@ public class PrecisionTest {
                 //acos(x) ≈ π/2 + (ax + bx³) / (1 + cx² + dx⁴)
     }
 
+    public static float acosFastGilcher(float x) {
+        float o = -0.156583f * Math.abs(x) + HALF_PI;
+        o *= Math.sqrt(1f - abs(x));
+        return x > 0.0 ? o : PI - o;
+//        return Math.copySign(o - HALF_PI, x) + HALF_PI;
+    }
+
     /**
      * "newfastatan2" by P. Gilcher, <a href="https://www.shadertoy.com/view/flSXRV">see ShaderToy</a>.
      * MIT licensed.
@@ -181,6 +217,19 @@ public class PrecisionTest {
 //        if(MathTools.isZero(dot, 1E-10)) return (float)Math.copySign(Math.abs(x) < Math.abs(y) ? HALF_PI_D : Math.copySign(HALF_PI_D, x) - HALF_PI_D, y);//, 6.3E-5
         double cat = x / Math.sqrt(dot);
         double t = Math.acos(cat);
+        return (float) Math.copySign(t, y);
+    }
+
+    /**
+     * "newfastatan2" by P. Gilcher, <a href="https://www.shadertoy.com/view/flSXRV">see ShaderToy</a>.
+     * MIT licensed.
+     * @param y
+     * @param x
+     * @return
+     */
+    public static float atan2GilcherA(float y, float x) {
+        float cosatan2 = x / (abs(x) + abs(y) + 0x1p-23f);
+        float t = HALF_PI - cosatan2 * HALF_PI;
         return (float) Math.copySign(t, y);
     }
     public static float atan2GilcherTT(double y, double x) {
@@ -3806,6 +3855,9 @@ CONST f32x2 sincos(s16 int_angle) {
 
         baselines.put("Math.acos vs. acosRuud", (x) -> (float) Math.acos(x));
         functions.add((x) -> (float) PrecisionTest.acosRuud(x));
+
+        baselines.put("Math.acos vs. acosFastGilcher", (x) -> (float) Math.acos(x));
+        functions.add(PrecisionTest::acosFastGilcher);
 
         for (int f = 0; f < baselines.size; f++) {
             String runName = baselines.orderedKeys().get(f);
