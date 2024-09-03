@@ -1,10 +1,12 @@
 package com.github.tommyettinger.digital;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.OrderedMap;
 import com.github.tommyettinger.digital.v037.TrigTools037;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
@@ -3604,5 +3606,188 @@ CONST f32x2 sincos(s16 int_angle) {
   return F32X2_NEW(sinx, cosx);
 }
      */
+
+    /**
+     * A big test that can handle lots of different comparisons.
+     * <br>
+     * Running Math.sin vs. TrigTools.sin
+     * Mean absolute error:     0.0000601882
+     * Mean relative error:     0.0006230420
+     * Maximum abs. error:      0.0001921714
+     * Maximum rel. error:      1.0024425983
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.221826076507568000000000
+     * Best output (lo):       -0.0613207370 (0xBD7B2B74)
+     * Correct output (lo):    -0.0613207370 (0xBD7B2B74)
+     * Worst input (hi):       -6.282993793487549000000000
+     * Highest output rel:      1.0024424791
+     * Worst output (hi):       0.0003834952 (0x39C90FDA)
+     * Correct output (hi):     0.0001915137 (0x3948D111)
+     * Worst input (abs):       3.148686885833740200000000
+     * Worst output (abs):     -0.0072863442 (0xBBEEC249)
+     * Correct output (abs):   -0.0070941728 (0xBBE8763C)
+     * Running Math.sin vs. TrigTools.sinSmoother
+     * Mean absolute error:     0.0000000824
+     * Mean relative error:     0.0000013559
+     * Maximum abs. error:      0.0000004470
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         5.909108638763428000000000
+     * Best output (lo):       -0.3654132187 (0xBEBB1771)
+     * Correct output (lo):    -0.3654132187 (0xBEBB1771)
+     * Worst input (hi):        6.283185482025146500000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000001748 (0x343BBD2E)
+     * Worst input (abs):       6.156139850616455000000000
+     * Worst output (abs):     -0.1267044097 (0xBE01BECD)
+     * Correct output (abs):   -0.1267039627 (0xBE01BEAF)
+     * Running Math.sin vs. TrigTools.sinSmooth
+     * Mean absolute error:     0.0000166354
+     * Mean relative error:     0.0000222836
+     * Maximum abs. error:      0.0000989437
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         4.850412845611572000000000
+     * Best output (lo):       -0.9904898405 (0xBF7D90BE)
+     * Correct output (lo):    -0.9904898405 (0xBF7D90BE)
+     * Worst input (hi):        6.283185482025146500000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0000001748 (0x343BBD2E)
+     * Worst input (abs):       4.712421894073486000000000
+     * Worst output (abs):     -0.9999010563 (0xBF7FF984)
+     * Correct output (abs):   -1.0000000000 (0xBF800000)
+     * Running Math.cos vs. TrigTools.cos
+     * Mean absolute error:     0.0000600990
+     * Mean relative error:     0.0006195969
+     * Maximum abs. error:      0.0001921159
+     * Maximum rel. error:      1.0023180246
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):       -1.570604801177978500000000
+     * Highest output rel:      1.0023179054
+     * Worst output (hi):       0.0003834952 (0x39C90FDA)
+     * Correct output (hi):     0.0001915256 (0x3948D444)
+     * Worst input (abs):       1.572521686553955000000000
+     * Worst output (abs):     -0.0019174748 (0xBAFB53C7)
+     * Correct output (abs):   -0.0017253589 (0xBAE22570)
+     * Running Math.cos vs. TrigTools.cosSmoother
+     * Mean absolute error:     0.0000000841
+     * Mean relative error:     0.0000012143
+     * Maximum abs. error:      0.0000004172
+     * Maximum rel. error:      0.6110913754
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):        4.712388515472412000000000
+     * Highest output rel:      0.6110913157
+     * Worst output (hi):      -0.0000007490 (0xB5491000)
+     * Correct output (hi):    -0.0000004649 (0xB4F9990F)
+     * Worst input (abs):       5.303077220916748000000000
+     * Worst output (abs):      0.5569323897 (0x3F0E931F)
+     * Correct output (abs):    0.5569328070 (0x3F0E9326)
+     * Running Math.cos vs. TrigTools.cosSmooth
+     * Mean absolute error:     0.0000165813
+     * Mean relative error:     0.0000220270
+     * Maximum abs. error:      0.0000989437
+     * Maximum rel. error:      0.6110966206
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.145555973052978500000000
+     * Best output (lo):        0.9905440211 (0x3F7D944B)
+     * Correct output (lo):     0.9905440211 (0x3F7D944B)
+     * Worst input (hi):        4.712388515472412000000000
+     * Highest output rel:      0.6110966206
+     * Worst output (hi):      -0.0000007490 (0xB549102B)
+     * Correct output (hi):    -0.0000004649 (0xB4F9990F)
+     * Worst input (abs):       6.283184528350830000000000
+     * Worst output (abs):      0.9999010563 (0x3F7FF984)
+     * Correct output (abs):    1.0000000000 (0x3F800000)
+     * -------
+     * Epsilon is:              0.0000000596
+     * -------
+     */
+    @Test
+    public void testPairs_PI2_PI2() {
+        OrderedMap<String, FloatUnaryOperator> baselines = new OrderedMap<>(8);
+        ArrayList<FloatUnaryOperator> functions = new ArrayList<>(8);
+        baselines.put("Math.sin vs. TrigTools.sin", (x) -> (float) Math.sin(x));
+        functions.add(TrigTools::sin);
+        baselines.put("Math.sin vs. TrigTools.sinSmoother", (x) -> (float) Math.sin(x));
+        functions.add(TrigTools::sinSmoother);
+        baselines.put("Math.sin vs. TrigTools.sinSmooth", (x) -> (float) Math.sin(x));
+        functions.add(TrigTools::sinSmooth);
+
+        baselines.put("Math.cos vs. TrigTools.cos", (x) -> (float) Math.cos(x));
+        functions.add(TrigTools::cos);
+        baselines.put("Math.cos vs. TrigTools.cosSmoother", (x) -> (float) Math.cos(x));
+        functions.add(TrigTools::cosSmoother);
+        baselines.put("Math.cos vs. TrigTools.cosSmooth", (x) -> (float) Math.cos(x));
+        functions.add(TrigTools::cosSmooth);
+
+        for (int f = 0; f < baselines.size; f++) {
+            String runName = baselines.orderedKeys().get(f);
+            System.out.println("Running " + runName);
+            FloatUnaryOperator baseline = baselines.get(runName);
+            FloatUnaryOperator op = functions.get(f);
+            float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
+            float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
+            long counter = 0L;
+            for (float x = PI2; x >= -PI2; x-= 0x1p-20f) {
+                float tru = baseline.applyAsFloat(x),
+                        approx = op.applyAsFloat(x),
+                        err = tru - approx,
+                        ae = abs(err),
+                        re = MathTools.isZero(tru, 1E-10) ? 0f : Math.abs(err / tru);
+                if(!MathTools.isZero(tru, 1E-10)) {
+                    relError += re;
+                    if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                        highestRelX = x;
+                    }
+                    if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                        lowestRelX = x;
+                    }
+                }
+                absError += ae;
+                if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
+                    worstAbsX = x;
+                }
+                ++counter;
+            }
+            float worstAbs = op.applyAsFloat(worstAbsX),
+                    worstTru = baseline.applyAsFloat(worstAbsX),
+                    highestTru = baseline.applyAsFloat(highestRelX),
+                    lowestTru = baseline.applyAsFloat(lowestRelX),
+                    lowestErr = lowestTru - op.applyAsFloat(lowestRelX),
+                    lowestRel = abs(lowestErr / Math.nextAfter(lowestTru, Math.copySign(Float.MAX_VALUE, lowestTru))),
+                    highestErr = highestTru - op.applyAsFloat(highestRelX),
+                    highestRel = abs(highestErr / Math.nextAfter(highestTru, Math.copySign(Float.MAX_VALUE, highestTru)));
+            System.out.printf(
+                    "Mean absolute error: %16.10f\n" +
+                            "Mean relative error: %16.10f\n" +
+                            "Maximum abs. error:  %16.10f\n" +
+                            "Maximum rel. error:  %16.10f\n" +
+                            "Lowest output rel:   %16.10f\n" +
+                            "Best input (lo):     %30.24f\n" +
+                            "Best output (lo):    %16.10f (0x%08X)\n" +
+                            "Correct output (lo): %16.10f (0x%08X)\n" +
+                            "Worst input (hi):    %30.24f\n" +
+                            "Highest output rel:  %16.10f\n" +
+                            "Worst output (hi):   %16.10f (0x%08X)\n" +
+                            "Correct output (hi): %16.10f (0x%08X)\n" +
+                            "Worst input (abs):   %30.24f\n" +
+                            "Worst output (abs):  %16.10f (0x%08X)\n" +
+                            "Correct output (abs):%16.10f (0x%08X)\n", absError / counter, relError / counter,
+                    maxAbsError, maxRelError,
+                    lowestRel, lowestRelX, op.applyAsFloat(lowestRelX), Float.floatToIntBits(op.applyAsFloat(lowestRelX)), lowestTru, Float.floatToIntBits(lowestTru),
+                    highestRelX, highestRel, op.applyAsFloat(highestRelX), Float.floatToIntBits(op.applyAsFloat(highestRelX)), highestTru, Float.floatToIntBits(highestTru),
+                    worstAbsX, worstAbs, Float.floatToIntBits(worstAbs), worstTru, Float.floatToIntBits(worstTru));
+        }
+        System.out.printf("-------\n" +
+                "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
+    }
 
 }
