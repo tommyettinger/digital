@@ -89,6 +89,7 @@ package com.github.tommyettinger.digital;
  * looking up in a cosine table so that we can use the absolute value of an angle (since cos(x) is the same as cos(-x))
  * is something I hadn't seen before, but I'm sure is not novel.
  */
+@SuppressWarnings({"ExpressionComparedToItself", "PointlessArithmeticExpression"})
 public final class TrigTools {
 
     /**
@@ -1737,12 +1738,10 @@ public final class TrigTools {
      * @return between {@code -HALF_PI} and {@code HALF_PI} when a is in the defined range
      */
     public static float asin(final float a) {
-        final float a2 = a * a;
-        final float a3 = a * a2;
         if (a >= 0f) {
-            return HALF_PI - (float) Math.sqrt(1f - a) * (1.5707288f - 0.2121144f * a + 0.0742610f * a2 - 0.0187293f * a3);
+            return (float) (HALF_PI_D - Math.sqrt(1.0 - a) * (1.5707288 + a * (-0.2121144 + a * (0.0742610 + a * -0.0187293))));
         }
-        return (float) Math.sqrt(1f + a) * (1.5707288f + 0.2121144f * a + 0.0742610f * a2 + 0.0187293f * a3) - HALF_PI;
+        return (float) (Math.sqrt(1.0 + a) * (1.5707288 + a * (0.2121144 + a * (0.0742610 + a * 0.0187293))) - HALF_PI_D);
     }
 
     /**
@@ -1753,13 +1752,10 @@ public final class TrigTools {
      * @return between {@code -90} and {@code 90} when a is in the defined range
      */
     public static float asinDeg(float a) {
-        float a2 = a * a; // a squared
-        float a3 = a * a2; // a cubed
         if (a >= 0f) {
-            return 90f
-                    - (float) Math.sqrt(1f - a) * (89.99613099964837f - 12.153259893949748f * a + 4.2548418824210055f * a2 - 1.0731098432343729f * a3);
+            return (float) (90.0 - Math.sqrt(1.0 - a) * (89.99613099964837 + a * (-12.153259893949748 + a * (4.2548418824210055 + a * -1.0731098432343729))));
         }
-        return (float) Math.sqrt(1f + a) * (89.99613099964837f + 12.153259893949748f * a + 4.2548418824210055f * a2 + 1.0731098432343729f * a3) - 90f;
+        return (float) (Math.sqrt(1.0 + a) * (89.99613099964837 + a * (12.153259893949748 + a * (4.2548418824210055 + a * 1.0731098432343729))) - 90.0);
     }
 
     /**
@@ -1771,12 +1767,10 @@ public final class TrigTools {
      * @return between {@code -0.25} and {@code 0.25} when a is in the defined range
      */
     public static float asinTurns(float a) {
-        float a2 = a * a; // a squared
-        float a3 = a * a2; // a cubed
         if (a >= 0f) {
-            return (float) (0.25 - Math.sqrt(1.0 - a) * (0.24998925277680104 - 0.033759055260971525 * a + 0.011819005228947238 * a2 - 0.0029808606756510357 * a3));
+            return (float) (0.25 - Math.sqrt(1.0 - a) * (0.24998925277680104 + a * (-0.033759055260971525 + a * (0.011819005228947238 + a * -0.0029808606756510357))));
         }
-        return (float) (Math.sqrt(1.0 + a) * (0.24998925277680104 + 0.033759055260971525 * a + 0.011819005228947238 * a2 + 0.0029808606756510357 * a3) - 0.25);
+        return (float) (Math.sqrt(1.0 + a) * (0.24998925277680104 + a * (0.033759055260971525 + a * (0.011819005228947238 + a * 0.0029808606756510357))) - 0.25);
     }
 
     /**
@@ -1833,13 +1827,10 @@ public final class TrigTools {
      * @return between {@code -HALF_PI} and {@code HALF_PI} when a is in the defined range
      */
     public static double asin(double a) {
-        double a2 = a * a; // a squared
-        double a3 = a * a2; // a cubed
         if (a >= 0.0) {
-            return HALF_PI_D
-                    - Math.sqrt(1.0 - a) * (1.5707288 - 0.2121144 * a + 0.0742610 * a2 - 0.0187293 * a3);
+            return HALF_PI_D - Math.sqrt(1.0 - a) * (1.5707288 + a * (-0.2121144 + a * (0.0742610 + a * -0.0187293)));
         }
-        return Math.sqrt(1.0 + a) * (1.5707288 + 0.2121144 * a + 0.0742610 * a2 + 0.0187293 * a3) - HALF_PI_D;
+        return Math.sqrt(1.0 + a) * (1.5707288 + a * (0.2121144 + a * (0.0742610 + a * 0.0187293))) - HALF_PI_D;
     }
 
     /**
@@ -1850,13 +1841,10 @@ public final class TrigTools {
      * @return between {@code -90} and {@code 90} when a is in the defined range
      */
     public static double asinDeg(double a) {
-        double a2 = a * a; // a squared
-        double a3 = a * a2; // a cubed
         if (a >= 0.0) {
-            return 90.0
-                    - Math.sqrt(1.0 - a) * (89.99613099964837 - 12.153259893949748 * a + 4.2548418824210055 * a2 - 1.0731098432343729 * a3);
+            return 90.0 - Math.sqrt(1.0 - a) * (89.99613099964837 + a * (-12.153259893949748 + a * (4.2548418824210055 + a * -1.0731098432343729)));
         }
-        return Math.sqrt(1.0 + a) * (89.99613099964837 + 12.153259893949748 * a + 4.2548418824210055 * a2 + 1.0731098432343729 * a3) - 90.0;
+        return Math.sqrt(1.0 + a) * (89.99613099964837 + a * (12.153259893949748 + a * (4.2548418824210055 + a * 1.0731098432343729))) - 90.0;
     }
 
     /**
@@ -1868,12 +1856,10 @@ public final class TrigTools {
      * @return between {@code -0.25} and {@code 0.25} when a is in the defined range
      */
     public static double asinTurns(double a) {
-        double a2 = a * a; // a squared
-        double a3 = a * a2; // a cubed
         if (a >= 0.0) {
-            return 0.25 - Math.sqrt(1.0 - a) * (0.24998925277680104 - 0.033759055260971525 * a + 0.011819005228947238 * a2 - 0.0029808606756510357 * a3);
+            return 0.25 - Math.sqrt(1.0 - a) * (0.24998925277680104 + a * (-0.033759055260971525 + a * (0.011819005228947238 + a * -0.0029808606756510357)));
         }
-        return Math.sqrt(1.0 + a) * (0.24998925277680104 + 0.033759055260971525 * a + 0.011819005228947238 * a2 + 0.0029808606756510357 * a3) - 0.25;
+        return Math.sqrt(1.0 + a) * (0.24998925277680104 + a * (0.033759055260971525 + a * (0.011819005228947238 + a * 0.0029808606756510357))) - 0.25;
     }
 
     /**

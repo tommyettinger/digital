@@ -20,40 +20,6 @@ public class PrecisionTest {
     public static final int PI2BITS = Float.floatToIntBits(TrigTools.PI2);
 
     /**
-     * Absolute error:   0.00000105
-     * Relative error:   0.00000961
-     * Maximum error:    0.00000180
-     * Worst position:   -0.21211123,0.42976010
-     */
-    @Test
-    @Ignore
-    public void testAtan2(){
-        double absError = 0.0, relError = 0.0, maxError = 0.0;
-        float worstY = 0, worstX = 0;
-        long counter = 0L;
-        for (int i = Float.floatToIntBits(1f), n = Float.floatToIntBits(2f); i < n; i+=511) {
-            float x = Float.intBitsToFloat(i) - 1.5f;
-            for (int j = Float.floatToIntBits(1f); j < n; j+=511) {
-                float y = Float.intBitsToFloat(j) - 1.5f;
-                double tru = Math.atan2(y, x),
-                        err = TrigTools.atan2(y, x) - tru,
-                        ae = abs(err);
-                relError += Math.abs(ae / Math.nextAfter(tru, Math.copySign(Float.POSITIVE_INFINITY, tru)));
-                absError += ae;
-                if(maxError != (maxError = Math.max(maxError, ae))){
-                    worstX = x;
-                    worstY = y;
-                }
-                counter++;
-            }
-        }
-        System.out.printf("Absolute error:   %3.8f\n" +
-                          "Relative error:   %3.8f\n" +
-                          "Maximum error:    %3.8f\n" +
-                          "Worst position:   %3.8f,%3.8f\n", absError / counter, relError / counter, maxError, worstX, worstY);
-    }
-
-    /**
      * TrigTools.atan2 :
      * Absolute error:   0.00000105
      * Relative error:   0.00000961
@@ -111,7 +77,7 @@ public class PrecisionTest {
      * Worst position:   -0.00000191,-0.00000191
      */
     @Test
-    public void testAtan2Comparison() {
+    public void testAtan2() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2", TrigTools::atan2);
         functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
