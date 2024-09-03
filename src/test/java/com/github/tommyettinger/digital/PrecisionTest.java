@@ -3,6 +3,7 @@ package com.github.tommyettinger.digital;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.github.tommyettinger.digital.v037.TrigTools037;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -3785,9 +3786,88 @@ CONST f32x2 sincos(s16 int_angle) {
                     lowestRel, lowestRelX, op.applyAsFloat(lowestRelX), Float.floatToIntBits(op.applyAsFloat(lowestRelX)), lowestTru, Float.floatToIntBits(lowestTru),
                     highestRelX, highestRel, op.applyAsFloat(highestRelX), Float.floatToIntBits(op.applyAsFloat(highestRelX)), highestTru, Float.floatToIntBits(highestTru),
                     worstAbsX, worstAbs, Float.floatToIntBits(worstAbs), worstTru, Float.floatToIntBits(worstTru));
+            Assert.assertTrue("Mean absolute error is broken", absError / counter < 0.5);
+            Assert.assertTrue("Max absolute error is broken", maxAbsError < 0.5);
         }
         System.out.printf("-------\n" +
                 "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
+    @Test
+    public void testPairs_1_1() {
+        OrderedMap<String, FloatUnaryOperator> baselines = new OrderedMap<>(8);
+        ArrayList<FloatUnaryOperator> functions = new ArrayList<>(8);
+        baselines.put("Math.asin vs. TrigTools.asin", (x) -> (float) Math.asin(x));
+        functions.add(TrigTools::asin);
+        baselines.put("Math.acos vs. TrigTools.acos", (x) -> (float) Math.acos(x));
+        functions.add(TrigTools::acos);
 
+        baselines.put("Math.acos vs. acosHand", (x) -> (float) Math.acos(x));
+        functions.add((x) -> (float) PrecisionTest.acosHand(x));
+
+        baselines.put("Math.acos vs. acosRuud", (x) -> (float) Math.acos(x));
+        functions.add((x) -> (float) PrecisionTest.acosRuud(x));
+
+        for (int f = 0; f < baselines.size; f++) {
+            String runName = baselines.orderedKeys().get(f);
+            System.out.println("Running " + runName);
+            FloatUnaryOperator baseline = baselines.get(runName);
+            FloatUnaryOperator op = functions.get(f);
+            float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
+            float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
+            long counter = 0L;
+            for (float x = 1f; x >= -1f; x-= 0x1p-20f) {
+                float tru = baseline.applyAsFloat(x),
+                        approx = op.applyAsFloat(x),
+                        err = tru - approx,
+                        ae = abs(err),
+                        re = MathTools.isZero(tru, 1E-10) ? 0f : Math.abs(err / tru);
+                if(!MathTools.isZero(tru, 1E-10)) {
+                    relError += re;
+                    if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                        highestRelX = x;
+                    }
+                    if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                        lowestRelX = x;
+                    }
+                }
+                absError += ae;
+                if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
+                    worstAbsX = x;
+                }
+                ++counter;
+            }
+            float worstAbs = op.applyAsFloat(worstAbsX),
+                    worstTru = baseline.applyAsFloat(worstAbsX),
+                    highestTru = baseline.applyAsFloat(highestRelX),
+                    lowestTru = baseline.applyAsFloat(lowestRelX),
+                    lowestErr = lowestTru - op.applyAsFloat(lowestRelX),
+                    lowestRel = abs(lowestErr / Math.nextAfter(lowestTru, Math.copySign(Float.MAX_VALUE, lowestTru))),
+                    highestErr = highestTru - op.applyAsFloat(highestRelX),
+                    highestRel = abs(highestErr / Math.nextAfter(highestTru, Math.copySign(Float.MAX_VALUE, highestTru)));
+            System.out.printf(
+                    "Mean absolute error: %16.10f\n" +
+                            "Mean relative error: %16.10f\n" +
+                            "Maximum abs. error:  %16.10f\n" +
+                            "Maximum rel. error:  %16.10f\n" +
+                            "Lowest output rel:   %16.10f\n" +
+                            "Best input (lo):     %30.24f\n" +
+                            "Best output (lo):    %16.10f (0x%08X)\n" +
+                            "Correct output (lo): %16.10f (0x%08X)\n" +
+                            "Worst input (hi):    %30.24f\n" +
+                            "Highest output rel:  %16.10f\n" +
+                            "Worst output (hi):   %16.10f (0x%08X)\n" +
+                            "Correct output (hi): %16.10f (0x%08X)\n" +
+                            "Worst input (abs):   %30.24f\n" +
+                            "Worst output (abs):  %16.10f (0x%08X)\n" +
+                            "Correct output (abs):%16.10f (0x%08X)\n", absError / counter, relError / counter,
+                    maxAbsError, maxRelError,
+                    lowestRel, lowestRelX, op.applyAsFloat(lowestRelX), Float.floatToIntBits(op.applyAsFloat(lowestRelX)), lowestTru, Float.floatToIntBits(lowestTru),
+                    highestRelX, highestRel, op.applyAsFloat(highestRelX), Float.floatToIntBits(op.applyAsFloat(highestRelX)), highestTru, Float.floatToIntBits(highestTru),
+                    worstAbsX, worstAbs, Float.floatToIntBits(worstAbs), worstTru, Float.floatToIntBits(worstTru));
+//            Assert.assertTrue("Mean absolute error is broken", absError / counter < 0.5);
+//            Assert.assertTrue("Max absolute error is broken", maxAbsError < 0.5);
+        }
+        System.out.printf("-------\n" +
+                "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
+    }
 }
