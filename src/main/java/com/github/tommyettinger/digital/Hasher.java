@@ -19,6 +19,7 @@ package com.github.tommyettinger.digital;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import static com.github.tommyettinger.digital.BitConversion.doubleToRawLongBits;
 import static com.github.tommyettinger.digital.BitConversion.floatToRawIntBits;
@@ -87,14 +88,14 @@ public class Hasher {
      * Creates a new Hasher seeded, arbitrarily, with the constant 0xC4CEB9FE1A85EC53L, or -4265267296055464877L .
      */
     public Hasher() {
-        this.seed = 0xC4CEB9FE1A85EC53L;
+        this(0xC4CEB9FE1A85EC53L);
     }
 
     /**
      * Initializes this Hasher with the given seed, verbatim; it is recommended to use {@link #randomize3(long)} on the
-     * seed if you don't know if it is adequately-random. If the seed is the same for two different Hasher instances and
-     * they are given the same inputs, they will produce the same results. If the seed is even slightly different, the
-     * results of the two Hashers given the same input should be significantly different.
+     * seed if you don't know if it is adequately-random. If the seed is the same for two different Hasher instances,
+     * and they are given the same inputs, they will produce the same results. If the seed is even slightly different,
+     * the results of the two Hashers given the same input should be significantly different.
      *
      * @param seed a long that will be used to change the output of hash() and hash64() methods on the new Hasher
      */
@@ -112,8 +113,8 @@ public class Hasher {
      * You have a choice between different randomize strengths in this class. {@code randomize1()} is simpler, and will
      * behave well when the inputs are sequential, while {@code randomize2()} is a completely different algorithm, Pelle
      * Evensen's <a href="https://mostlymangling.blogspot.com/2020/01/nasam-not-another-strange-acronym-mixer.html">xNASAM</a>;
-     * it will have excellent quality for most patterns in input but will be about 30% slower than
-     * {@code randomize1()}, though this is rarely detectable. {@code randomize3()} is the slowest and most robust; it
+     * it will have excellent quality for most patterns in input but will be about 30% slower than {@code randomize1()},
+     * though this is rarely detectable. {@code randomize3()} is the slowest and most robust; it
      * uses MX3 by Jon Maiga, which the aforementioned author of xNASAM now recommends for any unary hashing. All
      * randomizeN methods will produce all long outputs if given all possible longs as input. Technically-speaking,
      * {@code randomize1(long)}, {@code randomize2(long)}, and {@code randomize3(long)} are bijective functions, which
@@ -521,9 +522,32 @@ public class Hasher {
     public static final long b5 = 0xEB44ACCAB455D165L;
 
     /**
+     * A long constant used as a multiplier by the MX3 unary hash.
+     * Used in {@link #mix(long)} and {@link #mixStream(long, long)}, as well as when hashing one Object.
+     */
+    public static final long C = 0xBEA225F9EB34556DL;
+    /**
+     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, Random)}.
+     */
+    public static final long Q = 0xD1B92B09B92266DDL;
+    /**
+     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, Random)}.
+     */
+    public static final long R = 0x9995988B72E0D285L;
+    /**
+     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, Random)}.
+     */
+    public static final long S = 0x8FADF5E286E31587L;
+    /**
+     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, Random)}.
+     */
+    public static final long T = 0xFCF8B405D3D0783BL;
+
+    /**
      * Takes two arguments that are technically longs, and should be very different, and uses them to get a result
      * that is technically a long and mixes the bits of the inputs. The arguments and result are only technically
      * longs because their lower 32 bits matter much more than their upper 32, and giving just any long won't work.
+     * Used by {@link #hash64(int[])}, {@link #hash(int[])}, and other hashes that use 32-bit or smaller items.
      * <br>
      * This is very similar to wyhash's mum function, but doesn't use 128-bit math because it expects that its
      * arguments are only relevant in their lower 32 bits (allowing their product to fit in 64 bits).
@@ -541,6 +565,7 @@ public class Hasher {
      * A slower but higher-quality variant on {@link #mum(long, long)} that can take two arbitrary longs (with any
      * of their 64 bits containing relevant data) instead of mum's 32-bit sections of its inputs, and outputs a
      * 64-bit result that can have any of its bits used.
+     * Used by {@link #hash64(long[])}, {@link #hash(long[])}, and other hashes that use 64-bit items.
      * <br>
      * This was changed so that it distributes bits from both inputs a little better on July 6, 2019.
      *
@@ -552,6 +577,87 @@ public class Hasher {
         final long n = (a ^ (b << 39 | b >>> 25)) * (b ^ (a << 39 | a >>> 25));
         return n ^ (n >>> 32);
     }
+
+    /**
+     * A medium-quality, but fast, way to scramble a 64-bit input and get a 64-bit output.
+     * Used by {@link #hashBulk64} and {@link #hashBulk}.
+     * <br>
+     * This is reversible, which allows all outputs to be possible for the hashing functions to produce.
+     * However, this also allows the seed to be recovered if a zero-length input is supplied. That's why this
+     * is a non-cryptographic hashing algorithm!
+     * @param x any long
+     * @return any long
+     */
+    public static long mix(long x) {
+        x ^= (x << 23 | x >>> 41) ^ (x << 43 | x >>> 21);
+        x *= C;
+        return x ^ (x << 11 | x >>> 53) ^ (x << 50 | x >>> 14);
+    }
+
+    /**
+     * A low-to-medium-quality and fast way to combine two 64-bit inputs to get one 64-bit result.
+     * Used by {@link #hashBulk64} and {@link #hashBulk}.
+     * <br>
+     * This is not reversible unless you know one of the parameters in full.
+     * @param h any long, typically a counter; will be scrambled much less
+     * @param x any long, typically an item being hashed; will be scrambled much more
+     * @return any long
+     */
+    public static long mixStream(long h, long x) {
+        x *= C;
+        x ^= x >>> 39;
+        return (x * C + h) * C;
+    }
+
+    /**
+     * Performs part of the hashing step applied to four 64-bit inputs at once, and typically added to a running
+     * hash value directly.
+     * Used by {@link #hashBulk64} and {@link #hashBulk}.
+     * <br>
+     * This is not reversible under normal circumstances. It may be possible to recover one parameter if the other three
+     * are known in full. This uses four 64-bit primes as multipliers; the exact numbers don't matter as long as
+     * they are odd and have sufficiently well-distributed bits (close to 32 '1' bits, and so on). If this is only
+     * added to a running total, the result won't have very random low-order bits, so performing bitwise rotations
+     * after at least some calls to this (or xorshifting right) is critical to keeping the hash high-quality.
+     * @param a any long, typically an item being hashed
+     * @param b any long, typically an item being hashed
+     * @param c any long, typically an item being hashed
+     * @param d any long, typically an item being hashed
+     * @return any long
+     */
+    public static long mixStreamBulk(long a, long b, long c, long d) {
+        return
+                ((a << 29 | a >>> 35) - c) * Q
+                        + ((b << 29 | b >>> 35) - d) * R
+                        + ((c << 29 | c >>> 35) - b) * S
+                        + ((d << 29 | d >>> 35) - a) * T;
+    }
+
+
+    /**
+     * A very minimalist way to scramble inputs to be used as seeds; can be inverted using {@link #reverse(long)}.
+     * This simply performs the XOR-rotate-XOR-rotate operation on x, using left rotations of 29 and 47.
+     * @param x any long
+     * @return a slightly scrambled version of x
+     */
+    public static long forward(long x) {
+        return x ^ (x << 29 | x >>> 35) ^ (x << 47 | x >>> 17);
+    }
+
+    /**
+     * Unscrambles the result of {@link #forward(long)} to get its original argument back.
+     * @param x a long produced by {@link #forward(long)} or obtained from {@link #seed}
+     * @return the original long that was provided to {@link #forward(long)}, before scrambling
+     */
+    public static long reverse(long x) {
+        x ^= x ^ (x << 29 | x >>> 35) ^ (x << 47 | x >>> 17);
+        x ^= x ^ (x << 58 | x >>>  6) ^ (x << 30 | x >>> 34);
+        x ^= x ^ (x << 52 | x >>> 12) ^ (x << 60 | x >>>  4);
+        x ^= x ^ (x << 40 | x >>> 24) ^ (x << 56 | x >>>  8);
+        x ^= x ^ (x << 16 | x >>> 48) ^ (x << 48 | x >>> 16);
+        return x;
+    }
+
 
     public static final Hasher alpha = new Hasher("alpha"), beta = new Hasher("beta"), gamma = new Hasher("gamma"),
             delta = new Hasher("delta"), epsilon = new Hasher("epsilon"), zeta = new Hasher("zeta"),
@@ -3692,6 +3798,60 @@ public class Hasher {
             return 0;
         return (int)(mum(data.hashCode() ^ b2, b3 - seed) ^ seed);
     }
+
+    // bulk hashing section
+
+    public long hashBulk64(final long[] data) {
+        if (data == null) return 0;
+        return hashBulk64(data, 0, data.length);
+    }
+    public long hashBulk64(final long[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data[i++]);
+        }
+        return mix(h);
+    }
+    public long hashBulk(final long[] data) {
+        if (data == null) return 0;
+        return hashBulk(data, 0, data.length);
+    }
+    public int hashBulk(final long[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data[i++]);
+        }
+        return (int)mix(h);
+    }
+
+
+    // normal Java Object stuff
 
     @Override
     public boolean equals(Object o) {
