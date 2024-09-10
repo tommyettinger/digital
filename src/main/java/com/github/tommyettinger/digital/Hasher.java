@@ -38,12 +38,39 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
  * <a href="https://github.com/wangyi-fudan/wyhash/blob/version_1/wyhash.h">source here</a>,
  * but has diverged significantly.
  * <br>
+ * Variations on wyhash are used depending on the types being hashed. There is also a different
+ * algorithm present here in the {@link #hashBulk} and {@link #hashBulk64} methods, based very
+ * loosely on the <a href="https://github.com/jonmaiga/mx3">MX3 hash</a>. This algorithm, called
+ * Ax, is faster at hashing large arrays of longs than any of the Wyhash variants I've tried,
+ * and also passes the SMHasher 3 test suite. It does best with larger array sizes, so the name
+ * includes "Bulk", but it tends to be faster starting at lengths of maybe 20 long items. The
+ * bulk hash functions also include ways to connect with other hash functions to hash
+ * multidimensional arrays or arrays of types this doesn't provide a hash function for.
+ * <br>
  * This provides an object-based API and a static API, where a Hasher object is
  * instantiated with a seed, and the static methods take a seed as their first argument.
- * The hashes this returns are always 0 when given null to hash. Arrays with
+ * Any hash that this returns is always 0 when given null to hash. Arrays with
  * identical elements of identical types will hash identically. Arrays with identical
  * numerical values but different types will sometimes hash differently. This class
- * always provides 64-bit hashes via hash64() and 32-bit hashes via hash().
+ * always provides 64-bit hashes via hash64() and 32-bit hashes via hash(). The additional
+ * hashBulk64() and hashBulk() methods use the Ax algorithm instead of one based on
+ * Wyhash, as mentioned before, and can hash ByteBuffer objects and long arrays. They
+ * also provide some alternative options to hash arrays of some type using a user-provided
+ * hash for that type. Predefined functional interfaces are present in this class, such as
+ * {@link HashFunction64} for member {@link #hash64} methods, {@link HashFunction} for member
+ * {@link #hash} methods, {@link SeededHashFunction64} for static hash64 methods such as
+ * the one referenced in the {@link #longArrayHash64} constant, and {@link SeededHashFunction}
+ * for static hash methods such as the one referenced in the {@link #longArrayHash} constant.
+ * Using the static seeded variants is preferred when passing in a hash function, because the
+ * constants don't have any name clash. That means if you were to try to use
+ * {@code int result = Hasher.alpha.hashBulk(Hasher.alpha::hash, data);}, that would probably fail to compile
+ * because Java can't infer which hash() method is intended (the one with one argument of the
+ * correct type, or that argument as well as two ints). You can make hashBulk with a HashFunction
+ * work by casting {@code Hasher.alpha::hash} to the correct type, like so (where data is a {@code long[][]}):
+ * {@code int result = Hasher.alpha.hashBulk((Hasher.HashFunction64<long[]>)Hasher.alpha::hash, data);}
+ * Or, you can use the static variants:
+ * {@code int result = Hasher.hashBulk(seed, Hasher.longArrayHash, data);}
+ * <br>
  * The hash64() and hash() methods use 64-bit math even when producing
  * 32-bit hashes, for GWT reasons. GWT doesn't have the same behavior as desktop and
  * Android applications when using ints because it treats ints mostly like doubles,

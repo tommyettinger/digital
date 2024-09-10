@@ -3,6 +3,7 @@ package com.github.tommyettinger.digital;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -61,6 +62,19 @@ public class HasherTest {
         Assert.assertNotEquals(
                 Hasher.astaroth.hashBulk((Hasher.HashFunction<long[]>)Hasher.astaroth::hashBulk, long2D2),
                 Hasher.astaroth_.hashBulk((Hasher.HashFunction<long[]>)Hasher.astaroth_::hashBulk, long2D2));
+
+        Assert.assertNotEquals(
+                Hasher.hashBulk64(1L, Hasher.longArrayHashBulk64, long2D2),
+                Hasher.hashBulk64(2L, Hasher.longArrayHashBulk64, long2D2));
+        Assert.assertNotEquals(
+                Hasher.hashBulk64(1L, Hasher.longArrayHashBulk, long2D2),
+                Hasher.hashBulk64(2L, Hasher.longArrayHashBulk, long2D2));
+        Assert.assertNotEquals(
+                Hasher.hashBulk(1L, Hasher.longArrayHashBulk64, long2D2),
+                Hasher.hashBulk(2L, Hasher.longArrayHashBulk64, long2D2));
+        Assert.assertNotEquals(
+                Hasher.hashBulk(1L, Hasher.longArrayHashBulk, long2D2),
+                Hasher.hashBulk(2L, Hasher.longArrayHashBulk, long2D2));
     }
     @Test
     public void testRanges() {
@@ -157,5 +171,17 @@ public class HasherTest {
             hashes64.add(h.hash64("What a cute kitty!"));
         }
         Assert.assertEquals(targetLength, hashes64.size());
+    }
+
+    @Test
+    public void testByteBuffer() {
+        byte[] bytes = "Satchmo, my big cute baby cat".getBytes(StandardCharsets.UTF_8);
+        byte[] bytes2 = "my big cute baby".getBytes(StandardCharsets.UTF_8); // start 9, length 16
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        ByteBuffer buffer2 = ByteBuffer.wrap(bytes2);
+        Assert.assertEquals(Hasher.asmoday.hashBulk64(buffer, 9, 16), Hasher.asmoday.hashBulk64(buffer2));
+        Assert.assertNotEquals(Hasher.asmoday.hashBulk64(buffer, 9, 16), Hasher.asmoday_.hashBulk64(buffer2));
+        Assert.assertEquals(Hasher.asmoday.hashBulk(buffer, 9, 16), Hasher.asmoday.hashBulk(buffer2));
+        Assert.assertNotEquals(Hasher.asmoday.hashBulk(buffer, 9, 16), Hasher.asmoday_.hashBulk(buffer2));
     }
 }
