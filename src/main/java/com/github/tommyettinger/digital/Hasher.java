@@ -4011,18 +4011,24 @@ public class Hasher {
 
     /**
      * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
-     * {@link ByteBuffer#capacity()}. This is likely to significantly outperform {@link #hash64(byte[])} on all but
+     * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * <br>
+     * This is likely to significantly outperform {@link #hash64(byte[])} on all but
      * the smallest sequences of bytes (under 20 bytes).
      * @param data an input ByteBuffer
      * @return the 64-bit hash of data
      */
     public long hashBulk64(final ByteBuffer data) {
-        return hashBulk64(data, 0, data.capacity());
+        return hashBulk64(data, 0, data.limit());
     }
 
     /**
      * A hashing function that operates on a {@link ByteBuffer}, using the given {@code start} index (measured in bytes)
-     * and {@code length} (also in bytes). This is likely to significantly outperform {@link #hash64(byte[], int, int)}
+     * and {@code length} (also in bytes). The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * <br>
+     * This is likely to significantly outperform {@link #hash64(byte[], int, int)}
      * on all but the smallest sequences of bytes (under 20 bytes).
      * @param data an input ByteBuffer
      * @param start the starting index, measured in bytes
@@ -4030,11 +4036,10 @@ public class Hasher {
      * @return the 64-bit hash of data
      */
     public long hashBulk64(final ByteBuffer data, int start, int length) {
-        if (data == null || start < 0 || length < 0 || start + length >= data.capacity())
+        if (data == null || start < 0 || length < 0 || start >= data.limit())
             return 0;
-        int len = Math.min(length, data.capacity() - start);
+        int len = Math.min(length, data.limit() - start);
         data.position(start);
-        data.limit(start + len);
         long h = len ^ forward(seed);
         while(len >= 64){
             h *= C;
@@ -4061,18 +4066,24 @@ public class Hasher {
 
     /**
      * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
-     * {@link ByteBuffer#capacity()}. This is likely to significantly outperform {@link #hash(byte[])} on all but
+     * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * <br>
+     * This is likely to significantly outperform {@link #hash(byte[])} on all but
      * the smallest sequences of bytes (under 20 bytes).
      * @param data an input ByteBuffer
      * @return the 32-bit hash of data
      */
     public long hashBulk(final ByteBuffer data) {
-        return hashBulk(data, 0, data.capacity());
+        return hashBulk(data, 0, data.limit());
     }
 
     /**
      * A hashing function that operates on a {@link ByteBuffer}, using the given {@code start} index (measured in bytes)
-     * and {@code length} (also in bytes). This is likely to significantly outperform {@link #hash(byte[], int, int)}
+     * and {@code length} (also in bytes). The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * <br>
+     * This is likely to significantly outperform {@link #hash(byte[], int, int)}
      * on all but the smallest sequences of bytes (under 20 bytes).
      * @param data an input ByteBuffer
      * @param start the starting index, measured in bytes
@@ -4080,11 +4091,10 @@ public class Hasher {
      * @return the 32-bit hash of data
      */
     public int hashBulk(final ByteBuffer data, int start, int length) {
-        if (data == null || start < 0 || length < 0 || start + length >= data.capacity())
+        if (data == null || start < 0 || length < 0 || start >= data.limit())
             return 0;
-        int len = Math.min(length, data.capacity() - start);
+        int len = Math.min(length, data.limit() - start);
         data.position(start);
-        data.limit(start + len);
         long h = len ^ forward(seed);
         while(len >= 64){
             h *= C;
