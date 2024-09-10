@@ -4211,7 +4211,6 @@ public class Hasher {
         }
     }
 
-
     // normal Java Object stuff
 
     @Override

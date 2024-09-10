@@ -49,6 +49,18 @@ public class HasherTest {
         Assert.assertNotEquals(Hasher.astaroth.hash64(double2D), Hasher.astaroth_.hash64(double2D2));
         Assert.assertNotEquals(Hasher.astaroth.hash64(string2D), Hasher.astaroth_.hash64(string2D2));
 
+        Assert.assertNotEquals(
+                Hasher.astaroth.hashBulk64((Hasher.HashFunction64<long[]>)Hasher.astaroth::hash64, long2D2),
+                Hasher.astaroth_.hashBulk64((Hasher.HashFunction64<long[]>)Hasher.astaroth_::hash64, long2D2));
+        Assert.assertNotEquals(
+                Hasher.astaroth.hashBulk64((Hasher.HashFunction<long[]>)Hasher.astaroth::hash, long2D2),
+                Hasher.astaroth_.hashBulk64((Hasher.HashFunction<long[]>)Hasher.astaroth_::hash, long2D2));
+        Assert.assertNotEquals(
+                Hasher.astaroth.hashBulk((Hasher.HashFunction64<long[]>)Hasher.astaroth::hash64, long2D2),
+                Hasher.astaroth_.hashBulk((Hasher.HashFunction64<long[]>)Hasher.astaroth_::hash64, long2D2));
+        Assert.assertNotEquals(
+                Hasher.astaroth.hashBulk((Hasher.HashFunction<long[]>)Hasher.astaroth::hash, long2D2),
+                Hasher.astaroth_.hashBulk((Hasher.HashFunction<long[]>)Hasher.astaroth_::hash, long2D2));
     }
     @Test
     public void testRanges() {
@@ -98,6 +110,22 @@ public class HasherTest {
         System.arraycopy(floats2, 0, floats, 1, floats.length-1);
         System.arraycopy(doubles2, 0, doubles, 1, doubles.length-1);
         System.arraycopy(strings2, 0, strings, 1, strings.length-1);
+
+        Assert.assertEquals(Hasher.astaroth.hash(bytes, 1, bytes.length-1), Hasher.astaroth.hash(bytes2));
+        Assert.assertEquals(Hasher.astaroth.hash(chars, 1, chars.length-1), Hasher.astaroth.hash(chars2));
+        Assert.assertEquals(Hasher.astaroth.hash(ints, 1, ints.length-1), Hasher.astaroth.hash(ints2));
+        Assert.assertEquals(Hasher.astaroth.hash(longs, 1, longs.length-1), Hasher.astaroth.hash(longs2));
+        Assert.assertEquals(Hasher.astaroth.hash(floats, 1, floats.length-1), Hasher.astaroth.hash(floats2));
+        Assert.assertEquals(Hasher.astaroth.hash(doubles, 1, doubles.length-1), Hasher.astaroth.hash(doubles2));
+        Assert.assertEquals(Hasher.astaroth.hash(strings, 1, strings.length-1), Hasher.astaroth.hash(strings2));
+
+        Assert.assertEquals(Hasher.astaroth.hash64(bytes, 1, bytes.length-1), Hasher.astaroth.hash64(bytes2));
+        Assert.assertEquals(Hasher.astaroth.hash64(chars, 1, chars.length-1), Hasher.astaroth.hash64(chars2));
+        Assert.assertEquals(Hasher.astaroth.hash64(ints, 1, ints.length-1), Hasher.astaroth.hash64(ints2));
+        Assert.assertEquals(Hasher.astaroth.hash64(longs, 1, longs.length-1), Hasher.astaroth.hash64(longs2));
+        Assert.assertEquals(Hasher.astaroth.hash64(floats, 1, floats.length-1), Hasher.astaroth.hash64(floats2));
+        Assert.assertEquals(Hasher.astaroth.hash64(doubles, 1, doubles.length-1), Hasher.astaroth.hash64(doubles2));
+        Assert.assertEquals(Hasher.astaroth.hash64(strings, 1, strings.length-1), Hasher.astaroth.hash64(strings2));
 
         Assert.assertNotEquals(Hasher.astaroth.hash(bytes, 1, bytes.length-1), Hasher.astaroth_.hash(bytes2));
         Assert.assertNotEquals(Hasher.astaroth.hash(chars, 1, chars.length-1), Hasher.astaroth_.hash(chars2));
