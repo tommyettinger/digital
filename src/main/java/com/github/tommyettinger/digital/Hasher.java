@@ -3883,7 +3883,7 @@ public class Hasher {
      * @param data input array
      * @return the 32-bit hash of data
      */
-    public long hashBulk(final long[] data) {
+    public int hashBulk(final long[] data) {
         if (data == null) return 0;
         return hashBulk(data, 0, data.length);
     }
@@ -4166,7 +4166,7 @@ public class Hasher {
      * @param data an input ByteBuffer
      * @return the 32-bit hash of data
      */
-    public long hashBulk(final ByteBuffer data) {
+    public int hashBulk(final ByteBuffer data) {
         return hashBulk(data, 0, data.limit());
     }
 
@@ -4210,6 +4210,28 @@ public class Hasher {
             default: return (int)mix(h);
         }
     }
+
+    // predefined HashFunction instances, to avoid lots of casting
+
+    public static final SeededHashFunction64<boolean[]> booleanArrayHash64 = Hasher::hash64;
+    public static final SeededHashFunction64<byte[]> byteArrayHash64 = Hasher::hash64;
+    public static final SeededHashFunction64<short[]> shortArrayHash64 = Hasher::hash64;
+    public static final SeededHashFunction64<int[]> intArrayHash64 = Hasher::hash64;
+    public static final SeededHashFunction64<long[]> longArrayHash64 = Hasher::hash64;
+    public static final SeededHashFunction64<float[]> floatArrayHash64 = Hasher::hash64;
+    public static final SeededHashFunction64<double[]> doubleArrayHash64 = Hasher::hash64;
+    public static final SeededHashFunction64<char[]> charArrayHash64 = Hasher::hash64;
+    public static final SeededHashFunction64<Object[]> objectArrayHash64 = Hasher::hash64;
+
+    public static final SeededHashFunction<boolean[]> booleanArrayHash = Hasher::hash;
+    public static final SeededHashFunction<byte[]> byteArrayHash = Hasher::hash;
+    public static final SeededHashFunction<short[]> shortArrayHash = Hasher::hash;
+    public static final SeededHashFunction<int[]> intArrayHash = Hasher::hash;
+    public static final SeededHashFunction<long[]> longArrayHash = Hasher::hash;
+    public static final SeededHashFunction<float[]> floatArrayHash = Hasher::hash;
+    public static final SeededHashFunction<double[]> doubleArrayHash = Hasher::hash;
+    public static final SeededHashFunction<char[]> charArrayHash = Hasher::hash;
+    public static final SeededHashFunction<Object[]> objectArrayHash = Hasher::hash;
 
     // normal Java Object stuff
 

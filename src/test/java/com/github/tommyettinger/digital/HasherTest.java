@@ -50,17 +50,17 @@ public class HasherTest {
         Assert.assertNotEquals(Hasher.astaroth.hash64(string2D), Hasher.astaroth_.hash64(string2D2));
 
         Assert.assertNotEquals(
-                Hasher.astaroth.hashBulk64((Hasher.HashFunction64<long[]>)Hasher.astaroth::hash64, long2D2),
-                Hasher.astaroth_.hashBulk64((Hasher.HashFunction64<long[]>)Hasher.astaroth_::hash64, long2D2));
+                Hasher.astaroth.hashBulk64((Hasher.HashFunction64<long[]>)Hasher.astaroth::hashBulk64, long2D2),
+                Hasher.astaroth_.hashBulk64((Hasher.HashFunction64<long[]>)Hasher.astaroth_::hashBulk64, long2D2));
         Assert.assertNotEquals(
-                Hasher.astaroth.hashBulk64((Hasher.HashFunction<long[]>)Hasher.astaroth::hash, long2D2),
-                Hasher.astaroth_.hashBulk64((Hasher.HashFunction<long[]>)Hasher.astaroth_::hash, long2D2));
+                Hasher.astaroth.hashBulk64((Hasher.HashFunction<long[]>)Hasher.astaroth::hashBulk, long2D2),
+                Hasher.astaroth_.hashBulk64((Hasher.HashFunction<long[]>)Hasher.astaroth_::hashBulk, long2D2));
         Assert.assertNotEquals(
-                Hasher.astaroth.hashBulk((Hasher.HashFunction64<long[]>)Hasher.astaroth::hash64, long2D2),
-                Hasher.astaroth_.hashBulk((Hasher.HashFunction64<long[]>)Hasher.astaroth_::hash64, long2D2));
+                Hasher.astaroth.hashBulk((Hasher.HashFunction64<long[]>)Hasher.astaroth::hashBulk64, long2D2),
+                Hasher.astaroth_.hashBulk((Hasher.HashFunction64<long[]>)Hasher.astaroth_::hashBulk64, long2D2));
         Assert.assertNotEquals(
-                Hasher.astaroth.hashBulk((Hasher.HashFunction<long[]>)Hasher.astaroth::hash, long2D2),
-                Hasher.astaroth_.hashBulk((Hasher.HashFunction<long[]>)Hasher.astaroth_::hash, long2D2));
+                Hasher.astaroth.hashBulk((Hasher.HashFunction<long[]>)Hasher.astaroth::hashBulk, long2D2),
+                Hasher.astaroth_.hashBulk((Hasher.HashFunction<long[]>)Hasher.astaroth_::hashBulk, long2D2));
     }
     @Test
     public void testRanges() {
