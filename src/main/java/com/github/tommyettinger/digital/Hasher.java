@@ -4280,6 +4280,87 @@ public class Hasher {
         return (int)mix(h);
     }
 
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(double[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @return the 64-bit hash of data
+     */
+    public long hashBulk64(final double[] data) {
+        if (data == null) return 0;
+        return hashBulk64(data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(double[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 64-bit hash of data
+     */
+    public long hashBulk64(final double[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(doubleToRawLongBits(data[i  ]), doubleToRawLongBits(data[i+1]), doubleToRawLongBits(data[i+2]), doubleToRawLongBits(data[i+3]));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(doubleToRawLongBits(data[i+4]), doubleToRawLongBits(data[i+5]), doubleToRawLongBits(data[i+6]), doubleToRawLongBits(data[i+7]));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, doubleToRawLongBits(data[i++]));
+        }
+        return mix(h);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(double[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @return the 32-bit hash of data
+     */
+    public int hashBulk(final double[] data) {
+        if (data == null) return 0;
+        return hashBulk(data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(double[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public int hashBulk(final double[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(doubleToRawLongBits(data[i  ]), doubleToRawLongBits(data[i+1]), doubleToRawLongBits(data[i+2]), doubleToRawLongBits(data[i+3]));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(doubleToRawLongBits(data[i+4]), doubleToRawLongBits(data[i+5]), doubleToRawLongBits(data[i+6]), doubleToRawLongBits(data[i+7]));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, doubleToRawLongBits(data[i++]));
+        }
+        return (int)mix(h);
+    }
+
     /**
      * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
      * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
@@ -4324,15 +4405,16 @@ public class Hasher {
             h = mixStream(h, data.getLong());
         }
         switch (len) {
-            case 1: return  mix(mixStream(h, (data.get())));
-            case 2: return  mix(mixStream(h, (data.getShort())));
-            case 3: return  mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16));
-            case 4: return  mix(mixStream(h, (data.getInt())));
-            case 5: return  mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32));
-            case 6: return  mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32));
-            case 7: return  mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48));
-            default: return mix(h);
+            case 1:  h = mix(mixStream(h, (data.get()))); break;
+            case 2:  h = mix(mixStream(h, (data.getShort()))); break;
+            case 3:  h = mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16)); break;
+            case 4:  h = mix(mixStream(h, (data.getInt()))); break;
+            case 5:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32)); break;
+            case 6:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32)); break;
+            case 7:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48)); break;
+            default: h = mix(h); break;
         }
+        return h;
     }
 
     /**
@@ -4379,17 +4461,204 @@ public class Hasher {
             h = mixStream(h, data.getLong());
         }
         switch (len) {
-            case 1: return  (int)mix(mixStream(h, (data.get())));
-            case 2: return  (int)mix(mixStream(h, (data.getShort())));
-            case 3: return  (int)mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16));
-            case 4: return  (int)mix(mixStream(h, (data.getInt())));
-            case 5: return  (int)mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32));
-            case 6: return  (int)mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32));
-            case 7: return  (int)mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48));
-            default: return (int)mix(h);
+            case 1:  h = mix(mixStream(h, (data.get()))); break;
+            case 2:  h = mix(mixStream(h, (data.getShort()))); break;
+            case 3:  h = mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16)); break;
+            case 4:  h = mix(mixStream(h, (data.getInt()))); break;
+            case 5:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32)); break;
+            case 6:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32)); break;
+            case 7:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48)); break;
+            default: h = mix(h); break;
         }
+        return (int) h;
     }
-    
+
+    // member functions, function parameter section
+
+    /**
+     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
+     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
+     * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * @param function typically a method reference to a {@link #hash64} method here
+     * @param data input array
+     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
+     * @return the 64-bit hash of data
+     */
+    public <T> long hashBulk64(final HashFunction64<T> function, final T[] data) {
+        if (data == null) return 0;
+        return hashBulk64(function, data, 0, data.length);
+    }
+
+    /**
+     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
+     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
+     * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * @param function typically a method reference to a {@link #hash64} method here
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
+     * @return the 64-bit hash of data
+     */
+    public <T> long hashBulk64(final HashFunction64<T> function, final T[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(function.hash64(data[i  ]), function.hash64(data[i+1]), function.hash64(data[i+2]), function.hash64(data[i+3]));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(function.hash64(data[i+4]), function.hash64(data[i+5]), function.hash64(data[i+6]), function.hash64(data[i+7]));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, function.hash64(data[i++]));
+        }
+        return mix(h);
+    }
+
+    /**
+     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
+     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
+     * array type, and function is usually a method reference to a {@link #hash} method here.
+     * @param function typically a method reference to a {@link #hash} method here
+     * @param data input array
+     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
+     * @return the 64-bit hash of data
+     */
+    public <T> long hashBulk64(final HashFunction<T> function, final T[] data) {
+        if (data == null) return 0;
+        return hashBulk64(function, data, 0, data.length);
+    }
+
+    /**
+     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
+     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
+     * array type, and function is usually a method reference to a {@link #hash} method here.
+     * @param function typically a method reference to a {@link #hash} method here
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
+     * @return the 64-bit hash of data
+     */
+    public <T> long hashBulk64(final HashFunction<T> function, final T[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(function.hash(data[i  ]), function.hash(data[i+1]), function.hash(data[i+2]), function.hash(data[i+3]));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(function.hash(data[i+4]), function.hash(data[i+5]), function.hash(data[i+6]), function.hash(data[i+7]));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, function.hash(data[i++]));
+        }
+        return mix(h);
+    }
+
+    /**
+     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
+     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
+     * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * @param function typically a method reference to a {@link #hash64} method here
+     * @param data input array
+     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
+     * @return the 32-bit hash of data
+     */
+    public <T> int hashBulk(final HashFunction64<T> function, final T[] data) {
+        if (data == null) return 0;
+        return hashBulk(function, data, 0, data.length);
+    }
+
+    /**
+     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
+     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
+     * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * @param function typically a method reference to a {@link #hash64} method here
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
+     * @return the 32-bit hash of data
+     */
+    public <T> int hashBulk(final HashFunction64<T> function, final T[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(function.hash64(data[i  ]), function.hash64(data[i+1]), function.hash64(data[i+2]), function.hash64(data[i+3]));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(function.hash64(data[i+4]), function.hash64(data[i+5]), function.hash64(data[i+6]), function.hash64(data[i+7]));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, function.hash64(data[i++]));
+        }
+        return (int)mix(h);
+    }
+
+    /**
+     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
+     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
+     * array type, and function is usually a method reference to a {@link #hash} method here.
+     * @param function typically a method reference to a {@link #hash} method here
+     * @param data input array
+     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
+     * @return the 32-bit hash of data
+     */
+    public <T> int hashBulk(final HashFunction<T> function, final T[] data) {
+        if (data == null) return 0;
+        return hashBulk(function, data, 0, data.length);
+    }
+
+    /**
+     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
+     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
+     * array type, and function is usually a method reference to a {@link #hash} method here.
+     * @param function typically a method reference to a {@link #hash} method here
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
+     * @return the 32-bit hash of data
+     */
+    public <T> int hashBulk(final HashFunction<T> function, final T[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(function.hash(data[i  ]), function.hash(data[i+1]), function.hash(data[i+2]), function.hash(data[i+3]));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(function.hash(data[i+4]), function.hash(data[i+5]), function.hash(data[i+6]), function.hash(data[i+7]));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, function.hash(data[i++]));
+        }
+        return (int)mix(h);
+    }
+
     // bulk hashing section, seeded static functions
 
     /**
@@ -4827,34 +5096,28 @@ public class Hasher {
         }
         return (int)mix(h);
     }
-
-
     /**
-     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
-     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
-     * array type, and function is usually a method reference to a {@link #hash64} method here.
-     * @param function typically a method reference to a {@link #hash64} method here
+     * A hashing function that is likely to outperform {@link #hash64(double[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
      * @param data input array
-     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
      * @return the 64-bit hash of data
      */
-    public <T> long hashBulk64(final HashFunction64<T> function, final T[] data) {
+    public static long hashBulk64(final long seed, final double[] data) {
         if (data == null) return 0;
-        return hashBulk64(function, data, 0, data.length);
+        return hashBulk64(seed, data, 0, data.length);
     }
 
     /**
-     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
-     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
-     * array type, and function is usually a method reference to a {@link #hash64} method here.
-     * @param function typically a method reference to a {@link #hash64} method here
+     * A hashing function that is likely to outperform {@link #hash64(double[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
-     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
      * @return the 64-bit hash of data
      */
-    public <T> long hashBulk64(final HashFunction64<T> function, final T[] data, int start, int length) {
+    public static long hashBulk64(final long seed, final double[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         int len = Math.min(length, data.length - start);
@@ -4863,44 +5126,40 @@ public class Hasher {
         while(len >= 8){
             h *= C;
             len -= 8;
-            h += mixStreamBulk(function.hash64(data[i  ]), function.hash64(data[i+1]), function.hash64(data[i+2]), function.hash64(data[i+3]));
+            h += mixStreamBulk(doubleToRawLongBits(data[i  ]), doubleToRawLongBits(data[i+1]), doubleToRawLongBits(data[i+2]), doubleToRawLongBits(data[i+3]));
             h = (h << 37 | h >>> 27);
-            h += mixStreamBulk(function.hash64(data[i+4]), function.hash64(data[i+5]), function.hash64(data[i+6]), function.hash64(data[i+7]));
+            h += mixStreamBulk(doubleToRawLongBits(data[i+4]), doubleToRawLongBits(data[i+5]), doubleToRawLongBits(data[i+6]), doubleToRawLongBits(data[i+7]));
             i += 8;
         }
         while(len >= 1){
             len--;
-            h = mixStream(h, function.hash64(data[i++]));
+            h = mixStream(h, doubleToRawLongBits(data[i++]));
         }
         return mix(h);
     }
 
     /**
-     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
-     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
-     * array type, and function is usually a method reference to a {@link #hash} method here.
-     * @param function typically a method reference to a {@link #hash} method here
+     * A hashing function that is likely to outperform {@link #hash(double[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
      * @param data input array
-     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
-     * @return the 64-bit hash of data
+     * @return the 32-bit hash of data
      */
-    public <T> long hashBulk64(final HashFunction<T> function, final T[] data) {
+    public static int hashBulk(final long seed, final double[] data) {
         if (data == null) return 0;
-        return hashBulk64(function, data, 0, data.length);
+        return hashBulk(seed, data, 0, data.length);
     }
 
     /**
-     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
-     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
-     * array type, and function is usually a method reference to a {@link #hash} method here.
-     * @param function typically a method reference to a {@link #hash} method here
+     * A hashing function that is likely to outperform {@link #hash(double[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
-     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
-     * @return the 64-bit hash of data
+     * @return the 32-bit hash of data
      */
-    public <T> long hashBulk64(final HashFunction<T> function, final T[] data, int start, int length) {
+    public static int hashBulk(final long seed, final double[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         int len = Math.min(length, data.length - start);
@@ -4909,109 +5168,19 @@ public class Hasher {
         while(len >= 8){
             h *= C;
             len -= 8;
-            h += mixStreamBulk(function.hash(data[i  ]), function.hash(data[i+1]), function.hash(data[i+2]), function.hash(data[i+3]));
+            h += mixStreamBulk(doubleToRawLongBits(data[i  ]), doubleToRawLongBits(data[i+1]), doubleToRawLongBits(data[i+2]), doubleToRawLongBits(data[i+3]));
             h = (h << 37 | h >>> 27);
-            h += mixStreamBulk(function.hash(data[i+4]), function.hash(data[i+5]), function.hash(data[i+6]), function.hash(data[i+7]));
+            h += mixStreamBulk(doubleToRawLongBits(data[i+4]), doubleToRawLongBits(data[i+5]), doubleToRawLongBits(data[i+6]), doubleToRawLongBits(data[i+7]));
             i += 8;
         }
         while(len >= 1){
             len--;
-            h = mixStream(h, function.hash(data[i++]));
-        }
-        return mix(h);
-    }
-
-    /**
-     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
-     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
-     * array type, and function is usually a method reference to a {@link #hash64} method here.
-     * @param function typically a method reference to a {@link #hash64} method here
-     * @param data input array
-     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
-     * @return the 32-bit hash of data
-     */
-    public <T> int hashBulk(final HashFunction64<T> function, final T[] data) {
-        if (data == null) return 0;
-        return hashBulk(function, data, 0, data.length);
-    }
-
-    /**
-     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
-     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
-     * array type, and function is usually a method reference to a {@link #hash64} method here.
-     * @param function typically a method reference to a {@link #hash64} method here
-     * @param data input array
-     * @param start starting index in data
-     * @param length how many items to use from data
-     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
-     * @return the 32-bit hash of data
-     */
-    public <T> int hashBulk(final HashFunction64<T> function, final T[] data, int start, int length) {
-        if (data == null || start < 0 || length < 0 || start >= data.length)
-            return 0;
-        int len = Math.min(length, data.length - start);
-        long h = len ^ forward(seed);
-        int i = start;
-        while(len >= 8){
-            h *= C;
-            len -= 8;
-            h += mixStreamBulk(function.hash64(data[i  ]), function.hash64(data[i+1]), function.hash64(data[i+2]), function.hash64(data[i+3]));
-            h = (h << 37 | h >>> 27);
-            h += mixStreamBulk(function.hash64(data[i+4]), function.hash64(data[i+5]), function.hash64(data[i+6]), function.hash64(data[i+7]));
-            i += 8;
-        }
-        while(len >= 1){
-            len--;
-            h = mixStream(h, function.hash64(data[i++]));
+            h = mixStream(h, doubleToRawLongBits(data[i++]));
         }
         return (int)mix(h);
     }
 
-    /**
-     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
-     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
-     * array type, and function is usually a method reference to a {@link #hash} method here.
-     * @param function typically a method reference to a {@link #hash} method here
-     * @param data input array
-     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
-     * @return the 32-bit hash of data
-     */
-    public <T> int hashBulk(final HashFunction<T> function, final T[] data) {
-        if (data == null) return 0;
-        return hashBulk(function, data, 0, data.length);
-    }
-
-    /**
-     * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
-     * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
-     * array type, and function is usually a method reference to a {@link #hash} method here.
-     * @param function typically a method reference to a {@link #hash} method here
-     * @param data input array
-     * @param start starting index in data
-     * @param length how many items to use from data
-     * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
-     * @return the 32-bit hash of data
-     */
-    public <T> int hashBulk(final HashFunction<T> function, final T[] data, int start, int length) {
-        if (data == null || start < 0 || length < 0 || start >= data.length)
-            return 0;
-        int len = Math.min(length, data.length - start);
-        long h = len ^ forward(seed);
-        int i = start;
-        while(len >= 8){
-            h *= C;
-            len -= 8;
-            h += mixStreamBulk(function.hash(data[i  ]), function.hash(data[i+1]), function.hash(data[i+2]), function.hash(data[i+3]));
-            h = (h << 37 | h >>> 27);
-            h += mixStreamBulk(function.hash(data[i+4]), function.hash(data[i+5]), function.hash(data[i+6]), function.hash(data[i+7]));
-            i += 8;
-        }
-        while(len >= 1){
-            len--;
-            h = mixStream(h, function.hash(data[i++]));
-        }
-        return (int)mix(h);
-    }
+    // seeded static functions, function parameter section
 
     /**
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link SeededHashFunction64} as
@@ -5247,15 +5416,16 @@ public class Hasher {
             h = mixStream(h, data.getLong());
         }
         switch (len) {
-            case 1: return  mix(mixStream(h, (data.get())));
-            case 2: return  mix(mixStream(h, (data.getShort())));
-            case 3: return  mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16));
-            case 4: return  mix(mixStream(h, (data.getInt())));
-            case 5: return  mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32));
-            case 6: return  mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32));
-            case 7: return  mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48));
-            default: return mix(h);
+            case 1:  h = mix(mixStream(h, (data.get()))); break;
+            case 2:  h = mix(mixStream(h, (data.getShort()))); break;
+            case 3:  h = mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16)); break;
+            case 4:  h = mix(mixStream(h, (data.getInt()))); break;
+            case 5:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32)); break;
+            case 6:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32)); break;
+            case 7:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48)); break;
+            default: h = mix(h); break;
         }
+        return h;
     }
 
     /**
@@ -5304,15 +5474,16 @@ public class Hasher {
             h = mixStream(h, data.getLong());
         }
         switch (len) {
-            case 1: return  (int)mix(mixStream(h, (data.get())));
-            case 2: return  (int)mix(mixStream(h, (data.getShort())));
-            case 3: return  (int)mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16));
-            case 4: return  (int)mix(mixStream(h, (data.getInt())));
-            case 5: return  (int)mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32));
-            case 6: return  (int)mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32));
-            case 7: return  (int)mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48));
-            default: return (int)mix(h);
+            case 1:  h = mix(mixStream(h, (data.get()))); break;
+            case 2:  h = mix(mixStream(h, (data.getShort()))); break;
+            case 3:  h = mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16)); break;
+            case 4:  h = mix(mixStream(h, (data.getInt()))); break;
+            case 5:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32)); break;
+            case 6:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32)); break;
+            case 7:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48)); break;
+            default: h = mix(h); break;
         }
+        return (int) h;
     }
 
     // predefined HashFunction instances, to avoid lots of casting
