@@ -4441,6 +4441,86 @@ public class Hasher {
     }
 
     /**
+     * A hashing function that is likely to outperform {@link #hash64(boolean[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @return the 64-bit hash of data
+     */
+    public long hashBulk64(final boolean[] data) {
+        if (data == null) return 0;
+        return hashBulk64(data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(boolean[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 64-bit hash of data
+     */
+    public long hashBulk64(final boolean[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(data[i  ] ? -1L : 0L, data[i+1] ? -1L : 0L, data[i+2] ? -1L : 0L, data[i+3] ? -1L : 0L);
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data[i+4] ? -1L : 0L, data[i+5] ? -1L : 0L, data[i+6] ? -1L : 0L, data[i+7] ? -1L : 0L);
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data[i++] ? -1L : 0L);
+        }
+        return mix(h);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(boolean[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @return the 32-bit hash of data
+     */
+    public int hashBulk(final boolean[] data) {
+        if (data == null) return 0;
+        return hashBulk(data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(boolean[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public int hashBulk(final boolean[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8) {
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(data[i  ] ? -1L : 0L, data[i+1] ? -1L : 0L, data[i+2] ? -1L : 0L, data[i+3] ? -1L : 0L);
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data[i+4] ? -1L : 0L, data[i+5] ? -1L : 0L, data[i+6] ? -1L : 0L, data[i+7] ? -1L : 0L);
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data[i++] ? -1L : 0L);
+        }
+        return (int)mix(h);
+    }
+
+    /**
      * A hashing function that is likely to outperform {@link #hash64(CharSequence)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
      * @param data input array
@@ -5255,6 +5335,7 @@ public class Hasher {
         }
         return (int)mix(h);
     }
+
     /**
      * A hashing function that is likely to outperform {@link #hash64(double[])} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
@@ -5419,6 +5500,90 @@ public class Hasher {
         while(len >= 1){
             len--;
             h = mixStream(h, data[i++]);
+        }
+        return (int)mix(h);
+    }
+    
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(boolean[])} on longer input arrays
+     * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * @param seed any long seed
+     * @param data input array
+     * @return the 64-bit hash of data
+     */
+    public static long hashBulk64(final long seed, final boolean[] data) {
+        if (data == null) return 0;
+        return hashBulk64(seed, data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(boolean[], int, int)} on longer input arrays
+     * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * @param seed any long seed
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 64-bit hash of data
+     */
+    public static long hashBulk64(final long seed, final boolean[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(data[i  ] ? -1L : 0L, data[i+1] ? -1L : 0L, data[i+2] ? -1L : 0L, data[i+3] ? -1L : 0L);
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data[i+4] ? -1L : 0L, data[i+5] ? -1L : 0L, data[i+6] ? -1L : 0L, data[i+7] ? -1L : 0L);
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data[i++] ? -1L : 0L);
+        }
+        return mix(h);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(boolean[])} on longer input arrays
+     * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * @param seed any long seed
+     * @param data input array
+     * @return the 32-bit hash of data
+     */
+    public static int hashBulk(final long seed, final boolean[] data) {
+        if (data == null) return 0;
+        return hashBulk(seed, data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(boolean[], int, int)} on longer input arrays
+     * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * @param seed any long seed
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public static int hashBulk(final long seed, final boolean[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(data[i  ] ? -1L : 0L, data[i+1] ? -1L : 0L, data[i+2] ? -1L : 0L, data[i+3] ? -1L : 0L);
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data[i+4] ? -1L : 0L, data[i+5] ? -1L : 0L, data[i+6] ? -1L : 0L, data[i+7] ? -1L : 0L);
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data[i++] ? -1L : 0L);
         }
         return (int)mix(h);
     }
