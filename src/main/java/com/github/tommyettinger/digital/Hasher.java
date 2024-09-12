@@ -3904,6 +3904,47 @@ public class Hasher {
         return mix(h);
     }
 
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(int[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @return the 64-bit hash of data
+     */
+    public long hashBulk64(final int[] data) {
+        if (data == null) return 0;
+        return hashBulk64(data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(int[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 64-bit hash of data
+     */
+    public long hashBulk64(final int[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data[i++]);
+        }
+        return mix(h);
+    }
+
     /**
      * A hashing function that is likely to outperform {@link #hash(long[])} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
@@ -3924,6 +3965,46 @@ public class Hasher {
      * @return the 32-bit hash of data
      */
     public int hashBulk(final long[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data[i++]);
+        }
+        return (int)mix(h);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(int[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @return the 32-bit hash of data
+     */
+    public int hashBulk(final int[] data) {
+        if (data == null) return 0;
+        return hashBulk(data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(int[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public int hashBulk(final int[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         int len = Math.min(length, data.length - start);
@@ -4238,7 +4319,7 @@ public class Hasher {
         }
     }
     
-    // bulk hashing section, seedeed static functions
+    // bulk hashing section, seeded static functions
 
     /**
      * A hashing function that is likely to outperform {@link #hash64(long[])} on longer input arrays
@@ -4283,6 +4364,48 @@ public class Hasher {
     }
 
     /**
+     * A hashing function that is likely to outperform {@link #hash64(int[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
+     * @param data input array
+     * @return the 64-bit hash of data
+     */
+    public static long hashBulk64(final long seed, final int[] data) {
+        if (data == null) return 0;
+        return hashBulk64(seed, data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(int[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 64-bit hash of data
+     */
+    public static long hashBulk64(final long seed, final int[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data[i++]);
+        }
+        return mix(h);
+    }
+
+    /**
      * A hashing function that is likely to outperform {@link #hash(long[])} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
      * @param seed any long seed
@@ -4304,6 +4427,48 @@ public class Hasher {
      * @return the 32-bit hash of data
      */
     public static int hashBulk(final long seed, final long[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data[i++]);
+        }
+        return (int)mix(h);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(int[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
+     * @param data input array
+     * @return the 32-bit hash of data
+     */
+    public static int hashBulk(final long seed, final int[] data) {
+        if (data == null) return 0;
+        return hashBulk(seed, data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(int[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public static int hashBulk(final long seed, final int[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         int len = Math.min(length, data.length - start);
