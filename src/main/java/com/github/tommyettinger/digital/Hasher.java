@@ -31,22 +31,45 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
 
 /**
  * 64-bit and 32-bit hashing functions that we can rely on staying the same cross-platform.
- * This uses a family of algorithms all based on Wang Yi's wyhash, but using at most 64-bit
- * math. Wyhash was designed foremost for speed and also general-purpose usability, but not
- * cryptographic security. The functions here pass the stringent SMHasher test battery,
- * including the "bad seeds" test that wyhash itself fails. This is based on an early version
- * of wyhash,
- * <a href="https://github.com/wangyi-fudan/wyhash/blob/version_1/wyhash.h">source here</a>,
- * but has diverged significantly.
+ * Two families of algorithm are available here. One is faster at hashing small arrays, and
+ * uses the names {@link #hash64} and {@link #hash}. It is based on Wang Yi's wyhash, but
+ * uses at most 64-bit math. The other family is newer, and is faster at hashing larger arrays;
+ * it uses the names {@link #hashBulk64} and {@link #hashBulk}. It is based loosely on Jon
+ * Maiga's MX3 hash, though the algorithm is rather different. Wyhash and MX3 were designed
+ * foremost for speed and also general-purpose usability, but not cryptographic security.
+ * The "Bulk" functions here pass the stringent SMHasher 3 test battery, but the older family
+ * based on Wyhash only passes SMHasher 2. That means the "Bulk" functions can be used with
+ * more confidence as a source of randomness and avoiding collisions than the non-"Bulk"
+ * functions can. New code may want to prefer "Bulk" functions even if keys may sometimes be
+ * small, both because the statistical quality is somewhat better, and because some extra
+ * methods are available.
  * <br>
- * Variations on wyhash are used depending on the types being hashed. There is also a different
- * algorithm present here in the {@link #hashBulk} and {@link #hashBulk64} methods, based very
- * loosely on the <a href="https://github.com/jonmaiga/mx3">MX3 hash</a>. This algorithm, called
- * Ax, is faster at hashing large arrays of longs than any of the Wyhash variants I've tried,
- * and also passes the SMHasher 3 test suite. It does best with larger array sizes, so the name
- * includes "Bulk", but it tends to be faster starting at lengths of maybe 20 long items. The
- * bulk hash functions also include ways to connect with other hash functions to hash
- * multidimensional arrays or arrays of types this doesn't provide a hash function for.
+ * These extra methods include {@link #hashBulk(ByteBuffer)} and its overloads, which all
+ * can be used to hash a ByteBuffer more efficiently than a simple {@code byte[]} can be
+ * hashed here. There are also various {@link #hashBulk(HashFunction, Object[])} instance
+ * methods, with overloads that take {@link HashFunction} and {@link HashFunction64}, plus
+ * various {@link #hashBulk(long, SeededHashFunction, Object[])} static methods, with
+ * overloads that take {@link SeededHashFunction} and {@link SeededHashFunction64}. These
+ * "HashFunction-related" types are functional interfaces defined in this class. These allow
+ * you to connect bulk-hashing functions with other hash functions to hash multidimensional
+ * arrays or arrays of types this doesn't provide a hash function for. Because no APIs
+ * introduced in Java 8 are used here, you can use these functional interfaces on RoboVM
+ * as long as you use language level 8 (or higher, as it eventually becomes an option).
+ * <br>
+ * The Wyhash-related family is based on an early version of wyhash,
+ * <a href="https://github.com/wangyi-fudan/wyhash/blob/version_1/wyhash.h">source here</a>,
+ * but has diverged significantly. Variations on wyhash are used depending on the types being
+ * hashed.
+ * <a href="https://github.com/tommyettinger/waterhash">Code for the variations is here.</a>
+ * <br>
+ * The newer algorithm present here in the {@link #hashBulk} and {@link #hashBulk64} methods is
+ * based very loosely on the <a href="https://github.com/jonmaiga/mx3">MX3 hash</a>. This
+ * modified algorithm, called Ax, is faster at hashing large arrays of longs than any of the
+ * Wyhash variants I've tried, and also passes the SMHasher 3 test suite. It does best with
+ * larger array sizes, so the name includes "Bulk", but it tends to be faster starting at lengths
+ * of maybe 20 long items.
+ * <a href="https://github.com/tommyettinger/smhasher-with-junk/blob/master/smhasher3/hashes/ax.cpp">Code for Ax is here</a>
+ * in the repo containing SMHasher 3 tests, at least temporarily until it gets its own repo.
  * <br>
  * This provides an object-based API and a static API, where a Hasher object is
  * instantiated with a seed, and the static methods take a seed as their first argument.
@@ -71,6 +94,10 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
  * {@code int result = Hasher.alpha.hashBulk((Hasher.HashFunction64<long[]>)Hasher.alpha::hash, data);}
  * Or, you can use the static variants:
  * {@code int result = Hasher.hashBulk(seed, Hasher.longArrayHash, data);}
+ * You could also use longArrayHashBulk:
+ * {@code int result = Hasher.hashBulk(seed, Hasher.longArrayHashBulk, data);}
+ * Or you could do everything in 64-bit:
+ * {@code long result = Hasher.hashBulk64(seed, Hasher.longArrayHashBulk64, data);}
  * <br>
  * The hash64() and hash() methods use 64-bit math even when producing
  * 32-bit hashes, for GWT reasons. GWT doesn't have the same behavior as desktop and
@@ -277,7 +304,7 @@ public class Hasher {
      * {@code randomize1(long)}, {@code randomize2(long)}, and {@code randomize3(long)} are bijective functions, which
      * means they are reversible; it is, however, somewhat harder to reverse the xor-rotate-xor-rotate stage used in
      * randomize2() (reversing randomize3() is easy, but takes more steps), and the methods that produce any output
-     * other than a full-range long are not reversible (such as {@link #randomize1Bounded(long, int)} and
+     * other than a full-range long are not reversible (such as {@code randomize1Bounded(long, int)} and
      * {@link #randomize2Double(long)}).
      *
      * @param state any long; subsequent calls should change by an odd number, such as with {@code ++state}
@@ -501,7 +528,7 @@ public class Hasher {
      * means they are reversible; it is, however, somewhat harder to reverse the xor-rotate-xor-rotate stage used in
      * randomize2() (reversing randomize3() is easy, but takes more steps), and the methods that produce any output
      * other than a full-range long are not reversible (such as {@link #randomize1Bounded(long, int)} and
-     * {@link #randomize2Double(long)}).
+     * {@code randomize2Double(long)}).
      *
      * @param state a variable that should be different every time you want a different random result;
      *              using {@code randomizeDouble(++state)} is recommended to go forwards or
@@ -6153,6 +6180,7 @@ public class Hasher {
     public static final SeededHashFunction64<float[]> floatArrayHash64 = Hasher::hash64;
     public static final SeededHashFunction64<double[]> doubleArrayHash64 = Hasher::hash64;
     public static final SeededHashFunction64<char[]> charArrayHash64 = Hasher::hash64;
+    public static final SeededHashFunction64<CharSequence> charSequenceHash64 = Hasher::hash64;
     public static final SeededHashFunction64<Object[]> objectArrayHash64 = Hasher::hash64;
 
     public static final SeededHashFunction<boolean[]> booleanArrayHash = Hasher::hash;
@@ -6163,12 +6191,31 @@ public class Hasher {
     public static final SeededHashFunction<float[]> floatArrayHash = Hasher::hash;
     public static final SeededHashFunction<double[]> doubleArrayHash = Hasher::hash;
     public static final SeededHashFunction<char[]> charArrayHash = Hasher::hash;
+    public static final SeededHashFunction<CharSequence> charSequenceHash = Hasher::hash;
     public static final SeededHashFunction<Object[]> objectArrayHash = Hasher::hash;
 
+    public static final SeededHashFunction64<boolean[]> booleanArrayHashBulk64 = Hasher::hashBulk64;
+    public static final SeededHashFunction64<byte[]> byteArrayHashBulk64 = Hasher::hashBulk64;
+    public static final SeededHashFunction64<short[]> shortArrayHashBulk64 = Hasher::hashBulk64;
+    public static final SeededHashFunction64<int[]> intArrayHashBulk64 = Hasher::hashBulk64;
     public static final SeededHashFunction64<long[]> longArrayHashBulk64 = Hasher::hashBulk64;
+    public static final SeededHashFunction64<float[]> floatArrayHashBulk64 = Hasher::hashBulk64;
+    public static final SeededHashFunction64<double[]> doubleArrayHashBulk64 = Hasher::hashBulk64;
+    public static final SeededHashFunction64<char[]> charArrayHashBulk64 = Hasher::hashBulk64;
+    public static final SeededHashFunction64<CharSequence> charSequenceHashBulk64 = Hasher::hashBulk64;
+    public static final SeededHashFunction64<Object[]> objectArrayHashBulk64 = Hasher::hashBulk64;
     public static final SeededHashFunction64<ByteBuffer> byteBufferHashBulk64 = Hasher::hashBulk64;
 
+    public static final SeededHashFunction<boolean[]> booleanArrayHashBulk = Hasher::hashBulk;
+    public static final SeededHashFunction<byte[]> byteArrayHashBulk = Hasher::hashBulk;
+    public static final SeededHashFunction<short[]> shortArrayHashBulk = Hasher::hashBulk;
+    public static final SeededHashFunction<int[]> intArrayHashBulk = Hasher::hashBulk;
     public static final SeededHashFunction<long[]> longArrayHashBulk = Hasher::hashBulk;
+    public static final SeededHashFunction<float[]> floatArrayHashBulk = Hasher::hashBulk;
+    public static final SeededHashFunction<double[]> doubleArrayHashBulk = Hasher::hashBulk;
+    public static final SeededHashFunction<char[]> charArrayHashBulk = Hasher::hashBulk;
+    public static final SeededHashFunction<CharSequence> charSequenceHashBulk = Hasher::hashBulk;
+    public static final SeededHashFunction<Object[]> objectArrayHashBulk = Hasher::hashBulk;
     public static final SeededHashFunction<ByteBuffer> byteBufferHashBulk = Hasher::hashBulk;
 
     // normal Java Object stuff
