@@ -3756,6 +3756,38 @@ CONST f32x2 sincos(s16 int_angle) {
      * Worst input (abs):       6.283184528350830000000000
      * Worst output (abs):      0.9999010563 (0x3F7FF984)
      * Correct output (abs):    1.0000000000 (0x3F800000)
+     * Running Math.sin vs. MathUtils.sin
+     * Mean absolute error:     0.0001522401
+     * Mean relative error:     0.0023401673
+     * Maximum abs. error:      0.0005752884
+     * Maximum rel. error:   3809.6450195313
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.282993793487549000000000
+     * Best output (lo):       -0.0001915137 (0xB948D111)
+     * Correct output (lo):    -0.0001915137 (0xB948D111)
+     * Worst input (hi):       -3.141592502593994000000000
+     * Highest output rel:   3809.6447753906
+     * Worst output (hi):      -0.0005753914 (0xBA16D5DD)
+     * Correct output (hi):    -0.0000001510 (0xB4222169)
+     * Worst input (abs):      -6.280500888824463000000000
+     * Worst output (abs):      0.0032597035 (0x3B55A0C0)
+     * Correct output (abs):    0.0026844151 (0x3B2FED03)
+     * Running Math.cos vs. MathUtils.cos
+     * Mean absolute error:     0.0001294330
+     * Mean relative error:     0.0016387656
+     * Maximum abs. error:      0.0005754033
+     * Maximum rel. error:   1236.6342773438
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):       -4.712388515472412000000000
+     * Highest output rel:   1236.6342773438
+     * Worst output (hi):      -0.0005753914 (0xBA16D5DD)
+     * Correct output (hi):    -0.0000004649 (0xB4F9990F)
+     * Worst input (abs):      -1.571563243865966800000000
+     * Worst output (abs):     -0.0001915137 (0xB948D111)
+     * Correct output (abs):   -0.0007669170 (0xBA490AEE)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -3777,6 +3809,11 @@ CONST f32x2 sincos(s16 int_angle) {
         functions.add(TrigTools::cosSmoother);
         baselines.put("Math.cos vs. TrigTools.cosSmooth", (x) -> (float) Math.cos(x));
         functions.add(TrigTools::cosSmooth);
+
+        baselines.put("Math.sin vs. MathUtils.sin", (x) -> (float) Math.sin(x));
+        functions.add(MathUtils::sin);
+        baselines.put("Math.cos vs. MathUtils.cos", (x) -> (float) Math.cos(x));
+        functions.add(MathUtils::cos);
 
         for (int f = 0; f < baselines.size; f++) {
             String runName = baselines.orderedKeys().get(f);
@@ -3841,6 +3878,124 @@ CONST f32x2 sincos(s16 int_angle) {
         System.out.printf("-------\n" +
                 "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
+
+    /**
+     * Running Math.asin vs. TrigTools.asin
+     * Mean absolute error:     0.0000284235
+     * Mean relative error:     0.0007816033
+     * Maximum abs. error:      0.0000675268
+     * Maximum rel. error:     70.8044586182
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         1.000000000000000000000000
+     * Best output (lo):        1.5707963705 (0x3FC90FDB)
+     * Correct output (lo):     1.5707963705 (0x3FC90FDB)
+     * Worst input (hi):        0.000000953674316406250000
+     * Highest output rel:     70.8044509888
+     * Worst output (hi):       0.0000684781 (0x388F9BE2)
+     * Correct output (hi):     0.0000009537 (0x35800000)
+     * Worst input (abs):       0.000000000000000000000000
+     * Worst output (abs):      0.0000675268 (0x388D9D2C)
+     * Correct output (abs):    0.0000000000 (0x00000000)
+     * Running Math.acos vs. TrigTools.acos
+     * Mean absolute error:     0.0000284155
+     * Mean relative error:     0.0000215517
+     * Maximum abs. error:      0.0000675917
+     * Maximum rel. error:      0.0000477664
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         0.957683563232421900000000
+     * Best output (lo):        0.2919530571 (0x3E957ADF)
+     * Correct output (lo):     0.2919530571 (0x3E957ADF)
+     * Worst input (hi):        0.999991416931152300000000
+     * Highest output rel:      0.0000477664
+     * Worst output (hi):       0.0041430090 (0x3B87C214)
+     * Correct output (hi):     0.0041432069 (0x3B87C3BD)
+     * Worst input (abs):       0.000014305114746093750000
+     * Worst output (abs):      1.5707144737 (0x3FC90D2C)
+     * Correct output (abs):    1.5707820654 (0x3FC90F63)
+     * Running Math.asin vs. MathUtils.asin
+     * Mean absolute error:     0.0000284152
+     * Mean relative error:     0.0007822137
+     * Maximum abs. error:      0.0000675917
+     * Maximum rel. error:     70.8750000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         1.000000000000000000000000
+     * Best output (lo):        1.5707963705 (0x3FC90FDB)
+     * Correct output (lo):     1.5707963705 (0x3FC90FDB)
+     * Worst input (hi):        0.000000953674316406250000
+     * Highest output rel:     70.8749923706
+     * Worst output (hi):       0.0000685453 (0x388FC000)
+     * Correct output (hi):     0.0000009537 (0x35800000)
+     * Worst input (abs):       0.000039100646972656250000
+     * Worst output (abs):      0.0001066923 (0x38DFC000)
+     * Correct output (abs):    0.0000391006 (0x38240000)
+     * Running Math.acos vs. MathUtils.acos
+     * Mean absolute error:     0.0000284044
+     * Mean relative error:     0.0000215457
+     * Maximum abs. error:      0.0000675917
+     * Maximum rel. error:      0.0000478233
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         0.957729339599609400000000
+     * Best output (lo):        0.2917939723 (0x3E956605)
+     * Correct output (lo):     0.2917939723 (0x3E956605)
+     * Worst input (hi):        0.999974250793457000000000
+     * Highest output rel:      0.0000478233
+     * Worst output (hi):       0.0071759117 (0x3BEB23E9)
+     * Correct output (hi):     0.0071762549 (0x3BEB26CA)
+     * Worst input (abs):       0.000039100646972656250000
+     * Worst output (abs):      1.5706896782 (0x3FC90C5C)
+     * Correct output (abs):    1.5707572699 (0x3FC90E93)
+     * Running Math.acos vs. acosHand
+     * Mean absolute error:     0.0000284155
+     * Mean relative error:     0.0000215517
+     * Maximum abs. error:      0.0000675917
+     * Maximum rel. error:      0.0000477664
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         0.957683563232421900000000
+     * Best output (lo):        0.2919530571 (0x3E957ADF)
+     * Correct output (lo):     0.2919530571 (0x3E957ADF)
+     * Worst input (hi):        0.999991416931152300000000
+     * Highest output rel:      0.0000477664
+     * Worst output (hi):       0.0041430090 (0x3B87C214)
+     * Correct output (hi):     0.0041432069 (0x3B87C3BD)
+     * Worst input (abs):       0.000014305114746093750000
+     * Worst output (abs):      1.5707144737 (0x3FC90D2C)
+     * Correct output (abs):    1.5707820654 (0x3FC90F63)
+     * Running Math.acos vs. acosRuud
+     * Mean absolute error:     0.0098056532
+     * Mean relative error:     0.0089038955
+     * Maximum abs. error:      0.0167646408
+     * Maximum rel. error:      0.9779748321
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         0.942748069763183600000000
+     * Best output (lo):        0.3400197923 (0x3EAE1713)
+     * Correct output (lo):     0.3400197923 (0x3EAE1713)
+     * Worst input (hi):        0.999999046325683600000000
+     * Highest output rel:      0.9779747128
+     * Worst output (hi):       0.0000304183 (0x37FF2AB2)
+     * Correct output (hi):     0.0013810680 (0x3AB504F4)
+     * Worst input (abs):      -0.999341011047363300000000
+     * Worst output (abs):      3.1220512390 (0x4047CFB0)
+     * Correct output (abs):    3.1052865982 (0x4046BD04)
+     * Running Math.acos vs. acosFastGilcher
+     * Mean absolute error:     0.0054346938
+     * Mean relative error:     0.0039696740
+     * Maximum abs. error:      0.0090129375
+     * Maximum rel. error:      0.0078372313
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         0.999998092651367200000000
+     * Best output (lo):        0.0019531252 (0x3B000001)
+     * Correct output (lo):     0.0019531252 (0x3B000001)
+     * Worst input (hi):        0.462948799133300800000000
+     * Highest output rel:      0.0078372303
+     * Worst output (hi):       1.0980156660 (0x3F8C8BC7)
+     * Correct output (hi):     1.0894771814 (0x3F8B73FD)
+     * Worst input (abs):       0.361389160156250000000000
+     * Worst output (abs):      1.2100518942 (0x3F9AE2FB)
+     * Correct output (abs):    1.2010389566 (0x3F99BBA5)
+     * -------
+     * Epsilon is:              0.0000000596
+     * -------
+     */
     @Test
     public void testPairs_1_1() {
         OrderedMap<String, FloatUnaryOperator> baselines = new OrderedMap<>(8);
@@ -3849,6 +4004,11 @@ CONST f32x2 sincos(s16 int_angle) {
         functions.add(TrigTools::asin);
         baselines.put("Math.acos vs. TrigTools.acos", (x) -> (float) Math.acos(x));
         functions.add(TrigTools::acos);
+
+        baselines.put("Math.asin vs. MathUtils.asin", (x) -> (float) Math.asin(x));
+        functions.add(MathUtils::asin);
+        baselines.put("Math.acos vs. MathUtils.acos", (x) -> (float) Math.acos(x));
+        functions.add(MathUtils::acos);
 
         baselines.put("Math.acos vs. acosHand", (x) -> (float) Math.acos(x));
         functions.add((x) -> (float) PrecisionTest.acosHand(x));

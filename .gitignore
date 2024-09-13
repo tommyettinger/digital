@@ -51,3 +51,4 @@ Thumbs.db
 *#*#
 
 *.symbolMap
+/gradle/gradle-daemon-jvm.properties
