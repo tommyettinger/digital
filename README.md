@@ -281,14 +281,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.5.0"
+api "com.github.tommyettinger:digital:0.5.1"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.5.0:sources"
+api "com.github.tommyettinger:digital:0.5.1:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
