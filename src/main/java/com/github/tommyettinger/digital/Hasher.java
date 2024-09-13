@@ -20,6 +20,7 @@ package com.github.tommyettinger.digital;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import static com.github.tommyettinger.digital.BitConversion.doubleToRawLongBits;
@@ -4601,6 +4602,86 @@ public class Hasher {
     }
 
     /**
+     * A hashing function that is likely to outperform {@link #hash64(Object[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array; null items are tolerated
+     * @return the 64-bit hash of data
+     */
+    public long hashBulk64(final Object[] data) {
+        if (data == null) return 0;
+        return hashBulk64(data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(Object[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array; null items are tolerated
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 64-bit hash of data
+     */
+    public long hashBulk64(final Object[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(Objects.hashCode(data[i  ]), Objects.hashCode(data[i+1]), Objects.hashCode(data[i+2]), Objects.hashCode(data[i+3]));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(Objects.hashCode(data[i+4]), Objects.hashCode(data[i+5]), Objects.hashCode(data[i+6]), Objects.hashCode(data[i+7]));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, Objects.hashCode(data[i++]));
+        }
+        return mix(h);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(Object[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array; null items are tolerated
+     * @return the 32-bit hash of data
+     */
+    public int hashBulk(final Object[] data) {
+        if (data == null) return 0;
+        return hashBulk(data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(Object[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param data input array; null items are tolerated
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public int hashBulk(final Object[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(Objects.hashCode(data[i  ]), Objects.hashCode(data[i+1]), Objects.hashCode(data[i+2]), Objects.hashCode(data[i+3]));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(Objects.hashCode(data[i+4]), Objects.hashCode(data[i+5]), Objects.hashCode(data[i+6]), Objects.hashCode(data[i+7]));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, Objects.hashCode(data[i++]));
+        }
+        return (int)mix(h);
+    }
+
+    /**
      * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
      * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
      * past the limit.
@@ -5672,6 +5753,206 @@ public class Hasher {
         return (int)mix(h);
     }
 
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(Object[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
+     * @param data input array; null items are tolerated
+     * @return the 64-bit hash of data
+     */
+    public static long hashBulk64(final long seed, final Object[] data) {
+        if (data == null) return 0;
+        return hashBulk64(seed, data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(Object[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
+     * @param data input array; null items are tolerated
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 64-bit hash of data
+     */
+    public static long hashBulk64(final long seed, final Object[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(Objects.hashCode(data[i  ]), Objects.hashCode(data[i+1]), Objects.hashCode(data[i+2]), Objects.hashCode(data[i+3]));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(Objects.hashCode(data[i+4]), Objects.hashCode(data[i+5]), Objects.hashCode(data[i+6]), Objects.hashCode(data[i+7]));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, Objects.hashCode(data[i++]));
+        }
+        return mix(h);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(Object[])} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
+     * @param data input array; null items are tolerated
+     * @return the 32-bit hash of data
+     */
+    public static int hashBulk(final long seed, final Object[] data) {
+        if (data == null) return 0;
+        return hashBulk(seed, data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(Object[], int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * @param seed any long seed
+     * @param data input array; null items are tolerated
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public static int hashBulk(final long seed, final Object[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            h *= C;
+            len -= 8;
+            h += mixStreamBulk(Objects.hashCode(data[i  ]), Objects.hashCode(data[i+1]), Objects.hashCode(data[i+2]), Objects.hashCode(data[i+3]));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(Objects.hashCode(data[i+4]), Objects.hashCode(data[i+5]), Objects.hashCode(data[i+6]), Objects.hashCode(data[i+7]));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, Objects.hashCode(data[i++]));
+        }
+        return (int)mix(h);
+    }
+
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
+     * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * <br>
+     * This is likely to significantly outperform {@link #hash64(byte[])} on all but
+     * the smallest sequences of bytes (under 20 bytes).
+     * @param seed any long seed
+     * @param data an input ByteBuffer
+     * @return the 64-bit hash of data
+     */
+    public static long hashBulk64(final long seed, final ByteBuffer data) {
+        return hashBulk64(seed, data, 0, data.limit());
+    }
+
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, using the given {@code start} index (measured in bytes)
+     * and {@code length} (also in bytes). The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * <br>
+     * This is likely to significantly outperform {@link #hash64(byte[], int, int)}
+     * on all but the smallest sequences of bytes (under 20 bytes).
+     * @param seed any long seed
+     * @param data an input ByteBuffer
+     * @param start the starting index, measured in bytes
+     * @param length the number of bytes to hash
+     * @return the 64-bit hash of data
+     */
+    public static long hashBulk64(final long seed, final ByteBuffer data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.limit())
+            return 0;
+        int len = Math.min(length, data.limit() - start);
+        data.position(start);
+        long h = len ^ forward(seed);
+        while(len >= 64){
+            h *= C;
+            len -= 64;
+            h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
+        }
+        while(len >= 8){
+            len -= 8;
+            h = mixStream(h, data.getLong());
+        }
+        switch (len) {
+            case 1:  h = mix(mixStream(h, (data.get()))); break;
+            case 2:  h = mix(mixStream(h, (data.getShort()))); break;
+            case 3:  h = mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16)); break;
+            case 4:  h = mix(mixStream(h, (data.getInt()))); break;
+            case 5:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32)); break;
+            case 6:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32)); break;
+            case 7:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48)); break;
+            default: h = mix(h); break;
+        }
+        return h;
+    }
+
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
+     * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * <br>
+     * This is likely to significantly outperform {@link #hash(byte[])} on all but
+     * the smallest sequences of bytes (under 20 bytes).
+     * @param seed any long seed
+     * @param data an input ByteBuffer
+     * @return the 32-bit hash of data
+     */
+    public static int hashBulk(final long seed, final ByteBuffer data) {
+        return hashBulk(seed, data, 0, data.limit());
+    }
+
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, using the given {@code start} index (measured in bytes)
+     * and {@code length} (also in bytes). The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * <br>
+     * This is likely to significantly outperform {@link #hash(byte[], int, int)}
+     * on all but the smallest sequences of bytes (under 20 bytes).
+     * @param seed any long seed
+     * @param data an input ByteBuffer
+     * @param start the starting index, measured in bytes
+     * @param length the number of bytes to hash
+     * @return the 32-bit hash of data
+     */
+    public static int hashBulk(final long seed, final ByteBuffer data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.limit())
+            return 0;
+        int len = Math.min(length, data.limit() - start);
+        data.position(start);
+        long h = len ^ forward(seed);
+        while(len >= 64){
+            h *= C;
+            len -= 64;
+            h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
+        }
+        while(len >= 8){
+            len -= 8;
+            h = mixStream(h, data.getLong());
+        }
+        switch (len) {
+            case 1:  h = mix(mixStream(h, (data.get()))); break;
+            case 2:  h = mix(mixStream(h, (data.getShort()))); break;
+            case 3:  h = mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16)); break;
+            case 4:  h = mix(mixStream(h, (data.getInt()))); break;
+            case 5:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32)); break;
+            case 6:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32)); break;
+            case 7:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48)); break;
+            default: h = mix(h); break;
+        }
+        return (int) h;
+    }
+
     // seeded static functions, function parameter section
 
     /**
@@ -5860,122 +6141,6 @@ public class Hasher {
             h = mixStream(h, function.hash(seed, data[i++]));
         }
         return (int)mix(h);
-    }
-
-    /**
-     * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
-     * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
-     * past the limit.
-     * <br>
-     * This is likely to significantly outperform {@link #hash64(byte[])} on all but
-     * the smallest sequences of bytes (under 20 bytes).
-     * @param seed any long seed
-     * @param data an input ByteBuffer
-     * @return the 64-bit hash of data
-     */
-    public static long hashBulk64(final long seed, final ByteBuffer data) {
-        return hashBulk64(seed, data, 0, data.limit());
-    }
-
-    /**
-     * A hashing function that operates on a {@link ByteBuffer}, using the given {@code start} index (measured in bytes)
-     * and {@code length} (also in bytes). The {@link ByteBuffer#limit() limit} must be set on data; this will not read
-     * past the limit.
-     * <br>
-     * This is likely to significantly outperform {@link #hash64(byte[], int, int)}
-     * on all but the smallest sequences of bytes (under 20 bytes).
-     * @param seed any long seed
-     * @param data an input ByteBuffer
-     * @param start the starting index, measured in bytes
-     * @param length the number of bytes to hash
-     * @return the 64-bit hash of data
-     */
-    public static long hashBulk64(final long seed, final ByteBuffer data, int start, int length) {
-        if (data == null || start < 0 || length < 0 || start >= data.limit())
-            return 0;
-        int len = Math.min(length, data.limit() - start);
-        data.position(start);
-        long h = len ^ forward(seed);
-        while(len >= 64){
-            h *= C;
-            len -= 64;
-            h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
-            h = (h << 37 | h >>> 27);
-            h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
-        }
-        while(len >= 8){
-            len -= 8;
-            h = mixStream(h, data.getLong());
-        }
-        switch (len) {
-            case 1:  h = mix(mixStream(h, (data.get()))); break;
-            case 2:  h = mix(mixStream(h, (data.getShort()))); break;
-            case 3:  h = mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16)); break;
-            case 4:  h = mix(mixStream(h, (data.getInt()))); break;
-            case 5:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32)); break;
-            case 6:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32)); break;
-            case 7:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48)); break;
-            default: h = mix(h); break;
-        }
-        return h;
-    }
-
-    /**
-     * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
-     * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
-     * past the limit.
-     * <br>
-     * This is likely to significantly outperform {@link #hash(byte[])} on all but
-     * the smallest sequences of bytes (under 20 bytes).
-     * @param seed any long seed
-     * @param data an input ByteBuffer
-     * @return the 32-bit hash of data
-     */
-    public static int hashBulk(final long seed, final ByteBuffer data) {
-        return hashBulk(seed, data, 0, data.limit());
-    }
-
-    /**
-     * A hashing function that operates on a {@link ByteBuffer}, using the given {@code start} index (measured in bytes)
-     * and {@code length} (also in bytes). The {@link ByteBuffer#limit() limit} must be set on data; this will not read
-     * past the limit.
-     * <br>
-     * This is likely to significantly outperform {@link #hash(byte[], int, int)}
-     * on all but the smallest sequences of bytes (under 20 bytes).
-     * @param seed any long seed
-     * @param data an input ByteBuffer
-     * @param start the starting index, measured in bytes
-     * @param length the number of bytes to hash
-     * @return the 32-bit hash of data
-     */
-    public static int hashBulk(final long seed, final ByteBuffer data, int start, int length) {
-        if (data == null || start < 0 || length < 0 || start >= data.limit())
-            return 0;
-        int len = Math.min(length, data.limit() - start);
-        data.position(start);
-        long h = len ^ forward(seed);
-        while(len >= 64){
-            h *= C;
-            len -= 64;
-            h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
-            h = (h << 37 | h >>> 27);
-            h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
-        }
-        while(len >= 8){
-            len -= 8;
-            h = mixStream(h, data.getLong());
-        }
-        switch (len) {
-            case 1:  h = mix(mixStream(h, (data.get()))); break;
-            case 2:  h = mix(mixStream(h, (data.getShort()))); break;
-            case 3:  h = mix(mixStream(h, (data.getShort()) ^ ((long)data.get()) << 16)); break;
-            case 4:  h = mix(mixStream(h, (data.getInt()))); break;
-            case 5:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.get()) << 32)); break;
-            case 6:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32)); break;
-            case 7:  h = mix(mixStream(h, (data.getInt()) ^ ((long)data.getShort()) << 32 ^ ((long)data.get()) << 48)); break;
-            default: h = mix(h); break;
-        }
-        return (int) h;
     }
 
     // predefined HashFunction instances, to avoid lots of casting
