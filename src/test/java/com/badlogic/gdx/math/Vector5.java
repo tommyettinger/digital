@@ -353,13 +353,14 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
     }
 
     /** @return The dot product between the two vectors */
-    public static float dot (float x1, float y1, float z1, float w1, float x2, float y2, float z2, float w2) {
-        return x1 * x2 + y1 * y2 + z1 * z2 + w1 * w2;
+    public static float dot (float x1, float y1, float z1, float w1, float u1,
+                             float x2, float y2, float z2, float w2, float u2) {
+        return x1 * x2 + y1 * y2 + z1 * z2 + w1 * w2 + u1 * u2;
     }
 
     @Override
     public float dot (final Vector5 vector) {
-        return x * vector.x + y * vector.y + z * vector.z + w * vector.w;
+        return x * vector.x + y * vector.y + z * vector.z + w * vector.w + u * vector.u;
     }
 
     /** Returns the dot product between this and the given vector (given as 4 components).
@@ -367,9 +368,10 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
      * @param y The y-component of the other vector
      * @param z The z-component of the other vector
      * @param w The w-component of the other vector
+     * @param u The u-component of the other vector
      * @return The dot product */
-    public float dot (float x, float y, float z, float w) {
-        return this.x * x + this.y * y + this.z * z + this.w * w;
+    public float dot (float x, float y, float z, float w, float u) {
+        return this.x * x + this.y * y + this.z * z + this.w * w + this.u * u;
     }
 
     @Override
@@ -384,7 +386,7 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
 
     @Override
     public boolean isZero () {
-        return x == 0 && y == 0 && z == 0 && w == 0;
+        return x == 0 && y == 0 && z == 0 && w == 0 && u == 0;
     }
 
     @Override
@@ -399,7 +401,7 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
         // https://github.com/iboB/yama/blob/f08a71c6fd84df5eed62557000373f17f14e1ec7/include/yama/vector4.hpp#L566-L598
         // This code uses a flags variable to avoid allocating a float array.
         int flags = 0;
-        float dx = 0, dy = 0, dz = 0, dw = 0;
+        float dx = 0, dy = 0, dz = 0, dw = 0, du = 0;
 
         if (MathUtils.isZero(x, epsilon)) {
             if (!MathUtils.isZero(other.x, epsilon)) {
@@ -433,36 +435,40 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
             dw = w / other.w;
             flags |= 8;
         }
+        if (MathUtils.isZero(u, epsilon)) {
+            if (!MathUtils.isZero(other.u, epsilon)) {
+                return false;
+            }
+        } else {
+            du = u / other.u;
+            flags |= 16;
+        }
 
-        switch (flags) {
-            case 0:
-            case 1:
-            case 2:
-            case 4:
-            case 8:
-                return true;
-            case 3:
-                return MathUtils.isEqual(dx, dy, epsilon);
-            case 5:
-                return MathUtils.isEqual(dx, dz, epsilon);
-            case 9:
-                return MathUtils.isEqual(dx, dw, epsilon);
-            case 6:
-                return MathUtils.isEqual(dy, dz, epsilon);
-            case 10:
-                return MathUtils.isEqual(dy, dw, epsilon);
-            case 12:
-                return MathUtils.isEqual(dz, dw, epsilon);
-            case 7:
-                return MathUtils.isEqual(dx, dy, epsilon) && MathUtils.isEqual(dx, dz, epsilon);
-            case 11:
-                return MathUtils.isEqual(dx, dy, epsilon) && MathUtils.isEqual(dx, dw, epsilon);
-            case 13:
-                return MathUtils.isEqual(dx, dz, epsilon) && MathUtils.isEqual(dx, dw, epsilon);
-            case 14:
-                return MathUtils.isEqual(dy, dz, epsilon) && MathUtils.isEqual(dy, dw, epsilon);
-            default: // this is essentially case 15:
-                return MathUtils.isEqual(dx, dy, epsilon) && MathUtils.isEqual(dx, dz, epsilon) && MathUtils.isEqual(dx, dw, epsilon);
+        int lowest = flags & -flags;
+        flags ^= lowest;
+        if(flags == 0) return true;
+
+        boolean on = true;
+        float left;
+        switch (lowest) {
+            case 1:  left = dx; break;
+            case 2:  left = dy; break;
+            case 4:  left = dz; break;
+            default: left = dw; break;
+        }
+
+        while (true){
+            int next = flags & -flags; // get the lowest remaining bit of flags
+            switch (next){
+                case 2:  on &= MathUtils.isEqual(left, dy, epsilon); break;
+                case 4:  on &= MathUtils.isEqual(left, dz, epsilon); break;
+                case 8:  on &= MathUtils.isEqual(left, dw, epsilon); break;
+                default: on &= MathUtils.isEqual(left, du, epsilon); break;
+            }
+            flags ^= next;
+            if(flags == 0) {
+                return on;
+            }
         }
     }
 
@@ -526,6 +532,7 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
         y += alpha * (target.y - y);
         z += alpha * (target.z - z);
         w += alpha * (target.w - w);
+        u += alpha * (target.u - u);
         return this;
     }
 
