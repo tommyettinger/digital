@@ -4,9 +4,11 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.github.tommyettinger.digital.Distributor;
 
-import java.io.Externalizable;
-
-public class Vector5 implements Externalizable, Vector<Vector5> {
+/** Encapsulates a 5D vector. Allows chaining operations by returning a reference to itself in all modification methods.
+ * @author badlogicgames@gmail.com
+ * @author Antz
+ * @author Tommy Ettinger */
+public class Vector5 implements Vector<Vector5> {
     /** the x-component of this vector **/
     public float x;
     /** the y-component of this vector **/
@@ -18,11 +20,35 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
     /** the u-component of this vector **/
     public float u;
 
+    /**
+     * A reference vector with x=1 and all other components 0; DO NOT MODIFY THIS OBJECT.
+     * You should copy this, such as by using {@link #cpy()}, before making any alterations.
+     */
     public final static Vector5 X = new Vector5(1, 0, 0, 0, 0);
+    /**
+     * A reference vector with y=1 and all other components 0; DO NOT MODIFY THIS OBJECT.
+     * You should copy this, such as by using {@link #cpy()}, before making any alterations.
+     */
     public final static Vector5 Y = new Vector5(0, 1, 0, 0, 0);
+    /**
+     * A reference vector with z=1 and all other components 0; DO NOT MODIFY THIS OBJECT.
+     * You should copy this, such as by using {@link #cpy()}, before making any alterations.
+     */
     public final static Vector5 Z = new Vector5(0, 0, 1, 0, 0);
+    /**
+     * A reference vector with w=1 and all other components 0; DO NOT MODIFY THIS OBJECT.
+     * You should copy this, such as by using {@link #cpy()}, before making any alterations.
+     */
     public final static Vector5 W = new Vector5(0, 0, 0, 1, 0);
+    /**
+     * A reference vector with u=1 and all other components 0; DO NOT MODIFY THIS OBJECT.
+     * You should copy this, such as by using {@link #cpy()}, before making any alterations.
+     */
     public final static Vector5 U = new Vector5(0, 0, 0, 0, 1);
+    /**
+     * A reference vector with all components 0; DO NOT MODIFY THIS OBJECT.
+     * You should copy this, such as by using {@link #cpy()}, before making any alterations.
+     */
     public final static Vector5 Zero = new Vector5(0, 0, 0, 0, 0);
 
     /** Constructs a vector at (0,0,0,0,0) */
@@ -541,33 +567,35 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
         return lerp(target, interpolator.apply(alpha));
     }
 
-    /** Converts this {@code Vector5} to a string in the format {@code (x,y,z,w)}. Strings with this exact format can be parsed
-     * with {@link #fromString(String)}.
+    /** Converts this {@code Vector5} to a string in the format {@code (x,y,z,w,u)}. Strings with this exact format can
+     * be parsed with {@link #fromString(String)}.
      * @return a string representation of this object. */
     @Override
     public String toString () {
-        return "(" + x + "," + y + "," + z + "," + w + ")";
+        return "(" + x + "," + y + "," + z + "," + w + "," + u + ")";
     }
 
     /** Sets this {@code Vector5} to the value represented by the specified string according to the format of {@link #toString()}.
-     * @param v the string.
-     * @return this vector, set with the value from v, for chaining */
-    public Vector5 fromString (String v) {
-        int s0 = v.indexOf(',', 1);
-        int s1 = v.indexOf(',', s0 + 1);
-        int s2 = v.indexOf(',', s1 + 1);
-        if (s0 != -1 && s1 != -1 && v.charAt(0) == '(' && v.charAt(v.length() - 1) == ')') {
+     * @param s the string.
+     * @return this vector, set with the value from s, for chaining */
+    public Vector5 fromString (String s) {
+        int s0 = s.indexOf(',', 1);
+        int s1 = s.indexOf(',', s0 + 1);
+        int s2 = s.indexOf(',', s1 + 1);
+        int s3 = s.indexOf(',', s2 + 1);
+        if (s0 != -1 && s1 != -1 && s2 != -1 && s3 != -1 && s.charAt(0) == '(' && s.charAt(s.length() - 1) == ')') {
             try {
-                float x = Float.parseFloat(v.substring(1, s0));
-                float y = Float.parseFloat(v.substring(s0 + 1, s1));
-                float z = Float.parseFloat(v.substring(s1 + 1, s2));
-                float w = Float.parseFloat(v.substring(s2 + 1, v.length() - 1));
-                return this.set(x, y, z, w);
+                float x = Float.parseFloat(s.substring(1, s0));
+                float y = Float.parseFloat(s.substring(s0 + 1, s1));
+                float z = Float.parseFloat(s.substring(s1 + 1, s2));
+                float w = Float.parseFloat(s.substring(s2 + 1, s2));
+                float u = Float.parseFloat(s.substring(s3 + 1, s.length() - 1));
+                return this.set(x, y, z, w, u);
             } catch (NumberFormatException ex) {
                 // Throw a GdxRuntimeException...
             }
         }
-        throw new GdxRuntimeException("Malformed Vector5: " + v);
+        throw new GdxRuntimeException("Malformed Vector5: " + s);
     }
 
     @Override
@@ -614,6 +642,7 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
         result = prime * result + NumberUtils.floatToIntBits(y);
         result = prime * result + NumberUtils.floatToIntBits(z);
         result = prime * result + NumberUtils.floatToIntBits(w);
+        result = prime * result + NumberUtils.floatToIntBits(u);
         return result;
     }
 
@@ -627,6 +656,7 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
         if (NumberUtils.floatToIntBits(y) != NumberUtils.floatToIntBits(other.y)) return false;
         if (NumberUtils.floatToIntBits(z) != NumberUtils.floatToIntBits(other.z)) return false;
         if (NumberUtils.floatToIntBits(w) != NumberUtils.floatToIntBits(other.w)) return false;
+        if (NumberUtils.floatToIntBits(u) != NumberUtils.floatToIntBits(other.u)) return false;
         return true;
     }
 
@@ -637,6 +667,7 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
         if (Math.abs(other.y - y) > epsilon) return false;
         if (Math.abs(other.z - z) > epsilon) return false;
         if (Math.abs(other.w - w) > epsilon) return false;
+        if (Math.abs(other.u - u) > epsilon) return false;
         return true;
     }
 
@@ -645,13 +676,15 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
      * @param y y component of the other vector to compare
      * @param z z component of the other vector to compare
      * @param w w component of the other vector to compare
+     * @param u u component of the other vector to compare
      * @param epsilon how much error to tolerate and still consider two floats equal
      * @return whether the vectors are the same. */
-    public boolean epsilonEquals (float x, float y, float z, float w, float epsilon) {
+    public boolean epsilonEquals (float x, float y, float z, float w, float u, float epsilon) {
         if (Math.abs(x - this.x) > epsilon) return false;
         if (Math.abs(y - this.y) > epsilon) return false;
         if (Math.abs(z - this.z) > epsilon) return false;
         if (Math.abs(w - this.w) > epsilon) return false;
+        if (Math.abs(u - this.u) > epsilon) return false;
         return true;
     }
 
@@ -670,8 +703,8 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
      * @param z z component of the other vector to compare
      * @param w w component of the other vector to compare
      * @return true if the vectors are equal, otherwise false */
-    public boolean epsilonEquals (float x, float y, float z, float w) {
-        return epsilonEquals(x, y, z, w, MathUtils.FLOAT_ROUNDING_ERROR);
+    public boolean epsilonEquals (float x, float y, float z, float w, float u) {
+        return epsilonEquals(x, y, z, w, u, MathUtils.FLOAT_ROUNDING_ERROR);
     }
 
     @Override
@@ -680,6 +713,7 @@ public class Vector5 implements Externalizable, Vector<Vector5> {
         this.y = 0;
         this.z = 0;
         this.w = 0;
+        this.u = 0;
         return this;
     }
 }
