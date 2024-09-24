@@ -650,6 +650,41 @@ public class Vector5 implements Vector<Vector5> {
         return this;
     }
 
+    /**
+     * For each component, this clamps it between min and max, inclusive.
+     * @param min the minimum value allowable for any component, inclusive
+     * @param max the maximum value allowable for any component, inclusive
+     * @return this, after modifications
+     */
+    public Vector5 clampEach (float min, float max) {
+        x = Math.min(Math.max(x, min), max);
+        y = Math.min(Math.max(y, min), max);
+        z = Math.min(Math.max(z, min), max);
+        w = Math.min(Math.max(w, min), max);
+        u = Math.min(Math.max(u, min), max);
+        return this;
+    }
+
+    /**
+     * Sets each component so it only has a fractional value, by subtracting the floor from each component.
+     * This produces a non-negative float for each component, between 0.0 inclusive and 1.0 exclusive, unless a
+     * component is outside the safe range for {@link MathUtils#floor(float)} (-16384.0 at the lowest).
+     * <pre>
+     * The result of fract() for a component with a value of  1.25 will be 0.25 .
+     * The result of fract() for a component with a value of -1.25 will be 0.75 .
+     * </pre>
+     *
+     * @return this, after modifications
+     */
+    public Vector5 fract () {
+        x -= MathUtils.floor(x);
+        y -= MathUtils.floor(y);
+        z -= MathUtils.floor(z);
+        w -= MathUtils.floor(w);
+        u -= MathUtils.floor(u);
+        return this;
+    }
+
     @Override
     public int hashCode () {
         final int prime = 31;
