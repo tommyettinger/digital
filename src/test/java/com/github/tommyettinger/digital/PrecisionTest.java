@@ -2592,6 +2592,7 @@ Worst input (abs):       4.205234527587891000000000
     }
 
     /**
+     * {@code
      * return (x * (137.919f + x2 * -35.8822f))/(87.8021f + x2 * (13.2639f + x2)) * (1 - (ceil & 2));
      * Running sinPade
      * Mean absolute error:     0.0000300636
@@ -2681,6 +2682,7 @@ Worst input (abs):       4.205234527587891000000000
      * Worst input (abs):       4.712421894073486000000000
      * Worst output (abs):     -0.9999010563 (0xBF7FF984)
      * Correct output (abs):   -1.0000000000 (0xBF800000)
+     * }
      * @param x
      * @return
      */

@@ -474,28 +474,28 @@ public class Vector4 implements Serializable, Vector<Vector4> {
 		return isOnLine(other, MathUtils.FLOAT_ROUNDING_ERROR);
 	}
 
-	/** @return true if this vector is collinear with the other vector ({@link #isOnLine(Vector4, float)} &&
+	/** @return true if this vector is collinear with the other vector ({@link #isOnLine(Vector4, float)} and
 	 *         {@link #hasSameDirection(Vector4)}). */
 	@Override
 	public boolean isCollinear (Vector4 other, float epsilon) {
 		return isOnLine(other, epsilon) && hasSameDirection(other);
 	}
 
-	/** @return true if this vector is collinear with the other vector ({@link #isOnLine(Vector4)} &&
+	/** @return true if this vector is collinear with the other vector ({@link #isOnLine(Vector4)} and
 	 *         {@link #hasSameDirection(Vector4)}). */
 	@Override
 	public boolean isCollinear (Vector4 other) {
 		return isOnLine(other) && hasSameDirection(other);
 	}
 
-	/** @return true if this vector is collinear with the other vector ({@link #isOnLine(Vector4, float)} &&
+	/** @return true if this vector is collinear with the other vector ({@link #isOnLine(Vector4, float)} and
 	 *         {@link #hasSameDirection(Vector4)}). */
 	@Override
 	public boolean isCollinearOpposite (Vector4 other, float epsilon) {
 		return isOnLine(other, epsilon) && hasOppositeDirection(other);
 	}
 
-	/** @return true if this vector is collinear with the other vector ({@link #isOnLine(Vector4)} &&
+	/** @return true if this vector is collinear with the other vector ({@link #isOnLine(Vector4)} and
 	 *         {@link #hasSameDirection(Vector4)}). */
 	@Override
 	public boolean isCollinearOpposite (Vector4 other) {
@@ -551,7 +551,7 @@ public class Vector4 implements Serializable, Vector<Vector4> {
 		int s0 = v.indexOf(',', 1);
 		int s1 = v.indexOf(',', s0 + 1);
 		int s2 = v.indexOf(',', s1 + 1);
-		if (s0 != -1 && s1 != -1 && v.charAt(0) == '(' && v.charAt(v.length() - 1) == ')') {
+		if (s0 != -1 && s1 != -1 && s2 != -1 && v.charAt(0) == '(' && v.charAt(v.length() - 1) == ')') {
 			try {
 				float x = Float.parseFloat(v.substring(1, s0));
 				float y = Float.parseFloat(v.substring(s0 + 1, s1));
