@@ -4,6 +4,8 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.github.tommyettinger.digital.Distributor;
 
+import java.util.Random;
+
 /** Encapsulates a 5D vector. Allows chaining operations by returning a reference to itself in all modification methods.
  * @author badlogicgames@gmail.com
  * @author Antz
@@ -81,7 +83,8 @@ public class Vector5 implements Vector<Vector5> {
      *
      * @param vector The vector
      * @param z The z-component
-     * @param w The w-component */
+     * @param w The w-component
+     * @param u The u-component */
     public Vector5 (final Vector2 vector, float z, float w, float u) {
         this.set(vector.x, vector.y, z, w, u);
     }
@@ -89,7 +92,8 @@ public class Vector5 implements Vector<Vector5> {
     /** Creates a vector from the given Vector3 and w- and u-components
      *
      * @param vector The vector
-     * @param w The w-component */
+     * @param w The w-component
+     * @param u The u-component */
     public Vector5 (final Vector3 vector, float w, float u) {
         this.set(vector.x, vector.y, vector.z, w, u);
     }
@@ -108,6 +112,7 @@ public class Vector5 implements Vector<Vector5> {
      * @param y The y-component
      * @param z The z-component
      * @param w The w-component
+     * @param u The u-component
      * @return this vector for chaining */
     public Vector5 set (float x, float y, float z, float w, float u) {
         this.x = x;
@@ -163,15 +168,26 @@ public class Vector5 implements Vector<Vector5> {
 
     @Override
     public Vector5 setToRandomDirection () {
+        return setToRandomDirection(MathUtils.random);
+    }
+
+    /**
+     * Sets this Vector5 to a random unit vector (a random point on the surface of the radius-1 hypersphere in 5D
+     * space). This overload can take a seeded random number generator, or you could pass {@link MathUtils#random} to
+     * quickly use a non-seeded random number generator.
+     * @param random a non-null Random or subclass of Random, such as {@link RandomXS128}
+     * @return this, after modifications
+     */
+    public Vector5 setToRandomDirection (Random random) {
         // The algorithm here is #19 at
         // https://extremelearning.com.au/how-to-generate-uniformly-random-points-on-n-spheres-and-n-balls/ .
         // It is the only recommended way to randomly generate a point on the surface of the unit 5D hypersphere.
 
-        x = (float)Distributor.normal(MathUtils.random.nextLong());
-        y = (float)Distributor.normal(MathUtils.random.nextLong());
-        z = (float)Distributor.normal(MathUtils.random.nextLong());
-        w = (float)Distributor.normal(MathUtils.random.nextLong());
-        u = (float)Distributor.normal(MathUtils.random.nextLong());
+        x = (float)Distributor.normal(random.nextLong());
+        y = (float)Distributor.normal(random.nextLong());
+        z = (float)Distributor.normal(random.nextLong());
+        w = (float)Distributor.normal(random.nextLong());
+        u = (float)Distributor.normal(random.nextLong());
         // Once we normalize five normal-distributed floats, we have a point on the unit hypersphere's surface.
         return this.nor();
     }
