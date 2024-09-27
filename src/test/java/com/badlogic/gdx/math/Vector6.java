@@ -239,7 +239,7 @@ public class Vector6 implements Vector<Vector6> {
 
     @Override
     public Vector6 add (final Vector6 vector) {
-        return this.add(vector.x, vector.y, vector.z, vector.w, vector.u);
+        return this.add(vector.x, vector.y, vector.z, vector.w, vector.u, vector.v);
     }
 
     /** Adds the given components to this vector.
@@ -248,22 +248,23 @@ public class Vector6 implements Vector<Vector6> {
      * @param z Added to the z-component
      * @param w Added to the w-component
      * @param u Added to the u-component
+     * @param v Added to the v-component
      * @return This vector for chaining. */
-    public Vector6 add (float x, float y, float z, float w, float u) {
-        return this.set(this.x + x, this.y + y, this.z + z, this.w + w, this.u + u, 0);
+    public Vector6 add (float x, float y, float z, float w, float u, float v) {
+        return this.set(this.x + x, this.y + y, this.z + z, this.w + w, this.u + u, this.v + v);
     }
 
-    /** Adds the given value to all five components of the vector.
+    /** Adds the given value to all six components of the vector.
      *
      * @param value The value
      * @return This vector for chaining */
     public Vector6 add (float value) {
-        return this.set(this.x + value, this.y + value, this.z + value, this.w + value, this.u + value, 0);
+        return this.set(this.x + value, this.y + value, this.z + value, this.w + value, this.u + value, this.v + value);
     }
 
     @Override
     public Vector6 sub (final Vector6 vector) {
-        return this.sub(vector.x, vector.y, vector.z, vector.w, vector.u);
+        return this.sub(vector.x, vector.y, vector.z, vector.w, vector.u, vector.v);
     }
 
     /** Subtracts the given components from this vector.
@@ -273,9 +274,10 @@ public class Vector6 implements Vector<Vector6> {
      * @param z Subtracted from the z-component
      * @param w Subtracted from the w-component
      * @param u Subtracted from the u-component
+     * @param v Subtracted from the v-component
      * @return This vector for chaining */
-    public Vector6 sub (float x, float y, float z, float w, float u) {
-        return this.set(this.x - x, this.y - y, this.z - z, this.w - w, this.u - u, 0);
+    public Vector6 sub (float x, float y, float z, float w, float u, float v) {
+        return this.set(this.x - x, this.y - y, this.z - z, this.w - w, this.u - u, this.v - v);
     }
 
     /** Subtracts the given value from all components of this vector.
@@ -283,7 +285,7 @@ public class Vector6 implements Vector<Vector6> {
      * @param value The value
      * @return This vector for chaining */
     public Vector6 sub (float value) {
-        return this.set(this.x - value, this.y - value, this.z - value, this.w - value, this.u - value, 0);
+        return this.set(this.x - value, this.y - value, this.z - value, this.w - value, this.u - value, this.v - value);
     }
 
     /** Multiplies each component of this vector by the given scalar.
@@ -291,7 +293,7 @@ public class Vector6 implements Vector<Vector6> {
      * @return This vector for chaining */
     @Override
     public Vector6 scl (float scalar) {
-        return this.set(this.x * scalar, this.y * scalar, this.z * scalar, this.w * scalar, this.u * scalar, 0);
+        return this.set(this.x * scalar, this.y * scalar, this.z * scalar, this.w * scalar, this.u * scalar, this.v * scalar);
     }
 
     /** Multiplies each component of this vector by the corresponding component in other.
@@ -299,7 +301,7 @@ public class Vector6 implements Vector<Vector6> {
      * @return This vector for chaining */
     @Override
     public Vector6 scl (final Vector6 other) {
-        return this.set(x * other.x, y * other.y, z * other.z, w * other.w, u * other.u, 0);
+        return this.set(x * other.x, y * other.y, z * other.z, w * other.w, u * other.u, v * other.v);
     }
 
     /** Scales this vector by the given values.
@@ -308,9 +310,10 @@ public class Vector6 implements Vector<Vector6> {
      * @param vz Multiplied with the Z value
      * @param vw Multiplied with the W value
      * @param vu Multiplied with the U value
+     * @param vv Multiplied with the V value
      * @return This vector for chaining */
-    public Vector6 scl (float vx, float vy, float vz, float vw, float vu) {
-        return this.set(this.x * vx, this.y * vy, this.z * vz, this.w * vu, this.w * vu, 0);
+    public Vector6 scl (float vx, float vy, float vz, float vw, float vu, float vv) {
+        return this.set(this.x * vx, this.y * vy, this.z * vz, this.w * vw, this.u * vu, this.v * vv);
     }
 
     @Override
@@ -320,6 +323,7 @@ public class Vector6 implements Vector<Vector6> {
         this.z += vec.z * scalar;
         this.w += vec.w * scalar;
         this.u += vec.u * scalar;
+        this.v += vec.v * scalar;
         return this;
     }
 
@@ -330,48 +334,50 @@ public class Vector6 implements Vector<Vector6> {
         this.z += vec.z * mulVec.z;
         this.w += vec.w * mulVec.w;
         this.u += vec.u * mulVec.u;
+        this.v += vec.v * mulVec.v;
         return this;
     }
 
-    /** Gets the Euclidean length in 5D space from the origin to the given coordinates.
+    /** Gets the Euclidean length in 6D space from the origin to the given coordinates.
      *  @return The Euclidean length */
-    public static float len (final float x, final float y, final float z, float w, float u) {
-        return (float)Math.sqrt(x * x + y * y + z * z + w * w + u * u);
+    public static float len (final float x, final float y, final float z, float w, float u, float v) {
+        return (float)Math.sqrt(x * x + y * y + z * z + w * w + u * u + v * v);
     }
 
     @Override
     public float len () {
-        return (float)Math.sqrt(x * x + y * y + z * z + w * w + u * u);
+        return (float)Math.sqrt(x * x + y * y + z * z + w * w + u * u + v * v);
     }
 
-    /** Gets the squared Euclidean length in 5D space from the origin to the given coordinates.
+    /** Gets the squared Euclidean length in 6D space from the origin to the given coordinates.
      * @return The squared Euclidean length */
-    public static float len2 (final float x, final float y, final float z, float w, float u) {
-        return x * x + y * y + z * z + w * w + u * u;
+    public static float len2 (final float x, final float y, final float z, float w, float u, float v) {
+        return x * x + y * y + z * z + w * w + u * u + v * v;
     }
 
     @Override
     public float len2 () {
-        return x * x + y * y + z * z + w * w + u * u;
+        return x * x + y * y + z * z + w * w + u * u + v * v;
     }
 
     /** Returns true if this vector and the vector parameter have identical components.
      * @param vector The other vector
      * @return Whether this and the other vector are equal with exact precision */
     public boolean idt (final Vector6 vector) {
-        return x == vector.x && y == vector.y && z == vector.z && w == vector.w && u == vector.u;
+        return x == vector.x && y == vector.y && z == vector.z && w == vector.w && u == vector.u && v == vector.v;
     }
 
-    /** Gets the Euclidean length in 5D space between the two specified vectors.
+    /** Gets the Euclidean length in 6D space between the two specified vectors.
      *  @return The Euclidean distance between the two specified vectors */
-    public static float dst (final float x1, final float y1, final float z1, final float w1, final float u1,
-                             final float x2, final float y2, final float z2, final float w2, final float u2) {
+    public static float dst (final float x1, final float y1, final float z1, final float w1, final float u1, final float v1,
+                             final float x2, final float y2, final float z2, final float w2, final float u2, final float v2) {
         final float a = x2 - x1;
         final float b = y2 - y1;
         final float c = z2 - z1;
         final float d = w2 - w1;
         final float e = u2 - u1;
-        return (float)Math.sqrt(a * a + b * b + c * c + d * d + e * e);
+        final float f = v2 - v1;
+        return (float)Math.sqrt(a * a + b * b + c * c + d * d + e * e + f * f);
     }
 
     @Override
@@ -381,30 +387,33 @@ public class Vector6 implements Vector<Vector6> {
         final float c = vector.z - z;
         final float d = vector.w - w;
         final float e = vector.u - u;
-        return (float)Math.sqrt(a * a + b * b + c * c + d * d + e * e);
+        final float f = vector.v - v;
+        return (float)Math.sqrt(a * a + b * b + c * c + d * d + e * e + f * f);
     }
 
-    /** Gets the distance between this vector and the given 5D coordinates.
+    /** Gets the distance between this vector and the given 6D coordinates.
      *  @return the distance between this point and the given point */
-    public float dst (float x, float y, float z, float w, float u) {
+    public float dst (float x, float y, float z, float w, float u, float v) {
         final float a = x - this.x;
         final float b = y - this.y;
         final float c = z - this.z;
         final float d = w - this.w;
         final float e = u - this.u;
-        return (float)Math.sqrt(a * a + b * b + c * c + d * d + e * e);
+        final float f = v - this.v;
+        return (float)Math.sqrt(a * a + b * b + c * c + d * d + e * e + f * f);
     }
 
-    /** Gets the squared Euclidean length in 5D space between the two specified vectors.
+    /** Gets the squared Euclidean length in 6D space between the two specified vectors.
      * @return the squared distance between the given points */
-    public static float dst2 (final float x1, final float y1, final float z1, final float w1, final float u1,
-                              final float x2, final float y2, final float z2, final float w2, final float u2) {
+    public static float dst2 (final float x1, final float y1, final float z1, final float w1, final float u1, final float v1,
+                              final float x2, final float y2, final float z2, final float w2, final float u2, final float v2) {
         final float a = x2 - x1;
         final float b = y2 - y1;
         final float c = z2 - z1;
         final float d = w2 - w1;
         final float e = u2 - u1;
-        return a * a + b * b + c * c + d * d + e * e;
+        final float f = v2 - v1;
+        return a * a + b * b + c * c + d * d + e * e + f * f;
     }
 
     @Override
@@ -414,7 +423,8 @@ public class Vector6 implements Vector<Vector6> {
         final float c = point.z - z;
         final float d = point.w - w;
         final float e = point.u - u;
-        return a * a + b * b + c * c + d * d + e * e;
+        final float f = point.v - v;
+        return a * a + b * b + c * c + d * d + e * e + f * f;
     }
 
     /** Returns the squared distance between this point and the given point.
@@ -423,13 +433,14 @@ public class Vector6 implements Vector<Vector6> {
      * @param z The z-component of the other point
      * @param w The w-component of the other point
      * @return The squared distance */
-    public float dst2 (float x, float y, float z, float w, float u) {
+    public float dst2 (float x, float y, float z, float w, float u, float v) {
         final float a = x - this.x;
         final float b = y - this.y;
         final float c = z - this.z;
         final float d = w - this.w;
         final float e = u - this.u;
-        return a * a + b * b + c * c + d * d + e * e;
+        final float f = v - this.v;
+        return a * a + b * b + c * c + d * d + e * e + f * f;
     }
 
     @Override
@@ -439,27 +450,28 @@ public class Vector6 implements Vector<Vector6> {
         return this.scl(1f / (float)Math.sqrt(len2));
     }
 
-    /** Gets the dot product of two 5D vectors, each given as 5 components.
+    /** Gets the dot product of two 6D vectors, each given as 6 components.
      * @return The dot product of the two vectors */
-    public static float dot (float x1, float y1, float z1, float w1, float u1,
-                             float x2, float y2, float z2, float w2, float u2) {
-        return x1 * x2 + y1 * y2 + z1 * z2 + w1 * w2 + u1 * u2;
+    public static float dot (float x1, float y1, float z1, float w1, float u1, float v1,
+                             float x2, float y2, float z2, float w2, float u2, float v2) {
+        return x1 * x2 + y1 * y2 + z1 * z2 + w1 * w2 + u1 * u2 + v1 * v2;
     }
 
     @Override
     public float dot (final Vector6 vector) {
-        return x * vector.x + y * vector.y + z * vector.z + w * vector.w + u * vector.u;
+        return x * vector.x + y * vector.y + z * vector.z + w * vector.w + u * vector.u + v * vector.v;
     }
 
-    /** Returns the dot product between this and the given vector (given as 5 components).
+    /** Returns the dot product between this and the given vector (given as 6 components).
      * @param x The x-component of the other vector
      * @param y The y-component of the other vector
      * @param z The z-component of the other vector
      * @param w The w-component of the other vector
      * @param u The u-component of the other vector
+     * @param v The v-component of the other vector
      * @return The dot product */
-    public float dot (float x, float y, float z, float w, float u) {
-        return this.x * x + this.y * y + this.z * z + this.w * w + this.u * u;
+    public float dot (float x, float y, float z, float w, float u, float v) {
+        return this.x * x + this.y * y + this.z * z + this.w * w + this.u * u + this.v * v;
     }
 
     @Override

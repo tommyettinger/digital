@@ -271,7 +271,7 @@ public class Vector5 implements Vector<Vector5> {
      * @param vu Multiplied with the U value
      * @return This vector for chaining */
     public Vector5 scl (float vx, float vy, float vz, float vw, float vu) {
-        return this.set(this.x * vx, this.y * vy, this.z * vz, this.w * vu, this.w * vu);
+        return this.set(this.x * vx, this.y * vy, this.z * vz, this.w * vw, this.w * vu);
     }
 
     @Override
