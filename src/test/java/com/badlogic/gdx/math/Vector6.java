@@ -432,6 +432,8 @@ public class Vector6 implements Vector<Vector6> {
      * @param y The y-component of the other point
      * @param z The z-component of the other point
      * @param w The w-component of the other point
+     * @param u The u-component of the other point
+     * @param v The v-component of the other point
      * @return The squared distance */
     public float dst2 (float x, float y, float z, float w, float u, float v) {
         final float a = x - this.x;
@@ -486,7 +488,7 @@ public class Vector6 implements Vector<Vector6> {
 
     @Override
     public boolean isZero () {
-        return x == 0 && y == 0 && z == 0 && w == 0 && u == 0;
+        return x == 0 && y == 0 && z == 0 && w == 0 && u == 0 && v == 0;
     }
 
     @Override
@@ -509,7 +511,7 @@ public class Vector6 implements Vector<Vector6> {
         // https://github.com/iboB/yama/blob/f08a71c6fd84df5eed62557000373f17f14e1ec7/include/yama/vector4.hpp#L566-L598
         // This code uses a flags variable to avoid allocating a float array.
         int flags = 0;
-        float dx = 0, dy = 0, dz = 0, dw = 0, du = 0;
+        float dx = 0, dy = 0, dz = 0, dw = 0, du = 0, dv = 0;
 
         if (MathUtils.isZero(x, epsilon)) {
             if (!MathUtils.isZero(other.x, epsilon)) {
@@ -551,6 +553,14 @@ public class Vector6 implements Vector<Vector6> {
             du = u / other.u;
             flags |= 16;
         }
+        if (MathUtils.isZero(v, epsilon)) {
+            if (!MathUtils.isZero(other.v, epsilon)) {
+                return false;
+            }
+        } else {
+            dv = v / other.v;
+            flags |= 32;
+        }
 
         int lowest = flags & -flags;
         flags ^= lowest;
@@ -562,7 +572,8 @@ public class Vector6 implements Vector<Vector6> {
             case 1:  left = dx; break;
             case 2:  left = dy; break;
             case 4:  left = dz; break;
-            default: left = dw; break;
+            case 8:  left = dw; break;
+            default: left = du; break;
         }
 
         while (true){
@@ -571,7 +582,8 @@ public class Vector6 implements Vector<Vector6> {
                 case 2:  on &= MathUtils.isEqual(left, dy, epsilon); break;
                 case 4:  on &= MathUtils.isEqual(left, dz, epsilon); break;
                 case 8:  on &= MathUtils.isEqual(left, dw, epsilon); break;
-                default: on &= MathUtils.isEqual(left, du, epsilon); break;
+                case 16: on &= MathUtils.isEqual(left, du, epsilon); break;
+                default: on &= MathUtils.isEqual(left, dv, epsilon); break;
             }
             flags ^= next;
             if(flags == 0) {
@@ -662,6 +674,7 @@ public class Vector6 implements Vector<Vector6> {
         z += alpha * (target.z - z);
         w += alpha * (target.w - w);
         u += alpha * (target.u - u);
+        v += alpha * (target.v - v);
         return this;
     }
 
@@ -675,7 +688,7 @@ public class Vector6 implements Vector<Vector6> {
      * @return a string representation of this object. */
     @Override
     public String toString () {
-        return "(" + x + "," + y + "," + z + "," + w + "," + u +"," + v + ")";
+        return "(" + x + "," + y + "," + z + "," + w + "," + u + "," + v + ")";
     }
 
     /** Sets this {@code Vector6} to the value represented by the specified string according to the format of {@link #toString()}.
@@ -751,6 +764,7 @@ public class Vector6 implements Vector<Vector6> {
         z = Math.min(Math.max(z, min), max);
         w = Math.min(Math.max(w, min), max);
         u = Math.min(Math.max(u, min), max);
+        v = Math.min(Math.max(v, min), max);
         return this;
     }
 
@@ -771,6 +785,7 @@ public class Vector6 implements Vector<Vector6> {
         z -= MathUtils.floor(z);
         w -= MathUtils.floor(w);
         u -= MathUtils.floor(u);
+        v -= MathUtils.floor(v);
         return this;
     }
 
@@ -783,6 +798,7 @@ public class Vector6 implements Vector<Vector6> {
         result = prime * result + NumberUtils.floatToIntBits(z);
         result = prime * result + NumberUtils.floatToIntBits(w);
         result = prime * result + NumberUtils.floatToIntBits(u);
+        result = prime * result + NumberUtils.floatToIntBits(v);
         return result;
     }
 
@@ -797,6 +813,7 @@ public class Vector6 implements Vector<Vector6> {
         if (NumberUtils.floatToIntBits(z) != NumberUtils.floatToIntBits(other.z)) return false;
         if (NumberUtils.floatToIntBits(w) != NumberUtils.floatToIntBits(other.w)) return false;
         if (NumberUtils.floatToIntBits(u) != NumberUtils.floatToIntBits(other.u)) return false;
+        if (NumberUtils.floatToIntBits(v) != NumberUtils.floatToIntBits(other.v)) return false;
         return true;
     }
 
@@ -808,6 +825,7 @@ public class Vector6 implements Vector<Vector6> {
         if (Math.abs(other.z - z) > epsilon) return false;
         if (Math.abs(other.w - w) > epsilon) return false;
         if (Math.abs(other.u - u) > epsilon) return false;
+        if (Math.abs(other.v - v) > epsilon) return false;
         return true;
     }
 
@@ -817,14 +835,16 @@ public class Vector6 implements Vector<Vector6> {
      * @param z z component of the other vector to compare
      * @param w w component of the other vector to compare
      * @param u u component of the other vector to compare
+     * @param v v component of the other vector to compare
      * @param epsilon how much error to tolerate and still consider two floats equal
      * @return whether the vectors are the same. */
-    public boolean epsilonEquals (float x, float y, float z, float w, float u, float epsilon) {
+    public boolean epsilonEquals (float x, float y, float z, float w, float u, float v, float epsilon) {
         if (Math.abs(x - this.x) > epsilon) return false;
         if (Math.abs(y - this.y) > epsilon) return false;
         if (Math.abs(z - this.z) > epsilon) return false;
         if (Math.abs(w - this.w) > epsilon) return false;
         if (Math.abs(u - this.u) > epsilon) return false;
+        if (Math.abs(v - this.v) > epsilon) return false;
         return true;
     }
 
@@ -842,9 +862,11 @@ public class Vector6 implements Vector<Vector6> {
      * @param y y component of the other vector to compare
      * @param z z component of the other vector to compare
      * @param w w component of the other vector to compare
+     * @param u u component of the other vector to compare
+     * @param v v component of the other vector to compare
      * @return true if the vectors are equal, otherwise false */
-    public boolean epsilonEquals (float x, float y, float z, float w, float u) {
-        return epsilonEquals(x, y, z, w, u, MathUtils.FLOAT_ROUNDING_ERROR);
+    public boolean epsilonEquals (float x, float y, float z, float w, float u, float v) {
+        return epsilonEquals(x, y, z, w, u, v, MathUtils.FLOAT_ROUNDING_ERROR);
     }
 
     @Override
@@ -854,6 +876,7 @@ public class Vector6 implements Vector<Vector6> {
         this.z = 0;
         this.w = 0;
         this.u = 0;
+        this.v = 0;
         return this;
     }
 }

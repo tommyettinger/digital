@@ -383,6 +383,7 @@ public class Vector5 implements Vector<Vector5> {
      * @param y The y-component of the other point
      * @param z The z-component of the other point
      * @param w The w-component of the other point
+     * @param u The u-component of the other point
      * @return The squared distance */
     public float dst2 (float x, float y, float z, float w, float u) {
         final float a = x - this.x;
@@ -789,6 +790,7 @@ public class Vector5 implements Vector<Vector5> {
      * @param y y component of the other vector to compare
      * @param z z component of the other vector to compare
      * @param w w component of the other vector to compare
+     * @param u u component of the other vector to compare
      * @return true if the vectors are equal, otherwise false */
     public boolean epsilonEquals (float x, float y, float z, float w, float u) {
         return epsilonEquals(x, y, z, w, u, MathUtils.FLOAT_ROUNDING_ERROR);
