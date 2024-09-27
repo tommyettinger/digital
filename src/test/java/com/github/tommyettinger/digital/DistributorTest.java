@@ -26,12 +26,12 @@ public class DistributorTest {
         System.out.println("Distributor.probitHighPrecision(1.0 - 0x1p-53) == " + Distributor.probitHighPrecision(1.0 - 0x1p-53));
 
         System.out.println("Distributor.normal(Long.MIN_VALUE) == " + Distributor.normal(Long.MIN_VALUE));
-        System.out.println("Distributor.normal(0L) == " + Distributor.normal(-3L));
-        System.out.println("Distributor.normal(0L) == " + Distributor.normal(-2L));
-        System.out.println("Distributor.normal(0L) == " + Distributor.normal(-1L));
+        System.out.println("Distributor.normal(-3L) == " + Distributor.normal(-3L));
+        System.out.println("Distributor.normal(-2L) == " + Distributor.normal(-2L));
+        System.out.println("Distributor.normal(-1L) == " + Distributor.normal(-1L));
         System.out.println("Distributor.normal(0L) == " + Distributor.normal(0L));
-        System.out.println("Distributor.normal(0L) == " + Distributor.normal(1L));
-        System.out.println("Distributor.normal(0L) == " + Distributor.normal(2L));
+        System.out.println("Distributor.normal(1L) == " + Distributor.normal(1L));
+        System.out.println("Distributor.normal(2L) == " + Distributor.normal(2L));
         System.out.println("Distributor.normal(Long.MAX_VALUE) == " + Distributor.normal(Long.MAX_VALUE));
     }
 }
