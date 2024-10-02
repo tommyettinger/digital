@@ -33,5 +33,14 @@ public class DistributorTest {
         System.out.println("Distributor.normal(1L) == " + Distributor.normal(1L));
         System.out.println("Distributor.normal(2L) == " + Distributor.normal(2L));
         System.out.println("Distributor.normal(Long.MAX_VALUE) == " + Distributor.normal(Long.MAX_VALUE));
+
+        System.out.println("Distributor.normalF(Integer.MIN_VALUE) == " + Distributor.normalF(Integer.MIN_VALUE));
+        System.out.println("Distributor.normalF(-3) == " + Distributor.normalF(-3));
+        System.out.println("Distributor.normalF(-2) == " + Distributor.normalF(-2));
+        System.out.println("Distributor.normalF(-1) == " + Distributor.normalF(-1));
+        System.out.println("Distributor.normalF(0) == " + Distributor.normalF(0));
+        System.out.println("Distributor.normalF(1) == " + Distributor.normalF(1));
+        System.out.println("Distributor.normalF(2) == " + Distributor.normalF(2));
+        System.out.println("Distributor.normalF(Integer.MAX_VALUE) == " + Distributor.normalF(Integer.MAX_VALUE));
     }
 }

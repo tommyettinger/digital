@@ -7,9 +7,11 @@ import java.util.Random;
  * distributions, such as the normal distribution. {@link #probit(double)} and {@link #probitHighPrecision(double)} take
  * a double in the 0.0 to 1.0 range (typically exclusive, but not required to be), and produce a normal-distributed
  * double centered on 0.0 with standard deviation 1.0 . {@link #normal(long)} takes a long in the entire range of
- * possible long values, and also produces a double centered on 0.0 with standard deviation 1.0 . ALl of these ways will
- * preserve patterns in the input, so inputs close to the lowest possible input (0.0 for probit(),
- * {@link Long#MIN_VALUE} for normal()) will produce the lowest possible output (-8.375 for probit() and normal()),
+ * possible long values, and also produces a double centered on 0.0 with standard deviation 1.0 . Similarly,
+ * {@link #normalF(int)} takes an int in the entire range of possible int values, and produces a float centered on 0f
+ * with standard deviation 1f. All of these ways will preserve patterns in the input, so inputs close to the lowest
+ * possible input (0.0 for probit(), {@link Long#MIN_VALUE} for normal(), {@link Integer#MIN_VALUE} for normalF()) will
+ * produce the lowest possible output (-8.375 for probit(), normal(), and normalF()),
  * and similarly for the highest possible inputs producing the highest possible outputs.
  */
 public final class Distributor {
@@ -209,7 +211,7 @@ public final class Distributor {
         final int top10 = (n >>> 21);
         final float t = (n & 0x1FFFFF) * 0x1p-21f, v;
         if (top10 == 1023) {
-            v = t * t * (8.375f - 3.297193345691938f) + 3.297193345691938f;
+            v = t * t * (8.375005f - 3.297193345691938f) + 3.297193345691938f;
         } else {
             final float s = TABLE_F[top10];
             v = t * (TABLE_F[top10 + 1] - s) + s;
