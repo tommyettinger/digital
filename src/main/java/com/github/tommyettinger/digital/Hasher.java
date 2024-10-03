@@ -6230,6 +6230,9 @@ public class Hasher {
     public static final SeededHashFunction64<Object[][][]> objectArray3DHashBulk64 = (long seed, Object[][][] data) -> hashBulk(seed, objectArray2DHashBulk64, data);
     public static final SeededHashFunction64<ByteBuffer[][]> byteBufferArray2DHashBulk64 = (long seed, ByteBuffer[][] data) -> hashBulk(seed, byteBufferArrayHashBulk64, data);
 
+    public static final SeededHashFunction64<CharSequence[][][]> charSequenceArray3DHashBulk64 = (long seed, CharSequence[][][] data) -> hashBulk(seed, charSequenceArray2DHashBulk64, data);
+    public static final SeededHashFunction64<ByteBuffer[][][]> byteBufferArray3DHashBulk64 = (long seed, ByteBuffer[][][] data) -> hashBulk(seed, byteBufferArray2DHashBulk64, data);
+
     public static final SeededHashFunction<boolean[]> booleanArrayHashBulk = Hasher::hashBulk;
     public static final SeededHashFunction<byte[]> byteArrayHashBulk = Hasher::hashBulk;
     public static final SeededHashFunction<short[]> shortArrayHashBulk = Hasher::hashBulk;
@@ -6265,6 +6268,9 @@ public class Hasher {
     public static final SeededHashFunction<CharSequence[][]> charSequenceArray2DHashBulk = (long seed, CharSequence[][] data) -> hashBulk(seed, charSequenceArrayHashBulk, data);
     public static final SeededHashFunction<Object[][][]> objectArray3DHashBulk = (long seed, Object[][][] data) -> hashBulk(seed, objectArray2DHashBulk, data);
     public static final SeededHashFunction<ByteBuffer[][]> byteBufferArray2DHashBulk = (long seed, ByteBuffer[][] data) -> hashBulk(seed, byteBufferArrayHashBulk, data);
+
+    public static final SeededHashFunction<CharSequence[][][]> charSequenceArray3DHashBulk = (long seed, CharSequence[][][] data) -> hashBulk(seed, charSequenceArray2DHashBulk, data);
+    public static final SeededHashFunction<ByteBuffer[][][]> byteBufferArray3DHashBulk = (long seed, ByteBuffer[][][] data) -> hashBulk(seed, byteBufferArray2DHashBulk, data);
 
     // normal Java Object stuff
 
