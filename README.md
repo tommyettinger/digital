@@ -190,7 +190,10 @@ from the same seed in previous versions. You can get the older
 Hasher instances either from Git history or the test folder's
 [OldHasher v020](src/test/java/com/github/tommyettinger/digital/v020/OldHasher.java)
 or [OldHasher v037](src/test/java/com/github/tommyettinger/digital/v037/OldHasher.java) files,
-if you need to reproduce the results of older seeds.
+if you need to reproduce the results of older seeds. Newer versions
+of SMHasher do find statistical failures in at least some `hash()` and
+`hash64()` methods in `Hasher`, but the recently-added `hashBulk()`
+and `hashBulk64()` methods don't have detectable issues.
 
 AlternateRandom is a quick micro-port of a random number generator
 from the closely-related [juniper](https://github.com/tommyettinger/juniper)
@@ -256,6 +259,22 @@ functionality of `String.format()`, or even the functionality of
 but unlike Formic it should work on TeaVM. It does have enough support
 for the simpler usages of `%d` and `%f`, as well as common conveniences
 such as `%08X` to print a 32-bit int as 8 hex digits, and always 8.
+You could also use `Base.BASE16.unsigned(num)` for that.
+
+Distributor is a relatively narrow class that exists to redistribute
+int, long, and double inputs to float or double normal-distributed
+values, while preserving patterns in the input data. The code that takes
+int or long input acts like the more-well-known Ziggurat algorithm, but
+is faster and almost certainly less precise. These are the `normal()` and
+`normalF()` methods, and each works by looking up a precalculated normal
+value from a table and interpolating linearly. The table's size is the main
+saving grace for how simple the algorithm is; with 1024 entries, the
+severity of problems introduced by linear interpolation is greatly reduced.
+This class calculates the table using `probit()` and `probitHighPrecision()`
+(it also exposes those for external use). Those take a double in the 0.0 to
+1.0 range and return a normal-distributed double. There are probably all
+sorts of creative uses for mapping int or long inputs to normal-distributed
+outputs; you can find some yourself!
 
 ## How do I get it?
 
@@ -281,14 +300,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.5.1"
+api "com.github.tommyettinger:digital:0.5.2"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.5.1:sources"
+api "com.github.tommyettinger:digital:0.5.2:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
