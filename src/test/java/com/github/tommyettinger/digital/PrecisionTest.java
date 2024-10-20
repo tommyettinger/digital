@@ -3663,24 +3663,24 @@ CONST f32x2 sincos(s16 int_angle) {
      * A big test that can handle lots of different comparisons.
      * <br>
      * Running Math.sin vs. TrigTools.sin
-     * Mean absolute error:     0.0000601882
-     * Mean relative error:     0.0006230420
-     * Maximum abs. error:      0.0001921714
-     * Maximum rel. error:      1.0024425983
+     * Mean absolute error:     0.0000037685
+     * Mean relative error:     0.0154355764
+     * Maximum abs. error:      0.0001921779
+     * Maximum rel. error:      1.0039137602
      * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.221826076507568000000000
-     * Best output (lo):       -0.0613207370 (0xBD7B2B74)
-     * Correct output (lo):    -0.0613207370 (0xBD7B2B74)
-     * Worst input (hi):       -6.282993793487549000000000
-     * Highest output rel:      1.0024424791
+     * Best input (lo):         6.263627052307129000000000
+     * Best output (lo):       -0.0195570085 (0xBCA03605)
+     * Correct output (lo):    -0.0195570085 (0xBCA03605)
+     * Worst input (hi):        0.000191373095731250940000
+     * Highest output rel:      1.0039136410
      * Worst output (hi):       0.0003834952 (0x39C90FDA)
-     * Correct output (hi):     0.0001915137 (0x3948D111)
-     * Worst input (abs):       3.148686885833740200000000
-     * Worst output (abs):     -0.0072863442 (0xBBEEC249)
-     * Correct output (abs):   -0.0070941728 (0xBBE8763C)
+     * Correct output (hi):     0.0001913731 (0x3948AB53)
+     * Worst input (abs):       3.147152900695801000000000
+     * Worst output (abs):     -0.0057523963 (0xBBBC7E99)
+     * Correct output (abs):   -0.0055602184 (0xBBB6327E)
      * Running Math.sin vs. TrigTools.sinSmoother
-     * Mean absolute error:     0.0000000824
-     * Mean relative error:     0.0000013559
+     * Mean absolute error:     0.0000000013
+     * Mean relative error:     0.0000000233
      * Maximum abs. error:      0.0000004470
      * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
@@ -3695,40 +3695,40 @@ CONST f32x2 sincos(s16 int_angle) {
      * Worst output (abs):     -0.1267044097 (0xBE01BECD)
      * Correct output (abs):   -0.1267039627 (0xBE01BEAF)
      * Running Math.sin vs. TrigTools.sinSmooth
-     * Mean absolute error:     0.0000166354
-     * Mean relative error:     0.0000222836
+     * Mean absolute error:     0.0000004711
+     * Mean relative error:     0.0000005390
      * Maximum abs. error:      0.0000989437
      * Maximum rel. error:      1.0000000000
      * Lowest output rel:       0.0000000000
-     * Best input (lo):         4.850412845611572000000000
-     * Best output (lo):       -0.9904898405 (0xBF7D90BE)
-     * Correct output (lo):    -0.9904898405 (0xBF7D90BE)
+     * Best input (lo):         4.850440979003906000000000
+     * Best output (lo):       -0.9904859662 (0xBF7D907D)
+     * Correct output (lo):    -0.9904859662 (0xBF7D907D)
      * Worst input (hi):        6.283185482025146500000000
      * Highest output rel:      0.9999999404
      * Worst output (hi):       0.0000000000 (0x00000000)
      * Correct output (hi):     0.0000001748 (0x343BBD2E)
-     * Worst input (abs):       4.712421894073486000000000
+     * Worst input (abs):       4.712437629699707000000000
      * Worst output (abs):     -0.9999010563 (0xBF7FF984)
      * Correct output (abs):   -1.0000000000 (0xBF800000)
      * Running Math.cos vs. TrigTools.cos
-     * Mean absolute error:     0.0000600990
-     * Mean relative error:     0.0006195969
-     * Maximum abs. error:      0.0001921159
-     * Maximum rel. error:      1.0023180246
+     * Mean absolute error:     0.0000018842
+     * Mean relative error:     0.0000175666
+     * Maximum abs. error:      0.0001921206
+     * Maximum rel. error:      1.0038977861
      * Lowest output rel:       0.0000000000
      * Best input (lo):         6.283185482025146500000000
      * Best output (lo):        1.0000000000 (0x3F800000)
      * Correct output (lo):     1.0000000000 (0x3F800000)
-     * Worst input (hi):       -1.570604801177978500000000
-     * Highest output rel:      1.0023179054
-     * Worst output (hi):       0.0003834952 (0x39C90FDA)
-     * Correct output (hi):     0.0001915256 (0x3948D444)
-     * Worst input (abs):       1.572521686553955000000000
-     * Worst output (abs):     -0.0019174748 (0xBAFB53C7)
-     * Correct output (abs):   -0.0017253589 (0xBAE22570)
+     * Worst input (hi):        1.570987701416015600000000
+     * Highest output rel:      1.0038976669
+     * Worst output (hi):      -0.0003834952 (0xB9C90FDA)
+     * Correct output (hi):    -0.0001913746 (0xB948ABBC)
+     * Worst input (abs):       1.570987701416015600000000
+     * Worst output (abs):     -0.0003834952 (0xB9C90FDA)
+     * Correct output (abs):   -0.0001913746 (0xB948ABBC)
      * Running Math.cos vs. TrigTools.cosSmoother
-     * Mean absolute error:     0.0000000841
-     * Mean relative error:     0.0000012143
+     * Mean absolute error:     0.0000000015
+     * Mean relative error:     0.0000000255
      * Maximum abs. error:      0.0000004172
      * Maximum rel. error:      0.6110913754
      * Lowest output rel:       0.0000000000
@@ -3739,18 +3739,18 @@ CONST f32x2 sincos(s16 int_angle) {
      * Highest output rel:      0.6110913157
      * Worst output (hi):      -0.0000007490 (0xB5491000)
      * Correct output (hi):    -0.0000004649 (0xB4F9990F)
-     * Worst input (abs):       5.303077220916748000000000
-     * Worst output (abs):      0.5569323897 (0x3F0E931F)
-     * Correct output (abs):    0.5569328070 (0x3F0E9326)
+     * Worst input (abs):       5.339963912963867000000000
+     * Worst output (abs):      0.5871831179 (0x3F1651A2)
+     * Correct output (abs):    0.5871835351 (0x3F1651A9)
      * Running Math.cos vs. TrigTools.cosSmooth
-     * Mean absolute error:     0.0000165813
-     * Mean relative error:     0.0000220270
+     * Mean absolute error:     0.0000018842
+     * Mean relative error:     0.0000018842
      * Maximum abs. error:      0.0000989437
      * Maximum rel. error:      0.6110966206
      * Lowest output rel:       0.0000000000
-     * Best input (lo):         6.145555973052978500000000
-     * Best output (lo):        0.9905440211 (0x3F7D944B)
-     * Correct output (lo):     0.9905440211 (0x3F7D944B)
+     * Best input (lo):         6.145606994628906000000000
+     * Best output (lo):        0.9905509949 (0x3F7D94C0)
+     * Correct output (lo):     0.9905509949 (0x3F7D94C0)
      * Worst input (hi):        4.712388515472412000000000
      * Highest output rel:      0.6110966206
      * Worst output (hi):      -0.0000007490 (0xB549102B)
@@ -3759,43 +3759,43 @@ CONST f32x2 sincos(s16 int_angle) {
      * Worst output (abs):      0.9999010563 (0x3F7FF984)
      * Correct output (abs):    1.0000000000 (0x3F800000)
      * Running Math.sin vs. MathUtils.sin
-     * Mean absolute error:     0.0001522401
-     * Mean relative error:     0.0023401673
-     * Maximum abs. error:      0.0005752884
-     * Maximum rel. error:   3809.6450195313
+     * Mean absolute error:     0.0000059195
+     * Mean relative error:     0.0154355764
+     * Maximum abs. error:      0.0003834952
+     * Maximum rel. error:   1267.9168701172
      * Lowest output rel:       0.0000000000
      * Best input (lo):         6.282993793487549000000000
      * Best output (lo):       -0.0001915137 (0xB948D111)
      * Correct output (lo):    -0.0001915137 (0xB948D111)
-     * Worst input (hi):       -3.141592502593994000000000
-     * Highest output rel:   3809.6447753906
-     * Worst output (hi):      -0.0005753914 (0xBA16D5DD)
-     * Correct output (hi):    -0.0000001510 (0xB4222169)
-     * Worst input (abs):      -6.280500888824463000000000
-     * Worst output (abs):      0.0032597035 (0x3B55A0C0)
-     * Correct output (abs):    0.0026844151 (0x3B2FED03)
+     * Worst input (hi):        3.141592502593994000000000
+     * Highest output rel:   1267.9167480469
+     * Worst output (hi):       0.0001916011 (0x3948E888)
+     * Correct output (hi):     0.0000001510 (0x34222169)
+     * Worst input (abs):       0.000383495178539305900000
+     * Worst output (abs):      0.0000000000 (0x00000000)
+     * Correct output (abs):    0.0003834952 (0x39C90FDA)
      * Running Math.cos vs. MathUtils.cos
-     * Mean absolute error:     0.0001294330
-     * Mean relative error:     0.0016387656
-     * Maximum abs. error:      0.0005754033
-     * Maximum rel. error:   1236.6342773438
+     * Mean absolute error:     0.0000018842
+     * Mean relative error:     0.0000301476
+     * Maximum abs. error:      0.0003833016
+     * Maximum rel. error:   2536.8337402344
      * Lowest output rel:       0.0000000000
      * Best input (lo):         6.283185482025146500000000
      * Best output (lo):        1.0000000000 (0x3F800000)
      * Correct output (lo):     1.0000000000 (0x3F800000)
-     * Worst input (hi):       -4.712388515472412000000000
-     * Highest output rel:   1236.6342773438
-     * Worst output (hi):      -0.0005753914 (0xBA16D5DD)
-     * Correct output (hi):    -0.0000004649 (0xB4F9990F)
-     * Worst input (abs):      -1.571563243865966800000000
-     * Worst output (abs):     -0.0001915137 (0xB948D111)
-     * Correct output (abs):   -0.0007669170 (0xBA490AEE)
+     * Worst input (hi):        1.570796251296997000000000
+     * Highest output rel:   2536.8334960938
+     * Worst output (hi):       0.0001916011 (0x3948E888)
+     * Correct output (hi):     0.0000000755 (0x33A22169)
+     * Worst input (abs):       1.571179628372192400000000
+     * Worst output (abs):      0.0000000000 (0x00000000)
+     * Correct output (abs):   -0.0003833016 (0xB9C8F5DE)
      * -------
      * Epsilon is:              0.0000000596
      * -------
      */
     @Test
-    public void testPairs_PI2_PI2() {
+    public void testPairs_0_PI2() {
         OrderedMap<String, FloatUnaryOperator> baselines = new OrderedMap<>(8);
         ArrayList<FloatUnaryOperator> functions = new ArrayList<>(8);
         baselines.put("Math.sin vs. TrigTools.sin", (x) -> (float) Math.sin(x));
@@ -3825,13 +3825,15 @@ CONST f32x2 sincos(s16 int_angle) {
             float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
             float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
             long counter = 0L;
-            for (float x = PI2; x >= -PI2; x-= 0x1p-20f) {
+            int pi2Bits = BitConversion.floatToIntBits(PI2);
+            for (int ix = pi2Bits; ix >= 0; ix--) {
+                final float x = BitConversion.intBitsToFloat(ix);
                 float tru = baseline.applyAsFloat(x),
                         approx = op.applyAsFloat(x),
                         err = tru - approx,
                         ae = abs(err),
-                        re = MathTools.isZero(tru, 1E-10) ? 0f : Math.abs(err / tru);
-                if(!MathTools.isZero(tru, 1E-10)) {
+                        re = MathTools.isZero(tru, 0x1p-24f) ? 0f : Math.abs(err / tru);
+                if(!MathTools.isZero(tru, 0x1p-24f)) {
                     relError += re;
                     if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
                         highestRelX = x;
