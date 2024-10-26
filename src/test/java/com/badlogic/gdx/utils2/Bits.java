@@ -127,7 +127,7 @@ public class Bits {
 			long bitsAtWord = bits[word];
 			if (bitsAtWord != 0) {
 				for (int bit = 63; bit >= 0; --bit) {
-					if ((bitsAtWord & (1L << (bit & 0x3F))) != 0L) {
+					if ((bitsAtWord & (1L << bit)) != 0L) {
 						return (word << 6) + bit + 1;
 					}
 				}
@@ -162,8 +162,8 @@ public class Bits {
 		if (word >= bitsLength) return -1;
 		long bitsAtWord = bits[word];
 		if (bitsAtWord != 0) {
-			for (int i = fromIndex & 0x3f; i < 64; i++) {
-				if ((bitsAtWord & (1L << (i & 0x3F))) != 0L) {
+			for (int i = fromIndex & 0x3F; i < 64; i++) {
+				if ((bitsAtWord & (1L << i)) != 0L) {
 					return (word << 6) + i;
 				}
 			}
@@ -173,7 +173,7 @@ public class Bits {
 				bitsAtWord = bits[word];
 				if (bitsAtWord != 0) {
 					for (int i = 0; i < 64; i++) {
-						if ((bitsAtWord & (1L << (i & 0x3F))) != 0L) {
+						if ((bitsAtWord & (1L << i)) != 0L) {
 							return (word << 6) + i;
 						}
 					}
@@ -190,18 +190,18 @@ public class Bits {
 		int bitsLength = bits.length;
 		if (word >= bitsLength) return bits.length << 6;
 		long bitsAtWord = bits[word];
-		for (int i = fromIndex & 0x3f; i < 64; i++) {
-			if ((bitsAtWord & (1L << (i & 0x3F))) == 0L) {
+		for (int i = fromIndex & 0x3F; i < 64; i++) {
+			if ((bitsAtWord & (1L << i)) == 0L) {
 				return (word << 6) + i;
 			}
 		}
 		for (word++; word < bitsLength; word++) {
 			if (word == 0) {
-				return word << 6;
+				return 0;
 			}
 			bitsAtWord = bits[word];
 			for (int i = 0; i < 64; i++) {
-				if ((bitsAtWord & (1L << (i & 0x3F))) == 0L) {
+				if ((bitsAtWord & (1L << i)) == 0L) {
 					return (word << 6) + i;
 				}
 			}
@@ -259,7 +259,7 @@ public class Bits {
 	 * <li>The bit initially has the value true, and the corresponding bit in the argument has the value false.</li>
 	 * <li>The bit initially has the value false, and the corresponding bit in the argument has the value true.</li>
 	 * </ul>
-	 * @param other */
+	 * @param other a bit set */
 	public void xor (Bits other) {
 		int commonWords = Math.min(bits.length, other.bits.length);
 

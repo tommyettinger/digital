@@ -9,6 +9,7 @@ public class BitsTest {
         Bits bits = new Bits(1);
         int empty = bits.hashCode();
         bits.set(63);
+        System.out.println("Length is " + bits.length());
         int one = bits.hashCode();
         System.out.println(one);
         for (int i = 62; i >= 0; i--) {
