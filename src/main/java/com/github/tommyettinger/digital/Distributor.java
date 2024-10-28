@@ -6,25 +6,50 @@ import java.util.Random;
  * Different methods for distributing input {@code long} or {@code double} values from a given domain into specific
  * distributions, such as the normal distribution. {@link #probit(double)} and {@link #probitHighPrecision(double)} take
  * a double in the 0.0 to 1.0 range (typically exclusive, but not required to be), and produce a normal-distributed
- * double centered on 0.0 with standard deviation 1.0 . {@link #normal(long)} takes a long in the entire range of
+ * double centered on 0.0 with standard deviation 1.0 . {@link #linearNormal(long)} takes a long in the entire range of
  * possible long values, and also produces a double centered on 0.0 with standard deviation 1.0 . Similarly,
- * {@link #normalF(int)} takes an int in the entire range of possible int values, and produces a float centered on 0f
- * with standard deviation 1f. All of these ways will preserve patterns in the input, so inputs close to the lowest
+ * {@link #linearNormalF(int)} takes an int in the entire range of possible int values, and produces a float centered on
+ * 0f with standard deviation 1f. All of these ways will preserve patterns in the input, so inputs close to the lowest
  * possible input (0.0 for probit(), {@link Long#MIN_VALUE} for normal(), {@link Integer#MIN_VALUE} for normalF()) will
- * produce the lowest possible output (-8.375 for probit(), normal(), and normalF()),
- * and similarly for the highest possible inputs producing the highest possible outputs.
+ * produce the lowest possible output (-8.375 for probit(), linearNormal(), and linearNormalF()),
+ * and similarly for the highest possible inputs producing the highest possible outputs. There's also
+ * {@link #normal(long)}, which uses the <a href="https://en.wikipedia.org/wiki/Ziggurat_algorithm">Ziggurat method</a>
+ * and does not preserve input patterns. The Ziggurat method does get drastically closer to the correct normal
+ * distribution in the trail (where very positive or very negative values are), and it is about the same speed as
+ * linearNormal() and linearNormalF().
+ *
  */
 public final class Distributor {
 
     private Distributor() {}
+    private static final int    ZIG_TABLE_ITEMS = 256;
+    private static final double R               = 3.65415288536100716461;
+    private static final double INV_R           = 1.0 / R;
+    private static final double AREA            = 0.00492867323397465524494;
 
-    private static final double[] TABLE = new double[1024];
-    private static final float[] TABLE_F = new float[1024];
+    /**
+     * This is private because it shouldn't ever be changed after assignment, and has nearly no use outside this code.
+     */
+    private static final double[] ZIG_TABLE  = new double[257];
+    private static final double[] LIN_TABLE  = new double[1024];
+    private static final float[] LIN_TABLE_F = new float[1024];
 
     static {
         for (int i = 0; i < 1024; i++) {
-            TABLE_F[i] = (float) (TABLE[i] = probitHighPrecision(0.5 + i * 0x1p-11));
+            LIN_TABLE_F[i] = (float) (LIN_TABLE[i] = probitHighPrecision(0.5 + i * 0x1p-11));
         }
+        double f = Math.exp(-0.5 * R * R);
+        ZIG_TABLE[0] = AREA / f;
+        ZIG_TABLE[1] = R;
+
+        for (int i = 2; i < ZIG_TABLE_ITEMS; i++) {
+            double xx = Math.log(AREA /
+                    ZIG_TABLE[i - 1] + f);
+            ZIG_TABLE[i] = Math.sqrt(-2 * xx);
+            f = Math.exp(xx);
+        }
+
+        ZIG_TABLE[ZIG_TABLE_ITEMS] = 0.0;
     }
 
     /**
@@ -44,7 +69,7 @@ public final class Distributor {
      * is more likely to just be confusing.
      * <br>
      * Acklam's algorithm and Karimov's implementation are both competitive on speed with the Box-Muller Transform and
-     * Marsaglia's Polar Method, but slower than Ziggurat and the {@link #normal(long)} method here. This isn't quite
+     * Marsaglia's Polar Method, but slower than Ziggurat and the {@link #linearNormal(long)} method here. This isn't quite
      * as precise as Box-Muller or Marsaglia Polar, and can't produce as extreme min and max results in the extreme
      * cases they should appear. If given a typical uniform random {@code double} that's exclusive on 1.0, it won't
      * produce a result higher than
@@ -57,11 +82,11 @@ public final class Distributor {
      * Gaussian values that match a pattern present in the inputs (which you could have by using a sub-random sequence
      * as the input, such as those produced by a van der Corput, Halton, Sobol or R2 sequence). Most methods of generating
      * Gaussian values (e.g. Box-Muller and Marsaglia polar) do not have any way to preserve a particular pattern. Note
-     * that if you don't need to preserve patterns in input, then either the Ziggurat method (which is available and the
-     * default in the juniper library for pseudo-random generation) or the Marsaglia polar method (which is the default
-     * in the JDK Random class) will perform better in each one's optimal circumstances. The {@link #normal(long)}
-     * method here (using the Linnormal algorithm) both preserves patterns in input (given a {@code long}) and is faster
-     * than Ziggurat, making it the quickest here, though at some cost to precision.
+     * that if you don't need to preserve patterns in input, then either the Ziggurat method (which is available via the
+     * {@link #normal(long)} method) or the Marsaglia polar method (which is the default in the JDK Random class) will
+     * perform better in each one's optimal circumstances. The {@link #linearNormal(long)} method here (using the
+     * Linnormal algorithm) preserves patterns in input (given a {@code long}), though at some cost to precision, and
+     * preserving patterns may be important to some use cases.
      *
      * @param d should be between 0 and 1, exclusive, but other values are tolerated
      * @return a normal-distributed double centered on 0.0; all results will be between -8.375 and 8.375, both inclusive
@@ -154,17 +179,17 @@ public final class Distributor {
      * <br>
      * This is like the "Ziggurat algorithm" to make normal-distributed doubles, but this preserves patterns in the
      * input. Uses a large table of the results of {@link #probitHighPrecision(double)}, and interpolates between
-     * them using linear interpolation. This tends to be faster than Ziggurat at generating normal-distributed values,
+     * them using linear interpolation. This tends to be about as fast as Ziggurat at generating normal-distributed values,
      * though it probably has slightly worse quality. Since Ziggurat is already much faster than other common methods,
      * such as the Box-Muller Method, {@link #probit(double)} function, or the Marsaglia Polar Method (which Java itself
-     * uses), this being faster than Ziggurat is a good thing. All methods of generating normal-distributed variables
+     * uses), this being as fast as Ziggurat is a good thing. All methods of generating normal-distributed variables
      * while preserving input patterns are approximations, and this is slightly less accurate than some ways (but better
      * than the simplest ways, like just summing many random variables and re-centering around 0).
      *
      * @param n any long; input patterns will be preserved
      * @return a normal-distributed double, matching patterns in {@code n}
      */
-    public static double normal(long n) {
+    public static double linearNormal(long n) {
         final long sign = n >> 63;
         n ^= sign;
         final int top10 = (int) (n >>> 53);
@@ -172,8 +197,8 @@ public final class Distributor {
         if (top10 == 1023) {
             v = t * t * (8.375 - 3.297193345691938) + 3.297193345691938;
         } else {
-            final double s = TABLE[top10];
-            v = t * (TABLE[top10 + 1] - s) + s;
+            final double s = LIN_TABLE[top10];
+            v = t * (LIN_TABLE[top10 + 1] - s) + s;
         }
         return Math.copySign(v, sign);
     }
@@ -195,17 +220,17 @@ public final class Distributor {
      * <br>
      * This is like the "Ziggurat algorithm" to make normal-distributed doubles, but this preserves patterns in the
      * input. Uses a large table of the results of {@link #probitHighPrecision(double)}, and interpolates between
-     * them using linear interpolation. This tends to be faster than Ziggurat at generating normal-distributed values,
+     * them using linear interpolation. This tends to be about as fast as Ziggurat at generating normal-distributed values,
      * though it probably has slightly worse quality. Since Ziggurat is already much faster than other common methods,
      * such as the Box-Muller Method, {@link #probit(double)} function, or the Marsaglia Polar Method (which Java itself
-     * uses), this being faster than Ziggurat is a good thing. All methods of generating normal-distributed variables
+     * uses), this being as fast as Ziggurat is a good thing. All methods of generating normal-distributed variables
      * while preserving input patterns are approximations, and this is slightly less accurate than some ways (but better
      * than the simplest ways, like just summing many random variables and re-centering around 0).
      *
      * @param n any int; input patterns will be preserved
      * @return a normal-distributed float, matching patterns in {@code n}
      */
-    public static float normalF(int n) {
+    public static float linearNormalF(int n) {
         final int sign = n >> 31;
         n ^= sign;
         final int top10 = (n >>> 21);
@@ -213,9 +238,101 @@ public final class Distributor {
         if (top10 == 1023) {
             v = t * t * (8.375005f - 3.297193345691938f) + 3.297193345691938f;
         } else {
-            final float s = TABLE_F[top10];
-            v = t * (TABLE_F[top10 + 1] - s) + s;
+            final float s = LIN_TABLE_F[top10];
+            v = t * (LIN_TABLE_F[top10 + 1] - s) + s;
         }
         return Math.copySign(v, sign);
+    }
+
+    /**
+     * Given a long where all bits are sufficiently (independently) random, this produces a normal-distributed
+     * (Gaussian) variable as if by a normal distribution with mean (mu) 0.0 and standard deviation (sigma) 1.0.
+     * This uses the Ziggurat algorithm, and takes one {@code long} input to produce one {@code double} value.
+     * Note that no additive counters are considered sufficiently random for this, and linear congruential generators
+     * might not be random enough either if they return the low-order bits without changes.
+     * Patterns between different {@code state} values provided to this will generally not be preserved in the
+     * output, but this may not be true all the time for patterns on all bits.
+     * <br>
+     * The range this can produce is at least from -7.6719775673883905 to 7.183851151080583, and is almost certainly larger
+     * (only 4 billion distinct inputs were tested, and there are over 18 quintillion inputs possible).
+     * <br>
+     * From <a href="https://github.com/camel-cdr/cauldron/blob/7d5328441b1a1bc8143f627aebafe58b29531cb9/cauldron/random.h#L2013-L2265">Cauldron</a>,
+     * MIT-licensed. This in turn is based on Doornik's form of the Ziggurat method:
+     * <br>
+     *      Doornik, Jurgen A (2005):
+     *      "An improved ziggurat method to generate normal random samples."
+     *      University of Oxford: 77.
+     *
+     * @param state a long that should be sufficiently random; quasi-random longs may not be enough
+     * @return a normal-distributed double with mean (mu) 0.0 and standard deviation (sigma) 1.0
+     */
+    public static double normal(long state) {
+        double x, y, f0, f1, u;
+        int idx;
+
+        while (true) {
+            /* To minimize calls to the RNG, we use every bit for its own
+             * purposes:
+             *    - The 53 most significant bits are used to generate
+             *      a random floating-point number in the range [0.0,1.0).
+             *    - The first to the eighth least significant bits are used
+             *      to generate an index in the range [0,256).
+             *    - The ninth least significant bit is treated as the sign
+             *      bit of the result, unless the result is in the trail.
+             *    - If the random variable is in the trail, the state will
+             *      be modified instead of generating a new random number.
+             *      This could yield lower quality, but variables in the
+             *      trail are already rare (1/256 values or fewer).
+             *    - If the result is in the trail, the parity of the
+             *      complete state is used to randomly set the sign of the
+             *      return value.
+             */
+            idx = (int)(state & (ZIG_TABLE_ITEMS - 1));
+            u = (state >>> 11) * 0x1p-53 * ZIG_TABLE[idx];
+
+            /* Take a random box from TABLE
+             * and get the value of a random x-coordinate inside it.
+             * If it's also inside TABLE[idx + 1] we already know to accept
+             * this value. */
+            if (u < ZIG_TABLE[idx + 1])
+                break;
+
+            /* If our random box is at the bottom, we can't use the lookup
+             * table and need to generate a variable for the trail of the
+             * normal distribution, as described by Marsaglia in 1964: */
+            if (idx == 0) {
+                /* If idx is 0, then the bottom 8 bits of state must all be 0,
+                 * and u must be on the larger side.
+                 * Doing a "proper" mix of state to get a new random state is
+                 * not especially fast, but we could do it here with MX3. */
+//                state ^= 0xABC98388FB8FAC03L;
+//                state ^= state >>> 32;
+//                state *= 0xBEA225F9EB34556DL;
+//                state ^= state >>> 29;
+//                state *= 0xBEA225F9EB34556DL;
+//                state ^= state >>> 32;
+//                state *= 0xBEA225F9EB34556DL;
+//                state ^= state >>> 29;
+                do {
+                    x = Math.log((((state = (state ^ 0xF1357AEA2E62A9C5L) * 0xABC98388FB8FAC03L) >>> 11) + 1L) * 0x1p-53) * INV_R;
+                    y = Math.log((((state = (state ^ 0xF1357AEA2E62A9C5L) * 0xABC98388FB8FAC03L) >>> 11) + 1L) * 0x1p-53);
+                } while (-(y + y) < x * x);
+                return (Long.bitCount(state) & 1L) == 0L ?
+                        x - R :
+                        R - x;
+            }
+
+            /* Take a random x-coordinate u in between TABLE[idx] and TABLE[idx+1]
+             * and return x if u is inside the normal distribution,
+             * otherwise, repeat the entire ziggurat method. */
+            y = u * u;
+            f0 = Math.exp(-0.5 * (ZIG_TABLE[idx]     * ZIG_TABLE[idx]     - y));
+            f1 = Math.exp(-0.5 * (ZIG_TABLE[idx + 1] * ZIG_TABLE[idx + 1] - y));
+            if (f1 + (((state = (state ^ 0xF1357AEA2E62A9C5L) * 0xABC98388FB8FAC03L) >>> 11) * 0x1p-53) * (f0 - f1) < 1.0)
+                break;
+        }
+        /* (Zero-indexed ) bits 8, 9, and 10 aren't used in the calculations for idx
+         * or u, so we use bit 9 as a sign bit here. */
+        return Math.copySign(u, 256L - (state & 512L));
     }
 }
