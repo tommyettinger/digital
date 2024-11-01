@@ -155,18 +155,29 @@ version of [wyhash](https://github.com/wangyi-fudan/wyhash) that
 doesn't use 128-bit math.
 
 While Hasher can hash all types of 1D
-primitive array and most types of 2D primitive array, it can't
-do much with 3D or higher sizes at the moment. However, the only
-change that would be needed to add a `hash()` method for, say, a
-`float[][][]` is to copy the `hash(float[][], int, int)` method and change
-the first parameter to be a `float[][][]`, so if you have the source,
-you can add this yourself with a quick copy and paste. Hasher
+primitive array and most types of 2D primitive array using dedicated
+methods, 3D (and higher) dimensions are hashed using a generalized
+method that takes another method, usually one of the previously
+mentioned hashes for primitive arrays. The 3D code is already defined
+for primitives, using calls like
+`Hasher.byteArray3DHashBulk64.hash64(longSeed, bytes3D)`, where
+longSeed is a long to seed the hash, and bytes3D is a `byte[][][]`.
+That byteArray3DHashBulk64() is a lambda of the type
+`SeededHashFunction64<byte[][][]>` that calls
+`hashBulk64(seed, byteArray2DHashBulk64, data)`; you could change 2D
+to 3D there to make your own hash for 4D byte arrays (treating
+them as arrays of 3D byte arrays). Hasher
 allows you to specify the seed when you call `hash()` or
 `hash64()` (as static methods), but it also has a fairly-large
 array of `predefined` hash functions with instance methods for
 `hash()` and `hash64()`. Starting in 0.3.0, Hasher can either
 process a whole input array or part of one, specified by a start
-index and a length.
+index and a length. Starting in 0.5.1, Hasher also provides
+`hashBulk()` and `hashBulk64()` methods that use a different,
+slightly-higher-quality algorithm, and these methods can be
+faster than `hash` and `hash64` on large inputs. How large
+depends on your use case, but the quality improvement may be
+enough reason to switch on its own.
 
 Hasher also has a few unary hashes that
 can be used as quick and dirty random number generators when

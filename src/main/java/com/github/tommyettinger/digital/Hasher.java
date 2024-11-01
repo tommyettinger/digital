@@ -6088,7 +6088,7 @@ public class Hasher {
      */
     public static <T> int hashBulk(final long seed, final SeededHashFunction64<T> function, final T[] data) {
         if (data == null) return 0;
-        return (int)hashBulk(seed, function, data, 0, data.length);
+        return hashBulk(seed, function, data, 0, data.length);
     }
 
     /**
@@ -6135,7 +6135,7 @@ public class Hasher {
      */
     public static <T> int hashBulk(final long seed, final SeededHashFunction<T> function, final T[] data) {
         if (data == null) return 0;
-        return (int)hashBulk(seed, function, data, 0, data.length);
+        return hashBulk(seed, function, data, 0, data.length);
     }
 
     /**
@@ -6206,32 +6206,32 @@ public class Hasher {
     public static final SeededHashFunction64<Object[]> objectArrayHashBulk64 = Hasher::hashBulk64;
     public static final SeededHashFunction64<ByteBuffer> byteBufferHashBulk64 = Hasher::hashBulk64;
 
-    public static final SeededHashFunction64<boolean[][]> booleanArray2DHashBulk64 = (long seed, boolean[][] data) -> hashBulk(seed, booleanArrayHashBulk64, data);
-    public static final SeededHashFunction64<byte[][]> byteArray2DHashBulk64 = (long seed, byte[][] data) -> hashBulk(seed, byteArrayHashBulk64, data);
-    public static final SeededHashFunction64<short[][]> shortArray2DHashBulk64 = (long seed, short[][] data) -> hashBulk(seed, shortArrayHashBulk64, data);
-    public static final SeededHashFunction64<int[][]> intArray2DHashBulk64 = (long seed, int[][] data) -> hashBulk(seed, intArrayHashBulk64, data);
-    public static final SeededHashFunction64<long[][]> longArray2DHashBulk64 = (long seed, long[][] data) -> hashBulk(seed, longArrayHashBulk64, data);
-    public static final SeededHashFunction64<float[][]> floatArray2DHashBulk64 = (long seed, float[][] data) -> hashBulk(seed, floatArrayHashBulk64, data);
-    public static final SeededHashFunction64<double[][]> doubleArray2DHashBulk64 = (long seed, double[][] data) -> hashBulk(seed, doubleArrayHashBulk64, data);
-    public static final SeededHashFunction64<char[][]> charArray2DHashBulk64 = (long seed, char[][] data) -> hashBulk(seed, charArrayHashBulk64, data);
-    public static final SeededHashFunction64<CharSequence[]> charSequenceArrayHashBulk64 = (long seed, CharSequence[] data) -> hashBulk(seed, charSequenceHashBulk64, data);
-    public static final SeededHashFunction64<Object[][]> objectArray2DHashBulk64 = (long seed, Object[][] data) -> hashBulk(seed, objectArrayHashBulk64, data);
-    public static final SeededHashFunction64<ByteBuffer[]> byteBufferArrayHashBulk64 = (long seed, ByteBuffer[] data) -> hashBulk(seed, byteBufferHashBulk64, data);
+    public static final SeededHashFunction64<boolean[][]> booleanArray2DHashBulk64 = (long seed, boolean[][] data) -> hashBulk64(seed, booleanArrayHashBulk64, data);
+    public static final SeededHashFunction64<byte[][]> byteArray2DHashBulk64 = (long seed, byte[][] data) -> hashBulk64(seed, byteArrayHashBulk64, data);
+    public static final SeededHashFunction64<short[][]> shortArray2DHashBulk64 = (long seed, short[][] data) -> hashBulk64(seed, shortArrayHashBulk64, data);
+    public static final SeededHashFunction64<int[][]> intArray2DHashBulk64 = (long seed, int[][] data) -> hashBulk64(seed, intArrayHashBulk64, data);
+    public static final SeededHashFunction64<long[][]> longArray2DHashBulk64 = (long seed, long[][] data) -> hashBulk64(seed, longArrayHashBulk64, data);
+    public static final SeededHashFunction64<float[][]> floatArray2DHashBulk64 = (long seed, float[][] data) -> hashBulk64(seed, floatArrayHashBulk64, data);
+    public static final SeededHashFunction64<double[][]> doubleArray2DHashBulk64 = (long seed, double[][] data) -> hashBulk64(seed, doubleArrayHashBulk64, data);
+    public static final SeededHashFunction64<char[][]> charArray2DHashBulk64 = (long seed, char[][] data) -> hashBulk64(seed, charArrayHashBulk64, data);
+    public static final SeededHashFunction64<CharSequence[]> charSequenceArrayHashBulk64 = (long seed, CharSequence[] data) -> hashBulk64(seed, charSequenceHashBulk64, data);
+    public static final SeededHashFunction64<Object[][]> objectArray2DHashBulk64 = (long seed, Object[][] data) -> hashBulk64(seed, objectArrayHashBulk64, data);
+    public static final SeededHashFunction64<ByteBuffer[]> byteBufferArrayHashBulk64 = (long seed, ByteBuffer[] data) -> hashBulk64(seed, byteBufferHashBulk64, data);
 
-    public static final SeededHashFunction64<boolean[][][]> booleanArray3DHashBulk64 = (long seed, boolean[][][] data) -> hashBulk(seed, booleanArray2DHashBulk64, data);
-    public static final SeededHashFunction64<byte[][][]> byteArray3DHashBulk64 = (long seed, byte[][][] data) -> hashBulk(seed, byteArray2DHashBulk64, data);
-    public static final SeededHashFunction64<short[][][]> shortArray3DHashBulk64 = (long seed, short[][][] data) -> hashBulk(seed, shortArray2DHashBulk64, data);
-    public static final SeededHashFunction64<int[][][]> intArray3DHashBulk64 = (long seed, int[][][] data) -> hashBulk(seed, intArray2DHashBulk64, data);
-    public static final SeededHashFunction64<long[][][]> longArray3DHashBulk64 = (long seed, long[][][] data) -> hashBulk(seed, longArray2DHashBulk64, data);
-    public static final SeededHashFunction64<float[][][]> floatArray3DHashBulk64 = (long seed, float[][][] data) -> hashBulk(seed, floatArray2DHashBulk64, data);
-    public static final SeededHashFunction64<double[][][]> doubleArray3DHashBulk64 = (long seed, double[][][] data) -> hashBulk(seed, doubleArray2DHashBulk64, data);
-    public static final SeededHashFunction64<char[][][]> charArray3DHashBulk64 = (long seed, char[][][] data) -> hashBulk(seed, charArray2DHashBulk64, data);
-    public static final SeededHashFunction64<CharSequence[][]> charSequenceArray2DHashBulk64 = (long seed, CharSequence[][] data) -> hashBulk(seed, charSequenceArrayHashBulk64, data);
-    public static final SeededHashFunction64<Object[][][]> objectArray3DHashBulk64 = (long seed, Object[][][] data) -> hashBulk(seed, objectArray2DHashBulk64, data);
-    public static final SeededHashFunction64<ByteBuffer[][]> byteBufferArray2DHashBulk64 = (long seed, ByteBuffer[][] data) -> hashBulk(seed, byteBufferArrayHashBulk64, data);
+    public static final SeededHashFunction64<boolean[][][]> booleanArray3DHashBulk64 = (long seed, boolean[][][] data) -> hashBulk64(seed, booleanArray2DHashBulk64, data);
+    public static final SeededHashFunction64<byte[][][]> byteArray3DHashBulk64 = (long seed, byte[][][] data) -> hashBulk64(seed, byteArray2DHashBulk64, data);
+    public static final SeededHashFunction64<short[][][]> shortArray3DHashBulk64 = (long seed, short[][][] data) -> hashBulk64(seed, shortArray2DHashBulk64, data);
+    public static final SeededHashFunction64<int[][][]> intArray3DHashBulk64 = (long seed, int[][][] data) -> hashBulk64(seed, intArray2DHashBulk64, data);
+    public static final SeededHashFunction64<long[][][]> longArray3DHashBulk64 = (long seed, long[][][] data) -> hashBulk64(seed, longArray2DHashBulk64, data);
+    public static final SeededHashFunction64<float[][][]> floatArray3DHashBulk64 = (long seed, float[][][] data) -> hashBulk64(seed, floatArray2DHashBulk64, data);
+    public static final SeededHashFunction64<double[][][]> doubleArray3DHashBulk64 = (long seed, double[][][] data) -> hashBulk64(seed, doubleArray2DHashBulk64, data);
+    public static final SeededHashFunction64<char[][][]> charArray3DHashBulk64 = (long seed, char[][][] data) -> hashBulk64(seed, charArray2DHashBulk64, data);
+    public static final SeededHashFunction64<CharSequence[][]> charSequenceArray2DHashBulk64 = (long seed, CharSequence[][] data) -> hashBulk64(seed, charSequenceArrayHashBulk64, data);
+    public static final SeededHashFunction64<Object[][][]> objectArray3DHashBulk64 = (long seed, Object[][][] data) -> hashBulk64(seed, objectArray2DHashBulk64, data);
+    public static final SeededHashFunction64<ByteBuffer[][]> byteBufferArray2DHashBulk64 = (long seed, ByteBuffer[][] data) -> hashBulk64(seed, byteBufferArrayHashBulk64, data);
 
-    public static final SeededHashFunction64<CharSequence[][][]> charSequenceArray3DHashBulk64 = (long seed, CharSequence[][][] data) -> hashBulk(seed, charSequenceArray2DHashBulk64, data);
-    public static final SeededHashFunction64<ByteBuffer[][][]> byteBufferArray3DHashBulk64 = (long seed, ByteBuffer[][][] data) -> hashBulk(seed, byteBufferArray2DHashBulk64, data);
+    public static final SeededHashFunction64<CharSequence[][][]> charSequenceArray3DHashBulk64 = (long seed, CharSequence[][][] data) -> hashBulk64(seed, charSequenceArray2DHashBulk64, data);
+    public static final SeededHashFunction64<ByteBuffer[][][]> byteBufferArray3DHashBulk64 = (long seed, ByteBuffer[][][] data) -> hashBulk64(seed, byteBufferArray2DHashBulk64, data);
 
     public static final SeededHashFunction<boolean[]> booleanArrayHashBulk = Hasher::hashBulk;
     public static final SeededHashFunction<byte[]> byteArrayHashBulk = Hasher::hashBulk;

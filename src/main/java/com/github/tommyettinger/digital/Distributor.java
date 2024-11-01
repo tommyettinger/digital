@@ -17,7 +17,8 @@ import java.util.Random;
  * and does not preserve input patterns. The Ziggurat method does get drastically closer to the correct normal
  * distribution in the trail (where very positive or very negative values are), and it is about the same speed as
  * linearNormal() and linearNormalF().
- *
+ * <br>
+ * This class is meant to be copyable without dependencies.
  */
 public final class Distributor {
 
@@ -302,17 +303,7 @@ public final class Distributor {
              * normal distribution, as described by Marsaglia in 1964: */
             if (idx == 0) {
                 /* If idx is 0, then the bottom 8 bits of state must all be 0,
-                 * and u must be on the larger side.
-                 * Doing a "proper" mix of state to get a new random state is
-                 * not especially fast, but we could do it here with MX3. */
-//                state ^= 0xABC98388FB8FAC03L;
-//                state ^= state >>> 32;
-//                state *= 0xBEA225F9EB34556DL;
-//                state ^= state >>> 29;
-//                state *= 0xBEA225F9EB34556DL;
-//                state ^= state >>> 32;
-//                state *= 0xBEA225F9EB34556DL;
-//                state ^= state >>> 29;
+                 * and u must be on the larger side. */
                 do {
                     x = Math.log((((state = (state ^ 0xF1357AEA2E62A9C5L) * 0xABC98388FB8FAC03L) >>> 11) + 1L) * 0x1p-53) * INV_R;
                     y = Math.log((((state = (state ^ 0xF1357AEA2E62A9C5L) * 0xABC98388FB8FAC03L) >>> 11) + 1L) * 0x1p-53);
