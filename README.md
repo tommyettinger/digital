@@ -275,9 +275,9 @@ You could also use `Base.BASE16.unsigned(num)` for that.
 Distributor is a relatively narrow class that exists to redistribute
 int, long, and double inputs to float or double normal-distributed
 values, while preserving patterns in the input data. The code that takes
-int or long input acts like the more-well-known Ziggurat algorithm, but
-is faster and almost certainly less precise. These are the `normal()` and
-`normalF()` methods, and each works by looking up a precalculated normal
+int or long input acts like the more-well-known Ziggurat algorithm, is similar
+on speed and almost certainly less precise. These are the `linearNormal()` and
+`linearNormalF()` methods, and each works by looking up a precalculated normal
 value from a table and interpolating linearly. The table's size is the main
 saving grace for how simple the algorithm is; with 1024 entries, the
 severity of problems introduced by linear interpolation is greatly reduced.
@@ -285,7 +285,10 @@ This class calculates the table using `probit()` and `probitHighPrecision()`
 (it also exposes those for external use). Those take a double in the 0.0 to
 1.0 range and return a normal-distributed double. There are probably all
 sorts of creative uses for mapping int or long inputs to normal-distributed
-outputs; you can find some yourself!
+outputs; you can find some yourself! Distributor also provides the Ziggurat
+algorithm, which has higher-quality output in the trail of the distribution,
+but does not preserve patterns from input to output. The `normal()` method
+using Ziggurat is about the same speed as `linearNormal()`.
 
 ## How do I get it?
 
@@ -304,21 +307,21 @@ In a libGDX project, **you must make sure** the sourceCompatibility is
 This is currently not the default for gdx-setup projects (which is no
 longer the official setup tool), but is the default for
 [gdx-liftoff](https://github.com/libgdx/gdx-liftoff) projects (which is
-the offical setup tool). Liftoff also lets you just check a box to
+the official setup tool). Liftoff also lets you just check a box to
 depend on digital.
 
 To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.5.2"
+api "com.github.tommyettinger:digital:0.5.3"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.5.2:sources"
+api "com.github.tommyettinger:digital:0.5.3:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
