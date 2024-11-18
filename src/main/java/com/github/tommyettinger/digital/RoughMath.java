@@ -115,8 +115,10 @@ public final class RoughMath {
     {
         final int vx = BitConversion.floatToIntBits(x);
         final float mx = BitConversion.intBitsToFloat((vx & 0x007FFFFF) | 0x3f000000);
-        return (vx * 1.1920928955078125e-7f - 124.22551499f - 1.498030302f * mx - 1.72587999f / (0.3520887068f + mx)) * 0.69314718f;
+        return vx * 8.262958E-8f - 86.10657f - 1.0383555f * mx - 1.1962888f / (0.3520887068f + mx);
     }
+    // Last line above is equivalent to:
+    //return (vx * 1.1920928955078125e-7f - 124.22551499f - 1.498030302f * mx - 1.72587999f / (0.3520887068f + mx)) * 0.69314718f;
 
     /**
      * Approximates the logarithm of {@code x} with base 2, using single-precision, very roughly.

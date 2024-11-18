@@ -2,6 +2,8 @@ package com.github.tommyettinger.digital;
 
 import java.util.Random;
 
+import static com.github.tommyettinger.digital.RoughMath.logRough;
+
 /**
  * Different methods for distributing input {@code long} or {@code double} values from a given domain into specific
  * distributions, such as the normal distribution. {@link #probit(double)} and {@link #probitHighPrecision(double)} take
@@ -19,7 +21,8 @@ import java.util.Random;
  * <br>
  * All of these ways will preserve patterns in the input, so inputs close to the lowest
  * possible input (0.0 for probit(), {@link Long#MIN_VALUE} for normal(), {@link Integer#MIN_VALUE} for normalF()) will
- * produce the lowest possible output (-8.375 for probit(), linearNormal(), and linearNormalF()),
+ * produce the lowest possible output (-8.375 for probit(), linearNormal(), and linearNormalF(), -26.48372928592822 for
+ * probitD() and probitL(), or -9.080134 for probitF() and probitI()),
  * and similarly for the highest possible inputs producing the highest possible outputs.
  * <br>
  * There's also {@link #normal(long)} and {@link #normalF(int)}, which use the
@@ -27,7 +30,8 @@ import java.util.Random;
  * The Ziggurat method does get drastically closer to the correct normal distribution in the trail (where very positive
  * or very negative values are) relative to linearNormal methods, and it is about the same speed as linearNormal() and
  * linearNormalF(). Surprisingly, {@link #probitF(float)} is a little faster than {@link #normalF(int)}, even
- * considering that generating random floats for input is slower than generating random ints.
+ * considering that generating random floats for input is slower than generating random ints. However,
+ * {@link #normal(long)} is somewhat faster than {@link #probitL(long)}.
  */
 public final class Distributor {
 
@@ -51,33 +55,31 @@ public final class Distributor {
         for (int i = 0; i < LIN_TABLE.length; i++) {
             LIN_TABLE_F[i] = (float) (LIN_TABLE[i] = probitHighPrecision(0.5 + i * 0x1p-11));
         }
+
         double f = Math.exp(-0.5 * R * R);
         ZIG_TABLE[0] = AREA / f;
         ZIG_TABLE[1] = R;
-
         for (int i = 2; i < ZIG_TABLE_ITEMS; i++) {
             double xx = Math.log(AREA /
                     ZIG_TABLE[i - 1] + f);
             ZIG_TABLE[i] = Math.sqrt(-2 * xx);
             f = Math.exp(xx);
         }
-
         ZIG_TABLE[ZIG_TABLE_ITEMS] = 0.0;
 
         float ff = (float) Math.exp(-0.5 * R_F * R_F);
         ZIG_TABLE_F[0] = AREA_F / ff;
         ZIG_TABLE_F[1] = R_F;
-
         for (int i = 2; i < ZIG_TABLE_ITEMS_F; i++) {
             float xx = (float)Math.log(AREA_F /
                     ZIG_TABLE_F[i - 1] + ff);
             ZIG_TABLE_F[i] = (float) Math.sqrt(-2f * xx);
             ff = (float) Math.exp(xx);
         }
-
         ZIG_TABLE_F[ZIG_TABLE_ITEMS_F] = 0f;
     }
 
+    // constants used by probitI() and probitF()
     private static final float
             a0f = 0.195740115269792f,
             a1f = -0.652871358365296f,
@@ -91,6 +93,8 @@ public final class Distributor {
             d0f = 7.173787663925508066f,
             d1f = 8.759693508958633869f;
 
+
+    // constants used by probitL() and probitD()
     private static final double
             a0 = 0.195740115269792,
             a1 = -0.652871358365296,
@@ -115,10 +119,10 @@ public final class Distributor {
      */
     public static float probitF(float p) {
         if(0.0465f > p){
-            float r = (float)Math.sqrt(RoughMath.logRough(1f/(p*p)));
+            float r = (float)Math.sqrt(logRough(1f/(p*p)));
             return c3f * r + c2f + (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else if(0.9535f < p) {
-            float q = 1f - p, r = (float)Math.sqrt(RoughMath.logRough(1f/(q*q)));
+            float q = 1f - p, r = (float)Math.sqrt(logRough(1f/(q*q)));
             return -c3f * r - c2f - (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else {
             float q = p - 0.5f, r = q * q;
@@ -163,10 +167,10 @@ public final class Distributor {
         //float p = 0x1p-32f * i + 1.5f;
         // Really, the bitwise arcana is faster than a multiply-add op, somehow.
         if(1.0465f > p){
-            float q = p - 1f, r = (float)Math.sqrt(RoughMath.logRough(1f/(q*q)));
+            float q = p - 1f, r = (float)Math.sqrt(logRough(1f/(q*q)));
             return c3f * r + c2f + (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else if(1.9535f < p) {
-            float q = 2f - p, r = (float)Math.sqrt(RoughMath.logRough(1f/(q*q)));
+            float q = 2f - p, r = (float)Math.sqrt(logRough(1f/(q*q)));
             return -c3f * r - c2f - (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else {
             float q = p - 1.5f, r = q * q;
