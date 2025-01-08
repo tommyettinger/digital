@@ -153,7 +153,7 @@ public final class Distributor {
     }
 
     /**
-     * A single-precision probit() approximation that takes a float between 0 and 1 inclusive and returns an
+     * A single-precision probit() approximation that takes any int and returns an
      * approximately-Gaussian-distributed float between -9.080134 and 9.080134 .
      * The function maps the most negative inputs to the most negative outputs, the most positive inputs to the most
      * positive outputs, and inputs near 0 to outputs near 0. This does not consider the bottom 9 bits of {@code i}.

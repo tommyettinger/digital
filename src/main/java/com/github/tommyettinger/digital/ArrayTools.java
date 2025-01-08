@@ -214,7 +214,8 @@ public final class ArrayTools {
     }
     
     /**
-     * Stupidly simple convenience method that produces a char range from u0000 to uFFFF, limited to {@code buffer.length - 1}.
+     * Stupidly simple convenience method that fills {@code buffer} with a char range from u0000 to uFFFF, limited to
+     * {@code buffer.length - 1}.
      *
      * @param buffer a char array that will be modified in-place; if null this returns null
      * @return the range of chars as a char array
@@ -287,7 +288,8 @@ public final class ArrayTools {
      * (returning the Greek lower-case letter gamma, 'γ') and wrapping around if given negative numbers or numbers
      * larger than 255. This set does not contain "visual duplicate" letters, such as Latin alphabet capital letter 'A'
      * and Greek alphabet capital letter alpha, 'Α'; it does contain many accented Latin letters and the
-     * visually-distinct Greek letters, up to a point.
+     * visually-distinct Greek letters, up to a point. This is not to be confused with {@link #greekLetterAt(int)},
+     * which returns the name of a selected Greek letter as a Latin-alphabet String.
      *
      * @param index typically from 0 to 255, but all ints are allowed and will produce letters
      * @return the letter at the given index in a 256-element portion of visually distinct letters
@@ -368,7 +370,7 @@ public final class ArrayTools {
      * not overly long.
      *
      * @param index typically from 0 to 71, but all ints are allowed and will produce Strings
-     * @return the String at the given index in a 72-element group of Greek letter names
+     * @return the String at the given index in a 72-element group of demon names
      */
     public static String demonNameAt(int index) {
         return demonsLowerCase[(index & 1023) % demonsLowerCase.length];
@@ -379,7 +381,7 @@ public final class ArrayTools {
      * useful for quickly obtaining Strings that are guaranteed to at least be different and not overly long.
      *
      * @param index typically from 0 to 117, but all ints are allowed and will produce Strings
-     * @return the String at the given index in a 118-element group of Greek letter names
+     * @return the String at the given index in a 118-element group of chemical element names
      */
     public static String chemicalElementAt(int index) {
         return chemistryLowerCase[(index & 1023) % chemistryLowerCase.length];

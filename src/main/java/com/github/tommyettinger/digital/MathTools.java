@@ -2003,11 +2003,13 @@ public final class MathTools {
      * @return a float between -1f and 1f, both inclusive
      */
     public static float triangleWave(float t) {
-        return Math.abs(t -
-                ((int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT) //inlined round(t)
-        ) * 4f - 1f;
-        // return Math.abs(t - ((int) (t + 16384.5) - 16384)) * 2f;
+        return Math.abs(t - ((int) (t + 16384.5) - 16384)) * 4f - 1f;
     }
+//        return Math.abs(t -
+//                ((int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT) //inlined round(t)
+//        ) * 4f - 1f;
+//        // return Math.abs(t - ((int) (t + 16384.5) - 16384)) * 4f - 1f;
+//    }
 
     /**
      * A standard <a href="https://en.wikipedia.org/wiki/Triangle_wave">triangle wave</a> with a period of 1 and a range
