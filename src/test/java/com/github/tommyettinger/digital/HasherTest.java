@@ -187,25 +187,45 @@ public class HasherTest {
 
     @Test
     public void testBadSeeds() {
-        long all127, all128;
+        long all__0, all_32, all_48, all127, all128, all255;
+        all__0 = Hasher.hashBulk64(0L, new long[]{
+                0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+                0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+        });
+        all_32 = Hasher.hashBulk64(0L, new long[]{
+                0x1010101010101010L, 0x1010101010101010L, 0x1010101010101010L, 0x1010101010101010L,
+                0x1010101010101010L, 0x1010101010101010L, 0x1010101010101010L, 0x1010101010101010L,
+        });
+        all_48 = Hasher.hashBulk64(0L, new long[]{
+                0x3030303030303030L, 0x3030303030303030L, 0x3030303030303030L, 0x3030303030303030L,
+                0x3030303030303030L, 0x3030303030303030L, 0x3030303030303030L, 0x3030303030303030L,
+        });
         all127 = Hasher.hashBulk64(0L, new long[]{
                 0x7F7F7F7F7F7F7F7FL, 0x7F7F7F7F7F7F7F7FL, 0x7F7F7F7F7F7F7F7FL, 0x7F7F7F7F7F7F7F7FL,
                 0x7F7F7F7F7F7F7F7FL, 0x7F7F7F7F7F7F7F7FL, 0x7F7F7F7F7F7F7F7FL, 0x7F7F7F7F7F7F7F7FL,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x0808080808080808L, 0x0808080808080808L, 0x0808080808080808L, 0x0808080808080808L,
-                0x0808080808080808L, 0x0808080808080808L, 0x0808080808080808L, 0x0808080808080808L,
+                0x8080808080808080L, 0x8080808080808080L, 0x8080808080808080L, 0x8080808080808080L,
+                0x8080808080808080L, 0x8080808080808080L, 0x8080808080808080L, 0x8080808080808080L,
+        });
+        all255 = Hasher.hashBulk64(0L, new long[]{
+                0xFFFFFFFFFFFFFFFFL, 0xFFFFFFFFFFFFFFFFL, 0xFFFFFFFFFFFFFFFFL, 0xFFFFFFFFFFFFFFFFL,
+                0xFFFFFFFFFFFFFFFFL, 0xFFFFFFFFFFFFFFFFL, 0xFFFFFFFFFFFFFFFFL, 0xFFFFFFFFFFFFFFFFL,
         });
         System.out.println("8-bit blocks  :");
+        System.out.println("all__0: " + Base.BASE16.unsigned(all__0) + " or " + Base.BASE10.unsigned(all__0));
+        System.out.println("all_32: " + Base.BASE16.unsigned(all_32) + " or " + Base.BASE10.unsigned(all_32));
+        System.out.println("all_48: " + Base.BASE16.unsigned(all_48) + " or " + Base.BASE10.unsigned(all_48));
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
         System.out.println("all128: " + Base.BASE16.unsigned(all128) + " or " + Base.BASE10.unsigned(all128));
+        System.out.println("all255: " + Base.BASE16.unsigned(all255) + " or " + Base.BASE10.unsigned(all255));
         all127 = Hasher.hashBulk64(0L, new long[]{
                 0x007F007F007F007FL, 0x007F007F007F007FL, 0x007F007F007F007FL, 0x007F007F007F007FL,
                 0x007F007F007F007FL, 0x007F007F007F007FL, 0x007F007F007F007FL, 0x007F007F007F007FL,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x0008000800080008L, 0x0008000800080008L, 0x0008000800080008L, 0x0008000800080008L,
-                0x0008000800080008L, 0x0008000800080008L, 0x0008000800080008L, 0x0008000800080008L,
+                0x0080008000800080L, 0x0080008000800080L, 0x0080008000800080L, 0x0080008000800080L,
+                0x0080008000800080L, 0x0080008000800080L, 0x0080008000800080L, 0x0080008000800080L,
         });
         System.out.println("16-bit blocks :");
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
@@ -215,8 +235,8 @@ public class HasherTest {
                 0x0000007F0000007FL, 0x0000007F0000007FL, 0x0000007F0000007FL, 0x0000007F0000007FL,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x0000000800000008L, 0x0000000800000008L, 0x0000000800000008L, 0x0000000800000008L,
-                0x0000000800000008L, 0x0000000800000008L, 0x0000000800000008L, 0x0000000800000008L,
+                0x0000008000000080L, 0x0000008000000080L, 0x0000008000000080L, 0x0000008000000080L,
+                0x0000008000000080L, 0x0000008000000080L, 0x0000008000000080L, 0x0000008000000080L,
         });
         System.out.println("32-bit blocks :");
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
@@ -226,8 +246,8 @@ public class HasherTest {
                 0x7FL, 0x7FL, 0x7FL, 0x7FL,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x08L, 0x08L, 0x08L, 0x08L,
-                0x08L, 0x08L, 0x08L, 0x08L,
+                0x80L, 0x80L, 0x80L, 0x80L,
+                0x80L, 0x80L, 0x80L, 0x80L,
         });
         System.out.println("64-bit blocks :");
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
@@ -237,8 +257,8 @@ public class HasherTest {
                 0x00L, 0x7FL, 0x00L, 0x7FL,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x00L, 0x08L, 0x00L, 0x08L,
-                0x00L, 0x08L, 0x00L, 0x08L,
+                0x00L, 0x80L, 0x00L, 0x80L,
+                0x00L, 0x80L, 0x00L, 0x80L,
         });
         System.out.println("128-bit blocks:");
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
@@ -248,23 +268,25 @@ public class HasherTest {
                 0x00L, 0x00L, 0x00L, 0x7FL,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x00L, 0x00L, 0x00L, 0x08L,
-                0x00L, 0x00L, 0x00L, 0x08L,
+                0x00L, 0x00L, 0x00L, 0x80L,
+                0x00L, 0x00L, 0x00L, 0x80L,
         });
         System.out.println("256-bit blocks:");
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
         System.out.println("all128: " + Base.BASE16.unsigned(all128) + " or " + Base.BASE10.unsigned(all128));
-        all127 = Hasher.hashBulk64(0L, new long[]{
-                0x00L, 0x00L, 0x00L, 0x00L,
-                0x00L, 0x00L, 0x00L, 0x7FL,
-        });
-        all128 = Hasher.hashBulk64(0L, new long[]{
-                0x00L, 0x00L, 0x00L, 0x00L,
-                0x00L, 0x00L, 0x00L, 0x08L,
-        });
+        all__0 = Hasher.hashBulk64(0L, new long[]{0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L,});
+        all_32 = Hasher.hashBulk64(0L, new long[]{0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x20L,});
+        all_48 = Hasher.hashBulk64(0L, new long[]{0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x30L,});
+        all127 = Hasher.hashBulk64(0L, new long[]{0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x7FL,});
+        all128 = Hasher.hashBulk64(0L, new long[]{0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x80L,});
+        all255 = Hasher.hashBulk64(0L, new long[]{0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0x00L, 0xFFL,});
         System.out.println("512-bit blocks:");
+        System.out.println("all__0: " + Base.BASE16.unsigned(all__0) + " or " + Base.BASE10.unsigned(all__0));
+        System.out.println("all_32: " + Base.BASE16.unsigned(all_32) + " or " + Base.BASE10.unsigned(all_32));
+        System.out.println("all_48: " + Base.BASE16.unsigned(all_48) + " or " + Base.BASE10.unsigned(all_48));
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
         System.out.println("all128: " + Base.BASE16.unsigned(all128) + " or " + Base.BASE10.unsigned(all128));
+        System.out.println("all255: " + Base.BASE16.unsigned(all255) + " or " + Base.BASE10.unsigned(all255));
 
         System.out.println("\nENDIAN SWITCHEROO\n");
 
@@ -273,19 +295,19 @@ public class HasherTest {
                 0x7F007F007F007F00L, 0x7F007F007F007F00L, 0x7F007F007F007F00L, 0x7F007F007F007F00L,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x0800080008000800L, 0x0800080008000800L, 0x0800080008000800L, 0x0800080008000800L,
-                0x0800080008000800L, 0x0800080008000800L, 0x0800080008000800L, 0x0800080008000800L,
+                0x8000800080008000L, 0x8000800080008000L, 0x8000800080008000L, 0x8000800080008000L,
+                0x8000800080008000L, 0x8000800080008000L, 0x8000800080008000L, 0x8000800080008000L,
         });
         System.out.println("16-bit blocks :");
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
         System.out.println("all128: " + Base.BASE16.unsigned(all128) + " or " + Base.BASE10.unsigned(all128));
         all127 = Hasher.hashBulk64(0L, new long[]{
-                0x07F0000007F00000L, 0x07F0000007F00000L, 0x07F0000007F00000L, 0x07F0000007F00000L,
-                0x07F0000007F00000L, 0x07F0000007F00000L, 0x07F0000007F00000L, 0x07F0000007F00000L,
+                0x7F0000007F000000L, 0x7F0000007F000000L, 0x7F0000007F000000L, 0x7F0000007F000000L,
+                0x7F0000007F000000L, 0x7F0000007F000000L, 0x7F0000007F000000L, 0x7F0000007F000000L,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x0800000008000000L, 0x0800000008000000L, 0x0800000008000000L, 0x0800000008000000L,
-                0x0800000008000000L, 0x0800000008000000L, 0x0800000008000000L, 0x0800000008000000L,
+                0x8000000080000000L, 0x8000000080000000L, 0x8000000080000000L, 0x8000000080000000L, 
+                0x8000000080000000L, 0x8000000080000000L, 0x8000000080000000L, 0x8000000080000000L, 
         });
         System.out.println("32-bit blocks :");
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
@@ -295,8 +317,8 @@ public class HasherTest {
                 0x7F00000000000000L, 0x7F00000000000000L, 0x7F00000000000000L, 0x7F00000000000000L,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x0800000000000000L, 0x0800000000000000L, 0x0800000000000000L, 0x0800000000000000L,
-                0x0800000000000000L, 0x0800000000000000L, 0x0800000000000000L, 0x0800000000000000L,
+                0x8000000000000000L, 0x8000000000000000L, 0x8000000000000000L, 0x8000000000000000L,
+                0x8000000000000000L, 0x8000000000000000L, 0x8000000000000000L, 0x8000000000000000L,
         });
         System.out.println("64-bit blocks :");
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
@@ -306,8 +328,8 @@ public class HasherTest {
                 0x7F00000000000000L, 0x0000000000000000L, 0x7F00000000000000L, 0x0000000000000000L,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x0800000000000000L, 0x0000000000000000L, 0x0800000000000000L, 0x0000000000000000L,
-                0x0800000000000000L, 0x0000000000000000L, 0x0800000000000000L, 0x0000000000000000L,
+                0x8000000000000000L, 0x0000000000000000L, 0x8000000000000000L, 0x0000000000000000L,
+                0x8000000000000000L, 0x0000000000000000L, 0x8000000000000000L, 0x0000000000000000L,
         });
         System.out.println("128-bit blocks:");
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
@@ -317,22 +339,43 @@ public class HasherTest {
                 0x7F00000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x0800000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
-                0x0800000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+                0x8000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+                0x8000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
         });
         System.out.println("256-bit blocks:");
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
         System.out.println("all128: " + Base.BASE16.unsigned(all128) + " or " + Base.BASE10.unsigned(all128));
+        all__0 = Hasher.hashBulk64(0L, new long[]{
+                0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+                0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+        });
+        all_32 = Hasher.hashBulk64(0L, new long[]{
+                0x1000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+                0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+        });
+        all_48 = Hasher.hashBulk64(0L, new long[]{
+                0x3000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+                0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+        });
         all127 = Hasher.hashBulk64(0L, new long[]{
                 0x7F00000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
                 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
         });
         all128 = Hasher.hashBulk64(0L, new long[]{
-                0x0800000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+                0x8000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
                 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
         });
+        all255 = Hasher.hashBulk64(0L, new long[]{
+                0xFF00000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+                0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L, 0x0000000000000000L,
+        });
+
         System.out.println("512-bit blocks:");
+        System.out.println("all__0: " + Base.BASE16.unsigned(all__0) + " or " + Base.BASE10.unsigned(all__0));
+        System.out.println("all_32: " + Base.BASE16.unsigned(all_32) + " or " + Base.BASE10.unsigned(all_32));
+        System.out.println("all_48: " + Base.BASE16.unsigned(all_48) + " or " + Base.BASE10.unsigned(all_48));
         System.out.println("all127: " + Base.BASE16.unsigned(all127) + " or " + Base.BASE10.unsigned(all127));
         System.out.println("all128: " + Base.BASE16.unsigned(all128) + " or " + Base.BASE10.unsigned(all128));
+        System.out.println("all255: " + Base.BASE16.unsigned(all255) + " or " + Base.BASE10.unsigned(all255));
     }
 }
