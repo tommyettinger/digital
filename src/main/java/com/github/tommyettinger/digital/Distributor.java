@@ -108,6 +108,22 @@ public final class Distributor {
             d0 = 7.173787663925508066,
             d1 = 8.759693508958633869;
 
+    // Easier-to-read, slightly, version of probitL(long)
+    // Meant to be copied with the above constants.
+//    public static double probit(long l) {
+//        double p = l * 5.421010862427522E-20 + 0.5; // 5.421010862427522E-20 == (2.0 to the -64)
+//        if(0.0465 > p){
+//            double q = p + 7.458340731200208E-155, r = Math.sqrt(Math.log(1.0/(q*q)));
+//            return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
+//        } else if(0.9535 < p) {
+//            double q = 1.0 - p + 7.458340731200208E-155, r = Math.sqrt(Math.log(1.0/(q*q)));
+//            return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
+//        } else {
+//            double q = p - 0.5, r = q * q;
+//            return q * (a2 + (a1 * r + a0) / (r * (r + b1) + b0));
+//        }
+//    }
+
     /**
      * A single-precision probit() approximation that takes a float between 0 and 1 inclusive and returns an
      * approximately-Gaussian-distributed float between -9.080134 and 9.080134 .
