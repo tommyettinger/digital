@@ -204,7 +204,11 @@ or [OldHasher v037](src/test/java/com/github/tommyettinger/digital/v037/OldHashe
 if you need to reproduce the results of older seeds. Newer versions
 of SMHasher do find statistical failures in at least some `hash()` and
 `hash64()` methods in `Hasher`, but the recently-added `hashBulk()`
-and `hashBulk64()` methods don't have detectable issues.
+and `hashBulk64()` methods don't have detectable issues in SMHasher 3.
+The bulk methods changed in version 0.6.0, so they also pass the older
+SMHasher 2. The changes mainly affect a test for "bad seeds," which
+the bulk hashes pass without trouble now. This does mean 0.5.x and
+0.6.0 produce different output for bulk hashes.
 
 AlternateRandom is a quick micro-port of a random number generator
 from the closely-related [juniper](https://github.com/tommyettinger/juniper)
@@ -308,14 +312,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.5.4"
+api "com.github.tommyettinger:digital:0.6.0"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.5.4:sources"
+api "com.github.tommyettinger:digital:0.6.0:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
