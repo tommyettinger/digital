@@ -68,8 +68,9 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
  * Wyhash variants I've tried, and also passes the SMHasher 3 test suite. It does best with
  * larger array sizes, so the name includes "Bulk", but it tends to be faster starting at lengths
  * of maybe 20 long items.
- * <a href="https://github.com/tommyettinger/smhasher-with-junk/blob/master/smhasher3/hashes/ax.cpp">Code for Ax is here</a>
- * in the repo containing SMHasher 3 tests, at least temporarily until it gets its own repo.
+ * The main source for the Ax code used in testing <a href="https://github.com/tommyettinger/axhash">is in this small repo</a>.
+ * That repo contains code compatible with both C and C++; for the C++ code used to test with SMHasher 3,
+ * <a href="https://github.com/tommyettinger/smhasher-with-junk/blob/master/smhasher3/hashes/ax.cpp">it is here</a>.
  * <br>
  * This provides an object-based API and a static API, where a Hasher object is
  * instantiated with a seed, and the static methods take a seed as their first argument.
@@ -78,7 +79,7 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
  * numerical values but different types will sometimes hash differently. This class
  * always provides 64-bit hashes via hash64() and 32-bit hashes via hash(). The additional
  * hashBulk64() and hashBulk() methods use the Ax algorithm instead of one based on
- * Wyhash, as mentioned before, and can hash ByteBuffer objects and long arrays. They
+ * Wyhash, as mentioned before, and can hash ByteBuffer objects as well as arrays. They
  * also provide some alternative options to hash arrays of some type using a user-provided
  * hash for that type. Predefined functional interfaces are present in this class, such as
  * {@link HashFunction64} for member {@link #hash64} methods, {@link HashFunction} for member
@@ -710,18 +711,17 @@ public class Hasher {
      * they are odd and have sufficiently well-distributed bits (close to 32 '1' bits, and so on). If this is only
      * added to a running total, the result won't have very random low-order bits, so performing bitwise rotations
      * after at least some calls to this (or xorshifting right) is critical to keeping the hash high-quality.
-     * @param a any long, typically an item being hashed
-     * @param b any long, typically an item being hashed
-     * @param c any long, typically an item being hashed
-     * @param d any long, typically an item being hashed
+     * @param a any long, typically an item being hashed; mixed with b and d
+     * @param b any long, typically an item being hashed; mixed with c and a
+     * @param c any long, typically an item being hashed; mixed with d and b
+     * @param d any long, typically an item being hashed; mixed with a and c
      * @return any long
      */
     public static long mixStreamBulk(long a, long b, long c, long d) {
-        return
-                ((a << 29 | a >>> 35) - c) * Q
-                        + ((b << 29 | b >>> 35) - d) * R
-                        + ((c << 29 | c >>> 35) - b) * S
-                        + ((d << 29 | d >>> 35) - a) * T;
+        return ((a << 28 | a >>> 36) + b) * Q
+             + ((b << 29 | b >>> 35) + c) * R
+             + ((c << 27 | c >>> 37) + d) * S
+             + ((d << 25 | d >>> 39) + a) * T;
     }
 
 
@@ -3895,6 +3895,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(long[])} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 64-bit hash of data
      */
@@ -3906,6 +3908,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(long[], int, int)} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -3918,8 +3922,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -3935,6 +3939,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(long[])} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -3946,6 +3952,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(long[], int, int)} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -3958,8 +3966,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -3975,6 +3983,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(int[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 64-bit hash of data
      */
@@ -3986,6 +3996,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(int[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -3998,8 +4010,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -4015,6 +4027,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(int[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -4026,6 +4040,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(int[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4038,8 +4054,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -4055,6 +4071,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(short[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 64-bit hash of data
      */
@@ -4066,6 +4084,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(short[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4078,8 +4098,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -4095,6 +4115,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(short[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -4106,6 +4128,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(short[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4118,8 +4142,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -4135,6 +4159,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(byte[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * If you are expecting mostly inputs larger than about 100 bytes, you should consider wrapping any byte arrays you
      * have using {@link ByteBuffer#wrap(byte[])}  and passing them to
      * {@link #hashBulk64(ByteBuffer)} instead, which
@@ -4150,6 +4176,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(byte[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * If you are expecting mostly inputs larger than about 100 bytes, you should consider wrapping any byte arrays you
      * have using {@link ByteBuffer#wrap(byte[], int, int)}  and passing them to
      * {@link #hashBulk64(ByteBuffer, int, int)} instead, which
@@ -4166,8 +4194,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -4183,6 +4211,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(byte[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * If you are expecting mostly inputs larger than about 100 bytes, you should consider wrapping any byte arrays you
      * have using {@link ByteBuffer#wrap(byte[])}  and passing them to
      * {@link #hashBulk(ByteBuffer)} instead, which
@@ -4198,6 +4228,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(byte[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * If you are expecting mostly inputs larger than about 100 bytes, you should consider wrapping any byte arrays you
      * have using {@link ByteBuffer#wrap(byte[], int, int)}  and passing them to
      * {@link #hashBulk(ByteBuffer, int, int)} instead, which
@@ -4214,8 +4246,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -4231,6 +4263,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(float[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 64-bit hash of data
      */
@@ -4242,6 +4276,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(float[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4254,8 +4290,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(floatToRawIntBits(data[i  ]), floatToRawIntBits(data[i+1]), floatToRawIntBits(data[i+2]), floatToRawIntBits(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(floatToRawIntBits(data[i+4]), floatToRawIntBits(data[i+5]), floatToRawIntBits(data[i+6]), floatToRawIntBits(data[i+7]));
@@ -4271,6 +4307,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(float[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -4282,6 +4320,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(float[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4294,8 +4334,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(floatToRawIntBits(data[i  ]), floatToRawIntBits(data[i+1]), floatToRawIntBits(data[i+2]), floatToRawIntBits(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(floatToRawIntBits(data[i+4]), floatToRawIntBits(data[i+5]), floatToRawIntBits(data[i+6]), floatToRawIntBits(data[i+7]));
@@ -4311,6 +4351,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(double[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 64-bit hash of data
      */
@@ -4322,6 +4364,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(double[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4334,8 +4378,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(doubleToRawLongBits(data[i  ]), doubleToRawLongBits(data[i+1]), doubleToRawLongBits(data[i+2]), doubleToRawLongBits(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(doubleToRawLongBits(data[i+4]), doubleToRawLongBits(data[i+5]), doubleToRawLongBits(data[i+6]), doubleToRawLongBits(data[i+7]));
@@ -4351,6 +4395,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(double[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -4362,6 +4408,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(double[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4374,8 +4422,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(doubleToRawLongBits(data[i  ]), doubleToRawLongBits(data[i+1]), doubleToRawLongBits(data[i+2]), doubleToRawLongBits(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(doubleToRawLongBits(data[i+4]), doubleToRawLongBits(data[i+5]), doubleToRawLongBits(data[i+6]), doubleToRawLongBits(data[i+7]));
@@ -4391,6 +4439,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(char[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 64-bit hash of data
      */
@@ -4402,6 +4452,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(char[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4414,8 +4466,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -4431,6 +4483,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(char[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -4442,6 +4496,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(char[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4454,8 +4510,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -4471,6 +4527,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(boolean[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 64-bit hash of data
      */
@@ -4482,6 +4540,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(boolean[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4494,8 +4554,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ] ? -1L : 0L, data[i+1] ? -1L : 0L, data[i+2] ? -1L : 0L, data[i+3] ? -1L : 0L);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4] ? -1L : 0L, data[i+5] ? -1L : 0L, data[i+6] ? -1L : 0L, data[i+7] ? -1L : 0L);
@@ -4511,6 +4571,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(boolean[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -4522,6 +4584,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(boolean[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4534,8 +4598,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8) {
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ] ? -1L : 0L, data[i+1] ? -1L : 0L, data[i+2] ? -1L : 0L, data[i+3] ? -1L : 0L);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4] ? -1L : 0L, data[i+5] ? -1L : 0L, data[i+6] ? -1L : 0L, data[i+7] ? -1L : 0L);
@@ -4551,6 +4615,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(CharSequence)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 64-bit hash of data
      */
@@ -4562,6 +4628,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(CharSequence, int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4574,8 +4642,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data.charAt(i  ), data.charAt(i+1), data.charAt(i+2), data.charAt(i+3));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data.charAt(i+4), data.charAt(i+5), data.charAt(i+6), data.charAt(i+7));
@@ -4591,6 +4659,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(CharSequence)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -4602,6 +4672,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(CharSequence, int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4614,8 +4686,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data.charAt(i  ), data.charAt(i+1), data.charAt(i+2), data.charAt(i+3));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data.charAt(i+4), data.charAt(i+5), data.charAt(i+6), data.charAt(i+7));
@@ -4631,6 +4703,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(Object[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array; null items are tolerated
      * @return the 64-bit hash of data
      */
@@ -4642,6 +4716,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(Object[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array; null items are tolerated
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4654,8 +4730,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(Objects.hashCode(data[i  ]), Objects.hashCode(data[i+1]), Objects.hashCode(data[i+2]), Objects.hashCode(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(Objects.hashCode(data[i+4]), Objects.hashCode(data[i+5]), Objects.hashCode(data[i+6]), Objects.hashCode(data[i+7]));
@@ -4671,6 +4747,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(Object[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array; null items are tolerated
      * @return the 32-bit hash of data
      */
@@ -4682,6 +4760,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(Object[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data input array; null items are tolerated
      * @param start starting index in data
      * @param length how many items to use from data
@@ -4694,8 +4774,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(Objects.hashCode(data[i  ]), Objects.hashCode(data[i+1]), Objects.hashCode(data[i+2]), Objects.hashCode(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(Objects.hashCode(data[i+4]), Objects.hashCode(data[i+5]), Objects.hashCode(data[i+6]), Objects.hashCode(data[i+7]));
@@ -4715,6 +4795,8 @@ public class Hasher {
      * <br>
      * This is likely to significantly outperform {@link #hash64(byte[])} on all but
      * the smallest sequences of bytes (under 20 bytes).
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data an input ByteBuffer
      * @return the 64-bit hash of data
      */
@@ -4729,6 +4811,8 @@ public class Hasher {
      * <br>
      * This is likely to significantly outperform {@link #hash64(byte[], int, int)}
      * on all but the smallest sequences of bytes (under 20 bytes).
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data an input ByteBuffer
      * @param start the starting index, measured in bytes
      * @param length the number of bytes to hash
@@ -4741,8 +4825,8 @@ public class Hasher {
         data.position(start);
         long h = len ^ forward(seed);
         while(len >= 64){
-            h *= C;
             len -= 64;
+            h *= C;
             h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
@@ -4771,6 +4855,8 @@ public class Hasher {
      * <br>
      * This is likely to significantly outperform {@link #hash(byte[])} on all but
      * the smallest sequences of bytes (under 20 bytes).
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data an input ByteBuffer
      * @return the 32-bit hash of data
      */
@@ -4785,6 +4871,8 @@ public class Hasher {
      * <br>
      * This is likely to significantly outperform {@link #hash(byte[], int, int)}
      * on all but the smallest sequences of bytes (under 20 bytes).
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param data an input ByteBuffer
      * @param start the starting index, measured in bytes
      * @param length the number of bytes to hash
@@ -4797,8 +4885,8 @@ public class Hasher {
         data.position(start);
         long h = len ^ forward(seed);
         while(len >= 64){
-            h *= C;
             len -= 64;
+            h *= C;
             h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
@@ -4826,6 +4914,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param function typically a method reference to a {@link #hash64} method here
      * @param data input array
      * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
@@ -4840,6 +4930,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param function typically a method reference to a {@link #hash64} method here
      * @param data input array
      * @param start starting index in data
@@ -4854,8 +4946,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(function.hash64(data[i  ]), function.hash64(data[i+1]), function.hash64(data[i+2]), function.hash64(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(function.hash64(data[i+4]), function.hash64(data[i+5]), function.hash64(data[i+6]), function.hash64(data[i+7]));
@@ -4872,6 +4964,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param function typically a method reference to a {@link #hash} method here
      * @param data input array
      * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
@@ -4886,6 +4980,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param function typically a method reference to a {@link #hash} method here
      * @param data input array
      * @param start starting index in data
@@ -4900,8 +4996,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(function.hash(data[i  ]), function.hash(data[i+1]), function.hash(data[i+2]), function.hash(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(function.hash(data[i+4]), function.hash(data[i+5]), function.hash(data[i+6]), function.hash(data[i+7]));
@@ -4918,6 +5014,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param function typically a method reference to a {@link #hash64} method here
      * @param data input array
      * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
@@ -4932,6 +5030,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction64} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param function typically a method reference to a {@link #hash64} method here
      * @param data input array
      * @param start starting index in data
@@ -4946,8 +5046,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(function.hash64(data[i  ]), function.hash64(data[i+1]), function.hash64(data[i+2]), function.hash64(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(function.hash64(data[i+4]), function.hash64(data[i+5]), function.hash64(data[i+6]), function.hash64(data[i+7]));
@@ -4964,6 +5064,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param function typically a method reference to a {@link #hash} method here
      * @param data input array
      * @param <T> typically an array type, often of primitive items; may be more than one-dimensional
@@ -4978,6 +5080,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link HashFunction} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param function typically a method reference to a {@link #hash} method here
      * @param data input array
      * @param start starting index in data
@@ -4992,8 +5096,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(function.hash(data[i  ]), function.hash(data[i+1]), function.hash(data[i+2]), function.hash(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(function.hash(data[i+4]), function.hash(data[i+5]), function.hash(data[i+6]), function.hash(data[i+7]));
@@ -5011,6 +5115,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(long[])} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 64-bit hash of data
@@ -5023,6 +5129,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(long[], int, int)} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5036,8 +5144,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -5053,6 +5161,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(long[])} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
@@ -5065,6 +5175,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(long[], int, int)} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5078,8 +5190,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -5095,6 +5207,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(int[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 64-bit hash of data
@@ -5107,6 +5221,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(int[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5120,8 +5236,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -5137,6 +5253,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(int[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
@@ -5149,6 +5267,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(int[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5162,8 +5282,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -5179,6 +5299,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(short[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 64-bit hash of data
@@ -5191,6 +5313,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(short[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5204,8 +5328,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -5221,6 +5345,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(short[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
@@ -5233,6 +5359,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(short[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5246,8 +5374,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -5263,6 +5391,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(byte[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * If you are expecting mostly inputs larger than about 100 bytes, you should consider wrapping any byte arrays you
      * have using {@link ByteBuffer#wrap(byte[])} and passing them to
      * {@link #hashBulk64(long, ByteBuffer)} instead, which
@@ -5279,6 +5409,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(byte[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * If you are expecting mostly inputs larger than about 100 bytes, you should consider wrapping any byte arrays you
      * have using {@link ByteBuffer#wrap(byte[], int, int)}  and passing them to
      * {@link #hashBulk64(long, ByteBuffer, int, int)} instead, which
@@ -5296,8 +5428,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -5313,6 +5445,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(byte[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * If you are expecting mostly inputs larger than about 100 bytes, you should consider wrapping any byte arrays you
      * have using {@link ByteBuffer#wrap(byte[])}  and passing them to
      * {@link #hashBulk(long, ByteBuffer)} instead, which
@@ -5329,6 +5463,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(byte[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * If you are expecting mostly inputs larger than about 100 bytes, you should consider wrapping any byte arrays you
      * have using {@link ByteBuffer#wrap(byte[], int, int)}  and passing them to
      * {@link #hashBulk(long, ByteBuffer, int, int)} instead, which
@@ -5346,8 +5482,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -5363,6 +5499,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(float[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 64-bit hash of data
@@ -5375,6 +5513,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(float[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5388,8 +5528,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(floatToRawIntBits(data[i  ]), floatToRawIntBits(data[i+1]), floatToRawIntBits(data[i+2]), floatToRawIntBits(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(floatToRawIntBits(data[i+4]), floatToRawIntBits(data[i+5]), floatToRawIntBits(data[i+6]), floatToRawIntBits(data[i+7]));
@@ -5405,6 +5545,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(float[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
@@ -5417,6 +5559,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(float[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5430,8 +5574,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(floatToRawIntBits(data[i  ]), floatToRawIntBits(data[i+1]), floatToRawIntBits(data[i+2]), floatToRawIntBits(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(floatToRawIntBits(data[i+4]), floatToRawIntBits(data[i+5]), floatToRawIntBits(data[i+6]), floatToRawIntBits(data[i+7]));
@@ -5447,6 +5591,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(double[])} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 64-bit hash of data
@@ -5459,6 +5605,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(double[], int, int)} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5472,8 +5620,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(doubleToRawLongBits(data[i  ]), doubleToRawLongBits(data[i+1]), doubleToRawLongBits(data[i+2]), doubleToRawLongBits(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(doubleToRawLongBits(data[i+4]), doubleToRawLongBits(data[i+5]), doubleToRawLongBits(data[i+6]), doubleToRawLongBits(data[i+7]));
@@ -5489,6 +5637,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(double[])} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
@@ -5501,6 +5651,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(double[], int, int)} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5514,8 +5666,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(doubleToRawLongBits(data[i  ]), doubleToRawLongBits(data[i+1]), doubleToRawLongBits(data[i+2]), doubleToRawLongBits(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(doubleToRawLongBits(data[i+4]), doubleToRawLongBits(data[i+5]), doubleToRawLongBits(data[i+6]), doubleToRawLongBits(data[i+7]));
@@ -5531,6 +5683,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(char[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 64-bit hash of data
@@ -5543,6 +5697,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(char[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5556,8 +5712,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -5573,6 +5729,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(char[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
@@ -5585,6 +5743,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(char[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5598,8 +5758,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ], data[i+1], data[i+2], data[i+3]);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4], data[i+5], data[i+6], data[i+7]);
@@ -5615,6 +5775,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(boolean[])} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 64-bit hash of data
@@ -5627,6 +5789,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(boolean[], int, int)} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5640,8 +5804,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ] ? -1L : 0L, data[i+1] ? -1L : 0L, data[i+2] ? -1L : 0L, data[i+3] ? -1L : 0L);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4] ? -1L : 0L, data[i+5] ? -1L : 0L, data[i+6] ? -1L : 0L, data[i+7] ? -1L : 0L);
@@ -5657,6 +5821,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(boolean[])} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
@@ -5669,6 +5835,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(boolean[], int, int)} on longer input arrays
      * (length 50 and up). It is probably a little slower on the smallest input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5682,8 +5850,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data[i  ] ? -1L : 0L, data[i+1] ? -1L : 0L, data[i+2] ? -1L : 0L, data[i+3] ? -1L : 0L);
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data[i+4] ? -1L : 0L, data[i+5] ? -1L : 0L, data[i+6] ? -1L : 0L, data[i+7] ? -1L : 0L);
@@ -5699,6 +5867,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(CharSequence)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 64-bit hash of data
@@ -5711,6 +5881,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(CharSequence, int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5724,8 +5896,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data.charAt(i  ), data.charAt(i+1), data.charAt(i+2), data.charAt(i+3));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data.charAt(i+4), data.charAt(i+5), data.charAt(i+6), data.charAt(i+7));
@@ -5741,6 +5913,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(CharSequence)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
@@ -5753,6 +5927,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(CharSequence, int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array
      * @param start starting index in data
@@ -5766,8 +5942,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(data.charAt(i  ), data.charAt(i+1), data.charAt(i+2), data.charAt(i+3));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data.charAt(i+4), data.charAt(i+5), data.charAt(i+6), data.charAt(i+7));
@@ -5783,6 +5959,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(Object[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array; null items are tolerated
      * @return the 64-bit hash of data
@@ -5795,6 +5973,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash64(Object[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array; null items are tolerated
      * @param start starting index in data
@@ -5808,8 +5988,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(Objects.hashCode(data[i  ]), Objects.hashCode(data[i+1]), Objects.hashCode(data[i+2]), Objects.hashCode(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(Objects.hashCode(data[i+4]), Objects.hashCode(data[i+5]), Objects.hashCode(data[i+6]), Objects.hashCode(data[i+7]));
@@ -5825,6 +6005,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(Object[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array; null items are tolerated
      * @return the 32-bit hash of data
@@ -5837,6 +6019,8 @@ public class Hasher {
     /**
      * A hashing function that is likely to outperform {@link #hash(Object[], int, int)} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data input array; null items are tolerated
      * @param start starting index in data
@@ -5850,8 +6034,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(Objects.hashCode(data[i  ]), Objects.hashCode(data[i+1]), Objects.hashCode(data[i+2]), Objects.hashCode(data[i+3]));
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(Objects.hashCode(data[i+4]), Objects.hashCode(data[i+5]), Objects.hashCode(data[i+6]), Objects.hashCode(data[i+7]));
@@ -5871,6 +6055,8 @@ public class Hasher {
      * <br>
      * This is likely to significantly outperform {@link #hash64(byte[])} on all but
      * the smallest sequences of bytes (under 20 bytes).
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data an input ByteBuffer
      * @return the 64-bit hash of data
@@ -5886,6 +6072,8 @@ public class Hasher {
      * <br>
      * This is likely to significantly outperform {@link #hash64(byte[], int, int)}
      * on all but the smallest sequences of bytes (under 20 bytes).
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data an input ByteBuffer
      * @param start the starting index, measured in bytes
@@ -5899,8 +6087,8 @@ public class Hasher {
         data.position(start);
         long h = len ^ forward(seed);
         while(len >= 64){
-            h *= C;
             len -= 64;
+            h *= C;
             h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
@@ -5929,6 +6117,8 @@ public class Hasher {
      * <br>
      * This is likely to significantly outperform {@link #hash(byte[])} on all but
      * the smallest sequences of bytes (under 20 bytes).
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data an input ByteBuffer
      * @return the 32-bit hash of data
@@ -5944,6 +6134,8 @@ public class Hasher {
      * <br>
      * This is likely to significantly outperform {@link #hash(byte[], int, int)}
      * on all but the smallest sequences of bytes (under 20 bytes).
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param data an input ByteBuffer
      * @param start the starting index, measured in bytes
@@ -5957,8 +6149,8 @@ public class Hasher {
         data.position(start);
         long h = len ^ forward(seed);
         while(len >= 64){
-            h *= C;
             len -= 64;
+            h *= C;
             h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
             h = (h << 37 | h >>> 27);
             h += mixStreamBulk(data.getLong(), data.getLong(), data.getLong(), data.getLong());
@@ -5986,6 +6178,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link SeededHashFunction64} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param function typically a method reference to a {@link #hash64} method here
      * @param data input array
@@ -6001,6 +6195,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link SeededHashFunction64} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param function typically a method reference to a {@link #hash64} method here
      * @param data input array
@@ -6016,8 +6212,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(function.hash64(seed, data[i  ]), function.hash64(seed, data[i+1]), function.hash64(seed, data[i+2]), function.hash64(seed, data[i+3])); h = (h << 37 | h >>> 27);
             h += mixStreamBulk(function.hash64(seed, data[i+4]), function.hash64(seed, data[i+5]), function.hash64(seed, data[i+6]), function.hash64(seed, data[i+7]));
             i += 8;
@@ -6033,6 +6229,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link SeededHashFunction} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param function typically a method reference to a {@link #hash64} method here
      * @param data input array
@@ -6048,6 +6246,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link SeededHashFunction} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param function typically a method reference to a {@link #hash} method here
      * @param data input array
@@ -6063,8 +6263,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(function.hash(seed, data[i  ]), function.hash(seed, data[i+1]), function.hash(seed, data[i+2]), function.hash(seed, data[i+3])); h = (h << 37 | h >>> 27);
             h += mixStreamBulk(function.hash(seed, data[i+4]), function.hash(seed, data[i+5]), function.hash(seed, data[i+6]), function.hash(seed, data[i+7]));
             i += 8;
@@ -6080,6 +6280,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link SeededHashFunction64} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param function typically a method reference to a {@link #hash64} method here
      * @param data input array
@@ -6095,6 +6297,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link SeededHashFunction64} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param function typically a method reference to a {@link #hash64} method here
      * @param data input array
@@ -6110,8 +6314,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(function.hash64(seed, data[i  ]), function.hash64(seed, data[i+1]), function.hash64(seed, data[i+2]), function.hash64(seed, data[i+3])); h = (h << 37 | h >>> 27);
             h += mixStreamBulk(function.hash64(seed, data[i+4]), function.hash64(seed, data[i+5]), function.hash64(seed, data[i+6]), function.hash64(seed, data[i+7]));
             i += 8;
@@ -6127,6 +6331,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link SeededHashFunction} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash64} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param function typically a method reference to a {@link #hash64} method here
      * @param data input array
@@ -6142,6 +6348,8 @@ public class Hasher {
      * Meant to handle hashing larger 2D arrays (or higher dimensions), this lets you pass a {@link SeededHashFunction} as
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hash} method here.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
      * @param seed any long seed
      * @param function typically a method reference to a {@link #hash} method here
      * @param data input array
@@ -6157,8 +6365,8 @@ public class Hasher {
         long h = len ^ forward(seed);
         int i = start;
         while(len >= 8){
-            h *= C;
             len -= 8;
+            h *= C;
             h += mixStreamBulk(function.hash(seed, data[i  ]), function.hash(seed, data[i+1]), function.hash(seed, data[i+2]), function.hash(seed, data[i+3])); h = (h << 37 | h >>> 27);
             h += mixStreamBulk(function.hash(seed, data[i+4]), function.hash(seed, data[i+5]), function.hash(seed, data[i+6]), function.hash(seed, data[i+7]));
             i += 8;
