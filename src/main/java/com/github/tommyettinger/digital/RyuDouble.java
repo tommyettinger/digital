@@ -689,8 +689,17 @@ final class RyuDouble {
     return new String(result, 0, index);
   }
 
+  public static String scientific(double value, char scientificChar) {
+    final int index = scientific(value, result, scientificChar);
+    return new String(result, 0, index);
+  }
+
   public static StringBuilder appendScientific(StringBuilder builder, double value) {
     return appendScientific(builder, value, result);
+  }
+
+  public static StringBuilder appendScientific(StringBuilder builder, double value, char scientificChar) {
+    return appendScientific(builder, value, result, scientificChar);
   }
 
   public static StringBuilder appendScientific(StringBuilder builder, double value, char[] result) {
@@ -698,7 +707,16 @@ final class RyuDouble {
     return builder.append(result, 0, index);
   }
 
+  public static StringBuilder appendScientific(StringBuilder builder, double value, char[] result, char scientificChar) {
+    final int index = scientific(value, result, scientificChar);
+    return builder.append(result, 0, index);
+  }
+
   public static int scientific(double value, char[] result) {
+    return scientific(value, result, 'E');
+  }
+
+  public static int scientific(double value, char[] result, char scientificChar) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Double.isNaN(value)) {
@@ -727,7 +745,7 @@ final class RyuDouble {
       result[0] = '0';
       result[1] = '.';
       result[2] = '0';
-      result[3] = 'E';
+      result[3] = scientificChar;
       result[4] = '0';
       return 5;
     }
@@ -736,7 +754,7 @@ final class RyuDouble {
       result[1] = '0';
       result[2] = '.';
       result[3] = '0';
-      result[4] = 'E';
+      result[4] = scientificChar;
       result[5] = '0';
       return 6;
     }
@@ -896,8 +914,8 @@ final class RyuDouble {
       result[index++] = '0';
     }
 
-    // Print 'E', the exponent sign, and the exponent, which has at most three digits.
-    result[index++] = 'E';
+    // Print 'E' (or other scientificChar), the exponent sign, and the exponent, which has at most three digits.
+    result[index++] = scientificChar;
     if (exp < 0) {
       result[index++] = '-';
       exp = -exp;
