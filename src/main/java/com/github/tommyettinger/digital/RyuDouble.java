@@ -638,10 +638,13 @@ final class RyuDouble {
         builder.append('0');
       }
       int current = builder.length();
-      for (int i = 0; i < olength && decimalPlaces != 0; i++, decimalPlaces--) {
+      for (int i = 0; i < olength; i++, decimalPlaces--) {
         builder.insert(current, (char) ('0' + output % 10));
         output /= 10;
         index++;
+      }
+      for (int i = 0; i < decimalPlaces; i++) {
+        builder.append('0');
       }
       if(precision >= 0){
         builder.setLength(dotPosition + precision);

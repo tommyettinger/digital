@@ -37,9 +37,9 @@ public class StringfTest {
     public void testFloatConversion() {
         String fmt = "Sensor readings: %.4f%% oxygen, %.3f%% helium. Probability of colonization: %e";
         LinkedHashMap<Float, Float> pairs = new LinkedHashMap<>();
-//        pairs.put(10.3618f, 0.014f);
-//        pairs.put(5.4f, 2.2f);
-//        pairs.put(0.0f, 70.9830f);
+        pairs.put(10.3618f, 0.014f);
+        pairs.put(5.4f, 2.2f);
+        pairs.put(0.0f, 70.9830f);
         pairs.put(0.017f, 0.0640f);
         for(Map.Entry<Float, Float> ent : pairs.entrySet()) {
 //            Assert.assertEquals(String.format(fmt, ent.getKey(), ent.getValue()),
@@ -54,9 +54,9 @@ public class StringfTest {
     public void testDoubleConversion() {
         String fmt = "Sensor readings: %.4f%% oxygen, %.3f%% helium. Probability of colonization: %e";
         LinkedHashMap<Double, Double> pairs = new LinkedHashMap<>();
-//        pairs.put(10.3618, 0.014);
-//        pairs.put(5.4, 2.2);
-//        pairs.put(0.0, 70.9830);
+        pairs.put(10.3618, 0.014);
+        pairs.put(5.4, 2.2);
+        pairs.put(0.0, 70.9830);
         pairs.put(0.017, 0.0640);
         for(Map.Entry<Double, Double> ent : pairs.entrySet()) {
 //            Assert.assertEquals(String.format(fmt, ent.getKey(), ent.getValue()),
