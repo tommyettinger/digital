@@ -87,16 +87,33 @@ final class RyuFloat {
     return new String(result, 0, index);
   }
 
+  public static String general(float value, char scientificChar) {
+    final int index = general(value, result, -3, 7, scientificChar);
+    return new String(result, 0, index);
+  }
+
   public static StringBuilder appendGeneral(StringBuilder builder, float value) {
     return appendGeneral(builder, value, result, -3, 7);
+  }
+
+  public static StringBuilder appendGeneral(StringBuilder builder, float value, char scientificChar) {
+    return appendGeneral(builder, value, result, -3, 7, scientificChar);
   }
 
   public static StringBuilder appendGeneral(StringBuilder builder, float value, char[] result) {
     return appendGeneral(builder, value, result, -3, 7);
   }
 
+  public static StringBuilder appendGeneral(StringBuilder builder, float value, char[] result, char scientificChar) {
+    return appendGeneral(builder, value, result, -3, 7, scientificChar);
+  }
+
   public static int general(float value, char[] result) {
     return general(value, result, -3, 7);
+  }
+
+  public static int general(float value, char[] result, char scientificChar) {
+    return general(value, result, -3, 7, scientificChar);
   }
 
   public static int friendly(float value, char[] result) {
@@ -121,7 +138,16 @@ final class RyuFloat {
     return builder.append(result, 0, index);
   }
 
+  public static StringBuilder appendGeneral(StringBuilder builder, float value, char[] result, int low, int high, char scientificChar) {
+    final int index = general(value, result, low, high, scientificChar);
+    return builder.append(result, 0, index);
+  }
+
   public static int general(float value, char[] result, int low, int high) {
+    return general(value, result, low, high, 'E');
+  }
+
+  public static int general(float value, char[] result, int low, int high, char scientificChar) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Float.isNaN(value)) {
@@ -302,8 +328,8 @@ final class RyuFloat {
         result[index++] = '0';
       }
 
-      // Print 'E', the exponent sign, and the exponent, which has at most two digits.
-      result[index++] = 'E';
+      // Print 'E' (or other scientificChar), the exponent sign, and the exponent, which has at most two digits.
+      result[index++] = scientificChar;
       if (exp < 0) {
         result[index++] = '-';
         exp = -exp;

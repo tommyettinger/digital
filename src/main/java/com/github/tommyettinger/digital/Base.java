@@ -1272,6 +1272,20 @@ public class Base {
     }
 
     /**
+     * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation,
+     * appending the result to {@code builder}. This switches to scientific notation when a value would use a base-10
+     * exponent smaller than -3 or larger than 7. This can vary in how many chars it uses, but won't use more than 24.
+     * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any double
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendGeneral(StringBuilder builder, double number) {
+        return RyuDouble.appendGeneral(builder, number, progress);
+    }
+
+    /**
      * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation.
      * This switches to scientific notation when a value would use a base-10 exponent smaller than -3 or larger than 7.
      * Returns a new String.
@@ -1285,20 +1299,6 @@ public class Base {
     public String general(double number, boolean capitalize) {
         int i = RyuDouble.general(number, progress, capitalize ? 'E' : 'e');
         return String.valueOf(progress, 0, i);
-    }
-
-    /**
-     * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation,
-     * appending the result to {@code builder}. This switches to scientific notation when a value would use a base-10
-     * exponent smaller than -3 or larger than 7. This can vary in how many chars it uses, but won't use more than 24.
-     * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
-     *
-     * @param builder a non-null StringBuilder that will be modified (appended to)
-     * @param number  any double
-     * @return {@code builder}, with the base-10 {@code number} appended
-     */
-    public StringBuilder appendGeneral(StringBuilder builder, double number) {
-        return RyuDouble.appendGeneral(builder, number, progress);
     }
 
     /**
@@ -2032,7 +2032,7 @@ public class Base {
     /**
      * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation,
      * appending the result to {@code builder}. This switches to scientific notation when a value would use a base-10
-     * exponent smaller than -3 or larger than 7.This can vary in how many chars it uses, but won't use more than 15.
+     * exponent smaller than -3 or larger than 7. This can vary in how many chars it uses, but won't use more than 15.
      * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
@@ -2041,6 +2041,37 @@ public class Base {
      */
     public StringBuilder appendGeneral(StringBuilder builder, float number) {
         return RyuFloat.appendGeneral(builder, number, progress);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation.
+     * This switches to scientific notation when a value would use a base-10 exponent smaller than -3 or larger than 7.
+     * Returns a new String.
+     * This can vary in how many chars it uses, but won't use more than 15.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param number any float
+     * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
+     * @return a new String containing {@code number} in either decimal or scientific notation, always base-10
+     */
+    public String general(float number, boolean capitalize) {
+        int i = RyuFloat.general(number, progress, capitalize ? 'E' : 'e');
+        return String.valueOf(progress, 0, i);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that may use decimal or scientific notation,
+     * appending the result to {@code builder}. This switches to scientific notation when a value would use a base-10
+     * exponent smaller than -3 or larger than 7. This can vary in how many chars it uses, but won't use more than 15.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any float
+     * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendGeneral(StringBuilder builder, float number, boolean capitalize) {
+        return RyuFloat.appendGeneral(builder, number, progress, capitalize ? 'E' :'e');
     }
 
     /**
