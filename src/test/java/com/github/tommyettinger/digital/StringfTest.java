@@ -35,16 +35,34 @@ public class StringfTest {
 
     @Test
     public void testFloatConversion() {
-        String fmt = "Sensor readings: %.2f%% oxygen, %.4f%% helium.";
+        String fmt = "Sensor readings: %.5f%% oxygen, %.5f%% helium. Probability of colonization: %e";
+        LinkedHashMap<Float, Float> pairs = new LinkedHashMap<>();
+        pairs.put(10.3618f, 0.014f);
+        pairs.put(5.4f, 2.3f);
+        pairs.put(0.0f, 70.9830f);
+        pairs.put(0.009f, 0.0640f);
+        for(Map.Entry<Float, Float> ent : pairs.entrySet()) {
+//            Assert.assertEquals(String.format(fmt, ent.getKey(), ent.getValue()),
+//                    Stringf.format(fmt, ent.getKey(), ent.getValue()));
+            double rand = (float)Math.random() * 0x1p-10f;
+            System.out.println("STRING  : " + String.format(fmt, ent.getKey(), ent.getValue(), rand));
+            System.out.println("STRINGF : " + Stringf.format(fmt, ent.getKey(), ent.getValue(), rand));
+        }
+    }
+
+    @Test
+    public void testDoubleConversion() {
+        String fmt = "Sensor readings: %.2f%% oxygen, %.3f%% helium. Probability of colonization: %e";
         LinkedHashMap<Double, Double> pairs = new LinkedHashMap<>();
-        pairs.put(10.3618, 0.0014);
+        pairs.put(10.3618, 0.014);
         pairs.put(5.4, 2.3);
         pairs.put(0.0, 70.9830);
         for(Map.Entry<Double, Double> ent : pairs.entrySet()) {
 //            Assert.assertEquals(String.format(fmt, ent.getKey(), ent.getValue()),
 //                    Stringf.format(fmt, ent.getKey(), ent.getValue()));
-            System.out.println("STRING  : " + String.format(fmt, ent.getKey(), ent.getValue()));
-            System.out.println("STRINGF : " + Stringf.format(fmt, ent.getKey(), ent.getValue()));
+            double rand = Math.random() * 0.001;
+            System.out.println("STRING  : " + String.format(fmt, ent.getKey(), ent.getValue(), rand));
+            System.out.println("STRINGF : " + Stringf.format(fmt, ent.getKey(), ent.getValue(), rand));
         }
     }
 }
