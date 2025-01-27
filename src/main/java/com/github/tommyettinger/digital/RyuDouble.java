@@ -632,6 +632,7 @@ final class RyuDouble {
     if (exp < 0) {
       // Decimal dot is before any of the digits.
       builder.append("0.");
+      int dotPosition = builder.length();
       int decimalPlaces = precision < 0 ? Double.MAX_EXPONENT : precision;
       for (int i = -1; i > exp && decimalPlaces != 0; i--, decimalPlaces--) {
         builder.append('0');
@@ -641,6 +642,9 @@ final class RyuDouble {
         builder.insert(current, (char) ('0' + output % 10));
         output /= 10;
         index++;
+      }
+      if(precision >= 0){
+        builder.setLength(dotPosition + precision);
       }
     } else if (exp + 1 >= olength) {
       index = builder.length();
