@@ -130,6 +130,7 @@ public final class Distributor {
      * The function maps the lowest inputs to the most negative outputs, the highest inputs to the most
      * positive outputs, and inputs near 0.5 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param p should be between 0 and 1, inclusive.
      * @return an approximately-Gaussian-distributed float between -9.080134 and 9.080134
      */
@@ -152,6 +153,7 @@ public final class Distributor {
      * The function maps the lowest inputs to the most negative outputs, the highest inputs to the most
      * positive outputs, and inputs near 0.5 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param p should be between 0 and 1, inclusive.
      * @return an approximately-Gaussian-distributed double between -26.48372928592822 and 26.48372928592822
      */
@@ -174,11 +176,13 @@ public final class Distributor {
      * The function maps the most negative inputs to the most negative outputs, the most positive inputs to the most
      * positive outputs, and inputs near 0 to outputs near 0. This does not consider the bottom 8 bits of {@code i}.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param i may be any int, though very close ints will not produce different results
      * @return an approximately-Gaussian-distributed float between -9.080134 and 9.080134
      */
     public static float probitI(int i) {
-        final float p = 0x1p-32f * i + 0.5f;
+        /* 2.3283064E-10f is 0x1p-32f */
+        final float p = 2.3283064E-10f * i + 0.5f;
         if(0.0465f > p){
             float r = (float)Math.sqrt(logRough(1f / (p * p)));
             return c3f * r + c2f + (c1f * r + c0f) / (r * (r + d1f) + d0f);
@@ -197,11 +201,13 @@ public final class Distributor {
      * The function maps the most negative inputs to the most negative outputs, the most positive inputs to the most
      * positive outputs, and inputs near 0 to outputs near 0. This does not consider the bottom 11 bits of {@code l}.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param l may be any long, though very close longs will not produce different results
      * @return an approximately-Gaussian-distributed double between -26.48372928592822 and 26.48372928592822
      */
     public static double probitL(long l) {
-        final double p = l * 0x1p-64 + 0.5;
+        /* 5.421010862427522E-20 is 0x1p-64 */
+        final double p = l * 5.421010862427522E-20 + 0.5;
         if(0.0465 > p) {
             double r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
             return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
