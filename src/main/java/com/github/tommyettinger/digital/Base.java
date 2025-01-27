@@ -1365,6 +1365,19 @@ public class Base {
     }
 
     /**
+     * Converts the given {@code number} to a base-10 representation that uses scientific notation,
+     * appending the result to {@code builder}. This can vary in how many chars it uses, but won't use more than 24.
+     * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any double
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendScientific(StringBuilder builder, double number) {
+        return RyuDouble.appendScientific(builder, number, progress);
+    }
+
+    /**
      * Converts the given {@code number} to a base-10 representation that uses scientific notation.
      * Returns a new String.
      * This can vary in how many chars it uses, but won't use more than 24.
@@ -1378,20 +1391,6 @@ public class Base {
         int i = RyuDouble.scientific(number, progress, capitalize ? 'E' :'e');
         return String.valueOf(progress, 0, i);
     }
-
-    /**
-     * Converts the given {@code number} to a base-10 representation that uses scientific notation,
-     * appending the result to {@code builder}. This can vary in how many chars it uses, but won't use more than 24.
-     * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
-     *
-     * @param builder a non-null StringBuilder that will be modified (appended to)
-     * @param number  any double
-     * @return {@code builder}, with the base-10 {@code number} appended
-     */
-    public StringBuilder appendScientific(StringBuilder builder, double number) {
-        return RyuDouble.appendScientific(builder, number, progress);
-    }
-
     /**
      * Converts the given {@code number} to a base-10 representation that uses scientific notation,
      * appending the result to {@code builder}. This can vary in how many chars it uses, but won't use more than 24.
@@ -2133,6 +2132,34 @@ public class Base {
      */
     public StringBuilder appendScientific(StringBuilder builder, float number) {
         return RyuFloat.appendScientific(builder, number, progress);
+    }
+
+    /**
+     * Converts the given {@code number} to a base-10 representation that uses scientific notation.
+     * Returns a new String.
+     * This can vary in how many chars it uses, but won't use more than 24.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param number any float
+     * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
+     * @return a new String containing {@code number} in scientific notation, always base-10
+     */
+    public String scientific(float number, boolean capitalize) {
+        int i = RyuFloat.scientific(number, progress, capitalize ? 'E' :'e');
+        return String.valueOf(progress, 0, i);
+    }
+    /**
+     * Converts the given {@code number} to a base-10 representation that uses scientific notation,
+     * appending the result to {@code builder}. This can vary in how many chars it uses, but won't use more than 24.
+     * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
+     *
+     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param number  any float
+     * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
+     * @return {@code builder}, with the base-10 {@code number} appended
+     */
+    public StringBuilder appendScientific(StringBuilder builder, float number, boolean capitalize) {
+        return RyuFloat.appendScientific(builder, number, progress, capitalize ? 'E' :'e');
     }
 
     /**
