@@ -69,7 +69,7 @@ public final class Stringf {
                 } else if (curr == 'f') {
                     // float
                     double d = ((Number) args[arg++]).doubleValue();
-                    Base.BASE10.appendDecimal(sb, d, d < 0.0 ? 6 : 5);
+                    Base.BASE10.appendDecimal(sb, d, -10000, 6);
                 } else if (curr == 'e') {
                     // general, lower case
                     double d = ((Number) args[arg++]).doubleValue();
