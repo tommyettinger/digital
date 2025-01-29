@@ -365,6 +365,36 @@ public final class MathTools {
     }
 
     /**
+     * Returns a float between 0 and 1, gradually approaching 1 as timeTaken goes up. How gradually it
+     * "takes off" and "lands" depends on howGradual, with values greater than 1 taking off slowly and values less than
+     * 1 (but always greater than 0) taking off quickly. The Interpolator this takes allows you to affect the rate of
+     * change as timeTaken goes up. This is meant to be used to get an alpha parameter to pass to lerp() methods.
+     * @param timeTaken a non-negative float that should go up continually; the rate it goes up doesn't matter
+     * @param howGradual often 1.0, but should be adjusted higher if the approach should be very gradual, or as low as 0.1 if the approach should be rapid
+     * @param interpolator may be {@link Interpolations#linear} for the simplest case, or any other Interpolator
+     * @return a float between 0 and 1, that gradually approaches 1 as timeTaken goes up
+     */
+    public static float approachSigmoid(float timeTaken, float howGradual, Interpolations.Interpolator interpolator) {
+        return interpolator.apply(timeTaken / (float)Math.sqrt(howGradual + timeTaken * timeTaken));
+    }
+
+    /**
+     * Returns a float between start and target, gradually approaching target as timeTaken goes up. How gradually it
+     * "takes off" and "lands" depends on howGradual, with values greater than 1 taking off slowly and values less than
+     * 1 (but always greater than 0) taking off quickly. The Interpolator this takes allows you to affect the rate of
+     * change as timeTaken goes up.
+     * @param start the starting float value; does not change over the course of the movement
+     * @param target the target float value to gradually approach
+     * @param timeTaken a non-negative float that should go up continually; the rate it goes up doesn't matter
+     * @param howGradual often 1.0, but should be adjusted higher if the approach should be very gradual, or as low as 0.1 if the approach should be rapid
+     * @param interpolator may be {@link Interpolations#linear} for the simplest case, or any other Interpolator
+     * @return a float between start and end, that gradually approaches target as timeTaken goes up
+     */
+    public static float approachSigmoid(float start, float target, float timeTaken, float howGradual, Interpolations.Interpolator interpolator) {
+        return interpolator.apply(start, target, timeTaken / (float)Math.sqrt(howGradual + timeTaken * timeTaken));
+    }
+
+    /**
      * The cumulative distribution function for the normal distribution, with the range expanded to {@code [-1,1]}
      * instead of the usual {@code [0,1]} . This might be useful to bring noise functions (which sometimes have a range
      * of {@code -1,1}) from a very-centrally-biased form to a more uniformly-distributed form. The math here doesn't

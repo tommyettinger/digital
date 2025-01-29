@@ -126,6 +126,19 @@ public class MathToolsTest {
         return x / (float)Math.sqrt(1f + x * x);
     }
 
+    /**
+     * Given a value x that starts at 0 and goes up, this returns floats that gradually approach 1; how gradually
+     * depends on, naturally, howGradual. The howGradual parameter should usually be about 1f for a lazy, smooth
+     * approach, can be higher to get an even more shallow "takeoff" angle, or can be lower than 1 (but must be greater
+     * than 0) to make the takeoff more rapid or jumpy.
+     * @param x any non-negative float
+     * @param howGradual often 1.0, but should be adjusted higher if the approach should be very gradual, or as low as 0.1 if the approach should be rapid
+     * @return a float that starts at 0.0 and gradually approaches 1.0 as x goes from 0.0 to higher values
+     */
+    public static float sigRoot(float x, float howGradual) {
+        return x / (float)Math.sqrt(howGradual + x * x);
+    }
+
     @Test
     public void testApproach() {
         float a = 0f, b = 100f;
