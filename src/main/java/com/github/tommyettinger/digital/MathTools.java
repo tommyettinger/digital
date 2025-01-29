@@ -365,6 +365,35 @@ public final class MathTools {
     }
 
     /**
+     * When used to repeatedly mutate {@code a} every frame, and a frame had {@code delta} seconds between it and its
+     * predecessor, this will make {@code a} get closer and closer to the value of {@code b} as it is repeatedly called.
+     * The {@code halfLife} is the number of seconds it takes for {@code a} to halve its difference to {@code b}. Note
+     * that a will never actually reach b in a specific timeframe, it will just get very close. The {@code interpolator}
+     * changes (or could change) the rate {@code a} moves at different distances to {@code b}. How the interpolator
+     * works here, or if it works at all as expected, is not known yet.
+     * This is typically called with: {@code a = approach(a, b, deltaTime, halfLife, interpolator);}
+     * <br>
+     * Uses a 3/3 Padé approximant to {@code Math.pow(2.0, x)}, but otherwise is very close to
+     * <a href="https://mastodon.social/@acegikmo/111931613710775864">how Freya Holmér implemented this first</a>.
+     * <br>
+     * This version of approach() is experimental. It may not be framerate-independent and could fail entirely.
+     *
+     * @param a the current float value, and the one that the result of approach() should be assigned to
+     * @param b the target float value; will not change
+     * @param delta the number of (typically) seconds since the last call to this movement of {@code a}
+     * @param halfLife how many (typically) seconds it should take for {@code (b - a)} to become halved
+     * @param interpolator an Interpolator instance, such as {@link Interpolations#smooth}
+     * @return a new value to assign to {@code a}, which will be closer to {@code b}
+     */
+    public static float approach(float a, float b, float delta, float halfLife, Interpolations.Interpolator interpolator){
+        final float x = -delta/halfLife;
+        return interpolator.apply(a, b, 1f
+                        - (-275.988f + x * (-90.6997f + (-11.6318f - 0.594604f * x) * x))
+                        / (-275.988f + x * (100.601f + (-15.0623f + x) * x)));
+    }
+
+
+    /**
      * The cumulative distribution function for the normal distribution, with the range expanded to {@code [-1,1]}
      * instead of the usual {@code [0,1]} . This might be useful to bring noise functions (which sometimes have a range
      * of {@code -1,1}) from a very-centrally-biased form to a more uniformly-distributed form. The math here doesn't
