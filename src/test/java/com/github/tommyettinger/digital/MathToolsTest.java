@@ -112,17 +112,17 @@ public class MathToolsTest {
 
     @Test
     public void testApproach() {
-        float aSmoothing60 = 0f, aApproach60 = 0f, aTanh60 = 0f;
-        float aSmoothing90 = 0f, aApproach90 = 0f, aTanh90 = 0f;
-        float aSmoothing10 = 0f, aApproach10 = 0f, aTanh10 = 0f;
-        float b = 1f;
+        float a = 0f, b = 100f;
+        float aSmoothing60 = a, aApproach60 = a, aTanh60 = a;
+        float aSmoothing90 = a, aApproach90 = a, aTanh90 = a;
+        float aSmoothing10 = a, aApproach10 = a, aTanh10 = a;
         for (int i = 0; i <= 180; i++) {
             float time60 = i / 60f;
             float time90 = i / 90f;
             float time10 = i / 10f;
-            aTanh60 = RoughMath.tanhRough(time60 * 1.1f);
-            aTanh90 = RoughMath.tanhRough(time90 * 1.1f);
-            aTanh10 = RoughMath.tanhRough(time10 * 1.1f);
+            aTanh60 = MathTools.lerp(a, b, RoughMath.tanhRough(time60 * 1.1f));
+            aTanh90 = MathTools.lerp(a, b, RoughMath.tanhRough(time90 * 1.1f));
+            aTanh10 = MathTools.lerp(a, b, RoughMath.tanhRough(time10 * 1.1f));
             System.out.println("Iteration " + i + ", time60: " + time60  + ", time90: " + time90  + ", time10: " + time10);
             System.out.println("aSmoothing60: " + Base.BASE10.decimal(aSmoothing60, 10) + " vs. aApproach60: " + Base.BASE10.decimal(aApproach60, 10) + " vs. aTanh60: " + Base.BASE10.decimal(aTanh60, 10));
             System.out.println("aSmoothing90: " + Base.BASE10.decimal(aSmoothing90, 10) + " vs. aApproach90: " + Base.BASE10.decimal(aApproach90, 10) + " vs. aTanh90: " + Base.BASE10.decimal(aTanh90, 10));
@@ -173,19 +173,22 @@ public class MathToolsTest {
     @Test
     public void testApproachInterpolator() {
         Interpolations.Interpolator[] interpolators = {Interpolations.smooth, Interpolations.smoother, Interpolations.sineIn, Interpolations.sineOut};
+        float a = 0f, b = 100f;
         for(Interpolations.Interpolator ir : interpolators) {
-            float aSmoothing60 = 0f, aApproach60 = 0f;
-            float aSmoothing90 = 0f, aApproach90 = 0f;
-            float aSmoothing10 = 0f, aApproach10 = 0f;
-            float b = 1f;
+            float aSmoothing60 = a, aApproach60 = a, aTanh60 = a;
+            float aSmoothing90 = a, aApproach90 = a, aTanh90 = a;
+            float aSmoothing10 = a, aApproach10 = a, aTanh10 = a;
             for (int i = 0; i <= 180; i++) {
                 float time60 = i / 60f;
                 float time90 = i / 90f;
                 float time10 = i / 10f;
+                aTanh60 = ir.apply(a, b, RoughMath.tanhRough(time60 * 1.1f));
+                aTanh90 = ir.apply(a, b, RoughMath.tanhRough(time90 * 1.1f));
+                aTanh10 = ir.apply(a, b, RoughMath.tanhRough(time10 * 1.1f));
                 System.out.println("Using " + ir.tag + ", Iteration " + i + ", time60: " + time60 + ", time90: " + time90 + ", time10: " + time10);
-                System.out.println("aSmoothing60: " + Base.BASE10.decimal(aSmoothing60, 10) + " vs. aApproach60: " + Base.BASE10.decimal(aApproach60, 10));
-                System.out.println("aSmoothing90: " + Base.BASE10.decimal(aSmoothing90, 10) + " vs. aApproach90: " + Base.BASE10.decimal(aApproach90, 10));
-                System.out.println("aSmoothing10: " + Base.BASE10.decimal(aSmoothing10, 10) + " vs. aApproach10: " + Base.BASE10.decimal(aApproach10, 10));
+                System.out.println("aSmoothing60: " + Base.BASE10.decimal(aSmoothing60, 10) + " vs. aApproach60: " + Base.BASE10.decimal(aApproach60, 10) + " vs. aTanh60: " + Base.BASE10.decimal(aTanh60, 10));
+                System.out.println("aSmoothing90: " + Base.BASE10.decimal(aSmoothing90, 10) + " vs. aApproach90: " + Base.BASE10.decimal(aApproach90, 10) + " vs. aTanh90: " + Base.BASE10.decimal(aTanh90, 10));
+                System.out.println("aSmoothing10: " + Base.BASE10.decimal(aSmoothing10, 10) + " vs. aApproach10: " + Base.BASE10.decimal(aApproach10, 10) + " vs. aTanh10: " + Base.BASE10.decimal(aTanh10, 10));
                 aSmoothing60 = ir.apply(aSmoothing60, b, 1.5f / 60f);
                 aSmoothing90 = ir.apply(aSmoothing90, b, 1.5f / 90f);
                 aSmoothing10 = ir.apply(aSmoothing10, b, 1.5f / 10f);
