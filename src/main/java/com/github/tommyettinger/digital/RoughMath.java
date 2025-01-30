@@ -214,7 +214,10 @@ public final class RoughMath {
 
     /**
      * Approximates the <a href="https://en.wikipedia.org/wiki/Logistic_function">standard logistic function</a>, somewhat roughly.
-     * This is also called the sigmoid function, or expit. It is the same as {@link #tanhRough(float)}, scaled, with an offset.
+     * This is also called the sigmoid function, or expit.
+     * The formula for the standard logistic function is {@code 1 / (1 + exp(-x))} .
+     * It is the same as {@link #tanhRough(float)}, scaled, with an offset.
+     *
      * @param x the parameter to the standard logistic function; can be any float
      * @return an approximation of the logistic function of x; between 0 and 1 inclusive
      */
@@ -228,8 +231,11 @@ public final class RoughMath {
 
     /**
      * Approximates the <a href="https://en.wikipedia.org/wiki/Logistic_function">standard logistic function</a>, very roughly.
-     * This is also called the sigmoid function, or expit. It is the same as {@link #tanhRougher(float)}, scaled, with an offset.
-     * @param x the parameter to the standard logistic function; can be any float
+     * This is also called the sigmoid function, or expit.
+     * The formula for the standard logistic function is {@code 1 / (1 + exp(-x))} .
+     * It is the same as {@link #tanhRougher(float)}, scaled, with an offset.
+     *
+     *  @param x the parameter to the standard logistic function; can be any float
      * @return an approximation of the logistic function of x; between 0 and 1 inclusive
      */
     public static float logisticRougher (float x)

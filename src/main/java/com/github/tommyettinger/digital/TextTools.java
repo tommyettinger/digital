@@ -750,10 +750,9 @@ public final class TextTools {
         return String.valueOf(c);
     }
 
-
     /**
      * Creates a String made by repeating {@code item} {@code amount} times, with no delimiter.
-     * @param item any CharSequence, such as a String, to repeat
+     * @param item any non-null CharSequence, such as a String, to repeat
      * @param amount how many times to repeat {@code item}
      * @return a new String containing {@code item} {@code amount} times
      */
@@ -763,10 +762,25 @@ public final class TextTools {
     }
 
     /**
+     * Creates a String made by repeating {@code item} {@code amount} times, separating repetitions of {@code item} with
+     * {@code delimiter}.
+     * @param item any non-null CharSequence, such as a String, to repeat
+     * @param amount how many times to repeat {@code item}
+     * @param delimiter a non-null CharSequence to append between repetitions of {@code item}
+     * @return a new String containing {@code item} {@code amount} times, separated by {@code delimiter}
+     */
+    public static String repeat(CharSequence item, int amount, CharSequence delimiter) {
+        if(item == null || delimiter == null) return null;
+        if(amount <= 0) return "";
+        return appendRepeated(new StringBuilder(item.length() * amount + delimiter.length() * (amount - 1)),
+                item, amount, delimiter).toString();
+    }
+
+    /**
      * Appends the text {@code item} to the StringBuilder {@code sb} repeatedly, {@code amount} times.
      * Returns {@code sb}.
      * @param sb a non-null StringBuilder that will be appended to
-     * @param item any CharSequence, such as a String, to repeat
+     * @param item any non-null CharSequence, such as a String, to repeat
      * @param amount how many times to repeat {@code item}
      * @return {@code sb}, after modifications
      */
@@ -774,6 +788,25 @@ public final class TextTools {
         if(sb == null || item == null || amount <= 0) return sb;
         for (int i = 0; i < amount; i++) {
             sb.append(item);
+        }
+        return sb;
+    }
+
+    /**
+     * Appends the text {@code item} to the StringBuilder {@code sb} repeatedly, {@code amount} times, separating
+     * repetitions of {@code item} with {@code delimiter}.
+     * Returns {@code sb}.
+     * @param sb a non-null StringBuilder that will be appended to
+     * @param item any non-null CharSequence, such as a String, to repeat
+     * @param amount how many times to repeat {@code item}
+     * @param delimiter a non-null CharSequence to append between repetitions of {@code item}
+     * @return {@code sb}, after modifications
+     */
+    public static StringBuilder appendRepeated(StringBuilder sb, CharSequence item, int amount, CharSequence delimiter) {
+        if(sb == null || item == null || delimiter == null || amount <= 0) return sb;
+        sb.append(item);
+        for (int i = 1; i < amount; i++) {
+            sb.append(delimiter).append(item);
         }
         return sb;
     }

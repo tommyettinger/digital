@@ -56,6 +56,9 @@ public final class MathTools {
      * multiplying this constant by, for instance, 64, and using that as the tolerance if you need precision with
      * three-digit numbers (16 * 64 is 1024, so 0 to 999 should be precise there). A larger rounding error can introduce
      * false-positive equivalence with very small inputs.
+     * <br>
+     * This defaults to 9.536743E-7f, which is the same as {@code (float)Math.pow(2f, -20f)} or {@code 0x1p-20f} . This
+     * is just less than one millionth.
      */
     public static final float FLOAT_ROUNDING_ERROR = 9.536743E-7f; // 9.536743E-7f is 0x1p-20f
     
@@ -139,33 +142,43 @@ public final class MathTools {
     
     /**
      * The famous golden ratio, {@code (1.0 + Math.sqrt(5.0)) * 0.5}; this is the "most irrational" of irrational
-     * numbers, and has various useful properties.
+     * numbers (a record shared with {@link #PSI}), and has various useful properties.
      * <br>
-     * The same as {@link #PHI}.
+     * The same as {@link #PHI}. This is closely related to {@link #GOLDEN_RATIO_INVERSE};
+     * {@code GOLDEN_RATIO - 1f == GOLDEN_RATIO_INVERSE} and
+     * {@code 1f / GOLDEN_RATIO == GOLDEN_RATIO_INVERSE} .
+
      */
     public static final float GOLDEN_RATIO = 1.6180339887498949f;
 
     /**
      * The famous golden ratio, {@code (1.0 + Math.sqrt(5.0)) * 0.5}; this is the "most irrational" of irrational
-     * numbers, and has various useful properties.
+     * numbers (a record shared with {@link #PSI}), and has various useful properties.
      * <br>
-     * The same as {@link #GOLDEN_RATIO}.
+     * The same as {@link #GOLDEN_RATIO}. This is closely related to {@link #GOLDEN_RATIO_INVERSE};
+     * {@code GOLDEN_RATIO - 1f == GOLDEN_RATIO_INVERSE} and
+     * {@code 1f / GOLDEN_RATIO == GOLDEN_RATIO_INVERSE} .
      */
     public static final float PHI = GOLDEN_RATIO;
     
     /**
      * The famous golden ratio, {@code (1.0 + Math.sqrt(5.0)) * 0.5}, as a double; this is the "most irrational" of
-     * irrational numbers, and has various useful properties.
+     * irrational numbers (a record shared with {@link #PSI_D}), and has various useful properties.
      * <br>
-     * The same as {@link #PHI_D}.
+     * The same as {@link #PHI_D}. This is closely related to {@link #GOLDEN_RATIO_INVERSE_D};
+     * {@code GOLDEN_RATIO_d - 1.0 == GOLDEN_RATIO_INVERSE_D} and
+     * {@code 1.0 / GOLDEN_RATIO_D == GOLDEN_RATIO_INVERSE_D} .
+
      */
     public static final double GOLDEN_RATIO_D = 1.6180339887498949;
 
     /**
      * The famous golden ratio, {@code (1.0 + Math.sqrt(5.0)) * 0.5}, as a double; this is the "most irrational" of
-     * irrational numbers, and has various useful properties.
+     * irrational numbers (a record shared with {@link #PSI_D}), and has various useful properties.
      * <br>
-     * The same as {@link #GOLDEN_RATIO_D}.
+     * The same as {@link #GOLDEN_RATIO_D}. This is closely related to {@link #GOLDEN_RATIO_INVERSE_D};
+     * {@code GOLDEN_RATIO_d - 1.0 == GOLDEN_RATIO_INVERSE_D} and
+     * {@code 1.0 / GOLDEN_RATIO_D == GOLDEN_RATIO_INVERSE_D} .
      */
     public static final double PHI_D = GOLDEN_RATIO_D;
     
@@ -196,15 +209,18 @@ public final class MathTools {
     private static final int BIG_ENOUGH_INT = 16384;
     private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
     private static final double CEIL = 0.99999994f; // 0.99999994f is 0x1.fffffep-1f
-    private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5f;
+    private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5;
 
     /**
      * Calculate the first argument raised to the power of the second.
      * This method only supports non-negative powers.
+     * This returns a {@code long}, and can overflow if the calculation exceeds {@link Long#MAX_VALUE}.
+     * Overflow is probably the main reason to use this instead of {@link Math#pow(double, double)}, along with the
+     * precision from using only integers.
      *
-     * @param value The number to be raised.
-     * @param power The exponent (must be positive).
-     * @return {@code value} raised to {@code power}.
+     * @param value the number to be raised, as an int
+     * @param power the exponent (must be positive), as an int
+     * @return {@code value} raised to {@code power}, as a long
      */
     public static long raiseToPower(int value, int power) {
         if (power < 0) {
@@ -219,11 +235,11 @@ public final class MathTools {
 
 
     /**
-     * Calculate logarithms for arbitrary bases.
+     * Calculate logarithms for arbitrary bases, using doubles.
      *
-     * @param base The base for the logarithm.
-     * @param arg  The value to calculate the logarithm for.
-     * @return The log of {@code arg} in the specified {@code base}.
+     * @param base  the logarithm base to use, as a double
+     * @param arg what value to get the logarithm of, using the given base, as a double
+     * @return the log of {@code arg} in the specified {@code base}, as a double
      */
     public static double log(double base, double arg) {
         // Use natural logarithms and change the base.
@@ -231,21 +247,21 @@ public final class MathTools {
     }
 
     /**
-     * Calculate logarithms for arbitrary bases.
+     * Calculate logarithms for arbitrary bases, using floats.
      *
-     * @param base  the logarithm base to use
-     * @param value what value to get the logarithm of, using the given base
-     * @return The log of {@code arg} in the specified {@code base}.
+     * @param base  the logarithm base to use, as a float
+     * @param arg what value to get the logarithm of, using the given base, as a float
+     * @return the log of {@code arg} in the specified {@code base}, as a float
      */
-    public static float log(float base, float value) {
-        return (float) (Math.log(value) / Math.log(base));
+    public static float log(float base, float arg) {
+        return (float) (Math.log(arg) / Math.log(base));
     }
 
     /**
-     * Gets the logarithm of {@code value} with base 2.
+     * Gets the logarithm of {@code value} with base 2, using floats.
      * @see RoughMath#log2Rough(float) A lower-precision, but probably faster, approximation.
-     * @param value what value to get the logarithm of, using base 2
-     * @return the logarithm of value with base 2
+     * @param value what value to get the logarithm of, using base 2, as a float
+     * @return the logarithm of value with base 2, as a float
      */
     public static float log2(float value) {
         return (float) (Math.log(value) * 1.4426950408889634);
