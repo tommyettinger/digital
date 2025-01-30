@@ -365,13 +365,52 @@ public final class MathTools {
     }
 
     /**
-     * A configurable sigmoid function; this is simply {@code 1 / sqrt(howGradual + x * x)}, operating on floats.
-     * The given {@code x} can be any finite float; {@code howGradual} must be greater than 0.
+     * A configurable sigmoid function; this is simply {@code 1 / (howGradual + abs(x))}, operating on floats.
+     * The given {@code x} can be any finite float; {@code howGradual} must be greater than 0, and is usually near 1.
      * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
      * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
      * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
      * results curve more rapidly toward the limit.
+     * <br>
+     * This acts a little like calling {@link #rootSigmoid(float, float)} with a very high value for howGradual.
      * 
+     * @param x the input to the sigmoid function; may be any finite float
+     * @param howGradual a positive (non-zero) float that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
+     * @return a float between -1 and 1, returning 0 when x is 0
+     */
+    public static float basicSigmoid(float x, float howGradual){
+        return x / (howGradual + Math.abs(x));
+    }
+
+    /**
+     * A configurable sigmoid function; this is simply {@code 1 / (howGradual + abs(x))}, operating on doubles.
+     * The given {@code x} can be any finite double; {@code howGradual} must be greater than 0, and is usually near 1.
+     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
+     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
+     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
+     * results curve more rapidly toward the limit.
+     * <br>
+     * This acts a little like calling {@link #rootSigmoid(double, double)} with a very high value for howGradual.
+     *
+     * @param x the input to the sigmoid function; may be any finite double
+     * @param howGradual a positive (non-zero) double that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
+     * @return a double between -1 and 1, returning 0 when x is 0
+     */
+    public static double basicSigmoid(double x, double howGradual){
+        return x / (howGradual + Math.abs(x));
+    }
+
+
+    /**
+     * A configurable sigmoid function; this is simply {@code 1 / sqrt(howGradual + x * x)}, operating on floats.
+     * The given {@code x} can be any finite float; {@code howGradual} must be greater than 0, and is usually near 1.
+     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
+     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
+     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
+     * results curve more rapidly toward the limit.
+     * <br>
+     * The curve this produces is shaped more like {@link Math#tanh(double)} than {@link #basicSigmoid(float, float)}.
+     *
      * @param x the input to the sigmoid function; may be any finite float
      * @param howGradual a positive (non-zero) float that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
      * @return a float between -1 and 1, returning 0 when x is 0
@@ -382,11 +421,13 @@ public final class MathTools {
 
     /**
      * A configurable sigmoid function; this is simply {@code 1 / sqrt(howGradual + x * x)}, operating on doubles.
-     * The given {@code x} can be any finite double; {@code howGradual} must be greater than 0.
+     * The given {@code x} can be any finite double; {@code howGradual} must be greater than 0, and is usually near 1.
      * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
      * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
      * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
      * results curve more rapidly toward the limit.
+     * <br>
+     * The curve this produces is shaped more like {@link Math#tanh(double)} than {@link #basicSigmoid(double, double)}.
      *
      * @param x the input to the sigmoid function; may be any finite double
      * @param howGradual a positive (non-zero) double that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
