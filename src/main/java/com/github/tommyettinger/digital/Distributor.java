@@ -321,8 +321,8 @@ public final class Distributor {
         double x = probit(d);
         if( d > 0.0 && d < 1.0 && d != 0.5) {
             double e = 0.5 * erfc(x * -0.7071067811865475) - d; //-0.7071067811865475 == -1.0 / Math.sqrt(2.0)
-            double u = e * 2.5066282746310002 * Math.exp((x * x) * 0.5); //2.5066282746310002 == Math.sqrt(2 * Math.PI)
-            x = x - u / (1.0 + x * u * 0.5);
+            double u = e * 2.5066282746310002 * Math.exp(0.5 * x * x); //2.5066282746310002 == Math.sqrt(2 * Math.PI)
+            x = x - u / (1.0 + 0.5 * x * u);
         }
         return x;
     }

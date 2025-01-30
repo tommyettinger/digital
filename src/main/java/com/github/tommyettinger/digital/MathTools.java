@@ -1168,8 +1168,8 @@ public final class MathTools {
      * Gaussian values that match a pattern present in the inputs (which you could have by using a sub-random sequence
      * as the input, such as those produced by a van der Corput, Halton, Sobol or R2 sequence). Most methods of generating
      * Gaussian values (e.g. Box-Muller and Marsaglia polar) do not have any way to preserve a particular pattern. Note
-     * that if you don't need to preserve patterns in input, then either the Ziggurat method (which is available and the
-     * default in the juniper library for pseudo-random generation) or the Marsaglia polar method (which is the default
+     * that if you don't need to preserve patterns in input, then either the Ziggurat method (which is available via
+     * {@link Distributor#normal(long)}) or the Marsaglia polar method (which is the default
      * in the JDK Random class) will perform better in each one's optimal circumstances. The Marsaglia polar method does
      * well when generating multiple numbers at a time, while Ziggurat is often the best when you need one Gaussian
      * value per input.
@@ -1177,7 +1177,9 @@ public final class MathTools {
      * @see #probitInverse(double) probitInverse() provides a way to take normal-distributed values and go back to 0-1 .
      * @param d should be between 0 and 1, exclusive, but other values are tolerated
      * @return a normal-distributed double centered on 0.0; all results will be between -38.5 and 38.5, both inclusive
+     * @deprecated You should usually use {@link Distributor#probitD(double)} instead.
      */
+    @Deprecated
     public static double probit (final double d) {
         if (d <= 0 || d >= 1) {
             return Math.copySign(38.5, d - 0.5);
@@ -1197,13 +1199,14 @@ public final class MathTools {
     }
 
     /**
-     * Inverse to the {@link #probit(double)} function; takes a normal-distributed input and returns a value between 0.0
-     * and 1.0, both inclusive. This is based on a scaled error function approximation; the original approximation has a
-     * maximum error of {@code 3.0e-7}, and scaling it shouldn't change that too drastically. The CDF of the normal
-     * distribution is essentially the same as this method.
+     * Inverse to the {@link Distributor#probitD(double)} function; takes a normal-distributed input and returns a value
+     * between 0.0 and 1.0, both inclusive. This is based on a scaled error function approximation; the original
+     * approximation has a maximum error of {@code 3.0e-7}, and scaling it shouldn't change that too drastically. The
+     * CDF of the normal distribution is essentially the same as this method.
      * <br>
      * Equivalent to a scaled error function from Abramowitz and Stegun, 1964; equation 7.1.27 .
      * See <a href="https://en.wikipedia.org/wiki/Error_function#Approximation_with_elementary_functions">Wikipedia</a>.
+     *
      * @param x any finite double, typically normal-distributed but not necessarily
      * @return a double between 0 and 1, inclusive
      */
@@ -1218,10 +1221,10 @@ public final class MathTools {
     }
 
     /**
-     * Inverse to the {@link #probit(double)} function; takes a normal-distributed input and returns a value between 0.0
-     * and 1.0, both inclusive. This is based on a scaled error function approximation; the original approximation has a
-     * maximum error of {@code 3.0e-7}, and scaling it shouldn't change that too drastically. The CDF of the normal
-     * distribution is essentially the same as this method.
+     * Inverse to the {@link Distributor#probitF(float)} function; takes a normal-distributed input and returns a value
+     * between 0.0 and 1.0, both inclusive. This is based on a scaled error function approximation; the original
+     * approximation has a maximum error of {@code 3.0e-7}, and scaling it shouldn't change that too drastically. The
+     * CDF of the normal distribution is essentially the same as this method.
      * <br>
      * Equivalent to a scaled error function from Abramowitz and Stegun, 1964; equation 7.1.27 .
      * See <a href="https://en.wikipedia.org/wiki/Error_function#Approximation_with_elementary_functions">Wikipedia</a>.
@@ -1305,18 +1308,24 @@ public final class MathTools {
     }
 
     /**
-     * This is the same as {@link #probit(double)}, except that it performs an additional step of post-processing to
-     * bring the result even closer to the normal distribution.
+     * This is the same as {@link Distributor#probitD(double)}, except that it performs an additional step of
+     * post-processing to bring the result even closer to the normal distribution.
+     * <br>
+     * This is different from {@link Distributor#probitHighPrecision(double)} in that this improves on
+     * {@link Distributor#probitD(double)} instead of {@link Distributor#probit(double)} or its deprecated duplicate in
+     * this class.
+     *
      * @param d should be between 0 and 1, exclusive, but other values are tolerated
      * @return a normal-distributed double centered on 0.0
      */
     public static double probitHighPrecision(double d)
     {
-        double x = probit(d);
-        if( d > 0.0 && d < 1.0) {
-            double e = 0.5 * erfc(-x / Math.sqrt(2.0)) - d;
-            double u = e * Math.sqrt(2.0 * Math.PI) * Math.exp((x * x) / 2.0);
-            x = x - u / (1.0 + x * u / 2.0);
+        double x = Distributor.probitD(d);
+        if( d > 0.0 && d < 1.0 && d != 0.5) {
+            double e = 0.5 * erfc(-x * ROOT2_INVERSE_D) - d;
+            /* 2.5066282746310002 is Math.sqrt(2.0 * Math.PI) */
+            double u = e * 2.5066282746310002 * Math.exp(0.5 * x * x);
+            x = x - u / (1.0 + 0.5 * x * u);
         }
         return x;
     }
