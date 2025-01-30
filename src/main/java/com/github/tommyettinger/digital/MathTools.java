@@ -516,8 +516,27 @@ public final class MathTools {
      * push high-octave noise results from being centrally biased to being closer to uniform. Getting the values right
      * probably requires tweaking them manually; for Simplex Noise, mul=2.3f and mix=0.75f works well with 2 or more
      * octaves (and not at all well for one octave, which can use mix=0.0f to avoid redistributing at all). This
+     * variation takes n in the -1f to 1f range, inclusive, and returns a value in the same range.
+     *
+     * @param n a float between -1f and 1f inclusive
+     * @param mul a positive multiplier where higher values make extreme results more likely; often around 2.3f
+     * @param mix a blending amount between 0f and 1f where lower values keep {@code n} more; often around 0.75f
+     * @return a float between -1f and 1f inclusive
+     */
+    public static float redistributeNoise(float n, float mul, float mix) {
+        final float nn = n * n * mul, ann = 0.1400122886866665f * nn;
+        final float denormal = Math.copySign((float) Math.sqrt(1.0f - (float)Math.exp(nn * (-1.2732395447351628f - ann) / (1.0f + ann))), n);
+        return lerp(n, denormal, mix);
+    }
+
+    /**
+     * Redistributes a 0-1 value {@code n} using the given {@code mul} and {@code mix} parameters. This is meant to
+     * push averages of many 0-1 values from being centrally biased to being closer to uniform. Getting the values right
+     * probably requires tweaking them manually; for Simplex Noise, mul=2.3f and mix=0.75f works well with 2 or more
+     * octaves (and not at all well for one octave, which can use mix=0.0f to avoid redistributing at all). This
      * variation takes n in the 0f to 1f range, inclusive, and returns a value in the same range.
      *
+     * @see #redistributeNoise(float, float, float) should be preferred for input and output in the -1 to 1 range.
      * @param n a float between 0f and 1f inclusive
      * @param mul a positive multiplier where higher values make extreme results more likely; often around 2.3f
      * @param mix a blending amount between 0f and 1f where lower values keep {@code n} more; often around 0.75f
@@ -525,7 +544,7 @@ public final class MathTools {
      */
     public static float redistribute(float n, float mul, float mix) {
         final float x = (n - 0.5f) * 2f, xx = x * x * mul, axx = 0.1400122886866665f * xx;
-        final float denormal = Math.copySign((float) Math.sqrt(1.0f - Math.exp(xx * (-1.2732395447351628f - axx) / (1.0f + axx))), x);
+        final float denormal = Math.copySign((float) Math.sqrt(1.0f - (float)Math.exp(xx * (-1.2732395447351628f - axx) / (1.0f + axx))), x);
         return lerp(n, denormal * 0.5f + 0.5f, mix);
     }
 
@@ -552,7 +571,7 @@ public final class MathTools {
      */
     public static float redistribute(float n, float mul, float mix, float bias) {
         final float x = (n - 0.5f) * 2f, xx = x * x * mul, axx = 0.1400122886866665f * xx;
-        final float denormal = Math.copySign((float) Math.sqrt(1.0f - Math.exp(xx * (-1.2732395447351628f - axx) / (1.0f + axx))), x);
+        final float denormal = Math.copySign((float) Math.sqrt(1.0f - (float) Math.exp(xx * (-1.2732395447351628f - axx) / (1.0f + axx))), x);
         return (float) Math.pow(lerp(n, denormal * 0.5f + 0.5f, mix), bias);
     }
 
@@ -2505,8 +2524,8 @@ public final class MathTools {
      * See <a href="http://extremelearning.com.au/unreasonable-effectiveness-of-quasirandom-sequences/#GeneralizingGoldenRatio">Martin Roberts' blog post</a>
      * for more information on how these were constructed. This can be organized into 99 groups of increasing size -- 1
      * number from the 1D sequence in that post, 2 numbers from the 2D sequence, 3 numbers from the 3D sequence, etc.
-     * You can access the group of N numbers for the N-dimensional sequence by looking up N consecutive items starting
-     * at {@link #goldenLongsOffset(int)}, passing it N.
+     * all the way up to 99 items from the 99D sequence. You can access the group of N numbers for the N-dimensional
+     * sequence by looking up N consecutive items starting at {@link #goldenLongsOffset(int)}, passing it N.
      */
     public static final long[] GOLDEN_LONGS = {
             0x9E3779B97F4A7C15L,
