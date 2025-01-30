@@ -365,10 +365,48 @@ public final class MathTools {
     }
 
     /**
+     * A configurable sigmoid function; this is simply {@code 1 / sqrt(howGradual + x * x)}, operating on floats.
+     * The given {@code x} can be any finite float; {@code howGradual} must be greater than 0.
+     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
+     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
+     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
+     * results curve more rapidly toward the limit.
+     * 
+     * @param x the input to the sigmoid function; may be any finite float
+     * @param howGradual a positive (non-zero) float that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
+     * @return a float between -1 and 1, returning 0 when x is 0
+     */
+    public static float rootSigmoid(float x, float howGradual){
+        return x / (float)Math.sqrt(howGradual + x * x);
+    }
+
+    /**
+     * A configurable sigmoid function; this is simply {@code 1 / sqrt(howGradual + x * x)}, operating on doubles.
+     * The given {@code x} can be any finite double; {@code howGradual} must be greater than 0.
+     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
+     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
+     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
+     * results curve more rapidly toward the limit.
+     *
+     * @param x the input to the sigmoid function; may be any finite double
+     * @param howGradual a positive (non-zero) double that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
+     * @return a double between -1 and 1, returning 0 when x is 0
+     */
+    public static double rootSigmoid(double x, double howGradual){
+        return x / Math.sqrt(howGradual + x * x);
+    }
+
+    /**
      * Returns a float between 0 and 1, gradually approaching 1 as timeTaken goes up. How gradually it
      * "takes off" and "lands" depends on howGradual, with values greater than 1 taking off slowly and values less than
      * 1 (but always greater than 0) taking off quickly. The Interpolator this takes allows you to affect the rate of
-     * change as timeTaken goes up. This is meant to be used to get an alpha parameter to pass to lerp() methods.
+     * change as timeTaken goes up. Note, unlike {@link #approach(float, float, float, float)}, this is not meant to be
+     * assigned to any of its parameters; timeTaken should be related to the actual elapsed time (or a multiple thereof)
+     * and this makes using approachSigmoid() fundamentally different from approach().
+     * <br>
+     * The Interpolator this takes allows you to affect the rate of change as timeTaken goes up.
+     * This is meant to be used to get an alpha parameter to pass to lerp() methods that interpolate more than a float.
+     *
      * @param timeTaken a non-negative float that should go up continually; the rate it goes up doesn't matter
      * @param howGradual often 1.0, but should be adjusted higher if the approach should be very gradual, or as low as 0.1 if the approach should be rapid
      * @param interpolator may be {@link Interpolations#linear} for the simplest case, or any other Interpolator
@@ -381,8 +419,12 @@ public final class MathTools {
     /**
      * Returns a float between start and target, gradually approaching target as timeTaken goes up. How gradually it
      * "takes off" and "lands" depends on howGradual, with values greater than 1 taking off slowly and values less than
-     * 1 (but always greater than 0) taking off quickly. The Interpolator this takes allows you to affect the rate of
-     * change as timeTaken goes up.
+     * 1 (but always greater than 0) taking off quickly. Note, unlike {@link #approach(float, float, float, float)},
+     * this is not meant to be assigned to any of its parameters; timeTaken should be related to the actual elapsed time
+     * (or a multiple thereof) and this makes using approachSigmoid() fundamentally different from approach().
+     * <br>
+     * The Interpolator this takes allows you to affect the rate of change as timeTaken goes up.
+     *
      * @param start the starting float value; does not change over the course of the movement
      * @param target the target float value to gradually approach
      * @param timeTaken a non-negative float that should go up continually; the rate it goes up doesn't matter
