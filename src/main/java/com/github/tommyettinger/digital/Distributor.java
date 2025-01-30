@@ -13,25 +13,26 @@ import static com.github.tommyettinger.digital.RoughMath.logRough;
  * still fairly-high-quality approximation by Voutier, and are usually indistinguishable from the earlier
  * {@link #probit(double)}. The float and double versions also take inputs in the 0.0 to 1.0 range, but the int and long
  * versions can take any int or any long, with the lowest values mapping to the lowest results, highest to highest, near
- * 0 to near 0, etc. {@link #linearNormal(long)} is like {@link #probitL(long)}, though not quite as accurate.
- * It takes a long in the entire range of possible long values, and also produces a double centered on 0.0 with
- * standard deviation 1.0 . Similarly, {@link #linearNormalF(int)} takes an int in the entire range of possible int
- * values, and produces a float centered on 0f with standard deviation 1f. Using the suffixed probit() methods, such as
- * {@link #probitF(float)}, is recommended when generating normal-distributed floats or doubles.
+ * 0 to near 0, etc. Using the suffixed probit() methods, such as {@link #probitF(float)}, is recommended when
+ * generating normal-distributed floats or doubles.
  * <br>
  * All of these ways will preserve patterns in the input, so inputs close to the lowest
  * possible input (0.0 for probit(), {@link Long#MIN_VALUE} for normal(), {@link Integer#MIN_VALUE} for normalF()) will
- * produce the lowest possible output (-8.375 for probit(), linearNormal(), and linearNormalF(), -26.48372928592822 for
- * probitD() and probitL(), or -9.080134 for probitF() and probitI()),
+ * produce the lowest possible output (-8.375 for probit(), -26.48372928592822 for probitD() and probitL(), or -9.080134
+ * for probitF() and probitI()),
  * and similarly for the highest possible inputs producing the highest possible outputs.
  * <br>
  * There's also {@link #normal(long)} and {@link #normalF(int)}, which use the
  * <a href="https://en.wikipedia.org/wiki/Ziggurat_algorithm">Ziggurat method</a> and do not preserve input patterns.
- * The Ziggurat method does get drastically closer to the correct normal distribution in the trail (where very positive
- * or very negative values are) relative to linearNormal methods, and it is about the same speed as linearNormal() and
- * linearNormalF(). Surprisingly, {@link #probitF(float)} is a little faster than {@link #normalF(int)}, even
- * considering that generating random floats for input is slower than generating random ints. However,
- * {@link #normal(long)} is somewhat faster than {@link #probitL(long)}.
+ * The Ziggurat method does get closer to the correct normal distribution in the trail (where very positive
+ * or very negative values are) relative to probit methods. Surprisingly, {@link #probitF(float)} is a little faster
+ * than {@link #normalF(int)}, even considering that generating random floats for input is slower than generating random
+ * ints. However, {@link #normal(long)} is somewhat faster than {@link #probitL(long)}.
+ * <br>
+ * This class also still contains some older methods, for compatibility with earlier versions of this library. The
+ * "Linnormal" methods {@link #linearNormal(long)} and {@link #linearNormalF(int)} are like {@link #probitL(long)},
+ * though they used an algorithm that approximated the normal distribution very poorly. They are currently aliases for
+ * {@link #probitL(long)} and {@link #probitI(int)}.
  */
 public final class Distributor {
 
@@ -48,14 +49,7 @@ public final class Distributor {
     private static final float AREA_F            = 0.00991256303533646112916f;
     private static final float[] ZIG_TABLE_F  = new float[ZIG_TABLE_ITEMS_F+1];
 
-    private static final double[] LIN_TABLE  = new double[1024];
-    private static final float[] LIN_TABLE_F = new float[1024];
-
     static {
-        for (int i = 0; i < LIN_TABLE.length; i++) {
-            LIN_TABLE_F[i] = (float) (LIN_TABLE[i] = probitHighPrecision(0.5 + i * 0x1p-11));
-        }
-
         double f = Math.exp(-0.5 * R * R);
         ZIG_TABLE[0] = AREA / f;
         ZIG_TABLE[1] = R;
@@ -110,19 +104,19 @@ public final class Distributor {
 
     // Easier-to-read, slightly, version of probitL(long)
     // Meant to be copied with the above constants.
-    public static double probit(long l) {
-        double p = l * 5.421010862427522E-20 + 0.5; /* 5.421010862427522E-20 is Math.pow(2, -64) */
-        if(0.0465 > p) {
-            double r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
-            return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
-        } else if(0.9535 < p) {
-            double q = 1.0 - p, r = Math.sqrt(Math.log(1.0 / (q * q + 5.56268464626801E-309)));
-            return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
-        } else {
-            double q = p - 0.5, r = q * q;
-            return q * (a2 + (a1 * r + a0) / (r * (r + b1) + b0));
-        }
-    }
+//    public static double probit(long l) {
+//        double p = l * 5.421010862427522E-20 + 0.5; /* 5.421010862427522E-20 is Math.pow(2, -64) */
+//        if(0.0465 > p) {
+//            double r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
+//            return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
+//        } else if(0.9535 < p) {
+//            double q = 1.0 - p, r = Math.sqrt(Math.log(1.0 / (q * q + 5.56268464626801E-309)));
+//            return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
+//        } else {
+//            double q = p - 0.5, r = q * q;
+//            return q * (a2 + (a1 * r + a0) / (r * (r + b1) + b0));
+//        }
+//    }
 
     /**
      * A single-precision probit() approximation that takes a float between 0 and 1 inclusive and returns an
@@ -237,7 +231,7 @@ public final class Distributor {
      * is more likely to just be confusing.
      * <br>
      * Acklam's algorithm and Karimov's implementation are both competitive on speed with the Box-Muller Transform and
-     * Marsaglia's Polar Method, but slower than Ziggurat and the {@link #linearNormal(long)} method here. This isn't quite
+     * Marsaglia's Polar Method, but slower than Ziggurat and the {@link #probitD(double)} method here. This isn't quite
      * as precise as Box-Muller or Marsaglia Polar, and can't produce as extreme min and max results in the extreme
      * cases they should appear. If given a typical uniform random {@code double} that's exclusive on 1.0, it won't
      * produce a result higher than
@@ -261,6 +255,7 @@ public final class Distributor {
      * @param d should be between 0 and 1, exclusive, but other values are tolerated
      * @return a normal-distributed double centered on 0.0; all results will be between -8.375 and 8.375, both inclusive
      * @see #probitHighPrecision(double) There is a higher-precision, slower variant on this method.
+     * @see #probitD(double) There is a more-recent approximation that should be faster and more precise than this one.
      */
     public static double probit (final double d) {
         if (d <= 0 || d >= 1) {
@@ -319,6 +314,7 @@ public final class Distributor {
      * @param d should be between {@link Double#MIN_NORMAL}, inclusive, and 1, exclusive; subnormal values may return NaN
      * @return a normal-distributed double centered on 0.0
      * @see #probit(double) There is a lower-precision, faster variant on this method, which this uses internally.
+     * @see #probitD(double) A more-recently-published approximation that should be faster, and may have comparable quality
      */
     public static double probitHighPrecision(double d)
     {
@@ -332,82 +328,20 @@ public final class Distributor {
     }
 
     /**
-     * Given any {@code long} as input, this maps the full range of non-negative long values to much of the non-negative
-     * half of the range of the normal distribution with standard deviation 1.0, and similarly maps all negative long
-     * values to their equivalent-magnitude non-negative counterparts. Notably, an input of 0 will map to {@code 0.0},
-     * an input of -1 will map to {@code -0.0}, and inputs of {@link Long#MIN_VALUE} and  {@link Long#MAX_VALUE} will
-     * map to {@code -8.375} and {@code 8.375}, respectively. If you only pass this small
-     * sequential inputs, there may be no detectable difference between some outputs. This is meant to be given inputs
-     * with large differences (at least millions) if very different outputs are desired.
-     * <br>
-     * The algorithm here can be called Linnormal; it is comparatively quite simple, and mostly relies on lookup from a
-     * precomputed table of results of {@link #probitHighPrecision(double)}, followed by linear interpolation. Values in
-     * the "trail" of the normal distribution, that is, those produced by long values in the uppermost 1/2048 of all
-     * values or the lowermost 1/2048 of all values, are computed slightly differently. Where the other parts of the
-     * distribution use the bottom 53 bits to make an interpolant between 0.0 and 1.0 and use it verbatim, values in the
-     * trail do all that and then square that interpolant, before going through the same type of interpolation.
-     * <br>
-     * This is like the "Ziggurat algorithm" to make normal-distributed doubles, but this preserves patterns in the
-     * input. Uses a large table of the results of {@link #probitHighPrecision(double)}, and interpolates between
-     * them using linear interpolation. This tends to be about as fast as Ziggurat at generating normal-distributed values,
-     * though it has worse quality.
-     * <br>
-     * You should usually prefer {@link #probitL(long)}, which is about the same speed but much more accurate.
-     *
-     * @param n any long; input patterns will be preserved
-     * @return a normal-distributed double, matching patterns in {@code n}
+     * This is an alias for {@link #probitL(long)}; see its docs for details.
+     * @param n may be any long, though very close longs will not produce different results
+     * @return an approximately-Gaussian-distributed double between -26.48372928592822 and 26.48372928592822
      */
     public static double linearNormal(long n) {
-        final long sign = n >> 63;
-        n ^= sign;
-        final int top10 = (int) (n >>> 53);
-        final double t = (n & 0x1FFFFFFFFFFFFFL) * 0x1p-53, v;
-        if (top10 == 1023) {
-            v = t * t * (8.375 - 3.297193345691938) + 3.297193345691938;
-        } else {
-            final double s = LIN_TABLE[top10];
-            v = t * (LIN_TABLE[top10 + 1] - s) + s;
-        }
-        return Math.copySign(v, sign);
+        return probitL(n);
     }
     /**
-     * Given any {@code int} as input, this maps the full range of non-negative int values to much of the non-negative
-     * half of the range of the normal distribution with standard deviation 1f, and similarly maps all negative int
-     * values to their equivalent-magnitude non-negative counterparts. Notably, an input of 0 will map to {@code 0f},
-     * an input of -1 will map to {@code -0f}, and inputs of {@link Integer#MIN_VALUE} and {@link Integer#MAX_VALUE}
-     * will map to {@code -8.375f} and {@code 8.375f}, respectively. If you only pass this small
-     * sequential inputs, there may be no detectable difference between some outputs. This is meant to be given inputs
-     * with large differences (at least millions) if very different outputs are desired.
-     * <br>
-     * The algorithm here can be called Linnormal; it is comparatively quite simple, and mostly relies on lookup from a
-     * precomputed table of results of {@link #probitHighPrecision(double)}, followed by linear interpolation. Values in
-     * the "trail" of the normal distribution, that is, those produced by int values in the uppermost 1/2048 of all
-     * values or the lowermost 1/2048 of all values, are computed slightly differently. Where the other parts of the
-     * distribution use the bottom 53 bits to make an interpolant between 0.0 and 1.0 and use it verbatim, values in the
-     * trail do all that and then square that interpolant, before going through the same type of interpolation.
-     * <br>
-     * This is like the "Ziggurat algorithm" to make normal-distributed doubles, but this preserves patterns in the
-     * input. Uses a large table of the results of {@link #probitHighPrecision(double)}, and interpolates between
-     * them using linear interpolation. This tends to be about as fast as Ziggurat at generating normal-distributed values,
-     * though it probably hasworse quality.
-     * <br>
-     * You should usually prefer {@link #probitI(int)}, which is about the same speed but much more accurate.
-     *
-     * @param n any int; input patterns will be preserved
-     * @return a normal-distributed float, matching patterns in {@code n}
+     * This is an alias for {@link #probitI(int)}; see its docs for details.
+     * @param n may be any int, though very close ints will not produce different results
+     * @return an approximately-Gaussian-distributed float between -9.080134 and 9.080134
      */
     public static float linearNormalF(int n) {
-        final int sign = n >> 31;
-        n ^= sign;
-        final int top10 = (n >>> 21);
-        final float t = (n & 0x1FFFFF) * 0x1p-21f, v;
-        if (top10 == 1023) {
-            v = t * t * (8.375005f - 3.297193345691938f) + 3.297193345691938f;
-        } else {
-            final float s = LIN_TABLE_F[top10];
-            v = t * (LIN_TABLE_F[top10 + 1] - s) + s;
-        }
-        return Math.copySign(v, sign);
+        return probitI(n);
     }
 
     /**
