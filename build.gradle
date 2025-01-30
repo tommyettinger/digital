@@ -59,7 +59,7 @@ compileTestJava {
 }
 
 apply plugin: 'idea'
-idea.module.excludeDirs += [file("src/main/java/com/github/tommyettinger/emu/"), file("docs/")]
+idea.module.excludeDirs += [file("src/main/java/com/github/tommyettinger/emu/"), file("docs/"), file("other/")]
 [compileJava, compileTestJava, javadoc]*.exclude("com/github/tommyettinger/emu")
 
 // JavaDocs will be published inside the docs/ folder, which you can easily put on GitHub Pages in your repo settings.
@@ -86,13 +86,13 @@ repositories {
 }
 
 dependencies {
-    testImplementation "com.badlogicgames.gdx:gdx:1.12.1"
+    testImplementation "com.badlogicgames.gdx:gdx:1.13.1"
     testImplementation "junit:junit:4.13.2"
     // don't require audio if a test doesn't need it; we don't use audio here.
-    testImplementation ("com.badlogicgames.gdx:gdx-backend-lwjgl3:1.12.1"){
+    testImplementation ("com.badlogicgames.gdx:gdx-backend-lwjgl3:1.13.1"){
         exclude group: "org.jcraft", module: "jorbis"
         exclude group: "org.lwjgl", module: "lwjgl-openal"
     }
-    testImplementation "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-desktop"
+    testImplementation "com.badlogicgames.gdx:gdx-platform:1.13.1:natives-desktop"
 
 }

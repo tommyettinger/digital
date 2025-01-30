@@ -128,6 +128,11 @@ There's the fract() methods, familiar to shader programmers,
 that get the fractional part of a float or double. There's
 Freya Holmer's recently-discovered method to make a float
 approach another value at an even rate using interpolation.
+Various methods are there relating to sigmoid functions,
+including two configurable methods (basicSigmoid() and
+rootSigmoid()), and an alternative to the just-mentioned
+approach() that uses a sigmoid function to gradually approach
+a target value.
 In general, if you need a math function that isn't
 trigonometry-related and doesn't do something with text, you
 may want to look here first.
@@ -235,9 +240,10 @@ call this vague type "text." This class includes many different
 ways to search text for something, code to count the occurrences
 of text in a larger piece of text, code to join/split arrays of
 text and larger texts (this also works for boolean arrays), code
-for padding text, and code for replacing text with literals. This
-class mostly exists to avoid duplicating similar code that occurs
-often throughout my projects, and is related to code here.
+for padding text, code for replacing text with literals, and code to
+repeat pieces of text multiple times (possibly with a delimiter).
+This class mostly exists to avoid duplicating similar code that
+occurs often throughout my projects, and is related to code here.
 
 Interpolations, along with its nested classes InterpolationFunction
 and Interpolator, provide a way to store and look up functions to
@@ -312,14 +318,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.6.0"
+api "com.github.tommyettinger:digital:0.6.1"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.6.0:sources"
+api "com.github.tommyettinger:digital:0.6.1:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
