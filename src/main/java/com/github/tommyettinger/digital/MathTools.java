@@ -2510,6 +2510,29 @@ public final class MathTools {
     }
 
     /**
+     * Given an amount of decimal {@code digits} to use at most and a double value {@code v}, this softly limits any
+     * double v to fit into a number with the requested digits, positive or negative. This tolerates any size of double,
+     * as well as infinity, negative infinity, and NaN (this produces the same result for negative infinity and NaN,
+     * the most-significant negative number with the given amount of digits). Most digit amounts will act like the
+     * identity function for integers near 0 and to a decent distance away from it, for example,
+     * {@code softLimit(6, 9999)} will return {@code 9999}, but {@code softLimit(6, 54321)} will have slowed its
+     * approach toward the maximum value {@code 999999}. and returns {@code 54268}.
+     * <br>
+     * This can be useful when you want to limit the displayed digits to an int, but you process the value internally as
+     * a double to avoid overflow. While clamping is also a good option sometimes, neither approach works well if you
+     * internally process large numbers as ints, since clamping the product of two large ints will often be the same as
+     * clamping a negative number due to overflow.
+     *
+     * @param v the double value to softly limit so it fits in the requested digits
+     * @param digits how many decimal digits to use, between 1 and 9 inclusive
+     * @return a number with at most {@code digits} decimal digits, as a positive or negative int
+     */
+    public static int softLimit(double v, int digits) {
+        digits = (int)Math.pow(10, Math.min(Math.max(digits, 1), 9)) - 1;
+        return (int)(digits * Math.tanh(v / digits) + (digits + 0.5)) - digits;
+    }
+
+    /**
      * Gets the triangular number at a particular non-negative index. This returns 0 for index 0, 1 for index 1, 3 for
      * index 2, 6 for index 3, and so on according to
      * <a href="https://en.wikipedia.org/wiki/Triangular_number">Wikipedia's page on triangular numbers</a>.
