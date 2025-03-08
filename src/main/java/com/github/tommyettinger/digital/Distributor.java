@@ -2,7 +2,7 @@ package com.github.tommyettinger.digital;
 
 import java.util.Random;
 
-import static com.github.tommyettinger.digital.RoughMath.logRough;
+import static com.github.tommyettinger.digital.RoughMath.logRougher;
 
 /**
  * Different methods for distributing input {@code long} or {@code double} values from a given domain into specific
@@ -18,7 +18,7 @@ import static com.github.tommyettinger.digital.RoughMath.logRough;
  * <br>
  * All of these ways will preserve patterns in the input, so inputs close to the lowest
  * possible input (0.0 for probit(), {@link Long#MIN_VALUE} for normal(), {@link Integer#MIN_VALUE} for normalF()) will
- * produce the lowest possible output (-8.375 for probit(), -26.48372928592822 for probitD() and probitL(), or -9.080134
+ * produce the lowest possible output (-8.375 for probit(), -26.48372928592822 for probitD() and probitL(), or -9.082295
  * for probitF() and probitI()),
  * and similarly for the highest possible inputs producing the highest possible outputs.
  * <br>
@@ -107,9 +107,11 @@ public final class Distributor {
 //    public static double probit(long l) {
 //        double p = l * 5.421010862427522E-20 + 0.5; /* 5.421010862427522E-20 is Math.pow(2, -64) */
 //        if(0.0465 > p) {
+//            /* 5.56268464626801E-309 is the smallest number possible to add here. */
 //            double r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
 //            return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
 //        } else if(0.9535 < p) {
+//            /* 5.56268464626801E-309 is the smallest number possible to add here. */
 //            double q = 1.0 - p, r = Math.sqrt(Math.log(1.0 / (q * q + 5.56268464626801E-309)));
 //            return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
 //        } else {
@@ -120,23 +122,23 @@ public final class Distributor {
 
     /**
      * A single-precision probit() approximation that takes a float between 0 and 1 inclusive and returns an
-     * approximately-Gaussian-distributed float between -9.080134 and 9.080134 .
+     * approximately-Gaussian-distributed float between -9.082295 and 9.082295 .
      * The function maps the lowest inputs to the most negative outputs, the highest inputs to the most
      * positive outputs, and inputs near 0.5 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param p should be between 0 and 1, inclusive.
-     * @return an approximately-Gaussian-distributed float between -9.080134 and 9.080134
+     * @return an approximately-Gaussian-distributed float between -9.082295 and 9.082295
      */
     public static float probitF(float p) {
         if(0.0465f > p){
-            float r = (float)Math.sqrt(logRough(1f / (p * p)));
+            final float r = (float)Math.sqrt(logRougher(1f / (p * p)));
             return c3f * r + c2f + (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else if(0.9535f < p) {
-            float q = 1f - p, r = (float)Math.sqrt(logRough(1f / (q * q)));
+            final float q = 1f - p, r = (float)Math.sqrt(logRougher(1f / (q * q)));
             return -c3f * r - c2f - (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else {
-            float q = p - 0.5f, r = q * q;
+            final float q = p - 0.5f, r = q * q;
             return q * (a2f + (a1f * r + a0f) / (r * (r + b1f) + b0f));
         }
     }
@@ -153,39 +155,41 @@ public final class Distributor {
      */
     public static double probitD(double p) {
         if(0.0465 > p){
-            double r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
+            /* 5.56268464626801E-309 is the smallest number possible to add here. */
+            final double r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
             return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
         } else if(0.9535 < p) {
-            double q = 1.0 - p, r = Math.sqrt(Math.log(1.0 / (q * q + 5.56268464626801E-309)));
+            /* 5.56268464626801E-309 is the smallest number possible to add here. */
+            final double q = 1.0 - p, r = Math.sqrt(Math.log(1.0 / (q * q + 5.56268464626801E-309)));
             return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
         } else {
-            double q = p - 0.5, r = q * q;
+            final double q = p - 0.5, r = q * q;
             return q * (a2 + (a1 * r + a0) / (r * (r + b1) + b0));
         }
     }
 
     /**
      * A single-precision probit() approximation that takes any int and returns an
-     * approximately-Gaussian-distributed float between -9.080134 and 9.080134 .
+     * approximately-Gaussian-distributed float between -9.082295 and 9.082295 .
      * The function maps the most negative inputs to the most negative outputs, the most positive inputs to the most
-     * positive outputs, and inputs near 0 to outputs near 0. This does not consider the bottom 8 bits of {@code i}.
+     * positive outputs, and inputs near 0 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param i may be any int, though very close ints will not produce different results
-     * @return an approximately-Gaussian-distributed float between -9.080134 and 9.080134
+     * @return an approximately-Gaussian-distributed float between -9.082295 and 9.082295
      */
     public static float probitI(int i) {
         /* 2.3283064E-10f is 0x1p-32f */
-        final float p = 2.3283064E-10f * i + 0.5f;
-        if(0.0465f > p){
-            float r = (float)Math.sqrt(logRough(1f / (p * p)));
+        final float h = 2.3283064E-10f * i;
+        if(-0.4535f > h){
+            final float q = h + 0.5f, r = (float)Math.sqrt(logRougher(1f / (q * q)));
             return c3f * r + c2f + (c1f * r + c0f) / (r * (r + d1f) + d0f);
-        } else if(0.9535f < p) {
-            float q = 1f - p, r = (float)Math.sqrt(logRough(1f / (q * q)));
+        } else if(0.4535f < h) {
+            final float q = 0.5f - h, r = (float)Math.sqrt(logRougher(1f / (q * q)));
             return -c3f * r - c2f - (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else {
-            float q = p - 0.5f, r = q * q;
-            return q * (a2f + (a1f * r + a0f) / (r * (r + b1f) + b0f));
+            final float r = h * h;
+            return h * (a2f + (a1f * r + a0f) / (r * (r + b1f) + b0f));
         }
     }
 
@@ -193,7 +197,7 @@ public final class Distributor {
      * A double-precision probit() approximation that takes any long and returns an
      * approximately-Gaussian-distributed double between -26.48372928592822 and 26.48372928592822 .
      * The function maps the most negative inputs to the most negative outputs, the most positive inputs to the most
-     * positive outputs, and inputs near 0 to outputs near 0. This does not consider the bottom 11 bits of {@code l}.
+     * positive outputs, and inputs near 0 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param l may be any long, though very close longs will not produce different results
@@ -201,16 +205,18 @@ public final class Distributor {
      */
     public static double probitL(long l) {
         /* 5.421010862427522E-20 is 0x1p-64 */
-        final double p = l * 5.421010862427522E-20 + 0.5;
-        if(0.0465 > p) {
-            double r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
+        final double h = l * 5.421010862427522E-20;
+        if(-0.4535 > h) {
+            /* 5.56268464626801E-309 is the smallest number possible to add here. */
+            final double p = h + 0.5, r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
             return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
-        } else if(0.9535 < p) {
-            double q = 1.0 - p, r = Math.sqrt(Math.log(1.0 / (q * q + 5.56268464626801E-309)));
+        } else if(0.4535 < h) {
+            /* 5.56268464626801E-309 is the smallest number possible to add here. */
+            final double q = 0.5 - h, r = Math.sqrt(Math.log(1.0 / (q * q + 5.56268464626801E-309)));
             return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
         } else {
-            double q = p - 0.5, r = q * q;
-            return q * (a2 + (a1 * r + a0) / (r * (r + b1) + b0));
+            final double r = h * h;
+            return h * (a2 + (a1 * r + a0) / (r * (r + b1) + b0));
         }
     }
 
@@ -320,8 +326,8 @@ public final class Distributor {
     {
         double x = probit(d);
         if( d > 0.0 && d < 1.0 && d != 0.5) {
-            double e = 0.5 * erfc(x * -0.7071067811865475) - d; //-0.7071067811865475 == -1.0 / Math.sqrt(2.0)
-            double u = e * 2.5066282746310002 * Math.exp(0.5 * x * x); //2.5066282746310002 == Math.sqrt(2 * Math.PI)
+            double e = 0.5 * erfc(x * -0.7071067811865475) - d; /* -0.7071067811865475 == -1.0 / Math.sqrt(2.0) */
+            double u = e * 2.5066282746310002 * Math.exp(0.5 * x * x); /* 2.5066282746310002 == Math.sqrt(2*Math.PI) */
             x = x - u / (1.0 + 0.5 * x * u);
         }
         return x;
@@ -338,7 +344,7 @@ public final class Distributor {
     /**
      * This is an alias for {@link #probitI(int)}; see its docs for details.
      * @param n may be any int, though very close ints will not produce different results
-     * @return an approximately-Gaussian-distributed float between -9.080134 and 9.080134
+     * @return an approximately-Gaussian-distributed float between -9.082295 and 9.082295
      */
     public static float linearNormalF(int n) {
         return probitI(n);
@@ -388,7 +394,8 @@ public final class Distributor {
              *      return value.
              */
             idx = (int)(state & (ZIG_TABLE_ITEMS - 1));
-            u = (state >>> 11) * 0x1p-53 * ZIG_TABLE[idx];
+            /* 1.11022302462516E-16 is 0x1p-53 */
+            u = (state >>> 11) * 1.11022302462516E-16 * ZIG_TABLE[idx];
 
             /* Take a random box from TABLE
              * and get the value of a random x-coordinate inside it.
@@ -404,8 +411,9 @@ public final class Distributor {
                 /* If idx is 0, then the bottom 8 bits of state must all be 0,
                  * and u must be on the larger side. */
                 do {
-                    x = Math.log((((state = (state ^ 0xF1357AEA2E62A9C5L) * 0xABC98388FB8FAC03L) >>> 11) + 1L) * 0x1p-53) * INV_R;
-                    y = Math.log((((state = (state ^ 0xF1357AEA2E62A9C5L) * 0xABC98388FB8FAC03L) >>> 11) + 1L) * 0x1p-53);
+                    /* 1.11022302462516E-16 is 0x1p-53 */
+                    x = Math.log((((state = (state ^ 0xF1357AEA2E62A9C5L) * 0xABC98388FB8FAC03L) >>> 11) + 1L) * 1.11022302462516E-16) * INV_R;
+                    y = Math.log((((state = (state ^ 0xF1357AEA2E62A9C5L) * 0xABC98388FB8FAC03L) >>> 11) + 1L) * 1.11022302462516E-16);
                 } while (-(y + y) < x * x);
                 return (Long.bitCount(state) & 1L) == 0L ?
                         x - R :
@@ -418,7 +426,8 @@ public final class Distributor {
             y = u * u;
             f0 = Math.exp(-0.5 * (ZIG_TABLE[idx]     * ZIG_TABLE[idx]     - y));
             f1 = Math.exp(-0.5 * (ZIG_TABLE[idx + 1] * ZIG_TABLE[idx + 1] - y));
-            if (f1 + (((state = (state ^ 0xF1357AEA2E62A9C5L) * 0xABC98388FB8FAC03L) >>> 11) * 0x1p-53) * (f0 - f1) < 1.0)
+            /* 1.11022302462516E-16 is 0x1p-53 */
+            if (f1 + (((state = (state ^ 0xF1357AEA2E62A9C5L) * 0xABC98388FB8FAC03L) >>> 11) * 1.11022302462516E-16) * (f0 - f1) < 1.0)
                 break;
         }
         /* (Zero-indexed ) bits 8, 9, and 10 aren't used in the calculations for idx
