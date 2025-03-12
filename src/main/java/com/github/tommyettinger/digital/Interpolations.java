@@ -209,18 +209,38 @@ public final class Interpolations {
     public static final Interpolator linear = new Interpolator("linear", linearFunction);
     /**
      * "Smoothstep" or a cubic Hermite spline.
+     * <br>
+     * This has been modified slightly for numerical correctness. The form of this spline usually given,
+     * {code a * a * (3 - 2 * a)}, can exceed 1 for many inputs that are just less than 1, which makes that form much
+     * harder to use in a table lookup because an output larger than 1 could mean an out-of-bounds index. Instead, we
+     * use the form {@code a * a * (1 - a - a + 2)}, which always stays in the range 0.0f to 1.0f, inclusive.
      */
-    public static final Interpolator smooth = new Interpolator("smooth", a -> a * a * (3 - 2 * a));
+    public static final Interpolator smooth = new Interpolator("smooth", a -> a * a * (1 - a - a + 2));
     /**
      * "Smoothstep" or a cubic Hermite spline, but flipped.
+     * <br>
+     * This has been modified slightly for numerical correctness. The form of this spline usually given,
+     * {code a * a * (3 - 2 * a)}, can exceed 1 for many inputs that are just less than 1, which makes that form much
+     * harder to use in a table lookup because an output larger than 1 could mean an out-of-bounds index. Instead, we
+     * use the form {@code a * a * (1 - a - a + 2)}, which always stays in the range 0.0f to 1.0f, inclusive.
      */
     public static final Interpolator smoothOutIn = new Interpolator("smoothOutIn", smooth.fn.flip());
     /**
      * "Smoothstep" or a cubic Hermite spline, applied twice.
+     * <br>
+     * This has been modified slightly for numerical correctness. The form of the cubic Hermite spline usually given,
+     * {code a * a * (3 - 2 * a)}, can exceed 1 for many inputs that are just less than 1, which makes that form much
+     * harder to use in a table lookup because an output larger than 1 could mean an out-of-bounds index. Instead, we
+     * use the form {@code a * a * (1 - a - a + 2)}, which always stays in the range 0.0f to 1.0f, inclusive.
      */
-    public static final Interpolator smooth2 = new Interpolator("smooth2", a -> (a *= a * (3 - 2 * a)) * a * (3 - 2 * a));
+    public static final Interpolator smooth2 = new Interpolator("smooth2", a -> (a *= a * (1 - a - a + 2)) * a * (1 - a - a + 2));
     /**
      * "Smoothstep" or a cubic Hermite spline, applied twice, but flipped.
+     * <br>
+     * This has been modified slightly for numerical correctness. The form of the cubic Hermite spline usually given,
+     * {code a * a * (3 - 2 * a)}, can exceed 1 for many inputs that are just less than 1, which makes that form much
+     * harder to use in a table lookup because an output larger than 1 could mean an out-of-bounds index. Instead, we
+     * use the form {@code a * a * (1 - a - a + 2)}, which always stays in the range 0.0f to 1.0f, inclusive.
      */
     public static final Interpolator smooth2OutIn = new Interpolator("smooth2OutIn", smooth2.fn.flip());
     /**
