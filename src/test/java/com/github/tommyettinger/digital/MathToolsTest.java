@@ -268,16 +268,64 @@ public class MathToolsTest {
         x = 0.666182f * x + 0.333818f * y / (x*x); // newtonian step #2
         return x;
     }
+    public static float cbrtRetry(float cube) {
+        int ix = BitConversion.floatToIntBits(cube);
+        /*
+mean squared error: 0.0000000000000557
+mean error: -0.0000000016092396
+min error: -0.0000002948072876 at 13.3972063064575200
+max error: 0.0000009216367450 at 1.0986944437026978
+         */
+//        final int sign = (ix & 0x80000000);
+//        ix &= 0x7FFFFFFF;
+//        ix = (ix >>> 2) + (ix >>> 4);
+//        ix += ix >>> 4;
+//        ix = ix + (ix >>> 8) + 0x2A5137A0 | sign;
+//        float x = BitConversion.intBitsToFloat(ix);
+        /*
+mean squared error: 0.0000000000000556
+mean error: -0.0000000000441931
+min error: -0.0000002959369270 at 0.2093089073896408
+max error: 0.0000009699978846 at 0.2499718964099884
+         */
+        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A5137A0 | (ix & 0x80000000));
+        /*
+mean squared error: 0.0000000000000556
+mean error: -0.0000000000562560
+min error: -0.0000002959369270 at 0.2093089073896408
+max error: 0.0000009699978846 at 0.2499718964099884
+         */
+//        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A51379F | (ix & 0x80000000));
+        x = 0.6666667f * x + 0.33333334f * cube / (x * x);
+        x = 0.6666665f * x + 0.33333332f * cube / (x * x);
+        return x;
+    }
 
     public static void main(String[] args) {
+/*
+MathTools.cbrt():
+mean squared error: 0.0000000000000761
+mean error: 0.0000001503098200
+min error: -0.0000001338998894 at 1.5752552747726440
+max error: 0.0000010528937143 at 8.7879924774169920
+ */
         System.out.println("MathTools.cbrt(): ");
         testApprox(3, MathTools::cbrt, 0.0625f, 16f);
-        System.out.println("cbrtNewton0(): ");
-        testApprox(3, MathToolsTest::cbrtNewton0, 0.0625f, 16f);
-        System.out.println("cbrtNewton1(): ");
-        testApprox(3, MathToolsTest::cbrtNewton1, 0.0625f, 16f);
-        System.out.println("cbrtNewton2(): ");
-        testApprox(3, MathToolsTest::cbrtNewton2, 0.0625f, 16f);
+        /*
+cbrtRetry():
+mean squared error: 0.0000000000000556
+mean error: -0.0000000000441931
+min error: -0.0000002959369270 at 0.2093089073896408
+max error: 0.0000009699978846 at 0.2499718964099884
+         */
+        System.out.println("cbrtRetry(): ");
+        testApprox(3, MathToolsTest::cbrtRetry, 0.0625f, 16f);
+//        System.out.println("cbrtNewton0(): ");
+//        testApprox(3, MathToolsTest::cbrtNewton0, 0.0625f, 16f);
+//        System.out.println("cbrtNewton1(): ");
+//        testApprox(3, MathToolsTest::cbrtNewton1, 0.0625f, 16f);
+//        System.out.println("cbrtNewton2(): ");
+//        testApprox(3, MathToolsTest::cbrtNewton2, 0.0625f, 16f);
 
     }
 
@@ -290,8 +338,8 @@ public class MathToolsTest {
 //                min_error_arg = 0.0f, max_error_arg = 0.0f;
 
         double sum_error = 0.0, sum_sq_error = 0.0,
-                min_error     = 1e20, max_error     = -1e20,
-                min_error_arg = 0.0, max_error_arg = 0.0;
+                min_error     = 1e20, max_error     = -1e20;
+        float min_error_arg = 0.0f, max_error_arg = 0.0f;
         for (int i = ib; i <= ie; ++i)
         {
             float y = BitConversion.intBitsToFloat(i);
