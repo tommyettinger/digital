@@ -252,4 +252,102 @@ public class MathToolsTest {
             System.out.println();
         }
     }
+
+    public static float cbrtNewton0(float y) {
+        return BitConversion.intBitsToFloat(0x2a510680 + (BitConversion.floatToIntBits(y) / 3)); // log-approx hack
+    }
+
+    public static float cbrtNewton1(float y) {
+        float x = BitConversion.intBitsToFloat(0x2a543aa3 + (BitConversion.floatToIntBits(y) / 3)); // log-approx hack
+        return 0.652748f * x + 0.347252f * y / (x*x); // newtonian step #1
+    }
+
+    public static float cbrtNewton2(float y) {
+        float x = BitConversion.intBitsToFloat(0x2a4fcd03 + (BitConversion.floatToIntBits(y) / 3)); // log-approx hack
+        x = 0.666182f * x + 0.333818f * y / (x*x); // newtonian step #1
+        x = 0.666182f * x + 0.333818f * y / (x*x); // newtonian step #2
+        return x;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("MathTools.cbrt(): ");
+        testApprox(3, MathTools::cbrt, 0.0625f, 16f);
+        System.out.println("cbrtNewton0(): ");
+        testApprox(3, MathToolsTest::cbrtNewton0, 0.0625f, 16f);
+        System.out.println("cbrtNewton1(): ");
+        testApprox(3, MathToolsTest::cbrtNewton1, 0.0625f, 16f);
+        System.out.println("cbrtNewton2(): ");
+        testApprox(3, MathToolsTest::cbrtNewton2, 0.0625f, 16f);
+
+    }
+
+    public static void testApprox(int inversePower, PrecisionTest.FloatUnaryOperator approx, float minTest, float maxTest) {
+        int ib = BitConversion.floatToRawIntBits(minTest);
+        int ie = BitConversion.floatToRawIntBits(maxTest);
+
+//        float sum_error = 0.0f, sum_sq_error = 0.0f,
+//                min_error     = 1e20f, max_error     = -1e20f,
+//                min_error_arg = 0.0f, max_error_arg = 0.0f;
+
+        double sum_error = 0.0, sum_sq_error = 0.0,
+                min_error     = 1e20, max_error     = -1e20,
+                min_error_arg = 0.0, max_error_arg = 0.0;
+        for (int i = ib; i <= ie; ++i)
+        {
+            float y = BitConversion.intBitsToFloat(i);
+            double x = Math.pow(y, 1.0/inversePower);
+            double error = (approx.applyAsFloat(y) - x) / x;
+            sum_error += error;
+            sum_sq_error += error*error;
+            if (error < min_error) {min_error = error; min_error_arg = y;}
+            if (error > max_error) {max_error = error; max_error_arg = y;}
+        }
+        double samples = (ie - ib + 1);
+
+        System.out.printf("mean squared error: %.16f\n" +
+                        "mean error: %.16f\n" +
+                        "min error: %.16f at %.16f\n" +
+                        "max error: %.16f at %.16f\n",
+                sum_sq_error / samples,
+                sum_error / samples,
+                min_error, min_error_arg,
+                max_error, max_error_arg);
+
+    }
+    // from root-cellar, https://github.com/EvanBalster/root-cellar/blob/master/root_cellar.h , Apache-licensed
+    /*
+	template<int ROOT_INDEX, typename T_Approx, typename T_Float>
+	inline PowApprox_Stats Test_Root_Approx(
+		const T_Approx &approx,
+		T_Float range_min,
+		T_Float range_max)
+	{
+		using float_t = T_Float;
+		using int_t = float_as_int_t<float_t>;
+		int_t
+			ib = reinterpret_float_int(range_min),
+			ie = reinterpret_float_int(range_max);
+
+		// Measurements...
+		using measure_t = float_t;
+		measure_t sum_error = 0.0, sum_sq_error = 0.0,
+			min_error     = 1e20, max_error     = -1e20,
+			min_error_arg = 0.0, max_error_arg = 0.0;
+		for (int i = ib; i <= ie; ++i)
+		{
+			float_t y = reinterpret_int_float(i), x = root_i<ROOT_INDEX>(y);
+			measure_t error = (approx(y) - x) / x;
+			sum_error += error;
+			sum_sq_error += error*error;
+			if (error < min_error) {min_error = error; min_error_arg = y;}
+			if (error > max_error) {max_error = error; max_error_arg = y;}
+		}
+		double samples = double(ie - ib);
+		return {
+			sum_sq_error / samples,
+			sum_error / samples,
+			min_error, min_error_arg,
+			max_error, max_error_arg};
+	}
+     */
 }
