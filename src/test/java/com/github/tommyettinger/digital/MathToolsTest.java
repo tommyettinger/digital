@@ -300,11 +300,11 @@ max error: 0.0000009699978846 at 0.2499718964099884
         x = 0.6666665f * x + 0.33333332f * cube / (x * x);
         return x;
     }
-    public static float cbrtConfigurable(float cube, int magicSteps, int nx1, int nc1, int nx2, int nc2) {
+    public static float cbrtConfigurable(float cube, int magic, float nx1, float nc1, float nx2, float nc2) {
         int ix = BitConversion.floatToIntBits(cube);
-        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + (0x2A5137A0 + magicSteps) | (ix & 0x80000000));
-        x = MathTools.towardsZero(0.6666666f, -nx1) * x + MathTools.towardsZero(0.33333333f, -nc1) * cube / (x * x);
-        x = MathTools.towardsZero(0.6666666f, -nx2) * x + MathTools.towardsZero(0.33333333f, -nc2) * cube / (x * x);
+        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + magic | (ix & 0x80000000));
+        x = nx1 * x + nc1 * cube / (x * x);
+        x = nx2 * x + nc2 * cube / (x * x);
         return x;
     }
 
@@ -338,18 +338,21 @@ max error: 0.0000009699978846 at 0.2499718964099884
 
         double bestError = Float.MAX_VALUE;
         int bestM = -33, bestX1 = -11, bestC1 = -11, bestX2 = -11, bestC2 = -11;
-        for (int mSteps = -32; mSteps <= 32; mSteps++) {
-            for (int x1 = -10; x1 <= 10; x1++) {
-                for (int c1 = -10; c1 <= 10; c1++) {
-                    for (int x2 = -10; x2 <= 10; x2++) {
-                        for (int c2 = -10; c2 <= 10; c2++) {
+        for (int mSteps = -16; mSteps <= 16; mSteps++) {
+            for (int x1 = -6; x1 <= 6; x1++) {
+                for (int c1 = -6; c1 <= 6; c1++) {
+                    for (int x2 = -6; x2 <= 6; x2++) {
+                        double lastImprovedError = Float.MAX_VALUE;
+                        for (int c2 = -6; c2 <= 6; c2++) {
                             System.out.printf("mSteps=%d, x1=%d, c1=%d, x2=%d, c2=%d:\n", mSteps, x1, c1, x2, c2);
-                            int finalMSteps = mSteps;
-                            int finalX = x1;
-                            int finalC = c1;
-                            int finalX1 = x2;
-                            int finalC1 = c2;
+                            int finalMSteps = (0x2A5137A0 + mSteps);
+                            float finalX = MathTools.towardsZero(0.6666666f, -x1);
+                            float finalC = MathTools.towardsZero(0.33333333f, -c1);
+                            float finalX1 = MathTools.towardsZero(0.6666666f, -x2);
+                            float finalC1 = MathTools.towardsZero(0.33333333f, -c2);
                             double meanSquareError = testApprox(3, (f -> cbrtConfigurable(f, finalMSteps, finalX, finalC, finalX1, finalC1)), 0.0625f, 16f);
+                            if(meanSquareError > lastImprovedError) break;
+                            lastImprovedError = meanSquareError;
                             if(meanSquareError < bestError){
                                 bestError = meanSquareError;
                                 bestM = mSteps;
