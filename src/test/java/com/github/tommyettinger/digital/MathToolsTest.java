@@ -343,7 +343,7 @@ max error: 0.0000009699978846 at 0.2499718964099884
                 for (int c1 = -6; c1 <= 6; c1++) {
                     for (int x2 = -6; x2 <= 6; x2++) {
                         double lastImprovedError = Float.MAX_VALUE;
-                        for (int c2 = -6; c2 <= 6; c2++) {
+                        for (int c2 = -6; c2 <= 20; c2++) {
                             System.out.printf("mSteps=%d, x1=%d, c1=%d, x2=%d, c2=%d:\n", mSteps, x1, c1, x2, c2);
                             int finalMSteps = (0x2A5137A0 + mSteps);
                             float finalX = MathTools.towardsZero(0.6666666f, -x1);
@@ -361,6 +361,7 @@ max error: 0.0000009699978846 at 0.2499718964099884
                                 bestX2 = x2;
                                 bestC2 = c2;
                             }
+                            System.out.printf("Current best mean squared error: %.16f\n", bestError);
                         }
                     }
                 }
@@ -398,7 +399,7 @@ max error: 0.0000009699978846 at 0.2499718964099884
                         "mean error: %.16f\n" +
                         "min error: %.16f at %.16f\n" +
                         "max error: %.16f at %.16f\n",
-                sum_sq_error / samples,
+                sum_sq_error /= samples,
                 sum_error / samples,
                 min_error, min_error_arg,
                 max_error, max_error_arg);
