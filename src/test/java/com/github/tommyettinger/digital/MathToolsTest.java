@@ -301,6 +301,12 @@ max error: 0.0000009393916873 at 3.9999132156372070
         x = 0.749466f * x + 0.250534f * y / (x*x*x); // newtonian step #2
         return x;
     }
+    public static float fourthRootConfigurable(float y, int magicAdd) {
+        float x = BitConversion.intBitsToFloat(0x2f9b8068 + magicAdd + (BitConversion.floatToIntBits(y) >> 2)); // log-approx hack
+        x = 0.75f * x + 0.25f * y / (x*x*x); // newtonian step #1
+        x = 0.75f * x + 0.25f * y / (x*x*x); // newtonian step #2
+        return x;
+    }
 
     public static float cbrtRetry(float cube) {
         int ix = BitConversion.floatToIntBits(cube);
@@ -389,7 +395,7 @@ max error: 0.0000009699978846 at 0.2499718964099884
 
         System.out.println();
 
-        //change to true to enable a very long process
+        //change to true to enable a very long process to configure cbrtConfigurable()
         if(false) {
         /*
 BEST:
@@ -443,6 +449,29 @@ mSteps=-16, x1=-6, c1=-6, x2=0, c2=-5:
         System.out.println("fourthRootNewton2(): ");
         testApprox(4, MathToolsTest::fourthRootNewton2, testMin, testMax);
 
+        //change to false to disable a very long process to configure fourthRootConfigurable()
+        if(true) {
+        /*
+BEST:
+Mean squared error: 0.0000000000000537
+mSteps=-16, x1=-6, c1=-6, x2=0, c2=-5:
+         */
+            double bestError = Float.MAX_VALUE;
+            int foundM = 0;//, foundX1 = 0, foundC1 = 0, foundX2 = 0, foundC2 = 0;
+            int bestM = -30001;//, bestX1 = -11, bestC1 = -11, bestX2 = -11, bestC2 = -11;
+            ALL:
+            for (int mSteps = -30000; mSteps <= -129; mSteps += 16) {
+                System.out.printf("mSteps=%d:\n", mSteps);
+                int finalMSteps = (mSteps + foundM);
+                double meanSquareError = testApprox(4, (f -> fourthRootConfigurable(f, finalMSteps)), testMin, testMax);
+                if (meanSquareError < bestError) {
+                    bestError = meanSquareError;
+                    bestM = mSteps;
+                }
+                System.out.printf("Current best mean squared error: %.16f\nCompleted step %d/\n", bestError, (mSteps + 30001), 30130>>4);
+            }
+            System.out.printf("\n\nBEST:\nMean squared error: %.16f\nmSteps=%d:\n", bestError, bestM);
+        }
     }
 
     public static double testApprox(int inversePower, PrecisionTest.FloatUnaryOperator approx, float minTest, float maxTest) {
