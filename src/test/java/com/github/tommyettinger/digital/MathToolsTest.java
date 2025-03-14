@@ -336,21 +336,28 @@ max error: 0.0000009699978846 at 0.2499718964099884
 
         System.out.println();
 
+        /*
+BEST:
+Mean squared error: 0.0000000000000537
+mSteps=-16, x1=-6, c1=-6, x2=0, c2=-5:
+         */
         double bestError = Float.MAX_VALUE;
+        int foundM = -16, foundX1 = -6, foundC1 = -6, foundX2 = 0, foundC2 = -5;
         int bestM = -33, bestX1 = -11, bestC1 = -11, bestX2 = -11, bestC2 = -11;
-        for (int mSteps = -16; mSteps <= 16; mSteps++) {
-            for (int x1 = -6; x1 <= 6; x1++) {
-                for (int c1 = -6; c1 <= 6; c1++) {
-                    for (int x2 = -6; x2 <= 6; x2++) {
+        ALL:
+        for (int mSteps = -4; mSteps <= 4; mSteps++) {
+            for (int x1 = -2; x1 <= 2; x1++) {
+                for (int c1 = -2; c1 <= 2; c1++) {
+                    for (int x2 = -2; x2 <= 2; x2++) {
                         double lastImprovedError = Float.MAX_VALUE;
-                        for (int c2 = -6; c2 <= 20; c2++) {
+                        for (int c2 = -2; c2 <= 20; c2++) {
                             System.out.printf("mSteps=%d, x1=%d, c1=%d, x2=%d, c2=%d:\n", mSteps, x1, c1, x2, c2);
-                            int finalMSteps = (0x2A5137A0 + mSteps);
-                            float finalX = MathTools.towardsZero(0.6666666f, -x1);
-                            float finalC = MathTools.towardsZero(0.33333333f, -c1);
-                            float finalX1 = MathTools.towardsZero(0.6666666f, -x2);
-                            float finalC1 = MathTools.towardsZero(0.33333333f, -c2);
-                            double meanSquareError = testApprox(3, (f -> cbrtConfigurable(f, finalMSteps, finalX, finalC, finalX1, finalC1)), 0.0625f, 16f);
+                            int finalMSteps = (0x2A5137A0 + mSteps + foundM);
+                            float finalX1 = MathTools.towardsZero(0.6666666f, -x1 - foundX1);
+                            float finalC1 = MathTools.towardsZero(0.33333333f, -c1 - foundC1);
+                            float finalX2 = MathTools.towardsZero(0.6666666f, -x2 - foundX2);
+                            float finalC2 = MathTools.towardsZero(0.33333333f, -c2 - foundC2);
+                            double meanSquareError = testApprox(3, (f -> cbrtConfigurable(f, finalMSteps, finalX1, finalC1, finalX2, finalC2)), 0.0625f, 16f);
                             if(meanSquareError > lastImprovedError) break;
                             lastImprovedError = meanSquareError;
                             if(meanSquareError < bestError){
@@ -360,13 +367,14 @@ max error: 0.0000009699978846 at 0.2499718964099884
                                 bestC1 = c1;
                                 bestX2 = x2;
                                 bestC2 = c2;
+//                                if(bestError < 0.00000000000005375) break ALL;
                             }
                             System.out.printf("Current best mean squared error: %.16f\n", bestError);
                         }
                     }
                 }
             }
-            System.out.println("Completed step " + (mSteps + 32) + "/65");
+            System.out.println("Completed step " + (mSteps + 4) + "/9");
         }
         System.out.printf("\n\nBEST:\nMean squared error: %.16f\nmSteps=%d, x1=%d, c1=%d, x2=%d, c2=%d:\n", bestError, bestM, bestX1, bestC1, bestX2, bestC2);
 
