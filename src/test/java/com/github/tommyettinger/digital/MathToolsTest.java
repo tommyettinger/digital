@@ -307,6 +307,13 @@ max error: 0.0000009699978846 at 0.2499718964099884
         x = nx2 * x + nc2 * cube / (x * x);
         return x;
     }
+    public static float cbrtConfigured(float cube) {
+        int ix = BitConversion.floatToIntBits(cube);
+        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A513792 | (ix & 0x80000000));
+        x = 0.66666615f * x + 0.3333331f * cube / (x * x);
+        x = 0.66666660f * x + 0.3333332f * cube / (x * x);
+        return x;
+    }
 
     public static void main(String[] args) {
 /*
@@ -327,6 +334,8 @@ max error: 0.0000009699978846 at 0.2499718964099884
          */
         System.out.println("cbrtRetry(): ");
         testApprox(3, MathToolsTest::cbrtRetry, 0.0625f, 16f);
+        System.out.println("cbrtConfigured(): ");
+        testApprox(3, MathToolsTest::cbrtConfigured, 0.0625f, 16f);
 //        System.out.println("cbrtNewton0(): ");
 //        testApprox(3, MathToolsTest::cbrtNewton0, 0.0625f, 16f);
 //        System.out.println("cbrtNewton1(): ");
@@ -342,7 +351,7 @@ Mean squared error: 0.0000000000000537
 mSteps=-16, x1=-6, c1=-6, x2=0, c2=-5:
          */
         double bestError = Float.MAX_VALUE;
-        int foundM = -16, foundX1 = -6, foundC1 = -6, foundX2 = 0, foundC2 = -5;
+        int foundM = -9, foundX1 = -6, foundC1 = -6, foundX2 = 0, foundC2 = -5;
         int bestM = -33, bestX1 = -11, bestC1 = -11, bestX2 = -11, bestC2 = -11;
         ALL:
         for (int mSteps = -4; mSteps <= 4; mSteps++) {
