@@ -301,6 +301,14 @@ max error: 0.0000009393916873 at 3.9999132156372070
         x = 0.749466f * x + 0.250534f * y / (x*x*x); // newtonian step #2
         return x;
     }
+
+/*
+magicAdd=-6800:
+mean squared error: 0.0000000000014827
+mean error: 0.0000006813775558
+min error: -0.0000001104941982 at 1.7018373012542725
+max error: 0.0000047371498038 at 3.9997823238372803
+ */
     public static float fourthRootConfigurable(float y, int magicAdd) {
         float x = BitConversion.intBitsToFloat(0x2f9b8068 + magicAdd + (BitConversion.floatToIntBits(y) >> 2)); // log-approx hack
         x = 0.75f * x + 0.25f * y / (x*x*x); // newtonian step #1
