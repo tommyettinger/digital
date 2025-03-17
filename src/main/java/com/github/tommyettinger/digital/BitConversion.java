@@ -305,11 +305,19 @@ public final class BitConversion {
      * <br>
      * This simply calls {@link Integer#numberOfLeadingZeros(int)} on most platforms, but on GWT, it calls the
      * JS built-in function {@code Math.clz32(n)}. This probably performs better than the Integer method on GWT.
+     * <br>
+     * As of March 16, 2025, this does not use {@link Integer#numberOfLeadingZeros(int)} because JDK versions 19 through
+     * at least some versions of Java 24 can (rarely) miscalculate this, producing a value 1 less than the correct
+     * result. The conditions for the incorrect output were
+     * <a href="https://bugs.openjdk.org/browse/JDK-8349637">discussed by OpenJDK developers here</a>. This currently
+     * manages to continue using an intrinsic (hopefully) by changing:
+     * {@code Integer.numberOfLeadingZeros(n)} to {@code Long.numberOfLeadingZeros(n & 0xFFFFFFFFL) - 32} . GWT will
+     * continue to use the (correct) {@code Math.clz32(n)} method, which returns the same results this does.
      * @param n any int
      * @return the number of '0' bits starting at the sign bit and going until just before a '1' bit is encountered
      */
     public static int countLeadingZeros(int n) {
-        return Integer.numberOfLeadingZeros(n);
+        return Long.numberOfLeadingZeros(n & 0xFFFFFFFFL) - 32;
     }
 
     /**
