@@ -318,32 +318,7 @@ max error: 0.0000047371498038 at 3.9997823238372803
 
     public static float cbrtRetry(float cube) {
         int ix = BitConversion.floatToIntBits(cube);
-        /*
-mean squared error: 0.0000000000000557
-mean error: -0.0000000016092396
-min error: -0.0000002948072876 at 13.3972063064575200
-max error: 0.0000009216367450 at 1.0986944437026978
-         */
-//        final int sign = (ix & 0x80000000);
-//        ix &= 0x7FFFFFFF;
-//        ix = (ix >>> 2) + (ix >>> 4);
-//        ix += ix >>> 4;
-//        ix = ix + (ix >>> 8) + 0x2A5137A0 | sign;
-//        float x = BitConversion.intBitsToFloat(ix);
-        /*
-mean squared error: 0.0000000000000556
-mean error: -0.0000000000441931
-min error: -0.0000002959369270 at 0.2093089073896408
-max error: 0.0000009699978846 at 0.2499718964099884
-         */
         float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A5137A0 | (ix & 0x80000000));
-        /*
-mean squared error: 0.0000000000000556
-mean error: -0.0000000000562560
-min error: -0.0000002959369270 at 0.2093089073896408
-max error: 0.0000009699978846 at 0.2499718964099884
-         */
-//        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A51379F | (ix & 0x80000000));
         x = 0.6666667f * x + 0.33333334f * cube / (x * x);
         x = 0.6666665f * x + 0.33333332f * cube / (x * x);
         return x;
@@ -371,6 +346,14 @@ max error: 0.0000009699978846 at 0.2499718964099884
         return x;
     }
 
+    public static float cbrtConfigured2(float cube) {
+        final int ix = BitConversion.floatToIntBits(cube);
+        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A51379A | (ix & 0x80000000));
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        return x;
+    }
+
     public static void main(String[] args) {
 //        float testMin = 0.625f, testMax = 16f;
         float testMin = 1f, testMax = 8f;
@@ -394,6 +377,8 @@ max error: 0.0000009699978846 at 0.2499718964099884
         testApprox(3, MathToolsTest::cbrtRetry, testMin, testMax);
         System.out.println("cbrtConfigured(): ");
         testApprox(3, MathToolsTest::cbrtConfigured, testMin, testMax);
+        System.out.println("cbrtConfigured2(): ");
+        testApprox(3, MathToolsTest::cbrtConfigured2, testMin, testMax);
         System.out.println("cbrtNewton0(): ");
         testApprox(3, MathToolsTest::cbrtNewton0, testMin, testMax);
         System.out.println("cbrtNewton1(): ");
@@ -411,31 +396,32 @@ Mean squared error: 0.0000000000000537
 mSteps=-16, x1=-6, c1=-6, x2=0, c2=-5:
          */
             double bestError = Float.MAX_VALUE;
-            int foundM = -9, foundX1 = -6, foundC1 = -6, foundX2 = 0, foundC2 = -5;
-            int bestM = -33, bestX1 = -11, bestC1 = -11, bestX2 = -11, bestC2 = -11;
+            int foundM = 0, foundX1 = 0, foundC1 = 0, foundX2 = 0, foundC2 = 0;
+            int bestM = -33;
+            float bestX1 = -11, bestC1 = -11, bestX2 = -11, bestC2 = -11;
             ALL:
-            for (int mSteps = -4; mSteps <= 4; mSteps++) {
+            for (int mSteps = 8; mSteps <= 8; mSteps+= 4) {
                 for (int x1 = -2; x1 <= 2; x1++) {
                     for (int c1 = -2; c1 <= 2; c1++) {
                         for (int x2 = -2; x2 <= 2; x2++) {
                             double lastImprovedError = Float.MAX_VALUE;
                             for (int c2 = -2; c2 <= 20; c2++) {
                                 System.out.printf("mSteps=%d, x1=%d, c1=%d, x2=%d, c2=%d:\n", mSteps, x1, c1, x2, c2);
-                                int finalMSteps = (0x2A5137A0 + mSteps + foundM);
-                                float finalX1 = MathTools.towardsZero(0.6666666f, -x1 - foundX1);
-                                float finalC1 = MathTools.towardsZero(0.33333333f, -c1 - foundC1);
-                                float finalX2 = MathTools.towardsZero(0.6666666f, -x2 - foundX2);
-                                float finalC2 = MathTools.towardsZero(0.33333333f, -c2 - foundC2);
+                                int finalMSteps = (0x2A513792 + mSteps + foundM);
+                                float finalX1 = MathTools.towardsZero(0.66666615f, -x1 - foundX1);
+                                float finalC1 = MathTools.towardsZero(0.3333331f, -c1 - foundC1);
+                                float finalX2 = MathTools.towardsZero(0.66666660f, -x2 - foundX2);
+                                float finalC2 = MathTools.towardsZero(0.3333333f, -c2 - foundC2);
                                 double meanSquareError = testApprox(3, (f -> cbrtConfigurable(f, finalMSteps, finalX1, finalC1, finalX2, finalC2)), testMin, testMax);
                                 if (meanSquareError > lastImprovedError) break;
                                 lastImprovedError = meanSquareError;
                                 if (meanSquareError < bestError) {
                                     bestError = meanSquareError;
-                                    bestM = mSteps;
-                                    bestX1 = x1;
-                                    bestC1 = c1;
-                                    bestX2 = x2;
-                                    bestC2 = c2;
+                                    bestM = finalMSteps;
+                                    bestX1 = finalX1;
+                                    bestC1 = finalC1;
+                                    bestX2 = finalX2;
+                                    bestC2 = finalC2;
 //                                if(bestError < 0.00000000000005375) break ALL;
                                 }
                                 System.out.printf("Current best mean squared error: %.16f\n", bestError);
@@ -443,9 +429,9 @@ mSteps=-16, x1=-6, c1=-6, x2=0, c2=-5:
                         }
                     }
                 }
-                System.out.println("Completed step " + (mSteps + 4) + "/9");
+                System.out.println("Completed step " + (mSteps + 8)/4 + "/5");
             }
-            System.out.printf("\n\nBEST:\nMean squared error: %.16f\nmSteps=%d, x1=%d, c1=%d, x2=%d, c2=%d:\n", bestError, bestM, bestX1, bestC1, bestX2, bestC2);
+            System.out.printf("\n\nBEST:\nMean squared error: %.16f\nmSteps=%d, x1=%.16f, c1=%.16f, x2=%.16f, c2=%.16f:\n", bestError, bestM, bestX1, bestC1, bestX2, bestC2);
         }
 
         // fourth roots...
@@ -458,7 +444,7 @@ mSteps=-16, x1=-6, c1=-6, x2=0, c2=-5:
         testApprox(4, MathToolsTest::fourthRootNewton2, testMin, testMax);
 
         //change to false to disable a very long process to configure fourthRootConfigurable()
-        if(true) {
+        if(false) {
         /*
 BEST:
 Mean squared error: 0.0000000000000537

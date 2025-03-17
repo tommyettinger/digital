@@ -839,7 +839,7 @@ public static long mmi(final long a) {
 
     /**
      * An approximation of the cube-root function for float inputs and outputs.
-     * This can be about twice as fast as {@link Math#cbrt(double)}. It
+     * This can be over twice as fast as {@link Math#cbrt(double)}. It
      * correctly returns negative results when given negative inputs.
      * <br>
      * Has very low relative error (less than 1E-9) when inputs are uniformly
@@ -848,32 +848,28 @@ public static long mmi(final long a) {
      * presented in Hacker's Delight and also used in early 3D graphics (see
      * <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a> for more, but
      * this code approximates cbrt(x) and not 1/sqrt(x)). This specific code
-     * was originally by Marc B. Reynolds, posted in his
-     * <a href="https://github.com/Marc-B-Reynolds/Stand-alone-junk/blob/7d8d1e19b2ab09743f46964f60244906e1023f6a/src/Posts/ballcube.c#L182-L197">"Stand-alone-junk" repo</a> .
+     * mixes an approach originally by Marc B. Reynolds, posted in his
+     * <a href="https://github.com/Marc-B-Reynolds/Stand-alone-junk/blob/7d8d1e19b2ab09743f46964f60244906e1023f6a/src/Posts/ballcube.c#L182-L197">"Stand-alone-junk" repo</a>,
+     * with the evaluator for accuracy from <a href="https://github.com/EvanBalster/root-cellar/">Root-Cellar</a>, and
+     * ends up not using either version's cbrt() exactly.
      * <br>
      * This was adjusted very slightly so {@code cbrt(1f) == 1f}. While this corrects the behavior for one of the most
      * commonly-expected inputs, it may change results for (very) large positive or negative inputs.
      * <br>
      * If you need to work with doubles, or need higher precision, use {@link Math#cbrt(double)}.
-     * @param x any finite float to find the cube root of
-     * @return the cube root of x, approximated
+     * @param cube any finite float to find the cube root of
+     * @return the cube root of {@code cube}, approximated
      */
-    public static float cbrt(float x) {
-        int ix = BitConversion.floatToIntBits(x);
-        final int sign = ix & 0x80000000;
-        ix &= 0x7FFFFFFF;
-        final float x0 = x;
-        ix = (ix >>> 2) + (ix >>> 4);
-        ix += ix >>> 4;
-        ix = ix + (ix >>> 8) + 0x2A5137A0 | sign;
-        x = BitConversion.intBitsToFloat(ix);
-        x = 0.33333334f * (2f * x + x0 / (x * x));
-        x = 0.33333334f * (1.9999999f * x + x0 / (x * x));
+    public static float cbrt(float cube) {
+        final int ix = BitConversion.floatToIntBits(cube);
+        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A51379A | (ix & 0x80000000));
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
         return x;
     }
 
     /**
-     * Double-precision cube root.
+     * Double-precision cube root. Using {@link Math#cbrt(double)} is probably faster and more accurate.
      * <br>
      * <a href="https://stackoverflow.com/a/73354137">Credit to StackOverflow user wim</a>.
      * @param x any double
