@@ -34,8 +34,13 @@ counterpart) on non-GWT platforms. Counting leading zeros is
 an operation that shows up in a surprising assortment of
 places and is supposed to be fast, so having an alternative to
 [this monstrosity](https://github.com/gwtproject/gwt/blob/main/user/super/com/google/gwt/emul/java/lang/Integer.java#L118)
-is more than welcome. There's also `countTrailingZeros()` for
-int and long arguments, which compiles into a single call to
+is more than welcome. JDK 19-24 (at least for some versions
+of those JDK releases) has a [known bug](https://bugs.openjdk.org/browse/JDK-8349637)
+in `Integer.numberOfLeadingZeros()` that is avoided currently
+and a fixed version used, while still taking advantage of
+intrinsics on HotSpot and `Math.clz32()` on GWT. There's also
+`countTrailingZeros()` for int and long arguments, which
+compiles into a single call to
 `Integer.numberOfTrailingZeros()` (or using `Long`) on most
 platforms, or a JS two-liner on GWT that uses `Math.clz32()`.
 Also purely for GWT support, `lowestOneBit()` works around a
@@ -318,14 +323,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.6.1"
+api "com.github.tommyettinger:digital:0.6.2"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.6.1:sources"
+api "com.github.tommyettinger:digital:0.6.2:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
@@ -357,6 +362,7 @@ This also has instructions for Maven and other build tools.
 [wyhash](https://github.com/wangyi-fudan/wyhash),
 [Apache Commons Lang](https://github.com/apache/commons-lang),
 [fastapprox](https://code.google.com/archive/p/fastapprox/),
+[root-cellar](https://github.com/EvanBalster/root-cellar/),
 and [Ryu](https://github.com/ulfjack/ryu). More code
 is not from a particular repository (for example, some is from
 Wikipedia); see each file for specific author credits. The Ryu
@@ -372,4 +378,6 @@ another permissively-licensed repo, such as
 [P.J. Acklam's site](https://web.archive.org/web/20151030215612/http://home.online.no/~pjacklam/notes/invnorm/)
 (archived), and for most of these I
 have tried to provide credit and a link to the source in the
-documentation for that method.
+documentation for that method. Some code is derived from
+papers, like how Distributor uses
+[this algorithm by Paul Voutier](https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function).
