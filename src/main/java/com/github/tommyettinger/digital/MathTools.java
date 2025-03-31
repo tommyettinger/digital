@@ -869,7 +869,21 @@ public static long mmi(final long a) {
     }
 
     /**
+     * The same as {@link #cbrt(float)}, but with special handling for negative inputs removed; this will only return a
+     * close approximation to the cube root function for positive inputs.
+     * @param cube any positive finite float to find the cube root of
+     * @return the cube root of {@code cube}, approximated
+     */
+    public static float cbrtPositive(float cube) {
+        float x = BitConversion.intBitsToFloat(BitConversion.floatToIntBits(cube) / 3 + 0x2A51379A);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        return x;
+    }
+
+    /**
      * Double-precision cube root. Using {@link Math#cbrt(double)} is probably faster and more accurate.
+     * This is only really useful if you need to read code that produces an accurate cube root.
      * <br>
      * <a href="https://stackoverflow.com/a/73354137">Credit to StackOverflow user wim</a>.
      * @param x any double
