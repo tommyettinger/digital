@@ -87,19 +87,31 @@ public class Base {
      */
     public static final Base SIMPLE64 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!?", false, '$', '+', '-');
     /**
-     * The largest base here, this uses digits 0-9 first, then A-Z, then a-z, them many punctuation characters:
+     * The second-largest base here, this uses digits 0-9 first, then A-Z, then a-z, then many punctuation characters:
      * <code>'/!@#$%^&amp;*()[]{}&lt;&gt;:?;|_=</code> . This uses + to indicate a positive sign, and - for negative.
-     * This can encode a 32-bit number with 5 chars (unsigned); none of the other bases can. As a drawback, if a BASE86
-     * encoded number is stored in libGDX's "minimal JSON" format, it will often need quoting, which of the other bases,
-     * only {@link #BASE64} requires sometimes.
+     * This can encode a 32-bit number with 5 chars (unsigned); only {@link #BASE90} is also able to do this. As a
+     * drawback, if a BASE86 encoded number is stored in libGDX's "minimal JSON" format, it will often need quoting,
+     * which of the other bases, only {@link #BASE64} and {@link #BASE90} require sometimes.
      */
     public static final Base BASE86 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'/!@#$%^&*()[]{}<>:?;|_=", false, '\\', '+', '-');
+    /**
+     * The largest base here, this uses all ASCII characters from {@code %} to {@code ~} inclusive, with {@code #}
+     * indicating positive and {@code !} indicating negative. Notably, it doesn't use the double quote or the dollar
+     * sign, so it has slightly less trouble with escape sequences in Kotlin that use dollar signs to interpolate, but
+     * it does use backslash as a normal digit. The reason this exists and uses the unusual order it does is so code can
+     * directly get the value of a char between {@code %} to {@code ~} inclusive by simply subtracting {@code '%'} (or
+     * 37) from the char; if the result is not in the 0-89 range (both inclusive), it isn't a valid digit.
+     * Like {@link #BASE86} and unlike any other Bases here, this can encode a 32-bit number with 5 chars (unsigned). As
+     * a drawback, if a BASE90 encoded number is stored in libGDX's "minimal JSON" format, it will often need quoting,
+     * which of the other bases, only {@link #BASE64} and {@link #BASE86} require sometimes.
+     */
+    public static final Base BASE90 = new Base("%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", false, '$', '#', '!');
 
     /**
      * All Base instances this knows about from its own constants.
      * We use Arrays.asList() here to ensure the returned List is immutable.
      */
-    private static final List<Base> BASES = Arrays.asList(BASE2, BASE8, BASE10, BASE16, BASE36, BASE64, URI_SAFE, SIMPLE64, BASE86);
+    private static final List<Base> BASES = Arrays.asList(BASE2, BASE8, BASE10, BASE16, BASE36, BASE64, URI_SAFE, SIMPLE64, BASE86, BASE90);
 
     /**
      * Returns an immutable List of the Base instances this knows about from the start. Mostly useful for testing.
