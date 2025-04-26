@@ -345,7 +345,7 @@ public final class MathTools {
      * that a will never actually reach b in a specific timeframe, it will just get very close.
      * This is typically called with: {@code a = approach(a, b, deltaTime, halfLife);}
      * <br>
-     * Uses a 3/3 Padé approximant to {@code Math.pow(2.0, x)}, but otherwise is very close to
+     * This is very close to
      * <a href="https://mastodon.social/@acegikmo/111931613710775864">how Freya Holmér implemented this first</a>.
      *
      * @param a the current float value, and the one that the result of approach() should be assigned to
@@ -355,8 +355,7 @@ public final class MathTools {
      * @return a new value to assign to {@code a}, which will be closer to {@code b}
      */
     public static float approach(float a, float b, float delta, float halfLife){
-        final float x = -delta/halfLife;
-        return b + (a - b) * (-275.988f + x * (-90.6997f + (-11.6318f - 0.594604f * x) * x))/(-275.988f + x * (100.601f + (-15.0623f + x) * x));
+        return b + (a - b) * (float) Math.pow(2f, -delta/halfLife);
     }
 
     /**
@@ -366,7 +365,7 @@ public final class MathTools {
      * that a will never actually reach b in a specific timeframe, it will just get very close.
      * This is typically called with: {@code a = approach(a, b, deltaTime, halfLife);}
      * <br>
-     * Uses a 3/3 Padé approximant to {@code Math.pow(2.0, x)}, but otherwise is very close to
+     * This is very close to
      * <a href="https://mastodon.social/@acegikmo/111931613710775864">how Freya Holmér implemented this first</a>.
      *
      * @param a the current double value, and the one that the result of approach() should be assigned to
@@ -376,8 +375,7 @@ public final class MathTools {
      * @return a new value to assign to {@code a}, which will be closer to {@code b}
      */
     public static double approach(double a, double b, double delta, double halfLife){
-        final double x = -delta/halfLife;
-        return b + (a - b) * (-275.988 + x * (-90.6997 + (-11.6318 - 0.594604 * x) * x))/(-275.988 + x * (100.601 + (-15.0623 + x) * x));
+        return b + (a - b) * Math.pow(2, -delta/halfLife);
     }
 
     /**
@@ -782,14 +780,15 @@ public final class MathTools {
         return x;
     }
 
-//    public static int mmi(final int a) {
-//        int x = 2 ^ a * 3;
-//        x = x * (2 - (a * x));
-//        x = x * (2 - (a * x));
-//        x = x * (2 - (a * x));
-//        return x;
-//    }
-
+/*
+    public static int mmi(final int a) {
+        int x = 2 ^ a * 3;
+        x *= 2 - a * x;
+        x *= 2 - a * x;
+        x *= 2 - a * x;
+        return x;
+    }
+*/
     /**
      * Given any odd long {@code a}, this finds another odd long {@code b} such that {@code a * b == 1L}.
      *
