@@ -48,6 +48,7 @@ public final class MathTools {
      */
     private MathTools() {
     }
+//<editor-fold defaultstate="collapsed" desc="Constants">
 
     /**
      * A float that is meant to be used as the smallest reasonable tolerance for methods like {@link #isEqual(float, float, float)}.
@@ -211,383 +212,8 @@ public final class MathTools {
     private static final double CEIL = 0.99999994f; // 0.99999994f is 0x1.fffffep-1f
     private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5;
 
-    /**
-     * Calculate the first argument raised to the power of the second.
-     * This method only supports non-negative powers.
-     * This returns a {@code long}, and can overflow if the calculation exceeds {@link Long#MAX_VALUE}.
-     * Overflow is probably the main reason to use this instead of {@link Math#pow(double, double)}, along with the
-     * precision from using only integers.
-     *
-     * @param value the number to be raised, as an int
-     * @param power the exponent (must be positive), as an int
-     * @return {@code value} raised to {@code power}, as a long
-     */
-    public static long raiseToPower(int value, int power) {
-        if (power < 0) {
-            throw new IllegalArgumentException("This method does not support negative powers.");
-        }
-        long result = 1;
-        for (int i = 0; i < power; i++) {
-            result *= value;
-        }
-        return result;
-    }
-
-
-    /**
-     * Calculate logarithms for arbitrary bases, using doubles.
-     *
-     * @param base  the logarithm base to use, as a double
-     * @param arg what value to get the logarithm of, using the given base, as a double
-     * @return the log of {@code arg} in the specified {@code base}, as a double
-     */
-    public static double log(double base, double arg) {
-        // Use natural logarithms and change the base.
-        return Math.log(arg) / Math.log(base);
-    }
-
-    /**
-     * Calculate logarithms for arbitrary bases, using floats.
-     *
-     * @param base  the logarithm base to use, as a float
-     * @param arg what value to get the logarithm of, using the given base, as a float
-     * @return the log of {@code arg} in the specified {@code base}, as a float
-     */
-    public static float log(float base, float arg) {
-        return (float) (Math.log(arg) / Math.log(base));
-    }
-
-    /**
-     * Gets the logarithm of {@code value} with base 2, using floats.
-     * @see RoughMath#log2Rough(float) A lower-precision, but probably faster, approximation.
-     * @param value what value to get the logarithm of, using base 2, as a float
-     * @return the logarithm of value with base 2, as a float
-     */
-    public static float log2(float value) {
-        return (float) (Math.log(value) * 1.4426950408889634);
-    }
-
-    /**
-     * A rough approximation of {@link Math#exp(double)} for float arguments, meant to be faster than Math's version
-     * at the expense of accuracy. This is not at all accurate, but it gets the general shape of the function right.
-     * <br>
-     * Based on <a href="https://gist.github.com/Alrecenk/55be1682fe46cdd89663">this gist by Alrecenk</a>, but without
-     * any table lookup.
-     *
-     * @see #exp(float) A different exp() provides a higher-precision approximation.
-     * @see RoughMath#expRough(float) Yet another exp() variation that may have higher precision.
-     * @param power what exponent to raise {@link #E} to
-     * @return a rough approximation of E raised to the given power
-     */
-    public static float expHasty(float power) {
-        return BitConversion.intBitsToFloat(1065353216 +
-                (int)((12102203 - 0x1.6p-14f * BitConversion.floatToIntBits(power)) * power));
-    }
-
-    /**
-     * A decent approximation of {@link Math#exp(double)} for small float arguments, meant to be faster than Math's
-     * version for floats at the expense of accuracy. Like {@link #gaussian2D(float, float)}, this uses the 2/2 Padé
-     * approximant to {@code Math.exp(power)}, but halves the argument to exp() before approximating, and squares it
-     * before returning.The halving/squaring keeps the calculation in a more precise span for a larger domain. You
-     * should not use this if your {@code power} inputs will be much higher than about 3 or lower than -3 .
-     * <br>
-     * Pretty much all the work for this was done by Wolfram Alpha.
-     *
-     * @see #expHasty(float) A different exp() provides a lower-precision approximation that may be faster.
-     * @see RoughMath#expRough(float) Yet another exp() variation that may be faster and/or higher-precision.
-     * @param power what exponent to raise {@link #E} to
-     * @return a rough approximation of E raised to the given power
-     */
-    public static float exp(float power) {
-        power *= 0.5f;
-        power = (12 + power * (6 + power)) / (12 + power * (-6 + power));
-        return power * power;
-    }
-
-    /**
-     * A relatively close approximation of {@code Math.exp(-x * x - y * y)}, the Gaussian function in 2D. This returns
-     * 1.0f when x and y are both 0, and goes as low as 0.0051585725 when either or both of x or y are very significant.
-     * The Gaussian function is useful for making circular "bump" shapes, among lots of other things.
-     * <br>
-     * This uses the 2/2 Padé approximant to {@code Math.exp(-x*x-y*y)}, but halves the argument to exp() before
-     * approximating, ensures that that argument is at least -3.5f (to avoid major issues with larger inputs), runs the
-     * approximation, and squares the result. The halving/squaring keeps the calculation in a more precise span for a
-     * larger domain.
-     *
-     * @param x typically the difference between two x positions; will be squared, so may be positive or negative
-     * @param y typically the difference between two y positions; will be squared, so may be positive or negative
-     * @return the positive result of the Gaussian function in 2D for the given parameters; between 0.0051585725 and 1.0
-     */
-    public static float gaussian2D(float x, float y) {
-        x = Math.max(-3.5f, (x * x + y * y) * -0.5f);
-        x = (12 + x * (6 + x))/(12 + x * (-6 + x));
-        return x * x;
-    }
-
-    /**
-     * The same as {@link #gaussian2D(float, float)} except that its minimum is reduced to 0.0, while its maximum is
-     * still 1.0 . This is not precisely a Gaussian function, because it won't keep slowly decreasing given rising
-     * inputs, but being able to know the outside is 0 may be useful for various tasks.
-     * @param x typically the difference between two x positions; will be squared, so may be positive or negative
-     * @param y typically the difference between two y positions; will be squared, so may be positive or negative
-     * @return the positive result of the "Gaussian" function in 2D for the given parameters; between 0.0 and 1.0
-     */
-    public static float gaussianFinite2D(float x, float y) {
-        x = Math.max(-3.4060497f, (x * x + y * y) * -0.5f);
-        x = (12 + x * (6 + x))/(12 + x * (-6 + x));
-        return (x * x - 0.00516498f) * 1.0051918f;
-    }
-
-    /**
-     * When used to repeatedly mutate {@code a} every frame, and a frame had {@code delta} seconds between it and its
-     * predecessor, this will make {@code a} get closer and closer to the value of {@code b} as it is repeatedly called.
-     * The {@code halfLife} is the number of seconds it takes for {@code a} to halve its difference to {@code b}. Note
-     * that a will never actually reach b in a specific timeframe, it will just get very close.
-     * This is typically called with: {@code a = approach(a, b, deltaTime, halfLife);}
-     * <br>
-     * This is very close to
-     * <a href="https://mastodon.social/@acegikmo/111931613710775864">how Freya Holmér implemented this first</a>.
-     *
-     * @param a the current float value, and the one that the result of approach() should be assigned to
-     * @param b the target float value; will not change
-     * @param delta the number of (typically) seconds since the last call to this movement of {@code a}
-     * @param halfLife how many (typically) seconds it should take for {@code (b - a)} to become halved
-     * @return a new value to assign to {@code a}, which will be closer to {@code b}
-     */
-    public static float approach(float a, float b, float delta, float halfLife){
-        return b + (a - b) * (float) Math.pow(2f, -delta/halfLife);
-    }
-
-    /**
-     * When used to repeatedly mutate {@code a} every frame, and a frame had {@code delta} seconds between it and its
-     * predecessor, this will make {@code a} get closer and closer to the value of {@code b} as it is repeatedly called.
-     * The {@code halfLife} is the number of seconds it takes for {@code a} to halve its difference to {@code b}. Note
-     * that a will never actually reach b in a specific timeframe, it will just get very close.
-     * This is typically called with: {@code a = approach(a, b, deltaTime, halfLife);}
-     * <br>
-     * This is very close to
-     * <a href="https://mastodon.social/@acegikmo/111931613710775864">how Freya Holmér implemented this first</a>.
-     *
-     * @param a the current double value, and the one that the result of approach() should be assigned to
-     * @param b the target double value; will not change
-     * @param delta the number of (typically) seconds since the last call to this movement of {@code a}
-     * @param halfLife how many (typically) seconds it should take for {@code (b - a)} to become halved
-     * @return a new value to assign to {@code a}, which will be closer to {@code b}
-     */
-    public static double approach(double a, double b, double delta, double halfLife){
-        return b + (a - b) * Math.pow(2, -delta/halfLife);
-    }
-
-    /**
-     * A configurable sigmoid function; this is simply {@code 1 / (howGradual + abs(x))}, operating on floats.
-     * The given {@code x} can be any finite float; {@code howGradual} must be greater than 0, and is usually near 1.
-     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
-     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
-     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
-     * results curve more rapidly toward the limit.
-     * <br>
-     * This acts a little like calling {@link #rootSigmoid(float, float)} with a very high value for howGradual.
-     * 
-     * @param x the input to the sigmoid function; may be any finite float
-     * @param howGradual a positive (non-zero) float that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
-     * @return a float between -1 and 1, returning 0 when x is 0
-     */
-    public static float basicSigmoid(float x, float howGradual){
-        return x / (howGradual + Math.abs(x));
-    }
-
-    /**
-     * A configurable sigmoid function; this is simply {@code 1 / (howGradual + abs(x))}, operating on doubles.
-     * The given {@code x} can be any finite double; {@code howGradual} must be greater than 0, and is usually near 1.
-     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
-     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
-     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
-     * results curve more rapidly toward the limit.
-     * <br>
-     * This acts a little like calling {@link #rootSigmoid(double, double)} with a very high value for howGradual.
-     *
-     * @param x the input to the sigmoid function; may be any finite double
-     * @param howGradual a positive (non-zero) double that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
-     * @return a double between -1 and 1, returning 0 when x is 0
-     */
-    public static double basicSigmoid(double x, double howGradual){
-        return x / (howGradual + Math.abs(x));
-    }
-
-
-    /**
-     * A configurable sigmoid function; this is simply {@code 1 / sqrt(howGradual + x * x)}, operating on floats.
-     * The given {@code x} can be any finite float; {@code howGradual} must be greater than 0, and is usually near 1.
-     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
-     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
-     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
-     * results curve more rapidly toward the limit.
-     * <br>
-     * The curve this produces is shaped more like {@link Math#tanh(double)} than {@link #basicSigmoid(float, float)}.
-     *
-     * @param x the input to the sigmoid function; may be any finite float
-     * @param howGradual a positive (non-zero) float that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
-     * @return a float between -1 and 1, returning 0 when x is 0
-     */
-    public static float rootSigmoid(float x, float howGradual){
-        return x / (float)Math.sqrt(howGradual + x * x);
-    }
-
-    /**
-     * A configurable sigmoid function; this is simply {@code 1 / sqrt(howGradual + x * x)}, operating on doubles.
-     * The given {@code x} can be any finite double; {@code howGradual} must be greater than 0, and is usually near 1.
-     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
-     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
-     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
-     * results curve more rapidly toward the limit.
-     * <br>
-     * The curve this produces is shaped more like {@link Math#tanh(double)} than {@link #basicSigmoid(double, double)}.
-     *
-     * @param x the input to the sigmoid function; may be any finite double
-     * @param howGradual a positive (non-zero) double that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
-     * @return a double between -1 and 1, returning 0 when x is 0
-     */
-    public static double rootSigmoid(double x, double howGradual){
-        return x / Math.sqrt(howGradual + x * x);
-    }
-
-    /**
-     * Returns a float between 0 and 1, gradually approaching 1 as timeTaken goes up. How gradually it
-     * "takes off" and "lands" depends on howGradual, with values greater than 1 taking off slowly and values less than
-     * 1 (but always greater than 0) taking off quickly. The Interpolator this takes allows you to affect the rate of
-     * change as timeTaken goes up. Note, unlike {@link #approach(float, float, float, float)}, this is not meant to be
-     * assigned to any of its parameters; timeTaken should be related to the actual elapsed time (or a multiple thereof)
-     * and this makes using approachSigmoid() fundamentally different from approach().
-     * <br>
-     * The Interpolator this takes allows you to affect the rate of change as timeTaken goes up.
-     * This is meant to be used to get an alpha parameter to pass to lerp() methods that interpolate more than a float.
-     *
-     * @param timeTaken a non-negative float that should go up continually; the rate it goes up doesn't matter
-     * @param howGradual often 1.0, but should be adjusted higher if the approach should be very gradual, or as low as 0.1 if the approach should be rapid
-     * @param interpolator may be {@link Interpolations#linear} for the simplest case, or any other Interpolator
-     * @return a float between 0 and 1, that gradually approaches 1 as timeTaken goes up
-     */
-    public static float approachSigmoid(float timeTaken, float howGradual, Interpolations.Interpolator interpolator) {
-        return interpolator.apply(timeTaken / (float)Math.sqrt(howGradual + timeTaken * timeTaken));
-    }
-
-    /**
-     * Returns a float between start and target, gradually approaching target as timeTaken goes up. How gradually it
-     * "takes off" and "lands" depends on howGradual, with values greater than 1 taking off slowly and values less than
-     * 1 (but always greater than 0) taking off quickly. Note, unlike {@link #approach(float, float, float, float)},
-     * this is not meant to be assigned to any of its parameters; timeTaken should be related to the actual elapsed time
-     * (or a multiple thereof) and this makes using approachSigmoid() fundamentally different from approach().
-     * <br>
-     * The Interpolator this takes allows you to affect the rate of change as timeTaken goes up.
-     *
-     * @param start the starting float value; does not change over the course of the movement
-     * @param target the target float value to gradually approach
-     * @param timeTaken a non-negative float that should go up continually; the rate it goes up doesn't matter
-     * @param howGradual often 1.0, but should be adjusted higher if the approach should be very gradual, or as low as 0.1 if the approach should be rapid
-     * @param interpolator may be {@link Interpolations#linear} for the simplest case, or any other Interpolator
-     * @return a float between start and end, that gradually approaches target as timeTaken goes up
-     */
-    public static float approachSigmoid(float start, float target, float timeTaken, float howGradual, Interpolations.Interpolator interpolator) {
-        return interpolator.apply(start, target, timeTaken / (float)Math.sqrt(howGradual + timeTaken * timeTaken));
-    }
-
-    /**
-     * The cumulative distribution function for the normal distribution, with the range expanded to {@code [-1,1]}
-     * instead of the usual {@code [0,1]} . This might be useful to bring noise functions (which sometimes have a range
-     * of {@code -1,1}) from a very-centrally-biased form to a more uniformly-distributed form. The math here doesn't
-     * exactly match the normal distribution's CDF because the goal was to handle inputs between -1 and 1, not the full
-     * range of a normal-distributed variate (which is infinite). The distribution is very slightly different here from
-     * the double-based overload, because this clamps inputs that would produce incorrect results from its approximation
-     * of {@link Math#exp(double)} otherwise, whereas the double-based method uses the actual Math.exp().
-     *
-     * @param x a float between -1 and 1; will be clamped if outside that domain
-     * @return a more-uniformly distributed value between -1 and 1
-     */
-    public static float redistributeNormal(float x) {
-        final float xx = Math.min(x * x * 6.03435f, 6.03435f), axx = 0.1400122886866665f * xx;
-        return Math.copySign((float) Math.sqrt(1.0051551f - exp(xx * (-1.2732395447351628f - axx) / (0.9952389057917015f + axx))), x);
-    }
-
-    /**
-     * The cumulative distribution function for the normal distribution, with the range expanded to {@code [-1,1]}
-     * instead of the usual {@code [0,1]} . This might be useful to bring noise functions (which sometimes have a range
-     * of {@code -1,1}) from a very-centrally-biased form to a more uniformly-distributed form. The math here doesn't
-     * exactly match the normal distribution's CDF because the goal was to handle inputs between -1 and 1, not the full
-     * range of a normal-distributed variate (which is infinite). The distribution is very slightly different here from
-     * the float-based overload, because that method clamps inputs that would produce incorrect results from its
-     * approximation of {@link Math#exp(double)} otherwise, whereas this uses the actual Math.exp().
-     *
-     * @param x a double usually between -1 and 1; will change only very slowly outside that domain
-     * @return a more-uniformly distributed value between -1 and 1
-     */
-    public static double redistributeNormal(double x) {
-        final double xx = x * x * 6.03435, axx = 0.1400122886866665 * xx;
-        return Math.copySign(Math.sqrt(1.0 - Math.exp(xx * (-1.2732395447351628 - axx) / (1.0 + axx))), x);
-    }
-
-    /**
-     * Redistributes a noise value {@code n} using the given {@code mul} and {@code mix} parameters. This is meant to
-     * push high-octave noise results from being centrally biased to being closer to uniform. Getting the values right
-     * probably requires tweaking them manually; for Simplex Noise, mul=2.3f and mix=0.75f works well with 2 or more
-     * octaves (and not at all well for one octave, which can use mix=0.0f to avoid redistributing at all). This
-     * variation takes n in the -1f to 1f range, inclusive, and returns a value in the same range.
-     *
-     * @param n a float between -1f and 1f inclusive
-     * @param mul a positive multiplier where higher values make extreme results more likely; often around 2.3f
-     * @param mix a blending amount between 0f and 1f where lower values keep {@code n} more; often around 0.75f
-     * @return a float between -1f and 1f inclusive
-     */
-    public static float redistributeNoise(float n, float mul, float mix) {
-        final float nn = n * n * mul, ann = 0.1400122886866665f * nn;
-        final float denormal = Math.copySign((float) Math.sqrt(1.0f - (float)Math.exp(nn * (-1.2732395447351628f - ann) / (1.0f + ann))), n);
-        return lerp(n, denormal, mix);
-    }
-
-    /**
-     * Redistributes a 0-1 value {@code n} using the given {@code mul} and {@code mix} parameters. This is meant to
-     * push averages of many 0-1 values from being centrally biased to being closer to uniform. Getting the values right
-     * probably requires tweaking them manually; for Simplex Noise, mul=2.3f and mix=0.75f works well with 2 or more
-     * octaves (and not at all well for one octave, which can use mix=0.0f to avoid redistributing at all). This
-     * variation takes n in the 0f to 1f range, inclusive, and returns a value in the same range.
-     *
-     * @see #redistributeNoise(float, float, float) should be preferred for input and output in the -1 to 1 range.
-     * @param n a float between 0f and 1f inclusive
-     * @param mul a positive multiplier where higher values make extreme results more likely; often around 2.3f
-     * @param mix a blending amount between 0f and 1f where lower values keep {@code n} more; often around 0.75f
-     * @return a float between 0f and 1f inclusive
-     */
-    public static float redistribute(float n, float mul, float mix) {
-        final float x = (n - 0.5f) * 2f, xx = x * x * mul, axx = 0.1400122886866665f * xx;
-        final float denormal = Math.copySign((float) Math.sqrt(1.0f - (float)Math.exp(xx * (-1.2732395447351628f - axx) / (1.0f + axx))), x);
-        return lerp(n, denormal * 0.5f + 0.5f, mix);
-    }
-
-    /**
-     * Redistributes a noise value {@code n} using the given {@code mul}, {@code mix}, and {@code bias} parameters. This
-     * is meant to push high-octave noise results from being centrally biased to being closer to uniform. Getting the
-     * values right probably requires tweaking them manually; for Simplex Noise, using mul=2.3f, mix=0.75f, and
-     * bias=1f works well with 2 or more octaves (and not at all well for one octave, which can use mix=0.0f to avoid
-     * redistributing at all). This variation takes n in the 0f to 1f range, inclusive, and returns a value in the same
-     * range. You can give different bias values at different times to make noise that is more often high (when bias is
-     * above 1) or low (when bias is between 0 and 1). Using negative bias has undefined results. Bias should typically
-     * be calculated only when its value needs to change. If you have a variable {@code favor} that can have
-     * any float value and high values for favor should produce higher results from this function, you can get bias with
-     * {@code bias = (float)Math.exp(-favor);} .
-     * <br>
-     * If you don't need a bias parameter, you can either pass 1 here for bias, or call the overload
-     * {@link #redistribute(float, float, float)} instead (which is typically faster).
-     *
-     * @param n a float between 0f and 1f inclusive
-     * @param mul a positive multiplier where higher values make extreme results more likely; often around 2.3f
-     * @param mix a blending amount between 0f and 1f where lower values keep {@code n} more; often around 0.75f
-     * @param bias should be 1 to have no bias, between 0 and 1 for lower results, and above 1 for higher results
-     * @return a float between 0f and 1f inclusive
-     */
-    public static float redistribute(float n, float mul, float mix, float bias) {
-        final float x = (n - 0.5f) * 2f, xx = x * x * mul, axx = 0.1400122886866665f * xx;
-        final float denormal = Math.copySign((float) Math.sqrt(1.0f - (float) Math.exp(xx * (-1.2732395447351628f - axx) / (1.0f + axx))), x);
-        return (float) Math.pow(lerp(n, denormal * 0.5f + 0.5f, mix), bias);
-    }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Basic Checks">
 
     /**
      * Equivalent to libGDX's isEqual() method in MathUtils; this compares two doubles for equality and allows the given
@@ -631,6 +257,421 @@ public final class MathTools {
     public static boolean isEqual(float a, float b, float tolerance) {
         return Math.abs(a - b) <= tolerance;
     }
+
+    /**
+     * Returns true if the value is zero (using the default tolerance, {@link #FLOAT_ROUNDING_ERROR}, as outer bound).
+     *
+     * @param value any float
+     */
+    public static boolean isZero(float value) {
+        return Math.abs(value) <= FLOAT_ROUNDING_ERROR;
+    }
+
+    /**
+     * Returns true if the value is zero, using the given tolerance.
+     *
+     * @param value     any float
+     * @param tolerance represent an outer bound below which the value is considered zero.
+     */
+    public static boolean isZero(float value, float tolerance) {
+        return Math.abs(value) <= tolerance;
+    }
+
+
+    /**
+     * Returns true if the value is zero. A suggested tolerance is {@code 9.5367431640625E-7}, which is the same value
+     * the float overload uses for its default tolerance, the simpler {@code 1E-6} (one millionth), or a smaller number
+     * to reduce false-positives, such as {@code 0x1p-32} (2 to the -32) or {@code 1E-9} (one billionth).
+     *
+     * @param value     any double
+     * @param tolerance represent an outer bound below which the value is considered zero.
+     */
+    public static boolean isZero(double value, double tolerance) {
+        return Math.abs(value) <= tolerance;
+    }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Basic Convenience Methods">
+    /**
+     * Returns the square (second power) of its parameter. Purely here for convenience.
+     * @param n any float
+     * @return {@code n * n}
+     */
+    public static float square(final float n) {
+        return n * n;
+    }
+
+    /**
+     * Returns the square (second power) of its parameter. Purely here for convenience.
+     * @param n any double
+     * @return {@code n * n}
+     */
+    public static double square(final double n) {
+        return n * n;
+    }
+
+    /**
+     * Returns the cube (third power) of its parameter. Purely here for convenience.
+     * @param n any float
+     * @return {@code n * n * n}
+     */
+    public static float cube(final float n) {
+        return n * n * n;
+    }
+
+    /**
+     * Returns the cube (third power) of its parameter. Purely here for convenience.
+     * @param n any double
+     * @return {@code n * n * n}
+     */
+    public static double cube(final double n) {
+        return n * n * n;
+    }
+
+    /**
+     * A variant on {@link Math#sqrt(double)} that is defined for negative inputs in the same way that
+     * {@link #cbrt(float)} is: the signPreservingSqrt of x is equivalent to {@code (float)sqrt(abs(x))} with its sign
+     * changed if necessary to match the sign of x (using {@link Math#copySign(float, float)}). This returns
+     * {@code -0.0} if given {@code -0.0} as an input. Sign-preserving square roots show up not-infrequently in math
+     * formulas, so this may be useful to have.
+     * <br>
+     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
+     * {@code x} is the input: {@code Math.copySign((float)Math.sqrt(Math.abs(x)), x)}
+     * @param x any finite float
+     * @return the sign-preserving square root of x
+     */
+    public static float signPreservingSqrt(final float x) {
+        return Math.copySign((float)Math.sqrt(Math.abs(x)), x);
+    }
+
+    /**
+     * A variant on {@link Math#pow(double, double)} that is always defined for negative inputs in the same way that
+     * {@link #cbrt(float)} is: the signPreservingPow of x and any power is equivalent to
+     * {@code (float)pow(abs(x), power)} with its sign changed if necessary to match the sign of x (using
+     * {@link Math#copySign(float, float)}). If given {@code 0.0} or {@code -0.0} as the power, this returns
+     * {@code 1.0} for positive x (including {@code 0.0}) and {@code -1.0} for negative x (including {@code -0.0}).
+     * <br>
+     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
+     * {@code x} and {@code power} are the inputs: {@code Math.copySign((float)Math.pow(Math.abs(x), power), x)}
+     * @param x any finite float
+     * @param power any finite float, within a reasonable size
+     * @return x raised to power, preserving the sign of x
+     */
+    public static float signPreservingPow(final float x, final float power) {
+        return Math.copySign((float)Math.pow(Math.abs(x), power), x);
+    }
+
+    /**
+     * A variant on {@link Math#sqrt(double)} that is defined for negative inputs in the same way that
+     * {@link Math#cbrt(double)} is: the signPreservingSqrt of x is equivalent to {@code sqrt(abs(x))} with its sign
+     * changed if necessary to match the sign of x (using {@link Math#copySign(double, double)}). This returns
+     * {@code -0.0} if given {@code -0.0} as an input. Sign-preserving square roots show up not-infrequently in math
+     * formulas, so this may be useful to have.
+     * <br>
+     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
+     * {@code x} is the input: {@code Math.copySign(Math.sqrt(Math.abs(x)), x)}
+     * @param x any finite double
+     * @return the sign-preserving square root of x
+     */
+    public static double signPreservingSqrt(final double x) {
+        return Math.copySign(Math.sqrt(Math.abs(x)), x);
+    }
+
+    /**
+     * A variant on {@link Math#pow(double, double)} that is always defined for negative inputs in the same way that
+     * {@link Math#cbrt(double)} is: the signPreservingPow of x and any power is equivalent to
+     * {@code pow(abs(x), power)} with its sign changed if necessary to match the sign of x (using
+     * {@link Math#copySign(double, double)}). If given {@code 0.0} or {@code -0.0} as the power, this returns
+     * {@code 1.0} for positive x (including {@code 0.0}) and {@code -1.0} for negative x (including {@code -0.0}).
+     * <br>
+     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
+     * {@code x} and {@code power} are the inputs: {@code Math.copySign(Math.pow(Math.abs(x), power), x)}
+     * @param x any finite double
+     * @param power any finite double, within a reasonable size
+     * @return x raised to power, preserving the sign of x
+     */
+    public static double signPreservingPow(final double x, final double power) {
+        return Math.copySign(Math.pow(Math.abs(x), power), x);
+    }
+
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Fractional Parts of Numbers">
+
+    /**
+     * Like {@link Math#floor(double)}, but takes a float and returns an int.
+     * Only works with finite floats. This method will only properly floor
+     * floats from {@code -16384} to {@code 4194304}.
+     * Unlike {@link #floor(double)}, {@link #longFloor(float)}, and {@link #longFloor(double)},
+     * this is significantly faster than {@code (int)Math.floor(t)}.
+     * <br>
+     * Taken from libGDX MathUtils.
+     *
+     * @param t a float from -16384 to 4194304 (both inclusive)
+     * @return the floor of t, as an int
+     */
+    public static int fastFloor(final float t) {
+        return (int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
+    }
+
+    /**
+     * Like {@link Math#ceil(double)}, but takes a float and returns an int.
+     * Only works with finite floats. This method will only properly ceil
+     * floats from {@code -16384} to {@code 4194304}.
+     * Unlike {@link #ceil(float)}, this is significantly faster than {@code (int)Math.ceil(t)}.
+     * <br>
+     * Taken from libGDX MathUtils.
+     *
+     * @param t the float to find the ceiling for, from -16384 to 4194304
+     * @return the ceiling of t, as an int
+     */
+    public static int fastCeil(final float t) {
+        return BIG_ENOUGH_INT - (int) (BIG_ENOUGH_FLOOR - t);
+    }
+
+    /**
+     * Like the fract() function available in GLSL shaders, this gets the fractional part of the float
+     * input {@code t} by returning a result similar to {@code t - Math.floor(t)}, as a float. For
+     * negative inputs, this doesn't behave differently than for positive; both will always return a
+     * float that is <code>0 &lt;= t &lt; 1</code> . This is implemented differently from what appears
+     * to be the most straightforward way (just subtracting the floor). Because very small values for
+     * {@code t} that are negative can floor to -1, and subtracting -1 from a very small value can
+     * make the float just round to 1, we need to use a different approach. The code used here currently
+     * is: <code>
+     *     t -= (int)t - 1;
+     *     return t - (int)t;
+     *     </code>
+     * Any suggestions for improvements that still pass tests here are welcome.
+     * @param t a finite float that should be between about {@code -Math.pow(2, 23)} and {@code Math.pow(2, 23)}
+     * @return the fractional part of t, as a float <code>0 &lt;= result &lt; 1</code>
+     */
+    public static float fastFract(float t) {
+        t -= (int)t - 1;
+        return t - (int)t;
+    }
+//    int ti = (int)t; return t - ti + (int)(ti + 1 - t);
+
+//        return t - ((int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT);
+
+    /**
+     * Like {@link Math#floor}, but returns a long.
+     * Only works with finite doubles.
+     * This is only faster than {@code (long)Math.floor(t)} on Java 8 for supported desktop platforms.
+     *
+     * @param t the double to find the floor for
+     * @return the floor of t, as a long
+     */
+    public static long longFloor(final double t) {
+        final long z = (long) t;
+        return t < z ? z - 1L : z;
+    }
+
+    /**
+     * Like {@link Math#floor(double)}, but takes a float and returns a long.
+     * Only works with finite floats.
+     * This is only faster than {@code (long)Math.floor(t)} on Java 8 for supported desktop platforms.
+     *
+     * @param t the double to find the floor for
+     * @return the floor of t, as a long
+     */
+    public static long longFloor(final float t) {
+        final long z = (long) t;
+        return t < z ? z - 1L : z;
+    }
+
+    /**
+     * Like {@link Math#floor(double)} , but returns an int.
+     * Only works with finite doubles.
+     * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
+     *
+     * @param t the float to find the floor for
+     * @return the floor of t, as an int
+     */
+    public static int floor(final double t) {
+        final int z = (int) t;
+        return t < z ? z - 1 : z;
+    }
+
+    /**
+     * Like {@link Math#ceil(double)}, but returns an int.
+     * Only works with finite doubles.
+     * This is only faster than {@code (int)Math.ceil(t)} on Java 8 for supported desktop platforms.
+     *
+     * @param t the float to find the ceiling for
+     * @return the ceiling of t, as an int
+     */
+    public static int ceil(final double t) {
+        final int z = (int) t;
+        return t > z ? z + 1 : z;
+    }
+
+    /**
+     * Returns the largest int less than or equal to the specified float.
+     * Only works with finite floats.
+     * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
+     *
+     * @param value any float
+     * @return the floor of value, as an int
+     */
+    public static int floor(float value) {
+        final int z = (int) value;
+        return value < z ? z - 1 : z;
+    }
+
+    /**
+     * Returns the largest int less than or equal to the specified float. This method will only properly floor floats that are
+     * positive. Note, this method simply casts the float to int.
+     * <br>
+     * Taken from libGDX MathUtils.
+     *
+     * @param value any positive float
+     */
+    public static int floorPositive(float value) {
+        return (int) value;
+    }
+
+    /**
+     * Returns the smallest int greater than or equal to the specified float.
+     * Only works with finite floats.
+     * This is only faster than {@code (int)Math.ceil(t)} on Java 8 for supported desktop platforms.
+     *
+     * @param value the ceil of value, as an int
+     */
+    public static int ceil(float value) {
+        final int z = (int) value;
+        return value > z ? z + 1 : z;
+    }
+
+    /**
+     * Returns the smallest integer greater than or equal to the specified float. This method will only properly ceil floats that
+     * are positive.
+     * <br>
+     * Taken from libGDX MathUtils.
+     *
+     * @param value any positive float
+     */
+    public static int ceilPositive(float value) {
+        return (int) (value + CEIL);
+    }
+
+    /**
+     * Returns the closest integer to the specified float. This method will only properly round floats from -16384
+     * (inclusive) to 4194304 (exclusive).
+     * <br>
+     * Taken from libGDX MathUtils.
+     *
+     * @param value a float from -16384 to 4194304
+     */
+    public static int round(float value) {
+//        return (int) (value + 16384.5) - 16384;
+        return (int) (value + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT;
+    }
+
+    /**
+     * Returns the closest integer to the specified float. This method will only properly round floats that are positive.
+     * <br>
+     * Taken from libGDX MathUtils.
+     *
+     * @param value any positive float
+     */
+    public static int roundPositive(float value) {
+        return (int) (value + 0.5f);
+    }
+
+    /**
+     * Like the fract() function available in GLSL shaders, this gets the fractional part of the float
+     * input {@code t} by returning a result similar to {@code t - Math.floor(t)} . For
+     * negative inputs, this doesn't behave differently than for positive; both will always return a
+     * float that is <code>0 &lt;= t &lt; 1</code> . This code is currently the same as
+     * {@link #fastFract(float)}. If another implementation is introduced, this method will be the more
+     * accurate and probably slower version.
+     * @see #fastFract(float) (the code here is currently the same as fastFract())
+     * @param t a finite float that should be between about {@code -Math.pow(2, 23)} and {@code Math.pow(2, 23)}
+     * @return the fractional part of t, as a float <code>0 &lt;= result &lt; 1</code>
+     */
+    public static float fract(float t) {
+        t -= (int)t - 1;
+        return t - (int)t;
+    }
+
+    /**
+     * Like the fract() function available in GLSL shaders, this gets the fractional part of the double
+     * input {@code t} by returning a result equivalent to {@code t - Math.floor(t)} . For
+     * negative inputs, this doesn't behave differently than for positive; both will always return a
+     * double that is <code>0 &lt;= t &lt; 1</code> .
+     * @param t a finite double that should be between about {@code -Math.pow(2, 52)} and {@code Math.pow(2, 52)}
+     * @return the fractional part of t, as a double <code>0 &lt;= result &lt; 1</code>
+     */
+    public static double fract(double t) {
+        t -= (long)t - 1L;
+        return t - (long)t;
+    }
+
+    // note: just using {@code t - Math.floor(t)} fails when t is negative and very small, such as:
+    // fract(-Double.MIN_NORMAL) == 1
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Bit Twiddling">
+    /**
+     * Takes an x and a y value, each an int treated as unsigned, and returns a long that interleaves their bits so the
+     * least significant bit and every other bit after it are filled with the bits of x, while the
+     * second-least-significant bit and every other bit after that are filled with the bits of y. Essentially, this
+     * takes two numbers with bits labeled like {@code a b c} for x and {@code R S T} for y and makes a number with
+     * those bits arranged like {@code R a S b T c}. Numbers made by interleaving other numbers like this are sometimes
+     * called Morton codes, and the sequence of Morton codes forms a pattern called the Z-order curve. You can retrieve
+     * x and y from a Morton code (like what this returns) using {@link #disperseBits(long)}.
+     * @see #disperseBits(long)
+     * @param x an int that will be treated as unsigned
+     * @param y an int that will be treated as unsigned
+     * @return a long that interleaves x and y, with x in the least significant bit position
+     */
+    public static long interleaveBits(final int x, final int y)
+    {
+        long n = (x & 0xFFFFFFFFL) | (long)y << 32;
+        n =    ((n & 0x00000000ffff0000L) <<16) | ((n >>>16) & 0x00000000ffff0000L) | (n & 0xffff00000000ffffL);
+        n =    ((n & 0x0000ff000000ff00L) << 8) | ((n >>> 8) & 0x0000ff000000ff00L) | (n & 0xff0000ffff0000ffL);
+        n =    ((n & 0x00f000f000f000f0L) << 4) | ((n >>> 4) & 0x00f000f000f000f0L) | (n & 0xf00ff00ff00ff00fL);
+        n =    ((n & 0x0c0c0c0c0c0c0c0cL) << 2) | ((n >>> 2) & 0x0c0c0c0c0c0c0c0cL) | (n & 0xc3c3c3c3c3c3c3c3L);
+        return ((n & 0x2222222222222222L) << 1) | ((n >>> 1) & 0x2222222222222222L) | (n & 0x9999999999999999L);
+    }
+
+
+    /**
+     * Takes an int that represents a distance down the Z-order curve and moves its bits around so that
+     * its x component is stored in the bottom 16 bits (use {@code (n & 0xffff)} to obtain) and its y component is
+     * stored in the upper 16 bits (use {@code (n >>> 16)} to obtain). Numbers made by interleaving other numbers, like
+     * {@code n}, are sometimes called Morton codes, and the sequence of Morton codes forms a pattern called the
+     * Z-order curve. You can get a Morton code from an x, y position using {@link #interleaveBits(int, int)}, and to
+     * use it here you can just cast it to an int.
+     * @see #interleaveBits(int, int)
+     * @param n an int that has already been interleaved, though this can really be any int
+     * @return an int with x in its lower bits ({@code x = n & 0xffff;}) and y in its upper bits ({@code y = n >>> 16;})
+     */
+    public static int disperseBits(int n)
+    {
+        n =    ((n & 0x22222222) << 1) | ((n >>> 1) & 0x22222222) | (n & 0x99999999);
+        n =    ((n & 0x0c0c0c0c) << 2) | ((n >>> 2) & 0x0c0c0c0c) | (n & 0xc3c3c3c3);
+        n =    ((n & 0x00f000f0) << 4) | ((n >>> 4) & 0x00f000f0) | (n & 0xf00ff00f);
+        return ((n & 0x0000ff00) << 8) | ((n >>> 8) & 0x0000ff00) | (n & 0xff0000ff);
+    }
+
+    /**
+     * Takes a long that represents a distance down the Z-order curve and moves its bits around so that
+     * its x component is stored in the bottom 32 bits (use {@code (n & 0xffffffffL)} to obtain) and its y component is
+     * stored in the upper 32 bits (use {@code (n >>> 32)} to obtain). Numbers made by interleaving other numbers, like
+     * {@code n}, are sometimes called Morton codes, and the sequence of Morton codes forms a pattern called the
+     * Z-order curve. You can get a Morton code from an x, y position using {@link #interleaveBits(int, int)}.
+     * @see #interleaveBits(int, int)
+     * @param n a long that has already been interleaved, though this can really be any long
+     * @return a long with x in its lower bits ({@code x = dispersed & 0xffffffffL;}) and y in its upper bits ({@code y = dispersed >>> 32;})
+     */
+    public static long disperseBits(long n)
+    {
+        n =    ((n & 0x2222222222222222L) << 1) | ((n >>> 1) & 0x2222222222222222L) | (n & 0x9999999999999999L);
+        n =    ((n & 0x0c0c0c0c0c0c0c0cL) << 2) | ((n >>> 2) & 0x0c0c0c0c0c0c0c0cL) | (n & 0xc3c3c3c3c3c3c3c3L);
+        n =    ((n & 0x00f000f000f000f0L) << 4) | ((n >>> 4) & 0x00f000f000f000f0L) | (n & 0xf00ff00ff00ff00fL);
+        n =    ((n & 0x0000ff000000ff00L) << 8) | ((n >>> 8) & 0x0000ff000000ff00L) | (n & 0xff0000ffff0000ffL);
+        return ((n & 0x00000000ffff0000L) <<16) | ((n >>>16) & 0x00000000ffff0000L) | (n & 0xffff00000000ffffL);
+    }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Lower Math">
 
     /**
      * If the specified value is not greater than or equal to the specified minimum and
@@ -764,6 +805,8 @@ public final class MathTools {
         return a;
     }
 
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Higher Math">
     /**
      * Given any odd int {@code a}, this finds another odd int {@code b} such that {@code a * b == 1}.
      * Note that this is now GWT-compatible thanks to {@link BitConversion#imul(int, int)}, though this
@@ -814,277 +857,6 @@ public static long mmi(final long a) {
     return x;
 }
 */
-
-    /**
-     * Integer square root (using floor), maintaining correct results even for very large {@code long} values. This
-     * version treats negative inputs as unsigned and returns positive square roots for them (these are usually large).
-     * <br>
-     * This is based on <a href="https://github.com/python/cpython/pull/13244">code used by Python</a>, but
-     * isn't identical. Notably, this doesn't branch except in the for loop, and it handles negative inputs differently.
-     *
-     * @param n a {@code long} value that will be treated as if unsigned
-     * @return the square root of n, rounded down to the next lower {@code long} if the result isn't already a {@code long}
-     */
-    public static long isqrt(final long n) {
-        final int c = 63 - BitConversion.countLeadingZeros(n) >> 1;
-        long a = 1, d = 0, e;
-        for (int s = 31 & 32 - BitConversion.countLeadingZeros(c); s > 0; ) {
-            e = d;
-            d = c >>> --s;
-            a = (a << d - e - 1) + (n >>> c + c - e - d + 1) / a;
-        }
-        return a - (n - a * a >>> 63);
-    }
-
-    /**
-     * An approximation of the cube-root function for float inputs and outputs.
-     * This can be over twice as fast as {@link Math#cbrt(double)}. It
-     * correctly returns negative results when given negative inputs.
-     * <br>
-     * Has very low relative error (less than 1E-9) when inputs are uniformly
-     * distributed between -512 and 512, and absolute mean error of less than
-     * 1E-6 in the same scenario. Uses a bit-twiddling method similar to one
-     * presented in Hacker's Delight and also used in early 3D graphics (see
-     * <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a> for more, but
-     * this code approximates cbrt(x) and not 1/sqrt(x)). This specific code
-     * mixes an approach originally by Marc B. Reynolds, posted in his
-     * <a href="https://github.com/Marc-B-Reynolds/Stand-alone-junk/blob/7d8d1e19b2ab09743f46964f60244906e1023f6a/src/Posts/ballcube.c#L182-L197">"Stand-alone-junk" repo</a>,
-     * with the evaluator for accuracy from <a href="https://github.com/EvanBalster/root-cellar/">Root-Cellar</a>, and
-     * ends up not using either version's cbrt() exactly.
-     * <br>
-     * This was adjusted very slightly so {@code cbrt(1f) == 1f}. While this corrects the behavior for one of the most
-     * commonly-expected inputs, it may change results for (very) large positive or negative inputs.
-     * <br>
-     * If you need to work with doubles, or need higher precision, use {@link Math#cbrt(double)}.
-     * @param cube any finite float to find the cube root of
-     * @return the cube root of {@code cube}, approximated
-     */
-    public static float cbrt(float cube) {
-        final int ix = BitConversion.floatToIntBits(cube);
-        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A51379A | (ix & 0x80000000));
-        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
-        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
-        return x;
-    }
-
-    /**
-     * The same as {@link #cbrt(float)}, but with special handling for negative inputs removed; this will only return a
-     * close approximation to the cube root function for positive inputs.
-     * @param cube any positive finite float to find the cube root of
-     * @return the cube root of {@code cube}, approximated
-     */
-    public static float cbrtPositive(float cube) {
-        float x = BitConversion.intBitsToFloat(BitConversion.floatToIntBits(cube) / 3 + 0x2A51379A);
-        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
-        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
-        return x;
-    }
-
-    /**
-     * Double-precision cube root. Using {@link Math#cbrt(double)} is probably faster and more accurate.
-     * This is only really useful if you need to read code that produces an accurate cube root.
-     * <br>
-     * <a href="https://stackoverflow.com/a/73354137">Credit to StackOverflow user wim</a>.
-     * @param x any double
-     * @return an approximation of the cube root for the given double
-     */
-    public static double cbrt(double x) {
-        double a, y, r, r2_h, y_a2y4, ayy, diff;
-        long ai, ai23, aim23;
-        boolean small;
-
-        a = Math.abs(x);
-        small = a <  0.015625;                         // Scale large, small and/or subnormal numbers to avoid underflow, overflow or subnormal numbers
-        a = small ? a * 1.645504557321206E63 : a * 0.125; // 1.645504557321206E63 is 0x1.0p+210
-        ai = BitConversion.doubleToLongBits(a);
-        if (ai >= 0x7FF0000000000000L || x == 0.0){    // Inf, 0.0 and NaN
-            r = x + x;
-        }
-        else
-        {
-            ai23 = 2 * (ai/3);                           // Integer division. The compiler, with suitable optimization level, should generate a much more efficient multiplication by 0xAAAAAAAAAAAAAAAB
-            aim23 = 0x6A8EB53800000000L - ai23;          // This uses a similar idea as the "fast inverse square root" approximation, see https://en.wikipedia.org/wiki/Fast_inverse_square_root
-            y = BitConversion.longBitsToDouble(aim23);   // y is an approximation of a^(-2/3)
-
-            ayy = a * y * y;                          // First Newton iteration for f(y)=a^2-y^-3 to calculate a better approximation y=a^(-2/3)
-            y_a2y4 = y - ayy * ayy;
-            y = y_a2y4 * 0.33333333333333333333 + y;
-
-            ayy = a * y * y;                          // Second Newton iteration
-            y_a2y4 = y - ayy * ayy;
-            y = y_a2y4 * 0.33523333333 + y;           // This is a small modification to the exact Newton parameter 1/3 which gives slightly better results
-
-            ayy = a * y * y;                          // Third Newton iteration
-            y_a2y4 = y - ayy * ayy;
-            y = y_a2y4 * 0.33333333333333333333 + y;
-
-            r = y * a;                                // Now r = y * a is an approximation of a^(1/3), because y approximates a^(-2/3).
-
-            r2_h = r * r;                             // Compute one pseudo Newton step with g(r)=a-r^3, but instead of dividing by f'(r)=3r^2 we multiply with
-                                                      // the approximation 0.3333...*y (division is usually a relatively expensive operation)
-//            double r2_l = r * r + -r2_h;              // For better accuracy we could split r*r=r^2 as r^2=r2_h+r2_l exactly, but don't now.
-            diff = a - r2_h * r;
-//            diff = r2_l * -r + diff;                  // Compute diff=a-r^3 accurately: diff=(a-r*r2_h)-r*r2_l with two fma instructions
-            diff *= 0.33333333333333333333;
-            r = diff * y + r;                        // Now r approximates a^(1/3) well enough
-/*
-            r2_h = r * r;                             // One final Halley iteration (omitted for now)
-            r2_l = r * r + -r2_h;
-            diff = r2_h * -r + a;
-            diff = r2_l * -r + diff;
-            double denom = a * 3.0 - 2.0 * diff;
-            r = (diff/denom) * r + r;
-*/
-            r = small ? r * 8.470329472543003E-22 : r * 2.0;   // Undo scaling; 8.470329472543003E-22 is 0x1.0p-70
-            r = Math.copySign(r, x);
-        }
-        return r;
-    }
-
-    /**
-     * Returns the nth root of x. Any values within {@link #FLOAT_ROUNDING_ERROR} of an int are rounded to that int to
-     * reduce the likelihood of floating-point error adversely affecting the result.
-     * <br>
-     * For a detailed description of how this function handles negative roots and roots of negative numbers,
-     * refer to the documentation for {@link Math#pow(double, double)}. This implementation starts by calling
-     * {@code Math.pow(x, 1f / n)}, so consider the documentation in Math for the reciprocal of the power.
-     * <br>
-     * Unlike {@link #cbrt(float)}, this is not an approximation, and isn't any faster than calling Math.pow() with the
-     * reciprocal of the power. Its advantage is in precision when integer results are mathematically correct, but Math
-     * won't calculate them correctly on its own.
-     *
-     * @param x a number to find the nth root of
-     * @param n the degree of the root; may be negative or non-integer
-     * @return a number which, when raised to the power n, yields x
-     */
-    public static float nthrt(final float x, final float n) {        
-        float f = (float) Math.pow(x, 1f / n);
-        if (Float.isNaN(f) || Float.isInfinite(f))
-            return f;
-        int i = round(f);
-        return isEqual(i, f) ? i : f;
-    }
-    
-    /**
-     * Fast inverse square root, best known for its implementation in Quake III Arena.
-     * This is an algorithm that estimates the {@code float} value of 1/sqrt(x). It has
-     * comparable performance to the more-straightforward {@code 1f/(float)Math.sqrt(x)}
-     * on HotSpot JDKs, but this method outperforms the Math-based approach by over 40%
-     * on GraalVM 17. Some other platforms, such as Android and GWT, may have similar or
-     * very different performance relative to using Math, so if you expect to use this
-     * method often, you should test it in your app on the platforms you target.
-     * Precision will always be best with Math.
-     * <br>
-     * It is often used for vector normalization, i.e. scaling it to a length of 1.
-     * For example, it can be used to compute angles of incidence and reflection for
-     * lighting and shading.
-     * <br>
-     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>.
-     * This uses Jan Kadlec's adjustments on the "magic number" and Newton's method section.
-     *
-     * @param x a non-negative finite float to find the inverse square root of
-     * @return the inverse square root of x, approximated
-     */
-    public static float invSqrt(float x) {
-        int i = 0x5F1FFFF9 - (BitConversion.floatToIntBits(x) >> 1);
-        float y = BitConversion.intBitsToFloat(i);
-        return y * (0.703952253f * (2.38924456f - x * y * y));
-    }
-
-    /**
-     * Fast inverse square root, best known for its implementation in Quake III Arena.
-     * This is an algorithm that estimates the {@code double} value of 1/sqrt(x). It has
-     * comparable performance to the more-straightforward {@code 1.0/Math.sqrt(x)}
-     * on HotSpot JDKs, but this method may outperform the Math-based approach on GraalVM
-     * 17 (the float version, {@link #invSqrt(float)}, does so by 40% or more). Some other
-     * platforms, such as Android and GWT, may have similar or
-     * very different performance relative to using Math, so if you expect to use this
-     * method often, you should test it in your app on the platforms you target.
-     * Precision will always be best with Math.
-     * <br>
-     * It is often used for vector normalization, i.e. scaling it to a length of 1.
-     * For example, it can be used to compute angles of incidence and reflection for
-     * lighting and shading.
-     * <br>
-     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>.
-     * This uses a "magic number" found exactly by Matthew Robertson. The relative error of this
-     * double-based overload is actually worse than the float-based overload because of how
-     * the last step (Newton's method) was adjusted to fit the float-based version.
-     *
-     * @param x a non-negative finite double to find the inverse square root of
-     * @return the inverse square root of x, approximated
-     */
-    public static double invSqrt(final double x) {
-        long i = 0x5FE6EB50C7B537A9L - (BitConversion.doubleToLongBits(x) >> 1);
-        double y = BitConversion.longBitsToDouble(i);
-        return y * (1.5 - 0.5 * x * y * y);
-    }
-
-    /**
-     * A variant on {@link Math#sqrt(double)} that is defined for negative inputs in the same way that
-     * {@link #cbrt(float)} is: the signPreservingSqrt of x is equivalent to {@code (float)sqrt(abs(x))} with its sign
-     * changed if necessary to match the sign of x (using {@link Math#copySign(float, float)}). This returns
-     * {@code -0.0} if given {@code -0.0} as an input. Sign-preserving square roots show up not-infrequently in math
-     * formulas, so this may be useful to have.
-     * <br>
-     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
-     * {@code x} is the input: {@code Math.copySign((float)Math.sqrt(Math.abs(x)), x)}
-     * @param x any finite float
-     * @return the sign-preserving square root of x
-     */
-    public static float signPreservingSqrt(final float x) {
-        return Math.copySign((float)Math.sqrt(Math.abs(x)), x);
-    }
-
-    /**
-     * A variant on {@link Math#pow(double, double)} that is always defined for negative inputs in the same way that
-     * {@link #cbrt(float)} is: the signPreservingPow of x and any power is equivalent to
-     * {@code (float)pow(abs(x), power)} with its sign changed if necessary to match the sign of x (using
-     * {@link Math#copySign(float, float)}). If given {@code 0.0} or {@code -0.0} as the power, this returns
-     * {@code 1.0} for positive x (including {@code 0.0}) and {@code -1.0} for negative x (including {@code -0.0}).
-     * <br>
-     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
-     * {@code x} and {@code power} are the inputs: {@code Math.copySign((float)Math.pow(Math.abs(x), power), x)}
-     * @param x any finite float
-     * @param power any finite float, within a reasonable size
-     * @return x raised to power, preserving the sign of x
-     */
-    public static float signPreservingPow(final float x, final float power) {
-        return Math.copySign((float)Math.pow(Math.abs(x), power), x);
-    }
-
-    /**
-     * A variant on {@link Math#sqrt(double)} that is defined for negative inputs in the same way that
-     * {@link Math#cbrt(double)} is: the signPreservingSqrt of x is equivalent to {@code sqrt(abs(x))} with its sign
-     * changed if necessary to match the sign of x (using {@link Math#copySign(double, double)}). This returns
-     * {@code -0.0} if given {@code -0.0} as an input. Sign-preserving square roots show up not-infrequently in math
-     * formulas, so this may be useful to have.
-     * <br>
-     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
-     * {@code x} is the input: {@code Math.copySign(Math.sqrt(Math.abs(x)), x)}
-     * @param x any finite double
-     * @return the sign-preserving square root of x
-     */
-    public static double signPreservingSqrt(final double x) {
-        return Math.copySign(Math.sqrt(Math.abs(x)), x);
-    }
-
-    /**
-     * A variant on {@link Math#pow(double, double)} that is always defined for negative inputs in the same way that
-     * {@link Math#cbrt(double)} is: the signPreservingPow of x and any power is equivalent to
-     * {@code pow(abs(x), power)} with its sign changed if necessary to match the sign of x (using
-     * {@link Math#copySign(double, double)}). If given {@code 0.0} or {@code -0.0} as the power, this returns
-     * {@code 1.0} for positive x (including {@code 0.0}) and {@code -1.0} for negative x (including {@code -0.0}).
-     * <br>
-     * This method is very small, and you may just want to inline it into performance-critical code. The code is, where
-     * {@code x} and {@code power} are the inputs: {@code Math.copySign(Math.pow(Math.abs(x), power), x)}
-     * @param x any finite double
-     * @param power any finite double, within a reasonable size
-     * @return x raised to power, preserving the sign of x
-     */
-    public static double signPreservingPow(final double x, final double power) {
-        return Math.copySign(Math.pow(Math.abs(x), power), x);
-    }
 
     /**
      * A generalization on bias and gain functions that can represent both; this version is branch-less.
@@ -1182,6 +954,20 @@ public static long mmi(final long a) {
         final double d = (turning = turning * 0.5 + 0.5) - (x = x * 0.5 + 0.5);
         final int f = BitConversion.doubleToHighIntBits(d) >> 31, n = f | 1;
         return ((turning * n - f) * (x + f) / (2.2250738585072014E-308 - f + (x + shape * d) * n) - f - 0.5) * 2.0;
+    }
+
+    /**
+     * Emphasizes or de-emphasizes extreme values using Schlick's gain function when {@code x} is between 0 and 1
+     * (inclusive), or effectively {@code -gain(-x)} when x is between -1 and 0. The bias parameter is handled a little
+     * differently from how Schlick implemented it; here, {@code bias=1} produces a straight line (no bias), bias
+     * between 0 and 1 is shaped like the {@link MathTools#cbrt(float)} function, and
+     * bias greater than 1 is shaped like {@link MathTools#cube(float)}.
+     * @param x between -1 and 1, inclusive
+     * @param bias any float greater than 0 (exclusive)
+     * @return an altered float between -1 and 1, inclusive
+     */
+    public static float signedGain(float x, float bias) {
+        return x / (((bias - 1f) * (1f - Math.abs(x))) + 1f);
     }
 
     // 2.2250738585072014E-308 is 0x1p-1022
@@ -1504,255 +1290,307 @@ public static long mmi(final long a) {
     public static long fibonacci(long n) {
         return (long) (Math.pow(1.618033988749895, n) / 2.236067977499795 + 0.49999999999999917);
     }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Exponents and Logarithms">
 
     /**
-     * Returns the square (second power) of its parameter. Purely here for convenience.
-     * @param n any float
-     * @return {@code n * n}
-     */
-    public static float square(final float n) {
-        return n * n;
-    }
-
-    /**
-     * Returns the square (second power) of its parameter. Purely here for convenience.
-     * @param n any double
-     * @return {@code n * n}
-     */
-    public static double square(final double n) {
-        return n * n;
-    }
-
-    /**
-     * Returns the cube (third power) of its parameter. Purely here for convenience.
-     * @param n any float
-     * @return {@code n * n * n}
-     */
-    public static float cube(final float n) {
-        return n * n * n;
-    }
-
-    /**
-     * Returns the cube (third power) of its parameter. Purely here for convenience.
-     * @param n any double
-     * @return {@code n * n * n}
-     */
-    public static double cube(final double n) {
-        return n * n * n;
-    }
-
-    /**
-     * Like {@link Math#floor(double)}, but takes a float and returns an int.
-     * Only works with finite floats. This method will only properly floor
-     * floats from {@code -16384} to {@code 4194304}.
-     * Unlike {@link #floor(double)}, {@link #longFloor(float)}, and {@link #longFloor(double)},
-     * this is significantly faster than {@code (int)Math.floor(t)}.
+     * Integer square root (using floor), maintaining correct results even for very large {@code long} values. This
+     * version treats negative inputs as unsigned and returns positive square roots for them (these are usually large).
      * <br>
-     * Taken from libGDX MathUtils.
+     * This is based on <a href="https://github.com/python/cpython/pull/13244">code used by Python</a>, but
+     * isn't identical. Notably, this doesn't branch except in the for loop, and it handles negative inputs differently.
      *
-     * @param t a float from -16384 to 4194304 (both inclusive)
-     * @return the floor of t, as an int
+     * @param n a {@code long} value that will be treated as if unsigned
+     * @return the square root of n, rounded down to the next lower {@code long} if the result isn't already a {@code long}
      */
-    public static int fastFloor(final float t) {
-        return (int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
+    public static long isqrt(final long n) {
+        final int c = 63 - BitConversion.countLeadingZeros(n) >> 1;
+        long a = 1, d = 0, e;
+        for (int s = 31 & 32 - BitConversion.countLeadingZeros(c); s > 0; ) {
+            e = d;
+            d = c >>> --s;
+            a = (a << d - e - 1) + (n >>> c + c - e - d + 1) / a;
+        }
+        return a - (n - a * a >>> 63);
     }
 
     /**
-     * Like {@link Math#ceil(double)}, but takes a float and returns an int.
-     * Only works with finite floats. This method will only properly ceil
-     * floats from {@code -16384} to {@code 4194304}.
-     * Unlike {@link #ceil(float)}, this is significantly faster than {@code (int)Math.ceil(t)}.
+     * An approximation of the cube-root function for float inputs and outputs.
+     * This can be over twice as fast as {@link Math#cbrt(double)}. It
+     * correctly returns negative results when given negative inputs.
      * <br>
-     * Taken from libGDX MathUtils.
-     *
-     * @param t the float to find the ceiling for, from -16384 to 4194304
-     * @return the ceiling of t, as an int
-     */
-    public static int fastCeil(final float t) {
-        return BIG_ENOUGH_INT - (int) (BIG_ENOUGH_FLOOR - t);
-    }
-
-    /**
-     * Like the fract() function available in GLSL shaders, this gets the fractional part of the float
-     * input {@code t} by returning a result similar to {@code t - Math.floor(t)}, as a float. For
-     * negative inputs, this doesn't behave differently than for positive; both will always return a
-     * float that is <code>0 &lt;= t &lt; 1</code> . This is implemented differently from what appears
-     * to be the most straightforward way (just subtracting the floor). Because very small values for
-     * {@code t} that are negative can floor to -1, and subtracting -1 from a very small value can
-     * make the float just round to 1, we need to use a different approach. The code used here currently
-     * is: <code>
-     *     t -= (int)t - 1;
-     *     return t - (int)t;
-     *     </code>
-     * Any suggestions for improvements that still pass tests here are welcome.
-     * @param t a finite float that should be between about {@code -Math.pow(2, 23)} and {@code Math.pow(2, 23)}
-     * @return the fractional part of t, as a float <code>0 &lt;= result &lt; 1</code>
-     */
-    public static float fastFract(float t) {
-        t -= (int)t - 1;
-        return t - (int)t;
-    }
-//    int ti = (int)t; return t - ti + (int)(ti + 1 - t);
-
-//        return t - ((int) (t + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT);
-
-    /**
-     * Like {@link Math#floor}, but returns a long.
-     * Only works with finite doubles.
-     * This is only faster than {@code (long)Math.floor(t)} on Java 8 for supported desktop platforms.
-     *
-     * @param t the double to find the floor for
-     * @return the floor of t, as a long
-     */
-    public static long longFloor(final double t) {
-        final long z = (long) t;
-        return t < z ? z - 1L : z;
-    }
-
-    /**
-     * Like {@link Math#floor(double)}, but takes a float and returns a long.
-     * Only works with finite floats.
-     * This is only faster than {@code (long)Math.floor(t)} on Java 8 for supported desktop platforms.
-     *
-     * @param t the double to find the floor for
-     * @return the floor of t, as a long
-     */
-    public static long longFloor(final float t) {
-        final long z = (long) t;
-        return t < z ? z - 1L : z;
-    }
-
-    /**
-     * Like {@link Math#floor(double)} , but returns an int.
-     * Only works with finite doubles.
-     * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
-     *
-     * @param t the float to find the floor for
-     * @return the floor of t, as an int
-     */
-    public static int floor(final double t) {
-        final int z = (int) t;
-        return t < z ? z - 1 : z;
-    }
-
-    /**
-     * Like {@link Math#ceil(double)}, but returns an int.
-     * Only works with finite doubles.
-     * This is only faster than {@code (int)Math.ceil(t)} on Java 8 for supported desktop platforms.
-     *
-     * @param t the float to find the ceiling for
-     * @return the ceiling of t, as an int
-     */
-    public static int ceil(final double t) {
-        final int z = (int) t;
-        return t > z ? z + 1 : z;
-    }
-
-    /**
-     * Returns the largest int less than or equal to the specified float.
-     * Only works with finite floats.
-     * This is only faster than {@code (int)Math.floor(t)} on Java 8 for supported desktop platforms.
-     *
-     * @param value any float
-     * @return the floor of value, as an int
-     */
-    public static int floor(float value) {
-        final int z = (int) value;
-        return value < z ? z - 1 : z;
-    }
-
-    /**
-     * Returns the largest int less than or equal to the specified float. This method will only properly floor floats that are
-     * positive. Note, this method simply casts the float to int.
+     * Has very low relative error (less than 1E-9) when inputs are uniformly
+     * distributed between -512 and 512, and absolute mean error of less than
+     * 1E-6 in the same scenario. Uses a bit-twiddling method similar to one
+     * presented in Hacker's Delight and also used in early 3D graphics (see
+     * <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a> for more, but
+     * this code approximates cbrt(x) and not 1/sqrt(x)). This specific code
+     * mixes an approach originally by Marc B. Reynolds, posted in his
+     * <a href="https://github.com/Marc-B-Reynolds/Stand-alone-junk/blob/7d8d1e19b2ab09743f46964f60244906e1023f6a/src/Posts/ballcube.c#L182-L197">"Stand-alone-junk" repo</a>,
+     * with the evaluator for accuracy from <a href="https://github.com/EvanBalster/root-cellar/">Root-Cellar</a>, and
+     * ends up not using either version's cbrt() exactly.
      * <br>
-     * Taken from libGDX MathUtils.
-     *
-     * @param value any positive float
-     */
-    public static int floorPositive(float value) {
-        return (int) value;
-    }
-
-    /**
-     * Returns the smallest int greater than or equal to the specified float.
-     * Only works with finite floats.
-     * This is only faster than {@code (int)Math.ceil(t)} on Java 8 for supported desktop platforms.
-     *
-     * @param value the ceil of value, as an int
-     */
-    public static int ceil(float value) {
-        final int z = (int) value;
-        return value > z ? z + 1 : z;
-    }
-
-    /**
-     * Returns the smallest integer greater than or equal to the specified float. This method will only properly ceil floats that
-     * are positive.
+     * This was adjusted very slightly so {@code cbrt(1f) == 1f}. While this corrects the behavior for one of the most
+     * commonly-expected inputs, it may change results for (very) large positive or negative inputs.
      * <br>
-     * Taken from libGDX MathUtils.
-     *
-     * @param value any positive float
+     * If you need to work with doubles, or need higher precision, use {@link Math#cbrt(double)}.
+     * @param cube any finite float to find the cube root of
+     * @return the cube root of {@code cube}, approximated
      */
-    public static int ceilPositive(float value) {
-        return (int) (value + CEIL);
+    public static float cbrt(float cube) {
+        final int ix = BitConversion.floatToIntBits(cube);
+        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A51379A | (ix & 0x80000000));
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        return x;
     }
 
     /**
-     * Returns the closest integer to the specified float. This method will only properly round floats from -16384
-     * (inclusive) to 4194304 (exclusive).
+     * The same as {@link #cbrt(float)}, but with special handling for negative inputs removed; this will only return a
+     * close approximation to the cube root function for positive inputs.
+     * @param cube any positive finite float to find the cube root of
+     * @return the cube root of {@code cube}, approximated
+     */
+    public static float cbrtPositive(float cube) {
+        float x = BitConversion.intBitsToFloat(BitConversion.floatToIntBits(cube) / 3 + 0x2A51379A);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        return x;
+    }
+
+    /**
+     * Double-precision cube root. Using {@link Math#cbrt(double)} is probably faster and more accurate.
+     * This is only really useful if you need to read code that produces an accurate cube root.
      * <br>
-     * Taken from libGDX MathUtils.
-     *
-     * @param value a float from -16384 to 4194304
+     * <a href="https://stackoverflow.com/a/73354137">Credit to StackOverflow user wim</a>.
+     * @param x any double
+     * @return an approximation of the cube root for the given double
      */
-    public static int round(float value) {
-//        return (int) (value + 16384.5) - 16384;
-        return (int) (value + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT;
+    public static double cbrt(double x) {
+        double a, y, r, r2_h, y_a2y4, ayy, diff;
+        long ai, ai23, aim23;
+        boolean small;
+
+        a = Math.abs(x);
+        small = a <  0.015625;                         // Scale large, small and/or subnormal numbers to avoid underflow, overflow or subnormal numbers
+        a = small ? a * 1.645504557321206E63 : a * 0.125; // 1.645504557321206E63 is 0x1.0p+210
+        ai = BitConversion.doubleToLongBits(a);
+        if (ai >= 0x7FF0000000000000L || x == 0.0){    // Inf, 0.0 and NaN
+            r = x + x;
+        }
+        else
+        {
+            ai23 = 2 * (ai/3);                           // Integer division. The compiler, with suitable optimization level, should generate a much more efficient multiplication by 0xAAAAAAAAAAAAAAAB
+            aim23 = 0x6A8EB53800000000L - ai23;          // This uses a similar idea as the "fast inverse square root" approximation, see https://en.wikipedia.org/wiki/Fast_inverse_square_root
+            y = BitConversion.longBitsToDouble(aim23);   // y is an approximation of a^(-2/3)
+
+            ayy = a * y * y;                          // First Newton iteration for f(y)=a^2-y^-3 to calculate a better approximation y=a^(-2/3)
+            y_a2y4 = y - ayy * ayy;
+            y = y_a2y4 * 0.33333333333333333333 + y;
+
+            ayy = a * y * y;                          // Second Newton iteration
+            y_a2y4 = y - ayy * ayy;
+            y = y_a2y4 * 0.33523333333 + y;           // This is a small modification to the exact Newton parameter 1/3 which gives slightly better results
+
+            ayy = a * y * y;                          // Third Newton iteration
+            y_a2y4 = y - ayy * ayy;
+            y = y_a2y4 * 0.33333333333333333333 + y;
+
+            r = y * a;                                // Now r = y * a is an approximation of a^(1/3), because y approximates a^(-2/3).
+
+            r2_h = r * r;                             // Compute one pseudo Newton step with g(r)=a-r^3, but instead of dividing by f'(r)=3r^2 we multiply with
+            // the approximation 0.3333...*y (division is usually a relatively expensive operation)
+//            double r2_l = r * r + -r2_h;              // For better accuracy we could split r*r=r^2 as r^2=r2_h+r2_l exactly, but don't now.
+            diff = a - r2_h * r;
+//            diff = r2_l * -r + diff;                  // Compute diff=a-r^3 accurately: diff=(a-r*r2_h)-r*r2_l with two fma instructions
+            diff *= 0.33333333333333333333;
+            r = diff * y + r;                        // Now r approximates a^(1/3) well enough
+/*
+            r2_h = r * r;                             // One final Halley iteration (omitted for now)
+            r2_l = r * r + -r2_h;
+            diff = r2_h * -r + a;
+            diff = r2_l * -r + diff;
+            double denom = a * 3.0 - 2.0 * diff;
+            r = (diff/denom) * r + r;
+*/
+            r = small ? r * 8.470329472543003E-22 : r * 2.0;   // Undo scaling; 8.470329472543003E-22 is 0x1.0p-70
+            r = Math.copySign(r, x);
+        }
+        return r;
     }
 
     /**
-     * Returns the closest integer to the specified float. This method will only properly round floats that are positive.
+     * Returns the nth root of x. Any values within {@link #FLOAT_ROUNDING_ERROR} of an int are rounded to that int to
+     * reduce the likelihood of floating-point error adversely affecting the result.
      * <br>
-     * Taken from libGDX MathUtils.
+     * For a detailed description of how this function handles negative roots and roots of negative numbers,
+     * refer to the documentation for {@link Math#pow(double, double)}. This implementation starts by calling
+     * {@code Math.pow(x, 1f / n)}, so consider the documentation in Math for the reciprocal of the power.
+     * <br>
+     * Unlike {@link #cbrt(float)}, this is not an approximation, and isn't any faster than calling Math.pow() with the
+     * reciprocal of the power. Its advantage is in precision when integer results are mathematically correct, but Math
+     * won't calculate them correctly on its own.
      *
-     * @param value any positive float
+     * @param x a number to find the nth root of
+     * @param n the degree of the root; may be negative or non-integer
+     * @return a number which, when raised to the power n, yields x
      */
-    public static int roundPositive(float value) {
-        return (int) (value + 0.5f);
+    public static float nthrt(final float x, final float n) {
+        float f = (float) Math.pow(x, 1f / n);
+        if (Float.isNaN(f) || Float.isInfinite(f))
+            return f;
+        int i = round(f);
+        return isEqual(i, f) ? i : f;
     }
 
     /**
-     * Like the fract() function available in GLSL shaders, this gets the fractional part of the float
-     * input {@code t} by returning a result similar to {@code t - Math.floor(t)} . For
-     * negative inputs, this doesn't behave differently than for positive; both will always return a
-     * float that is <code>0 &lt;= t &lt; 1</code> . This code is currently the same as
-     * {@link #fastFract(float)}. If another implementation is introduced, this method will be the more
-     * accurate and probably slower version.
-     * @see #fastFract(float) (the code here is currently the same as fastFract())
-     * @param t a finite float that should be between about {@code -Math.pow(2, 23)} and {@code Math.pow(2, 23)}
-     * @return the fractional part of t, as a float <code>0 &lt;= result &lt; 1</code>
+     * Fast inverse square root, best known for its implementation in Quake III Arena.
+     * This is an algorithm that estimates the {@code float} value of 1/sqrt(x). It has
+     * comparable performance to the more-straightforward {@code 1f/(float)Math.sqrt(x)}
+     * on HotSpot JDKs, but this method outperforms the Math-based approach by over 40%
+     * on GraalVM 17. Some other platforms, such as Android and GWT, may have similar or
+     * very different performance relative to using Math, so if you expect to use this
+     * method often, you should test it in your app on the platforms you target.
+     * Precision will always be best with Math.
+     * <br>
+     * It is often used for vector normalization, i.e. scaling it to a length of 1.
+     * For example, it can be used to compute angles of incidence and reflection for
+     * lighting and shading.
+     * <br>
+     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>.
+     * This uses Jan Kadlec's adjustments on the "magic number" and Newton's method section.
+     *
+     * @param x a non-negative finite float to find the inverse square root of
+     * @return the inverse square root of x, approximated
      */
-    public static float fract(float t) {
-        t -= (int)t - 1;
-        return t - (int)t;
+    public static float invSqrt(float x) {
+        int i = 0x5F1FFFF9 - (BitConversion.floatToIntBits(x) >> 1);
+        float y = BitConversion.intBitsToFloat(i);
+        return y * (0.703952253f * (2.38924456f - x * y * y));
     }
 
     /**
-     * Like the fract() function available in GLSL shaders, this gets the fractional part of the double
-     * input {@code t} by returning a result equivalent to {@code t - Math.floor(t)} . For
-     * negative inputs, this doesn't behave differently than for positive; both will always return a
-     * double that is <code>0 &lt;= t &lt; 1</code> .
-     * @param t a finite double that should be between about {@code -Math.pow(2, 52)} and {@code Math.pow(2, 52)}
-     * @return the fractional part of t, as a double <code>0 &lt;= result &lt; 1</code>
+     * Fast inverse square root, best known for its implementation in Quake III Arena.
+     * This is an algorithm that estimates the {@code double} value of 1/sqrt(x). It has
+     * comparable performance to the more-straightforward {@code 1.0/Math.sqrt(x)}
+     * on HotSpot JDKs, but this method may outperform the Math-based approach on GraalVM
+     * 17 (the float version, {@link #invSqrt(float)}, does so by 40% or more). Some other
+     * platforms, such as Android and GWT, may have similar or
+     * very different performance relative to using Math, so if you expect to use this
+     * method often, you should test it in your app on the platforms you target.
+     * Precision will always be best with Math.
+     * <br>
+     * It is often used for vector normalization, i.e. scaling it to a length of 1.
+     * For example, it can be used to compute angles of incidence and reflection for
+     * lighting and shading.
+     * <br>
+     * For more information, see <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a>.
+     * This uses a "magic number" found exactly by Matthew Robertson. The relative error of this
+     * double-based overload is actually worse than the float-based overload because of how
+     * the last step (Newton's method) was adjusted to fit the float-based version.
+     *
+     * @param x a non-negative finite double to find the inverse square root of
+     * @return the inverse square root of x, approximated
      */
-    public static double fract(double t) {
-        t -= (long)t - 1L;
-        return t - (long)t;
+    public static double invSqrt(final double x) {
+        long i = 0x5FE6EB50C7B537A9L - (BitConversion.doubleToLongBits(x) >> 1);
+        double y = BitConversion.longBitsToDouble(i);
+        return y * (1.5 - 0.5 * x * y * y);
     }
 
-    // note: just using {@code t - Math.floor(t)} fails when t is negative and very small, such as:
-    // fract(-Double.MIN_NORMAL) == 1
+    /**
+     * Calculate the first argument raised to the power of the second.
+     * This method only supports non-negative powers.
+     * This returns a {@code long}, and can overflow if the calculation exceeds {@link Long#MAX_VALUE}.
+     * Overflow is probably the main reason to use this instead of {@link Math#pow(double, double)}, along with the
+     * precision from using only integers.
+     *
+     * @param value the number to be raised, as an int
+     * @param power the exponent (must be positive), as an int
+     * @return {@code value} raised to {@code power}, as a long
+     */
+    public static long raiseToPower(int value, int power) {
+        if (power < 0) {
+            throw new IllegalArgumentException("This method does not support negative powers.");
+        }
+        long result = 1;
+        for (int i = 0; i < power; i++) {
+            result *= value;
+        }
+        return result;
+    }
 
+    /**
+     * Calculate logarithms for arbitrary bases, using doubles.
+     *
+     * @param base  the logarithm base to use, as a double
+     * @param arg what value to get the logarithm of, using the given base, as a double
+     * @return the log of {@code arg} in the specified {@code base}, as a double
+     */
+    public static double log(double base, double arg) {
+        // Use natural logarithms and change the base.
+        return Math.log(arg) / Math.log(base);
+    }
+
+    /**
+     * Calculate logarithms for arbitrary bases, using floats.
+     *
+     * @param base  the logarithm base to use, as a float
+     * @param arg what value to get the logarithm of, using the given base, as a float
+     * @return the log of {@code arg} in the specified {@code base}, as a float
+     */
+    public static float log(float base, float arg) {
+        return (float) (Math.log(arg) / Math.log(base));
+    }
+
+    /**
+     * Gets the logarithm of {@code value} with base 2, using floats.
+     * @see RoughMath#log2Rough(float) A lower-precision, but probably faster, approximation.
+     * @param value what value to get the logarithm of, using base 2, as a float
+     * @return the logarithm of value with base 2, as a float
+     */
+    public static float log2(float value) {
+        return (float) (Math.log(value) * 1.4426950408889634);
+    }
+
+    /**
+     * A rough approximation of {@link Math#exp(double)} for float arguments, meant to be faster than Math's version
+     * at the expense of accuracy. This is not at all accurate, but it gets the general shape of the function right.
+     * <br>
+     * Based on <a href="https://gist.github.com/Alrecenk/55be1682fe46cdd89663">this gist by Alrecenk</a>, but without
+     * any table lookup.
+     *
+     * @see #exp(float) A different exp() provides a higher-precision approximation.
+     * @see RoughMath#expRough(float) Yet another exp() variation that may have higher precision.
+     * @param power what exponent to raise {@link #E} to
+     * @return a rough approximation of E raised to the given power
+     */
+    public static float expHasty(float power) {
+        return BitConversion.intBitsToFloat(1065353216 +
+                (int)((12102203 - 0x1.6p-14f * BitConversion.floatToIntBits(power)) * power));
+    }
+
+    /**
+     * A decent approximation of {@link Math#exp(double)} for small float arguments, meant to be faster than Math's
+     * version for floats at the expense of accuracy. Like {@link #gaussian2D(float, float)}, this uses the 2/2 Padé
+     * approximant to {@code Math.exp(power)}, but halves the argument to exp() before approximating, and squares it
+     * before returning.The halving/squaring keeps the calculation in a more precise span for a larger domain. You
+     * should not use this if your {@code power} inputs will be much higher than about 3 or lower than -3 .
+     * <br>
+     * Pretty much all the work for this was done by Wolfram Alpha.
+     *
+     * @see #expHasty(float) A different exp() provides a lower-precision approximation that may be faster.
+     * @see RoughMath#expRough(float) Yet another exp() variation that may be faster and/or higher-precision.
+     * @param power what exponent to raise {@link #E} to
+     * @return a rough approximation of E raised to the given power
+     */
+    public static float exp(float power) {
+        power *= 0.5f;
+        power = (12 + power * (6 + power)) / (12 + power * (-6 + power));
+        return power * power;
+    }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Displaying Numbers">
     /**
      * Forces precision loss on the given float so very small fluctuations away from an integer will be erased.
      * This is meant primarily for cleaning up floats, so they can be presented without needing scientific notation.
@@ -1779,6 +1617,30 @@ public static long mmi(final long a) {
         return i * 2.2737367544323206E-13;       // 2.2737367544323206E-13 is 2 raised to the -42 as a double, or 0x1p-42
     }
 
+    /**
+     * Given an amount of decimal {@code digits} to use at most and a double value {@code v}, this softly limits any
+     * double v to fit into a number with the requested digits, positive or negative. This tolerates any size of double,
+     * as well as infinity, negative infinity, and NaN (this produces the same result for negative infinity and NaN,
+     * the most-significant negative number with the given amount of digits). Most digit amounts will act like the
+     * identity function for integers near 0 and to a decent distance away from it, for example,
+     * {@code softLimit(6, 9999)} will return {@code 9999}, but {@code softLimit(6, 54321)} will have slowed its
+     * approach toward the maximum value {@code 999999}. and returns {@code 54268}.
+     * <br>
+     * This can be useful when you want to limit the displayed digits to an int, but you process the value internally as
+     * a double to avoid overflow. While clamping is also a good option sometimes, neither approach works well if you
+     * internally process large numbers as ints, since clamping the product of two large ints will often be the same as
+     * clamping a negative number due to overflow.
+     *
+     * @param v the double value to softly limit so it fits in the requested digits
+     * @param digits how many decimal digits to use, between 1 and 9 inclusive
+     * @return a number with at most {@code digits} decimal digits, as a positive or negative int
+     */
+    public static int softLimit(double v, int digits) {
+        digits = (int)Math.pow(10, Math.min(Math.max(digits, 1), 9)) - 1;
+        return (int)(digits * Math.tanh(v / digits) + (digits + 0.5)) - digits;
+    }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Interpolation">
     /**
      * Linearly interpolates between fromValue to toValue on progress position.
      *
@@ -1986,37 +1848,160 @@ public static long mmi(final long a) {
 //        d = fromTurns + progress * (d - Math.floor(d + 0.5f));
 //        return d - Math.floor(d);
 //    }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Hyperbolic Approach">
 
     /**
-     * Returns true if the value is zero (using the default tolerance, {@link #FLOAT_ROUNDING_ERROR}, as outer bound).
+     * When used to repeatedly mutate {@code a} every frame, and a frame had {@code delta} seconds between it and its
+     * predecessor, this will make {@code a} get closer and closer to the value of {@code b} as it is repeatedly called.
+     * The {@code halfLife} is the number of seconds it takes for {@code a} to halve its difference to {@code b}. Note
+     * that a will never actually reach b in a specific timeframe, it will just get very close.
+     * This is typically called with: {@code a = approach(a, b, deltaTime, halfLife);}
+     * <br>
+     * This is very close to
+     * <a href="https://mastodon.social/@acegikmo/111931613710775864">how Freya Holmér implemented this first</a>.
      *
-     * @param value any float
+     * @param a the current float value, and the one that the result of approach() should be assigned to
+     * @param b the target float value; will not change
+     * @param delta the number of (typically) seconds since the last call to this movement of {@code a}
+     * @param halfLife how many (typically) seconds it should take for {@code (b - a)} to become halved
+     * @return a new value to assign to {@code a}, which will be closer to {@code b}
      */
-    public static boolean isZero(float value) {
-        return Math.abs(value) <= FLOAT_ROUNDING_ERROR;
+    public static float approach(float a, float b, float delta, float halfLife){
+        return b + (a - b) * (float) Math.pow(2f, -delta/halfLife);
     }
 
     /**
-     * Returns true if the value is zero, using the given tolerance.
+     * When used to repeatedly mutate {@code a} every frame, and a frame had {@code delta} seconds between it and its
+     * predecessor, this will make {@code a} get closer and closer to the value of {@code b} as it is repeatedly called.
+     * The {@code halfLife} is the number of seconds it takes for {@code a} to halve its difference to {@code b}. Note
+     * that a will never actually reach b in a specific timeframe, it will just get very close.
+     * This is typically called with: {@code a = approach(a, b, deltaTime, halfLife);}
+     * <br>
+     * This is very close to
+     * <a href="https://mastodon.social/@acegikmo/111931613710775864">how Freya Holmér implemented this first</a>.
      *
-     * @param value     any float
-     * @param tolerance represent an outer bound below which the value is considered zero.
+     * @param a the current double value, and the one that the result of approach() should be assigned to
+     * @param b the target double value; will not change
+     * @param delta the number of (typically) seconds since the last call to this movement of {@code a}
+     * @param halfLife how many (typically) seconds it should take for {@code (b - a)} to become halved
+     * @return a new value to assign to {@code a}, which will be closer to {@code b}
      */
-    public static boolean isZero(float value, float tolerance) {
-        return Math.abs(value) <= tolerance;
+    public static double approach(double a, double b, double delta, double halfLife){
+        return b + (a - b) * Math.pow(2, -delta/halfLife);
+    }
+
+    /**
+     * A configurable sigmoid function; this is simply {@code 1 / (howGradual + abs(x))}, operating on floats.
+     * The given {@code x} can be any finite float; {@code howGradual} must be greater than 0, and is usually near 1.
+     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
+     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
+     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
+     * results curve more rapidly toward the limit.
+     * <br>
+     * This acts a little like calling {@link #rootSigmoid(float, float)} with a very high value for howGradual.
+     *
+     * @param x the input to the sigmoid function; may be any finite float
+     * @param howGradual a positive (non-zero) float that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
+     * @return a float between -1 and 1, returning 0 when x is 0
+     */
+    public static float basicSigmoid(float x, float howGradual){
+        return x / (howGradual + Math.abs(x));
+    }
+
+    /**
+     * A configurable sigmoid function; this is simply {@code 1 / (howGradual + abs(x))}, operating on doubles.
+     * The given {@code x} can be any finite double; {@code howGradual} must be greater than 0, and is usually near 1.
+     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
+     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
+     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
+     * results curve more rapidly toward the limit.
+     * <br>
+     * This acts a little like calling {@link #rootSigmoid(double, double)} with a very high value for howGradual.
+     *
+     * @param x the input to the sigmoid function; may be any finite double
+     * @param howGradual a positive (non-zero) double that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
+     * @return a double between -1 and 1, returning 0 when x is 0
+     */
+    public static double basicSigmoid(double x, double howGradual){
+        return x / (howGradual + Math.abs(x));
     }
 
 
     /**
-     * Returns true if the value is zero. A suggested tolerance is {@code 9.5367431640625E-7}, which is the same value
-     * the float overload uses for its default tolerance, the simpler {@code 1E-6} (one millionth), or a smaller number
-     * to reduce false-positives, such as {@code 0x1p-32} (2 to the -32) or {@code 1E-9} (one billionth).
+     * A configurable sigmoid function; this is simply {@code 1 / sqrt(howGradual + x * x)}, operating on floats.
+     * The given {@code x} can be any finite float; {@code howGradual} must be greater than 0, and is usually near 1.
+     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
+     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
+     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
+     * results curve more rapidly toward the limit.
+     * <br>
+     * The curve this produces is shaped more like {@link Math#tanh(double)} than {@link #basicSigmoid(float, float)}.
      *
-     * @param value     any double
-     * @param tolerance represent an outer bound below which the value is considered zero.
+     * @param x the input to the sigmoid function; may be any finite float
+     * @param howGradual a positive (non-zero) float that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
+     * @return a float between -1 and 1, returning 0 when x is 0
      */
-    public static boolean isZero(double value, double tolerance) {
-        return Math.abs(value) <= tolerance;
+    public static float rootSigmoid(float x, float howGradual){
+        return x / (float)Math.sqrt(howGradual + x * x);
+    }
+
+    /**
+     * A configurable sigmoid function; this is simply {@code 1 / sqrt(howGradual + x * x)}, operating on doubles.
+     * The given {@code x} can be any finite double; {@code howGradual} must be greater than 0, and is usually near 1.
+     * When {@code x} is 0, this returns 0; when x is large and positive, it approaches 1, and when x is large and
+     * negative, it approaches -1. How gradually it approaches 1 or -1 depends on {@code howGradual}; higher values make
+     * the results curve very slowly toward the limit, and smaller values (though always greater than 0) make the
+     * results curve more rapidly toward the limit.
+     * <br>
+     * The curve this produces is shaped more like {@link Math#tanh(double)} than {@link #basicSigmoid(double, double)}.
+     *
+     * @param x the input to the sigmoid function; may be any finite double
+     * @param howGradual a positive (non-zero) double that, as it gets larger, makes the function approach its -1 or 1 limit more slowly
+     * @return a double between -1 and 1, returning 0 when x is 0
+     */
+    public static double rootSigmoid(double x, double howGradual){
+        return x / Math.sqrt(howGradual + x * x);
+    }
+
+    /**
+     * Returns a float between 0 and 1, gradually approaching 1 as timeTaken goes up. How gradually it
+     * "takes off" and "lands" depends on howGradual, with values greater than 1 taking off slowly and values less than
+     * 1 (but always greater than 0) taking off quickly. The Interpolator this takes allows you to affect the rate of
+     * change as timeTaken goes up. Note, unlike {@link #approach(float, float, float, float)}, this is not meant to be
+     * assigned to any of its parameters; timeTaken should be related to the actual elapsed time (or a multiple thereof)
+     * and this makes using approachSigmoid() fundamentally different from approach().
+     * <br>
+     * The Interpolator this takes allows you to affect the rate of change as timeTaken goes up.
+     * This is meant to be used to get an alpha parameter to pass to lerp() methods that interpolate more than a float.
+     *
+     * @param timeTaken a non-negative float that should go up continually; the rate it goes up doesn't matter
+     * @param howGradual often 1.0, but should be adjusted higher if the approach should be very gradual, or as low as 0.1 if the approach should be rapid
+     * @param interpolator may be {@link Interpolations#linear} for the simplest case, or any other Interpolator
+     * @return a float between 0 and 1, that gradually approaches 1 as timeTaken goes up
+     */
+    public static float approachSigmoid(float timeTaken, float howGradual, Interpolations.Interpolator interpolator) {
+        return interpolator.apply(timeTaken / (float)Math.sqrt(howGradual + timeTaken * timeTaken));
+    }
+
+    /**
+     * Returns a float between start and target, gradually approaching target as timeTaken goes up. How gradually it
+     * "takes off" and "lands" depends on howGradual, with values greater than 1 taking off slowly and values less than
+     * 1 (but always greater than 0) taking off quickly. Note, unlike {@link #approach(float, float, float, float)},
+     * this is not meant to be assigned to any of its parameters; timeTaken should be related to the actual elapsed time
+     * (or a multiple thereof) and this makes using approachSigmoid() fundamentally different from approach().
+     * <br>
+     * The Interpolator this takes allows you to affect the rate of change as timeTaken goes up.
+     *
+     * @param start the starting float value; does not change over the course of the movement
+     * @param target the target float value to gradually approach
+     * @param timeTaken a non-negative float that should go up continually; the rate it goes up doesn't matter
+     * @param howGradual often 1.0, but should be adjusted higher if the approach should be very gradual, or as low as 0.1 if the approach should be rapid
+     * @param interpolator may be {@link Interpolations#linear} for the simplest case, or any other Interpolator
+     * @return a float between start and end, that gradually approaches target as timeTaken goes up
+     */
+    public static float approachSigmoid(float start, float target, float timeTaken, float howGradual, Interpolations.Interpolator interpolator) {
+        return interpolator.apply(start, target, timeTaken / (float)Math.sqrt(howGradual + timeTaken * timeTaken));
     }
 
     /**
@@ -2080,69 +2065,8 @@ public static long mmi(final long a) {
         final long bits = BitConversion.doubleToLongBits(x), sign = bits & 0x8000000000000000L;
         return BitConversion.longBitsToDouble(Math.max((bits ^ sign) - steps, 0) | sign);
     }
-
-    /**
-     * Takes an x and a y value, each an int treated as unsigned, and returns a long that interleaves their bits so the
-     * least significant bit and every other bit after it are filled with the bits of x, while the
-     * second-least-significant bit and every other bit after that are filled with the bits of y. Essentially, this
-     * takes two numbers with bits labeled like {@code a b c} for x and {@code R S T} for y and makes a number with
-     * those bits arranged like {@code R a S b T c}. Numbers made by interleaving other numbers like this are sometimes
-     * called Morton codes, and the sequence of Morton codes forms a pattern called the Z-order curve. You can retrieve
-     * x and y from a Morton code (like what this returns) using {@link #disperseBits(long)}.
-     * @see #disperseBits(long)
-     * @param x an int that will be treated as unsigned
-     * @param y an int that will be treated as unsigned
-     * @return a long that interleaves x and y, with x in the least significant bit position
-     */
-    public static long interleaveBits(final int x, final int y)
-    {
-        long n = (x & 0xFFFFFFFFL) | (long)y << 32;
-        n =    ((n & 0x00000000ffff0000L) <<16) | ((n >>>16) & 0x00000000ffff0000L) | (n & 0xffff00000000ffffL);
-        n =    ((n & 0x0000ff000000ff00L) << 8) | ((n >>> 8) & 0x0000ff000000ff00L) | (n & 0xff0000ffff0000ffL);
-        n =    ((n & 0x00f000f000f000f0L) << 4) | ((n >>> 4) & 0x00f000f000f000f0L) | (n & 0xf00ff00ff00ff00fL);
-        n =    ((n & 0x0c0c0c0c0c0c0c0cL) << 2) | ((n >>> 2) & 0x0c0c0c0c0c0c0c0cL) | (n & 0xc3c3c3c3c3c3c3c3L);
-        return ((n & 0x2222222222222222L) << 1) | ((n >>> 1) & 0x2222222222222222L) | (n & 0x9999999999999999L);
-    }
-
-
-    /**
-     * Takes an int that represents a distance down the Z-order curve and moves its bits around so that
-     * its x component is stored in the bottom 16 bits (use {@code (n & 0xffff)} to obtain) and its y component is
-     * stored in the upper 16 bits (use {@code (n >>> 16)} to obtain). Numbers made by interleaving other numbers, like
-     * {@code n}, are sometimes called Morton codes, and the sequence of Morton codes forms a pattern called the
-     * Z-order curve. You can get a Morton code from an x, y position using {@link #interleaveBits(int, int)}, and to
-     * use it here you can just cast it to an int.
-     * @see #interleaveBits(int, int)
-     * @param n an int that has already been interleaved, though this can really be any int
-     * @return an int with x in its lower bits ({@code x = n & 0xffff;}) and y in its upper bits ({@code y = n >>> 16;})
-     */
-    public static int disperseBits(int n)
-    {
-        n =    ((n & 0x22222222) << 1) | ((n >>> 1) & 0x22222222) | (n & 0x99999999);
-        n =    ((n & 0x0c0c0c0c) << 2) | ((n >>> 2) & 0x0c0c0c0c) | (n & 0xc3c3c3c3);
-        n =    ((n & 0x00f000f0) << 4) | ((n >>> 4) & 0x00f000f0) | (n & 0xf00ff00f);
-        return ((n & 0x0000ff00) << 8) | ((n >>> 8) & 0x0000ff00) | (n & 0xff0000ff);
-    }
-
-    /**
-     * Takes a long that represents a distance down the Z-order curve and moves its bits around so that
-     * its x component is stored in the bottom 32 bits (use {@code (n & 0xffffffffL)} to obtain) and its y component is
-     * stored in the upper 32 bits (use {@code (n >>> 32)} to obtain). Numbers made by interleaving other numbers, like
-     * {@code n}, are sometimes called Morton codes, and the sequence of Morton codes forms a pattern called the
-     * Z-order curve. You can get a Morton code from an x, y position using {@link #interleaveBits(int, int)}.
-     * @see #interleaveBits(int, int)
-     * @param n a long that has already been interleaved, though this can really be any long
-     * @return a long with x in its lower bits ({@code x = dispersed & 0xffffffffL;}) and y in its upper bits ({@code y = dispersed >>> 32;})
-     */
-    public static long disperseBits(long n)
-    {
-        n =    ((n & 0x2222222222222222L) << 1) | ((n >>> 1) & 0x2222222222222222L) | (n & 0x9999999999999999L);
-        n =    ((n & 0x0c0c0c0c0c0c0c0cL) << 2) | ((n >>> 2) & 0x0c0c0c0c0c0c0c0cL) | (n & 0xc3c3c3c3c3c3c3c3L);
-        n =    ((n & 0x00f000f000f000f0L) << 4) | ((n >>> 4) & 0x00f000f000f000f0L) | (n & 0xf00ff00ff00ff00fL);
-        n =    ((n & 0x0000ff000000ff00L) << 8) | ((n >>> 8) & 0x0000ff000000ff00L) | (n & 0xff0000ffff0000ffL);
-        return ((n & 0x00000000ffff0000L) <<16) | ((n >>>16) & 0x00000000ffff0000L) | (n & 0xffff00000000ffffL);
-    }
-
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Waves">
     /**
      * Takes any float and produces a float in the -1f to 1f range, with similar inputs producing
      * close to a consistent rate of up and down through the range. This is meant for noise, where it may be useful to
@@ -2173,6 +2097,7 @@ public static long mmi(final long a) {
     public static float triangleWave(float t) {
         return Math.abs(t - ((int) (t + 16384.5) - 16384)) * 4f - 1f;
     }
+
 //        return Math.abs(t -
 //                ((int) (t + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT) //inlined round(t)
 //        ) * 4f - 1f;
@@ -2412,20 +2337,8 @@ public static long mmi(final long a) {
         floor &= 1;
         return value * value * value * (value * (value * 6.0 - 15.0) + 10.0) * (-floor | 1) + floor;
     }
-
-    /**
-     * Emphasizes or de-emphasizes extreme values using Schlick's gain function when {@code x} is between 0 and 1
-     * (inclusive), or effectively {@code -gain(-x)} when x is between -1 and 0. The bias parameter is handled a little
-     * differently from how Schlick implemented it; here, {@code bias=1} produces a straight line (no bias), bias
-     * between 0 and 1 is shaped like the {@link MathTools#cbrt(float)} function, and
-     * bias greater than 1 is shaped like {@link MathTools#cube(float)}.
-     * @param x between -1 and 1, inclusive
-     * @param bias any float greater than 0 (exclusive)
-     * @return an altered float between -1 and 1, inclusive
-     */
-    public static float signedGain(float x, float bias) {
-        return x / (((bias - 1f) * (1f - Math.abs(x))) + 1f);
-    }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Randomness-Related">
 
     /**
      * Given a state that is typically random-seeming, this produces an int within a bounded range that is similarly
@@ -2519,29 +2432,141 @@ public static long mmi(final long a) {
     public static double exclusiveDouble(final long bits) {
         return BitConversion.longBitsToDouble(1022L - BitConversion.countLeadingZeros(bits) << 52 | bits & 0xFFFFFFFFFFFFFL);
     }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Distribution">
+    /**
+     * The cumulative distribution function for the normal distribution, with the range expanded to {@code [-1,1]}
+     * instead of the usual {@code [0,1]} . This might be useful to bring noise functions (which sometimes have a range
+     * of {@code -1,1}) from a very-centrally-biased form to a more uniformly-distributed form. The math here doesn't
+     * exactly match the normal distribution's CDF because the goal was to handle inputs between -1 and 1, not the full
+     * range of a normal-distributed variate (which is infinite). The distribution is very slightly different here from
+     * the double-based overload, because this clamps inputs that would produce incorrect results from its approximation
+     * of {@link Math#exp(double)} otherwise, whereas the double-based method uses the actual Math.exp().
+     *
+     * @param x a float between -1 and 1; will be clamped if outside that domain
+     * @return a more-uniformly distributed value between -1 and 1
+     */
+    public static float redistributeNormal(float x) {
+        final float xx = Math.min(x * x * 6.03435f, 6.03435f), axx = 0.1400122886866665f * xx;
+        return Math.copySign((float) Math.sqrt(1.0051551f - exp(xx * (-1.2732395447351628f - axx) / (0.9952389057917015f + axx))), x);
+    }
 
     /**
-     * Given an amount of decimal {@code digits} to use at most and a double value {@code v}, this softly limits any
-     * double v to fit into a number with the requested digits, positive or negative. This tolerates any size of double,
-     * as well as infinity, negative infinity, and NaN (this produces the same result for negative infinity and NaN,
-     * the most-significant negative number with the given amount of digits). Most digit amounts will act like the
-     * identity function for integers near 0 and to a decent distance away from it, for example,
-     * {@code softLimit(6, 9999)} will return {@code 9999}, but {@code softLimit(6, 54321)} will have slowed its
-     * approach toward the maximum value {@code 999999}. and returns {@code 54268}.
-     * <br>
-     * This can be useful when you want to limit the displayed digits to an int, but you process the value internally as
-     * a double to avoid overflow. While clamping is also a good option sometimes, neither approach works well if you
-     * internally process large numbers as ints, since clamping the product of two large ints will often be the same as
-     * clamping a negative number due to overflow.
+     * The cumulative distribution function for the normal distribution, with the range expanded to {@code [-1,1]}
+     * instead of the usual {@code [0,1]} . This might be useful to bring noise functions (which sometimes have a range
+     * of {@code -1,1}) from a very-centrally-biased form to a more uniformly-distributed form. The math here doesn't
+     * exactly match the normal distribution's CDF because the goal was to handle inputs between -1 and 1, not the full
+     * range of a normal-distributed variate (which is infinite). The distribution is very slightly different here from
+     * the float-based overload, because that method clamps inputs that would produce incorrect results from its
+     * approximation of {@link Math#exp(double)} otherwise, whereas this uses the actual Math.exp().
      *
-     * @param v the double value to softly limit so it fits in the requested digits
-     * @param digits how many decimal digits to use, between 1 and 9 inclusive
-     * @return a number with at most {@code digits} decimal digits, as a positive or negative int
+     * @param x a double usually between -1 and 1; will change only very slowly outside that domain
+     * @return a more-uniformly distributed value between -1 and 1
      */
-    public static int softLimit(double v, int digits) {
-        digits = (int)Math.pow(10, Math.min(Math.max(digits, 1), 9)) - 1;
-        return (int)(digits * Math.tanh(v / digits) + (digits + 0.5)) - digits;
+    public static double redistributeNormal(double x) {
+        final double xx = x * x * 6.03435, axx = 0.1400122886866665 * xx;
+        return Math.copySign(Math.sqrt(1.0 - Math.exp(xx * (-1.2732395447351628 - axx) / (1.0 + axx))), x);
     }
+
+    /**
+     * Redistributes a noise value {@code n} using the given {@code mul} and {@code mix} parameters. This is meant to
+     * push high-octave noise results from being centrally biased to being closer to uniform. Getting the values right
+     * probably requires tweaking them manually; for Simplex Noise, mul=2.3f and mix=0.75f works well with 2 or more
+     * octaves (and not at all well for one octave, which can use mix=0.0f to avoid redistributing at all). This
+     * variation takes n in the -1f to 1f range, inclusive, and returns a value in the same range.
+     *
+     * @param n a float between -1f and 1f inclusive
+     * @param mul a positive multiplier where higher values make extreme results more likely; often around 2.3f
+     * @param mix a blending amount between 0f and 1f where lower values keep {@code n} more; often around 0.75f
+     * @return a float between -1f and 1f inclusive
+     */
+    public static float redistributeNoise(float n, float mul, float mix) {
+        final float nn = n * n * mul, ann = 0.1400122886866665f * nn;
+        final float denormal = Math.copySign((float) Math.sqrt(1.0f - (float)Math.exp(nn * (-1.2732395447351628f - ann) / (1.0f + ann))), n);
+        return lerp(n, denormal, mix);
+    }
+
+    /**
+     * Redistributes a 0-1 value {@code n} using the given {@code mul} and {@code mix} parameters. This is meant to
+     * push averages of many 0-1 values from being centrally biased to being closer to uniform. Getting the values right
+     * probably requires tweaking them manually; for Simplex Noise, mul=2.3f and mix=0.75f works well with 2 or more
+     * octaves (and not at all well for one octave, which can use mix=0.0f to avoid redistributing at all). This
+     * variation takes n in the 0f to 1f range, inclusive, and returns a value in the same range.
+     *
+     * @see #redistributeNoise(float, float, float) should be preferred for input and output in the -1 to 1 range.
+     * @param n a float between 0f and 1f inclusive
+     * @param mul a positive multiplier where higher values make extreme results more likely; often around 2.3f
+     * @param mix a blending amount between 0f and 1f where lower values keep {@code n} more; often around 0.75f
+     * @return a float between 0f and 1f inclusive
+     */
+    public static float redistribute(float n, float mul, float mix) {
+        final float x = (n - 0.5f) * 2f, xx = x * x * mul, axx = 0.1400122886866665f * xx;
+        final float denormal = Math.copySign((float) Math.sqrt(1.0f - (float)Math.exp(xx * (-1.2732395447351628f - axx) / (1.0f + axx))), x);
+        return lerp(n, denormal * 0.5f + 0.5f, mix);
+    }
+
+    /**
+     * Redistributes a noise value {@code n} using the given {@code mul}, {@code mix}, and {@code bias} parameters. This
+     * is meant to push high-octave noise results from being centrally biased to being closer to uniform. Getting the
+     * values right probably requires tweaking them manually; for Simplex Noise, using mul=2.3f, mix=0.75f, and
+     * bias=1f works well with 2 or more octaves (and not at all well for one octave, which can use mix=0.0f to avoid
+     * redistributing at all). This variation takes n in the 0f to 1f range, inclusive, and returns a value in the same
+     * range. You can give different bias values at different times to make noise that is more often high (when bias is
+     * above 1) or low (when bias is between 0 and 1). Using negative bias has undefined results. Bias should typically
+     * be calculated only when its value needs to change. If you have a variable {@code favor} that can have
+     * any float value and high values for favor should produce higher results from this function, you can get bias with
+     * {@code bias = (float)Math.exp(-favor);} .
+     * <br>
+     * If you don't need a bias parameter, you can either pass 1 here for bias, or call the overload
+     * {@link #redistribute(float, float, float)} instead (which is typically faster).
+     *
+     * @param n a float between 0f and 1f inclusive
+     * @param mul a positive multiplier where higher values make extreme results more likely; often around 2.3f
+     * @param mix a blending amount between 0f and 1f where lower values keep {@code n} more; often around 0.75f
+     * @param bias should be 1 to have no bias, between 0 and 1 for lower results, and above 1 for higher results
+     * @return a float between 0f and 1f inclusive
+     */
+    public static float redistribute(float n, float mul, float mix, float bias) {
+        final float x = (n - 0.5f) * 2f, xx = x * x * mul, axx = 0.1400122886866665f * xx;
+        final float denormal = Math.copySign((float) Math.sqrt(1.0f - (float) Math.exp(xx * (-1.2732395447351628f - axx) / (1.0f + axx))), x);
+        return (float) Math.pow(lerp(n, denormal * 0.5f + 0.5f, mix), bias);
+    }
+
+    /**
+     * A relatively close approximation of {@code Math.exp(-x * x - y * y)}, the Gaussian function in 2D. This returns
+     * 1.0f when x and y are both 0, and goes as low as 0.0051585725 when either or both of x or y are very significant.
+     * The Gaussian function is useful for making circular "bump" shapes, among lots of other things.
+     * <br>
+     * This uses the 2/2 Padé approximant to {@code Math.exp(-x*x-y*y)}, but halves the argument to exp() before
+     * approximating, ensures that that argument is at least -3.5f (to avoid major issues with larger inputs), runs the
+     * approximation, and squares the result. The halving/squaring keeps the calculation in a more precise span for a
+     * larger domain.
+     *
+     * @param x typically the difference between two x positions; will be squared, so may be positive or negative
+     * @param y typically the difference between two y positions; will be squared, so may be positive or negative
+     * @return the positive result of the Gaussian function in 2D for the given parameters; between 0.0051585725 and 1.0
+     */
+    public static float gaussian2D(float x, float y) {
+        x = Math.max(-3.5f, (x * x + y * y) * -0.5f);
+        x = (12 + x * (6 + x))/(12 + x * (-6 + x));
+        return x * x;
+    }
+
+    /**
+     * The same as {@link #gaussian2D(float, float)} except that its minimum is reduced to 0.0, while its maximum is
+     * still 1.0 . This is not precisely a Gaussian function, because it won't keep slowly decreasing given rising
+     * inputs, but being able to know the outside is 0 may be useful for various tasks.
+     * @param x typically the difference between two x positions; will be squared, so may be positive or negative
+     * @param y typically the difference between two y positions; will be squared, so may be positive or negative
+     * @return the positive result of the "Gaussian" function in 2D for the given parameters; between 0.0 and 1.0
+     */
+    public static float gaussianFinite2D(float x, float y) {
+        x = Math.max(-3.4060497f, (x * x + y * y) * -0.5f);
+        x = (12 + x * (6 + x))/(12 + x * (-6 + x));
+        return (x * x - 0.00516498f) * 1.0051918f;
+    }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Golden Numbers">
 
     /**
      * Gets the triangular number at a particular non-negative index. This returns 0 for index 0, 1 for index 1, 3 for
@@ -2862,5 +2887,5 @@ public static long mmi(final long a) {
             0x92789E2B0740C0CFL, 0x907D70B362B15D3FL, 0x8E891F68C4D68C4DL, 0x8C9B928A2A4DAE11L, 0x8AB4B2A8D0179CD7L,
             0x88D468A716C9E203L, 0x86FA9DB7699A1B09L, 0x85273B5B293637D3L, 0x835A2B619A5C69D3L, 0x819357E6D825C8C5L
     };
-
+//</editor-fold>
 }
