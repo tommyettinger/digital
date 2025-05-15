@@ -32,7 +32,8 @@ import static com.github.tommyettinger.digital.TrigTools.PI_D;
  * {@link #cbrt(float)} by Marc B. Reynolds, building on the legendary fast inverse square root,
  * and a generalized bias/gain function, {@link #barronSpline(float, float, float)}, popularized by Jon Barron.
  * The {@link #fastFloor(float)} and {@link #fastCeil(float)} methods were devised by Riven on JavaGaming.org .
- * {@link #factorial(float)} and {@link #gamma(float)} are by T. J. Stieltjes.
+ * {@link #factorial(float)} and {@link #gamma(float)} are by T. J. Stieltjes. The code relating to
+ * {@link #deposit(long, long)} and {@link #extract(long, long)} is derived from Hacker's Delight, 2nd Edition.
  *
  * @author Daniel Dyer
  * @author Tommy Ettinger
@@ -669,6 +670,228 @@ public final class MathTools {
         n =    ((n & 0x00f000f000f000f0L) << 4) | ((n >>> 4) & 0x00f000f000f000f0L) | (n & 0xf00ff00ff00ff00fL);
         n =    ((n & 0x0000ff000000ff00L) << 8) | ((n >>> 8) & 0x0000ff000000ff00L) | (n & 0xff0000ffff0000ffL);
         return ((n & 0x00000000ffff0000L) <<16) | ((n >>>16) & 0x00000000ffff0000L) | (n & 0xffff00000000ffffL);
+    }
+
+    /**
+     * Given a long {@code bits} where the first N positions can have variable bits, and a long {@code mask} with N bits
+     * set to 1, produces a long where the least-significant N bits of {@code bits} have been placed into consecutively
+     * greater set bits in {@code mask}. This method does not allocate, but it spends much of its time computing five
+     * long "table" values that can be precomputed using {@link #computeDepositTable(long, long[])} and then used with
+     * {@link #depositPrecomputed(long, long, long[])} for cases when the mask stays the same across many calls.
+     * <br>
+     * Based on Hacker's Delight (2nd edition). This can be replaced with {@code Long.expand(bits, mask)} in Java 19 or
+     * later, which may perform better if the processor in use has a fast PDEP instruction.
+     * @param bits the bit values to be deposited into positions denoted by mask
+     * @param mask where a bit is 1, a bit from {@code bits} will be deposited
+     * @return a long where only bits in mask can be set
+     */
+    public static long deposit(long bits, long mask) {
+        long table0, table1, table2, table3, table4;
+        long mp, t, m0 = mask; // Save original mask.
+        long mk = ~mask; // We will count 0's to right.
+
+        mp = mk ^ mk << 1; // Parallel suffix.
+        mp ^= mp << 2;
+        mp ^= mp << 4;
+        mp ^= mp << 8;
+        mp ^= mp << 16;
+        mp ^= mp << 32;
+        t = mp & mask; // Bits to move.
+        table0 = t;
+        mask = (mask ^ t) | (t >>> 1); // Compress mask.
+        mk = mk & ~mp;
+
+        mp = mk ^ mk << 1; // Parallel suffix.
+        mp ^= mp << 2;
+        mp ^= mp << 4;
+        mp ^= mp << 8;
+        mp ^= mp << 16;
+        mp ^= mp << 32;
+        t = mp & mask; // Bits to move.
+        table1 = t;
+        mask = (mask ^ t) | (t >>> 2); // Compress mask.
+        mk = mk & ~mp;
+
+        mp = mk ^ mk << 1; // Parallel suffix.
+        mp ^= mp << 2;
+        mp ^= mp << 4;
+        mp ^= mp << 8;
+        mp ^= mp << 16;
+        mp ^= mp << 32;
+        t = mp & mask; // Bits to move.
+        table2 = t;
+        mask = (mask ^ t) | (t >>> 4); // Compress mask.
+        mk = mk & ~mp;
+
+        mp = mk ^ mk << 1; // Parallel suffix.
+        mp ^= mp << 2;
+        mp ^= mp << 4;
+        mp ^= mp << 8;
+        mp ^= mp << 16;
+        mp ^= mp << 32;
+        t = mp & mask; // Bits to move.
+        table3 = t;
+        mask = (mask ^ t) | (t >>> 8); // Compress mask.
+        mk = mk & ~mp;
+
+        mp = mk ^ mk << 1; // Parallel suffix.
+        mp ^= mp << 2;
+        mp ^= mp << 4;
+        mp ^= mp << 8;
+        mp ^= mp << 16;
+        mp ^= mp << 32;
+        t = mp & mask; // Bits to move.
+        table4 = t;
+        // done making the table values.
+
+        // actually using the five table values:
+        t = bits << 16;
+        bits = (bits & ~table4) | (t & table4);
+        t = bits << 8;
+        bits = (bits & ~table3) | (t & table3);
+        t = bits << 4;
+        bits = (bits & ~table2) | (t & table2);
+        t = bits << 2;
+        bits = (bits & ~table1) | (t & table1);
+        t = bits << 1;
+        bits = (bits & ~table0) | (t & table0);
+        return bits & m0; // Clear out extraneous bits.
+    }
+    /**
+     * Given a long {@code bits} where the first N positions can have variable bits, and a long {@code mask} with N bits
+     * set to 1, produces a long where the least-significant N bits of {@code bits} have been placed into consecutively
+     * greater set bits in {@code mask}. This permits taking a long array with 5 items, {@code table}, that can be null
+     * if the mask is expected to change often, making this recompute a table every time, or precomputed via
+     * {@link #computeDepositTable(long, long[])} and passed here for when the mask will be the same many times.
+     * In the case where {@code table} is passed as varargs and has exactly 5 elements, this should instead delegate to
+     * {@link #depositPrecomputed(long, long, long, long, long, long, long)}, which doesn't allocate an array.
+     * <br>
+     * Based on Hacker's Delight (2nd edition). This is similar to {@code Long.expand(bits, mask)} in Java 19 or later,
+     * which may perform better if the processor in use has a fast PDEP instruction, though this saves a substantial
+     * amount of effort on the software fallback for expand().
+     * @param bits the bit values to be deposited into positions denoted by mask
+     * @param mask where a bit is 1, a bit from {@code bits} will be deposited
+     * @param table if null, will be computed each time, but can be precomputed with {@link #computeDepositTable(long, long[])}
+     * @return a long where only bits in mask can be set
+     */
+    public static long depositPrecomputed(long bits, long mask, long... table) {
+        if(table == null || table.length < 5)
+            table = computeDepositTable(mask, table);
+        for (int i = 4; i >= 0; i--) {
+            long mv = table[i];
+            long t = bits << (1 << i);
+            bits = (bits & ~mv) | (t & mv);
+        }
+        return bits & mask; // Clear out extraneous bits.
+    }
+
+    /**
+     * Given a long {@code bits} where the first N positions can have variable bits, and a long {@code mask} with N bits
+     * set to 1, produces a long where the least-significant N bits of {@code bits} have been placed into consecutively
+     * greater set bits in {@code mask}. This overload takes 5 long "table" arguments explicitly to avoid allocating an
+     * array when exactly 5 longs are given as varargs to {@link #depositPrecomputed(long, long, long...)}. The table
+     * arguments should be exactly what {@link #printDepositTable(long...)} prints for a table produced by
+     * {@link #computeDepositTable(long, long[])}, and can also be
+     * {@code table[0], table[1], table[2], table[3], table[4]}. This version is optimized relative to
+     * {@link #depositPrecomputed(long, long, long...)}, and should perform better if called often.
+     * <br>
+     * Based on Hacker's Delight (2nd edition). This is similar to {@code Long.expand(bits, mask)} in Java 19 or later,
+     * which may perform better if the processor in use has a fast PDEP instruction, though this saves a substantial
+     * amount of effort on the software fallback for expand().
+     * @param bits the bit values to be deposited into positions denoted by mask
+     * @param mask where a bit is 1, a bit from {@code bits} will be deposited
+     * @param table0 item from a precomputed table produced by {@link #computeDepositTable(long, long[])}
+     * @param table1 item from a precomputed table produced by {@link #computeDepositTable(long, long[])}
+     * @param table2 item from a precomputed table produced by {@link #computeDepositTable(long, long[])}
+     * @param table3 item from a precomputed table produced by {@link #computeDepositTable(long, long[])}
+     * @param table4 item from a precomputed table produced by {@link #computeDepositTable(long, long[])}
+     * @return a long where only bits in mask can be set
+     */
+    public static long depositPrecomputed(long bits, long mask, long table0, long table1, long table2, long table3, long table4) {
+        bits = (bits & ~table4) | (bits << 16 & table4);
+        bits = (bits & ~table3) | (bits <<  8 & table3);
+        bits = (bits & ~table2) | (bits <<  4 & table2);
+        bits = (bits & ~table1) | (bits <<  2 & table1);
+        bits = (bits & ~table0) | (bits <<  1 & table0);
+        return bits & mask;
+    }
+
+    /**
+     * Precomputes the {@code table} argument for the given {@code mask} that can be given to
+     * {@link #depositPrecomputed(long, long, long[])} to avoid recalculating and reallocating a 5-item table.
+     * <br>
+     * Based on Hacker's Delight (2nd edition).
+     * @param mask the mask that will be used with {@link #depositPrecomputed(long, long, long[])}
+     * @param table an existing long array of length 5 or greater that will be overwritten, otherwise this will create a new array
+     * @return {@code table} after reassignment, or a new long array if {@code table} was null or too small
+     */
+    public static long[] computeDepositTable(long mask, long... table) {
+        if(table == null || table.length < 5)
+            table = new long[5];
+        long mk = ~mask; // We will count 0's to right.
+        for (int i = 0; i < 5; i++) {
+            long mp = mk ^ mk << 1; // Parallel suffix.
+            mp ^= mp << 2;
+            mp ^= mp << 4;
+            mp ^= mp << 8;
+            mp ^= mp << 16;
+            mp ^= mp << 32;
+            long v = mp & mask; // Bits to move.
+            table[i] = v;
+            mask = (mask ^ v) | (v >>> (1 << i)); // Compress mask.
+            mk = mk & ~mp;
+        }
+        return table;
+    }
+
+    /**
+     * Intended for debugging, this takes an array or varargs of 5 long items, which should have been produced by
+     * {@link #computeDepositTable(long, long[])}, and prints them in a format that can be entered as Java or Kotlin
+     * source code, either as varargs to {@link #depositPrecomputed(long, long, long...)} or as the 5 closing arguments
+     * to {@link #depositPrecomputed(long, long, long, long, long, long, long)}.
+     * @param table an array or varargs almost certainly produced by {@link #computeDepositTable(long, long...)}
+     */
+    public static void printDepositTable(long... table) {
+        if(table == null || table.length < 5)
+            System.out.println("Invalid table.");
+        else {
+            for (int i = 0; i < 5; i++) {
+                System.out.print(Base.readable(table[i]));
+                if(i < 4) System.out.print(", ");
+            }
+        }
+
+    }
+
+    /**
+     * Given a long {@code bits} where any bits may be set, and a long {@code mask} with N bits set to 1 that determines
+     * which positions in {@code bits} will matter, this produces an up-to-N-bit long result where positions in
+     * {@code bits} matching positions in {@code mask} were placed in sequentially-more-significant positions, starting
+     * at the least significant bit.
+     * <br>
+     * Based on Hacker's Delight (2nd edition). This can be replaced with {@code Long.compress(bits, mask)} in Java 19
+     * or later, which may perform better if the processor in use has a fast PEXT instruction.
+     * @param bits the bit values that will be masked by {@code mask} and placed into the low-order bits of the result
+     * @param mask where a bit is 1, a bit from {@code bits} will be extracted to be returned
+     * @return a long with the highest bit that can be set equal to the {@link Long#bitCount(long)} of {@code mask}
+     */
+    public static long extract(long bits, long mask) {
+        bits &= mask; // Clear irrelevant bits.
+        long mk = ~mask; // We will count 0's to right.
+        for (int i = 0; i < 5; i++) {
+            long mp = mk ^ mk << 1; // Parallel suffix.
+            mp ^= mp << 2;
+            mp ^= mp << 4;
+            mp ^= mp << 8;
+            mp ^= mp << 16;
+            mp ^= mp << 32;
+            long mv = mp & mask; // Bits to move.
+            mask = (mask ^ mv) | (mv >>> (1 << i)); // Compress mask.
+            long t = bits & mv;
+            bits = (bits ^ t) | (t >>> (1 << i)); // Compress bits.
+            mk = mk & ~mp;
+        }
+        return bits;
     }
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Lower Math">
