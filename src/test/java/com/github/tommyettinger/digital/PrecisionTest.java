@@ -3659,6 +3659,108 @@ CONST f32x2 sincos(s16 int_angle) {
 }
      */
 
+    public static float joltSin(float angle) {
+        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
+        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+        int bits = BitConversion.floatToIntBits(angle);
+        // Make argument positive and remember sign for sin only since cos is symmetric around x (highest bit of a float is the sign bit)
+        int sinSign = bits & 0x80000000;
+        float x = BitConversion.intBitsToFloat(bits ^ sinSign);
+        // x / (PI / 2) rounded to nearest int gives us the quadrant closest to x
+        int quadrant = MathTools.round(0.6366197723675814f * x);
+        // Make x relative to the closest quadrant.
+        // This does x = x - quadrant * PI / 2 using a two step Cody-Waite argument reduction.
+        // This improves the accuracy of the result by avoiding loss of significant bits in the subtraction.
+        // We start with x = x - quadrant * PI / 2, PI / 2 in hexadecimal notation is 0x3fc90fdb, we remove the lowest 16 bits to
+        // get 0x3fc90000 (= 1.5703125) this means we can now multiply with a number of up to 2^16 without losing any bits.
+        // This leaves us with: x = (x - quadrant * 1.5703125) - quadrant * (PI / 2 - 1.5703125).
+        // PI / 2 - 1.5703125 in hexadecimal is 0x39fdaa22, stripping the lowest 12 bits we get 0x39fda000 (= 0.0004837512969970703125)
+        // This leaves uw with: x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * (PI / 2 - 1.5703125 - 0.0004837512969970703125)
+        // See: https://stackoverflow.com/questions/42455143/sine-cosine-modular-extended-precision-arithmetic
+        // After this we have x in the range [-PI / 4, PI / 4].
+        x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
+        float x2 = x * x, s;
+        quadrant = (quadrant & 1) | ((sinSign >>> 30 ^ quadrant) & 2);
+        switch (quadrant & 3) {
+            case 0:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 1:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 2:
+                s = -(((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x);
+                break;
+            default:
+                s = -(((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f);
+        }
+        return s;
+
+    }
+
+
+
+//    void Vec4::SinCos(Vec4 &outSin, Vec4 &outCos) const
+//    {
+//        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
+//        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+//
+//        // Make argument positive and remember sign for sin only since cos is symmetric around x (highest bit of a float is the sign bit)
+//        UVec4 sin_sign = UVec4::sAnd(ReinterpretAsInt(), UVec4::sReplicate(0x80000000U));
+//        Vec4 x = Vec4::sXor(*this, sin_sign.ReinterpretAsFloat());
+//
+//        // x / (PI / 2) rounded to nearest int gives us the quadrant closest to x
+//        UVec4 quadrant = (0.6366197723675814f * x + Vec4::sReplicate(0.5f)).ToInt();
+//
+//        // Make x relative to the closest quadrant.
+//        // This does x = x - quadrant * PI / 2 using a two step Cody-Waite argument reduction.
+//        // This improves the accuracy of the result by avoiding loss of significant bits in the subtraction.
+//        // We start with x = x - quadrant * PI / 2, PI / 2 in hexadecimal notation is 0x3fc90fdb, we remove the lowest 16 bits to
+//        // get 0x3fc90000 (= 1.5703125) this means we can now multiply with a number of up to 2^16 without losing any bits.
+//        // This leaves us with: x = (x - quadrant * 1.5703125) - quadrant * (PI / 2 - 1.5703125).
+//        // PI / 2 - 1.5703125 in hexadecimal is 0x39fdaa22, stripping the lowest 12 bits we get 0x39fda000 (= 0.0004837512969970703125)
+//        // This leaves uw with: x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * (PI / 2 - 1.5703125 - 0.0004837512969970703125)
+//        // See: https://stackoverflow.com/questions/42455143/sine-cosine-modular-extended-precision-arithmetic
+//        // After this we have x in the range [-PI / 4, PI / 4].
+//        Vec4 float_quadrant = quadrant.ToFloat();
+//        x = ((x - float_quadrant * 1.5703125f) - float_quadrant * 0.0004837512969970703125f) - float_quadrant * 7.549789948768648e-8f;
+//
+//        // Calculate x2 = x^2
+//        Vec4 x2 = x * x;
+//
+//        // Taylor expansion:
+//        // Cos(x) = 1 - x^2/2! + x^4/4! - x^6/6! + x^8/8! + ... = (((x2/8!- 1/6!) * x2 + 1/4!) * x2 - 1/2!) * x2 + 1
+//        Vec4 taylor_cos = ((2.443315711809948e-5f * x2 - Vec4::sReplicate(1.388731625493765e-3f)) * x2 + Vec4::sReplicate(4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + Vec4::sOne();
+//        // Sin(x) = x - x^3/3! + x^5/5! - x^7/7! + ... = ((-x2/7! + 1/5!) * x2 - 1/3!) * x2 * x + x
+//        Vec4 taylor_sin = ((-1.9515295891e-4f * x2 + Vec4::sReplicate(8.3321608736e-3f)) * x2 - Vec4::sReplicate(1.6666654611e-1f)) * x2 * x + x;
+//
+//        // The lowest 2 bits of quadrant indicate the quadrant that we are in.
+//        // Let x be the original input value and x' our value that has been mapped to the range [-PI / 4, PI / 4].
+//        // since cos(x) = sin(x - PI / 2) and since we want to use the Taylor expansion as close as possible to 0,
+//        // we can alternate between using the Taylor expansion for sin and cos according to the following table:
+//        //
+//        // quadrant  sin(x)      cos(x)
+//        // XXX00b    sin(x')     cos(x')
+//        // XXX01b    cos(x')    -sin(x')
+//        // XXX10b   -sin(x')    -cos(x')
+//        // XXX11b   -cos(x')     sin(x')
+//        //
+//        // So: sin_sign = bit2, cos_sign = bit1 ^ bit2, bit1 determines if we use sin or cos Taylor expansion
+//        UVec4 bit1 = quadrant.LogicalShiftLeft<31>();
+//        UVec4 bit2 = UVec4::sAnd(quadrant.LogicalShiftLeft<30>(), UVec4::sReplicate(0x80000000U));
+//
+//        // Select which one of the results is sin and which one is cos
+//        Vec4 s = Vec4::sSelect(taylor_sin, taylor_cos, bit1);
+//        Vec4 c = Vec4::sSelect(taylor_cos, taylor_sin, bit1);
+//
+//        // Update the signs
+//        sin_sign = UVec4::sXor(sin_sign, bit2);
+//        UVec4 cos_sign = UVec4::sXor(bit1, bit2);
+//
+//        // Correct the signs
+//        outSin = Vec4::sXor(s, sin_sign.ReinterpretAsFloat());
+//        outCos = Vec4::sXor(c, cos_sign.ReinterpretAsFloat());
+//    }
     /**
      * A big test that can handle lots of different comparisons.
      * <br>
