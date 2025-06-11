@@ -3663,25 +3663,12 @@ CONST f32x2 sincos(s16 int_angle) {
         // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
         // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         int bits = BitConversion.floatToIntBits(angle);
-        // Make argument positive and remember sign for sin only since cos is symmetric around x (highest bit of a float is the sign bit)
         int sinSign = bits & 0x80000000;
         float x = BitConversion.intBitsToFloat(bits ^ sinSign);
-        // x / (PI / 2) rounded to nearest int gives us the quadrant closest to x
         int quadrant = MathTools.round(0.6366197723675814f * x);
-        // Make x relative to the closest quadrant.
-        // This does x = x - quadrant * PI / 2 using a two step Cody-Waite argument reduction.
-        // This improves the accuracy of the result by avoiding loss of significant bits in the subtraction.
-        // We start with x = x - quadrant * PI / 2, PI / 2 in hexadecimal notation is 0x3fc90fdb, we remove the lowest 16 bits to
-        // get 0x3fc90000 (= 1.5703125) this means we can now multiply with a number of up to 2^16 without losing any bits.
-        // This leaves us with: x = (x - quadrant * 1.5703125) - quadrant * (PI / 2 - 1.5703125).
-        // PI / 2 - 1.5703125 in hexadecimal is 0x39fdaa22, stripping the lowest 12 bits we get 0x39fda000 (= 0.0004837512969970703125)
-        // This leaves uw with: x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * (PI / 2 - 1.5703125 - 0.0004837512969970703125)
-        // See: https://stackoverflow.com/questions/42455143/sine-cosine-modular-extended-precision-arithmetic
-        // After this we have x in the range [-PI / 4, PI / 4].
         x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
         float x2 = x * x, s;
-        quadrant = (quadrant & 1) | ((sinSign >>> 30 ^ quadrant) & 2);
-        switch (quadrant & 3) {
+        switch ((quadrant & 1) | ((sinSign >>> 30 ^ quadrant) & 2)) {
             case 0:
                 s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
                 break;
@@ -3689,16 +3676,36 @@ CONST f32x2 sincos(s16 int_angle) {
                 s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
                 break;
             case 2:
-                s = -(((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x);
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
                 break;
             default:
-                s = -(((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f);
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
         }
         return s;
-
     }
 
-
+    public static float joltCos(float angle) {
+        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
+        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+        float x = Math.abs(angle);
+        int quadrant = MathTools.round(0.6366197723675814f * x);
+        x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
+        float x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 1:
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
+        }
+        return s;
+    }
 
 //    void Vec4::SinCos(Vec4 &outSin, Vec4 &outCos) const
 //    {
