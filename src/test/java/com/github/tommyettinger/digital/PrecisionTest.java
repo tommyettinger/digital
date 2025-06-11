@@ -3892,6 +3892,22 @@ CONST f32x2 sincos(s16 int_angle) {
      * Worst input (abs):       1.571179628372192400000000
      * Worst output (abs):      0.0000000000 (0x00000000)
      * Correct output (abs):   -0.0003833016 (0xB9C8F5DE)
+     * Running Math.sin vs. joltSin
+     * Mean absolute error:     0.0000000002
+     * Mean relative error:     0.0000000003
+     * Maximum abs. error:      0.0000000596
+     * Maximum rel. error:      0.0000001227
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        0.0000001748 (0x343BBD2E)
+     * Correct output (lo):     0.0000001748 (0x343BBD2E)
+     * Worst input (hi):        3.648786783218384000000000
+     * Highest output rel:      0.0000001227
+     * Worst output (hi):      -0.4857264757 (0xBEF8B124)
+     * Correct output (hi):    -0.4857265353 (0xBEF8B126)
+     * Worst input (abs):       5.759584426879883000000000
+     * Worst output (abs):     -0.5000017881 (0xBF00001E)
+     * Correct output (abs):   -0.5000018477 (0xBF00001F)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -3906,18 +3922,21 @@ CONST f32x2 sincos(s16 int_angle) {
         functions.add(TrigTools::sinSmoother);
         baselines.put("Math.sin vs. TrigTools.sinSmooth", (x) -> (float) Math.sin(x));
         functions.add(TrigTools::sinSmooth);
+//
+//        baselines.put("Math.cos vs. TrigTools.cos", (x) -> (float) Math.cos(x));
+//        functions.add(TrigTools::cos);
+//        baselines.put("Math.cos vs. TrigTools.cosSmoother", (x) -> (float) Math.cos(x));
+//        functions.add(TrigTools::cosSmoother);
+//        baselines.put("Math.cos vs. TrigTools.cosSmooth", (x) -> (float) Math.cos(x));
+//        functions.add(TrigTools::cosSmooth);
+//
+//        baselines.put("Math.sin vs. MathUtils.sin", (x) -> (float) Math.sin(x));
+//        functions.add(MathUtils::sin);
+//        baselines.put("Math.cos vs. MathUtils.cos", (x) -> (float) Math.cos(x));
+//        functions.add(MathUtils::cos);
 
-        baselines.put("Math.cos vs. TrigTools.cos", (x) -> (float) Math.cos(x));
-        functions.add(TrigTools::cos);
-        baselines.put("Math.cos vs. TrigTools.cosSmoother", (x) -> (float) Math.cos(x));
-        functions.add(TrigTools::cosSmoother);
-        baselines.put("Math.cos vs. TrigTools.cosSmooth", (x) -> (float) Math.cos(x));
-        functions.add(TrigTools::cosSmooth);
-
-        baselines.put("Math.sin vs. MathUtils.sin", (x) -> (float) Math.sin(x));
-        functions.add(MathUtils::sin);
-        baselines.put("Math.cos vs. MathUtils.cos", (x) -> (float) Math.cos(x));
-        functions.add(MathUtils::cos);
+        baselines.put("Math.sin vs. joltSin", (x) -> (float) Math.sin(x));
+        functions.add(PrecisionTest::joltSin);
 
         for (int f = 0; f < baselines.size; f++) {
             String runName = baselines.orderedKeys().get(f);
