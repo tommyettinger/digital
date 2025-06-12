@@ -4194,6 +4194,134 @@ CONST f32x2 sincos(s16 int_angle) {
      * Worst input (abs):       0.361389160156250000000000
      * Worst output (abs):      1.2100518942 (0x3F9AE2FB)
      * Correct output (abs):    1.2010389566 (0x3F99BBA5)
+     * Running Math.sin vs. sinTurns
+     * Mean absolute error:     0.0000610204
+     * Mean relative error:     0.0006442947
+     * Maximum abs. error:      0.0001917476
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         0.999938964843750000000000
+     * Best output (lo):       -0.0003834952 (0xB9C90FDA)
+     * Correct output (lo):    -0.0003834952 (0xB9C90FDA)
+     * Worst input (hi):        0.999999046325683600000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):    -0.0000059921 (0xB6C90FDB)
+     * Worst input (abs):       0.999969482421875000000000
+     * Worst output (abs):      0.0000000000 (0x00000000)
+     * Correct output (abs):   -0.0001917476 (0xB9490FDB)
+     * Running Math.sin vs. sinSmoothTurns
+     * Mean absolute error:     0.0000172673
+     * Mean relative error:     0.0000216576
+     * Maximum abs. error:      0.0000988841
+     * Maximum rel. error:      0.0000988841
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         0.771974563598632800000000
+     * Best output (lo):       -0.9904834628 (0xBF7D9053)
+     * Correct output (lo):    -0.9904834628 (0xBF7D9053)
+     * Worst input (hi):        0.750017166137695300000000
+     * Highest output rel:      0.0000988841
+     * Worst output (hi):      -0.9999011159 (0xBF7FF985)
+     * Correct output (hi):    -1.0000000000 (0xBF800000)
+     * Worst input (abs):       0.750017166137695300000000
+     * Worst output (abs):     -0.9999011159 (0xBF7FF985)
+     * Correct output (abs):   -1.0000000000 (0xBF800000)
+     * Running Math.sin vs. sinSmootherTurns
+     * Mean absolute error:     0.0000000118
+     * Mean relative error:     0.0000000190
+     * Maximum abs. error:      0.0000000596
+     * Maximum rel. error:      0.0000020491
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         0.999988555908203100000000
+     * Best output (lo):       -0.0000719053 (0xB896CBE4)
+     * Correct output (lo):    -0.0000719053 (0xB896CBE4)
+     * Worst input (hi):        0.999999046325683600000000
+     * Highest output rel:      0.0000020491
+     * Worst output (hi):      -0.0000059921 (0xB6C90FC0)
+     * Correct output (hi):    -0.0000059921 (0xB6C90FDB)
+     * Worst input (abs):       0.916658401489257800000000
+     * Worst output (abs):     -0.5000449419 (0xBF0002F2)
+     * Correct output (abs):   -0.5000450015 (0xBF0002F3)
+     * Running Math.sin vs. sinTurnsJolt
+     * Mean absolute error:     0.0000000087
+     * Mean relative error:     0.0000000188
+     * Maximum abs. error:      0.0000000596
+     * Maximum rel. error:      0.0000001243
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         0.999999046325683600000000
+     * Best output (lo):       -0.0000059921 (0xB6C90FDB)
+     * Correct output (lo):    -0.0000059921 (0xB6C90FDB)
+     * Worst input (hi):        0.920406341552734400000000
+     * Highest output rel:      0.0000001243
+     * Worst output (hi):      -0.4795148373 (0xBEF582F8)
+     * Correct output (hi):    -0.4795147777 (0xBEF582F6)
+     * Worst input (abs):       0.920406341552734400000000
+     * Worst output (abs):     -0.4795148373 (0xBEF582F8)
+     * Correct output (abs):   -0.4795147777 (0xBEF582F6)
+     * Running Math.cos vs. cosTurns
+     * Mean absolute error:     0.0000610216
+     * Mean relative error:     0.0006445739
+     * Maximum abs. error:      0.0001917476
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         1.000000000000000000000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):        0.750029563903808600000000
+     * Highest output rel:      0.9999999404
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0001857555 (0x3942C75C)
+     * Worst input (abs):       0.749969482421875000000000
+     * Worst output (abs):      0.0000000000 (0x00000000)
+     * Correct output (abs):   -0.0001917476 (0xB9490FDB)
+     * Running Math.cos vs. cosSmoothTurns
+     * Mean absolute error:     0.0000172754
+     * Mean relative error:     0.0000216233
+     * Maximum abs. error:      0.0000988841
+     * Maximum rel. error:      0.0000988841
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         0.978088378906250000000000
+     * Best output (lo):        0.9905377626 (0x3F7D93E2)
+     * Correct output (lo):     0.9905377626 (0x3F7D93E2)
+     * Worst input (hi):        1.000000000000000000000000
+     * Highest output rel:      0.0000988841
+     * Worst output (hi):       0.9999011159 (0x3F7FF985)
+     * Correct output (hi):     1.0000000000 (0x3F800000)
+     * Worst input (abs):       1.000000000000000000000000
+     * Worst output (abs):      0.9999011159 (0x3F7FF985)
+     * Correct output (abs):    1.0000000000 (0x3F800000)
+     * Running Math.cos vs. cosSmootherTurns
+     * Mean absolute error:     0.0000000118
+     * Mean relative error:     0.0000000190
+     * Maximum abs. error:      0.0000000596
+     * Maximum rel. error:      0.0000020491
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         1.000000000000000000000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):        0.749999046325683600000000
+     * Highest output rel:      0.0000020491
+     * Worst output (hi):      -0.0000059921 (0xB6C90FC0)
+     * Correct output (hi):    -0.0000059921 (0xB6C90FDB)
+     * Worst input (abs):       0.999968528747558600000000
+     * Worst output (abs):      0.9999999404 (0x3F7FFFFF)
+     * Correct output (abs):    1.0000000000 (0x3F800000)
+     * Running Math.cos vs. cosTurnsJolt
+     * Mean absolute error:     0.0000000087
+     * Mean relative error:     0.0000000188
+     * Maximum abs. error:      0.0000000596
+     * Maximum rel. error:      0.0000001243
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         1.000000000000000000000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):        0.829593658447265600000000
+     * Highest output rel:      0.0000001243
+     * Worst output (hi):       0.4795148373 (0x3EF582F8)
+     * Correct output (hi):     0.4795147777 (0x3EF582F6)
+     * Worst input (abs):       0.994140625000000000000000
+     * Worst output (abs):      0.9993224144 (0x3F7FD398)
+     * Correct output (abs):    0.9993223548 (0x3F7FD397)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -4202,24 +4330,45 @@ CONST f32x2 sincos(s16 int_angle) {
     public void testPairs_1_1() {
         OrderedMap<String, FloatUnaryOperator> baselines = new OrderedMap<>(8);
         ArrayList<FloatUnaryOperator> functions = new ArrayList<>(8);
-        baselines.put("Math.asin vs. TrigTools.asin", (x) -> (float) Math.asin(x));
-        functions.add(TrigTools::asin);
-        baselines.put("Math.acos vs. TrigTools.acos", (x) -> (float) Math.acos(x));
-        functions.add(TrigTools::acos);
+//        baselines.put("Math.asin vs. TrigTools.asin", (x) -> (float) Math.asin(x));
+//        functions.add(TrigTools::asin);
+//        baselines.put("Math.acos vs. TrigTools.acos", (x) -> (float) Math.acos(x));
+//        functions.add(TrigTools::acos);
+//
+//        baselines.put("Math.asin vs. MathUtils.asin", (x) -> (float) Math.asin(x));
+//        functions.add(MathUtils::asin);
+//        baselines.put("Math.acos vs. MathUtils.acos", (x) -> (float) Math.acos(x));
+//        functions.add(MathUtils::acos);
+//
+//        baselines.put("Math.acos vs. acosHand", (x) -> (float) Math.acos(x));
+//        functions.add((x) -> (float) PrecisionTest.acosHand(x));
+//
+//        baselines.put("Math.acos vs. acosRuud", (x) -> (float) Math.acos(x));
+//        functions.add((x) -> (float) PrecisionTest.acosRuud(x));
+//
+//        baselines.put("Math.acos vs. acosFastGilcher", (x) -> (float) Math.acos(x));
+//        functions.add(PrecisionTest::acosFastGilcher);
 
-        baselines.put("Math.asin vs. MathUtils.asin", (x) -> (float) Math.asin(x));
-        functions.add(MathUtils::asin);
-        baselines.put("Math.acos vs. MathUtils.acos", (x) -> (float) Math.acos(x));
-        functions.add(MathUtils::acos);
+        baselines.put("Math.sin vs. sinTurns", (x) -> (float) Math.sin(x * PI2_D));
+        functions.add(TrigTools::sinTurns);
+        baselines.put("Math.sin vs. sinSmoothTurns", (x) -> (float) Math.sin(x * PI2_D));
+        functions.add(TrigTools::sinSmoothTurns);
+        baselines.put("Math.sin vs. sinSmootherTurns", (x) -> (float) Math.sin(x * PI2_D));
+        functions.add(TrigTools::sinSmootherTurns);
 
-        baselines.put("Math.acos vs. acosHand", (x) -> (float) Math.acos(x));
-        functions.add((x) -> (float) PrecisionTest.acosHand(x));
+        baselines.put("Math.sin vs. sinTurnsJolt", (x) -> (float) Math.sin(x * PI2_D));
+        functions.add(PrecisionTest::sinTurnsJolt);
 
-        baselines.put("Math.acos vs. acosRuud", (x) -> (float) Math.acos(x));
-        functions.add((x) -> (float) PrecisionTest.acosRuud(x));
 
-        baselines.put("Math.acos vs. acosFastGilcher", (x) -> (float) Math.acos(x));
-        functions.add(PrecisionTest::acosFastGilcher);
+        baselines.put("Math.cos vs. cosTurns", (x) -> (float) Math.cos(x * PI2_D));
+        functions.add(TrigTools::cosTurns);
+        baselines.put("Math.cos vs. cosSmoothTurns", (x) -> (float) Math.cos(x * PI2_D));
+        functions.add(TrigTools::cosSmoothTurns);
+        baselines.put("Math.cos vs. cosSmootherTurns", (x) -> (float) Math.cos(x * PI2_D));
+        functions.add(TrigTools::cosSmootherTurns);
+
+        baselines.put("Math.cos vs. cosTurnsJolt", (x) -> (float) Math.cos(x * PI2_D));
+        functions.add(PrecisionTest::cosTurnsJolt);
 
         for (int f = 0; f < baselines.size; f++) {
             String runName = baselines.orderedKeys().get(f);
