@@ -4130,6 +4130,237 @@ CONST f32x2 sincos(s16 int_angle) {
     }
 
     /**
+     * A big test that can handle lots of different comparisons on degree inputs. Doesn't run on every possible float;
+     * skips 256 ULPs at a time.
+     * <br>
+     * Running Math.sin vs. TrigTools.sinDeg
+     * Mean absolute error:     0.0000116260
+     * Mean relative error:     0.0918901265
+     * Maximum abs. error:      0.0001921221
+     * Maximum rel. error:      1.0039137602
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):       359.648437500000000000000000
+     * Best output (lo):       -0.0061358847 (0xBBC90F88)
+     * Correct output (lo):    -0.0061358847 (0xBBC90F88)
+     * Worst input (hi):        0.010964870452880860000000
+     * Highest output rel:      1.0039136410
+     * Worst output (hi):       0.0003834952 (0x39C90FDA)
+     * Correct output (hi):     0.0001913731 (0x3948AB53)
+     * Worst input (abs):       0.010964870452880860000000
+     * Worst output (abs):      0.0003834952 (0x39C90FDA)
+     * Correct output (abs):    0.0001913731 (0x3948AB53)
+     * Running Math.sin vs. TrigTools.sinDegSmoother
+     * Mean absolute error:     0.0000000013
+     * Mean relative error:     0.0000000129
+     * Maximum abs. error:      0.0000003427
+     * Maximum rel. error:      0.0005405607
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):       359.648437500000000000000000
+     * Best output (lo):       -0.0061358847 (0xBBC90F88)
+     * Correct output (lo):    -0.0061358847 (0xBBC90F88)
+     * Worst input (hi):      180.027343750000000000000000
+     * Highest output rel:      0.0005405607
+     * Worst output (hi):      -0.0004774964 (0xB9FA587C)
+     * Correct output (hi):    -0.0004772384 (0xB9FA35DC)
+     * Worst input (abs):     355.703125000000000000000000
+     * Worst output (abs):     -0.0749239996 (0xBD9971C1)
+     * Correct output (abs):   -0.0749243423 (0xBD9971EF)
+     * Running Math.sin vs. TrigTools.sinSmooth
+     * Mean absolute error:     0.0000005705
+     * Mean relative error:     0.0000017226
+     * Maximum abs. error:      0.0000988841
+     * Maximum rel. error:      0.0005467201
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):       358.828125000000000000000000
+     * Best output (lo):       -0.0204516519 (0xBCA78A39)
+     * Correct output (lo):    -0.0204516519 (0xBCA78A39)
+     * Worst input (hi):      180.027343750000000000000000
+     * Highest output rel:      0.0005467201
+     * Worst output (hi):      -0.0004774994 (0xB9FA58E1)
+     * Correct output (hi):    -0.0004772384 (0xB9FA35DC)
+     * Worst input (abs):     270.000000000000000000000000
+     * Worst output (abs):     -0.9999011159 (0xBF7FF985)
+     * Correct output (abs):   -1.0000000000 (0xBF800000)
+     * Running Math.cos vs. TrigTools.cos
+     * Mean absolute error:     0.0000023237
+     * Mean relative error:     0.0000173411
+     * Maximum abs. error:      0.0001874865
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):       360.000000000000000000000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):      270.007812500000000000000000
+     * Highest output rel:      0.9999998808
+     * Worst output (hi):       0.0000000000 (0x00000000)
+     * Correct output (hi):     0.0001363538 (0x390EFA35)
+     * Worst input (abs):     270.054687500000000000000000
+     * Worst output (abs):      0.0007669903 (0x3A490FD9)
+     * Correct output (abs):    0.0009544768 (0x3A7A35DA)
+     * Running Math.cos vs. TrigTools.cosSmoother
+     * Mean absolute error:     0.0000000026
+     * Mean relative error:     0.0000000116
+     * Maximum abs. error:      0.0000003055
+     * Maximum rel. error:      0.0006713507
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):       360.000000000000000000000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):      270.023437500000000000000000
+     * Highest output rel:      0.0006713506
+     * Worst output (hi):       0.0004093361 (0x39D69C2B)
+     * Correct output (hi):     0.0004090615 (0x39D6774F)
+     * Worst input (abs):     266.414062500000000000000000
+     * Worst output (abs):     -0.0625452623 (0xBD8017BB)
+     * Correct output (abs):   -0.0625455678 (0xBD8017E4)
+     * Running Math.cos vs. TrigTools.cosSmooth
+     * Mean absolute error:     0.0000895480
+     * Mean relative error:     0.0000896972
+     * Maximum abs. error:      0.0000989437
+     * Maximum rel. error:      0.0006775405
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):       352.101562500000000000000000
+     * Best output (lo):        0.9905132055 (0x3F7D9246)
+     * Correct output (lo):     0.9905132055 (0x3F7D9246)
+     * Worst input (hi):      270.023437500000000000000000
+     * Highest output rel:      0.0006775405
+     * Worst output (hi):       0.0004093387 (0x39D69C82)
+     * Correct output (hi):     0.0004090615 (0x39D6774F)
+     * Worst input (abs):       0.003194451332092285000000
+     * Worst output (abs):      0.9999010563 (0x3F7FF984)
+     * Correct output (abs):    1.0000000000 (0x3F800000)
+     * Running Math.sin vs. sinDegJolt
+     * Mean absolute error:     0.0000000003
+     * Mean relative error:     0.0000000028
+     * Maximum abs. error:      0.0000000596
+     * Maximum rel. error:      0.0000001235
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):       359.992187500000000000000000
+     * Best output (lo):       -0.0001363538 (0xB90EFA35)
+     * Correct output (lo):    -0.0001363538 (0xB90EFA35)
+     * Worst input (hi):       28.860839843750000000000000
+     * Highest output rel:      0.0000001235
+     * Worst output (hi):       0.4826838672 (0x3EF72257)
+     * Correct output (hi):     0.4826839268 (0x3EF72259)
+     * Worst input (abs):     329.906250000000000000000000
+     * Worst output (abs):     -0.5014163256 (0xBF005CD2)
+     * Correct output (abs):   -0.5014163852 (0xBF005CD3)
+     * Running Math.cos vs. cosDegJolt
+     * Mean absolute error:     0.0000000003
+     * Mean relative error:     0.0000000005
+     * Maximum abs. error:      0.0000000596
+     * Maximum rel. error:      0.0000001229
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):       360.000000000000000000000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):      240.988281250000000000000000
+     * Highest output rel:      0.0000001229
+     * Worst output (hi):      -0.4849884510 (0xBEF85068)
+     * Correct output (hi):    -0.4849885106 (0xBEF8506A)
+     * Worst input (abs):     357.890625000000000000000000
+     * Worst output (abs):      0.9993224144 (0x3F7FD398)
+     * Correct output (abs):    0.9993223548 (0x3F7FD397)
+     * -------
+     * Epsilon is:              0.0000000596
+     * -------
+     */
+    @Test
+    public void testPairs_0_360() {
+        OrderedMap<String, FloatUnaryOperator> baselines = new OrderedMap<>(8);
+        ArrayList<FloatUnaryOperator> functions = new ArrayList<>(8);
+        baselines.put("Math.sin vs. TrigTools.sinDeg", (x) -> (float) Math.sin(Math.toRadians(x)));
+        functions.add(TrigTools::sinDeg);
+        baselines.put("Math.sin vs. TrigTools.sinDegSmoother", (x) -> (float) Math.sin(Math.toRadians(x)));
+        functions.add(TrigTools::sinSmootherDeg);
+        baselines.put("Math.sin vs. TrigTools.sinSmooth", (x) -> (float) Math.sin(Math.toRadians(x)));
+        functions.add(TrigTools::sinSmoothDeg);
+
+        baselines.put("Math.cos vs. TrigTools.cos", (x) -> (float) Math.cos(Math.toRadians(x)));
+        functions.add(TrigTools::cosDeg);
+        baselines.put("Math.cos vs. TrigTools.cosSmoother", (x) -> (float) Math.cos(Math.toRadians(x)));
+        functions.add(TrigTools::cosSmootherDeg);
+        baselines.put("Math.cos vs. TrigTools.cosSmooth", (x) -> (float) Math.cos(Math.toRadians(x)));
+        functions.add(TrigTools::cosSmoothDeg);
+
+//        baselines.put("Math.sin vs. MathUtils.sin", (x) -> (float) Math.sin(x));
+//        functions.add(MathUtils::sin);
+//        baselines.put("Math.cos vs. MathUtils.cos", (x) -> (float) Math.cos(x));
+//        functions.add(MathUtils::cos);
+
+        baselines.put("Math.sin vs. sinDegJolt", (x) -> (float) Math.sin(Math.toRadians(x)));
+        functions.add(PrecisionTest::sinDegJolt);
+
+        baselines.put("Math.cos vs. cosDegJolt", (x) -> (float) Math.cos(Math.toRadians(x)));
+        functions.add(PrecisionTest::cosDegJolt);
+
+        for (int f = 0; f < baselines.size; f++) {
+            String runName = baselines.orderedKeys().get(f);
+            System.out.println("Running " + runName);
+            FloatUnaryOperator baseline = baselines.get(runName);
+            FloatUnaryOperator op = functions.get(f);
+            float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
+            float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
+            long counter = 0L;
+            int degreeBits = BitConversion.floatToIntBits(360);
+            for (int ix = degreeBits; ix >= 0; ix-= 256) {
+                final float x = BitConversion.intBitsToFloat(ix);
+                float tru = baseline.applyAsFloat(x),
+                        approx = op.applyAsFloat(x),
+                        err = tru - approx,
+                        ae = abs(err),
+                        re = MathTools.isZero(tru, 0x1p-24f) ? 0f : Math.abs(err / tru);
+                if(!MathTools.isZero(tru, 0x1p-24f)) {
+                    relError += re;
+                    if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                        highestRelX = x;
+                    }
+                    if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                        lowestRelX = x;
+                    }
+                }
+                absError += ae;
+                if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
+                    worstAbsX = x;
+                }
+                ++counter;
+            }
+            float worstAbs = op.applyAsFloat(worstAbsX),
+                    worstTru = baseline.applyAsFloat(worstAbsX),
+                    highestTru = baseline.applyAsFloat(highestRelX),
+                    lowestTru = baseline.applyAsFloat(lowestRelX),
+                    lowestErr = lowestTru - op.applyAsFloat(lowestRelX),
+                    lowestRel = abs(lowestErr / Math.nextAfter(lowestTru, Math.copySign(Float.MAX_VALUE, lowestTru))),
+                    highestErr = highestTru - op.applyAsFloat(highestRelX),
+                    highestRel = abs(highestErr / Math.nextAfter(highestTru, Math.copySign(Float.MAX_VALUE, highestTru)));
+            System.out.printf(
+                    "Mean absolute error: %16.10f\n" +
+                            "Mean relative error: %16.10f\n" +
+                            "Maximum abs. error:  %16.10f\n" +
+                            "Maximum rel. error:  %16.10f\n" +
+                            "Lowest output rel:   %16.10f\n" +
+                            "Best input (lo):     %30.24f\n" +
+                            "Best output (lo):    %16.10f (0x%08X)\n" +
+                            "Correct output (lo): %16.10f (0x%08X)\n" +
+                            "Worst input (hi):    %30.24f\n" +
+                            "Highest output rel:  %16.10f\n" +
+                            "Worst output (hi):   %16.10f (0x%08X)\n" +
+                            "Correct output (hi): %16.10f (0x%08X)\n" +
+                            "Worst input (abs):   %30.24f\n" +
+                            "Worst output (abs):  %16.10f (0x%08X)\n" +
+                            "Correct output (abs):%16.10f (0x%08X)\n", absError / counter, relError / counter,
+                    maxAbsError, maxRelError,
+                    lowestRel, lowestRelX, op.applyAsFloat(lowestRelX), Float.floatToIntBits(op.applyAsFloat(lowestRelX)), lowestTru, Float.floatToIntBits(lowestTru),
+                    highestRelX, highestRel, op.applyAsFloat(highestRelX), Float.floatToIntBits(op.applyAsFloat(highestRelX)), highestTru, Float.floatToIntBits(highestTru),
+                    worstAbsX, worstAbs, Float.floatToIntBits(worstAbs), worstTru, Float.floatToIntBits(worstTru));
+            Assert.assertTrue("Mean absolute error is broken", absError / counter < 0.5);
+            Assert.assertTrue("Max absolute error is broken", maxAbsError < 0.5);
+        }
+        System.out.printf("-------\n" +
+                "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
+    }
+
+    /**
      * Running Math.asin vs. TrigTools.asin
      * Mean absolute error:     0.0000284235
      * Mean relative error:     0.0007816033
