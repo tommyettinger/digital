@@ -3659,16 +3659,16 @@ CONST f32x2 sincos(s16 int_angle) {
 }
      */
 
-    public static float joltSin(float angle) {
+    public static float sinJolt(float angle) {
         // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
         // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         int bits = BitConversion.floatToIntBits(angle);
         int sinSign = bits & 0x80000000;
         float x = BitConversion.intBitsToFloat(bits ^ sinSign);
-        int quadrant = MathTools.round(0.6366197723675814f * x);
+        int quadrant = (int)(0.6366197723675814 * x + 0.5);
         x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
         float x2 = x * x, s;
-        switch ((quadrant & 1) | ((sinSign >>> 30 ^ quadrant) & 2)) {
+        switch ((sinSign >>> 30 ^ quadrant) & 3) {
             case 0:
                 s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
                 break;
@@ -3684,11 +3684,11 @@ CONST f32x2 sincos(s16 int_angle) {
         return s;
     }
 
-    public static float joltCos(float angle) {
+    public static float cosJolt(float angle) {
         // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
         // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float x = Math.abs(angle);
-        int quadrant = MathTools.round(0.6366197723675814f * x);
+        int quadrant = (int)(0.6366197723675814f * x + 0.5);
         x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
         float x2 = x * x, s;
         switch (quadrant & 3) {
@@ -3768,6 +3768,57 @@ CONST f32x2 sincos(s16 int_angle) {
 //        outSin = Vec4::sXor(s, sin_sign.ReinterpretAsFloat());
 //        outCos = Vec4::sXor(c, cos_sign.ReinterpretAsFloat());
 //    }
+
+
+    public static float sinTurnsJolt(float angle) {
+        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
+        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+        int bits = BitConversion.floatToIntBits(angle);
+        int sinSign = bits & 0x80000000;
+        float x = BitConversion.intBitsToFloat(bits ^ sinSign);
+        int quadrant = (int)(4 * x + 0.5f);
+        x = (x - quadrant * 0.25f) * PI2;
+        float x2 = x * x, s;
+        switch ((sinSign >>> 30 ^ quadrant) & 3) {
+            case 0:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 1:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 2:
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
+        }
+        return s;
+    }
+
+    public static float cosTurnsJolt(float angle) {
+        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
+        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+        float x = Math.abs(angle);
+        int quadrant = (int)(4 * x + 0.5f);
+        x = (x - quadrant * 0.25f) * PI2;
+        float x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 1:
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
+        }
+        return s;
+    }
+
+
     /**
      * A big test that can handle lots of different comparisons.
      * <br>
@@ -3899,7 +3950,7 @@ CONST f32x2 sincos(s16 int_angle) {
      * Worst input (abs):       1.571179628372192400000000
      * Worst output (abs):      0.0000000000 (0x00000000)
      * Correct output (abs):   -0.0003833016 (0xB9C8F5DE)
-     * Running Math.sin vs. joltSin
+     * Running Math.sin vs. sinJolt
      * Mean absolute error:     0.0000000002
      * Mean relative error:     0.0000000003
      * Maximum abs. error:      0.0000000596
@@ -3915,7 +3966,7 @@ CONST f32x2 sincos(s16 int_angle) {
      * Worst input (abs):       5.759584426879883000000000
      * Worst output (abs):     -0.5000017881 (0xBF00001E)
      * Correct output (abs):   -0.5000018477 (0xBF00001F)
-     * Running Math.cos vs. joltCos
+     * Running Math.cos vs. cosJolt
      * Mean absolute error:     0.0000000003
      * Mean relative error:     0.0000000005
      * Maximum abs. error:      0.0000000596
@@ -3958,11 +4009,11 @@ CONST f32x2 sincos(s16 int_angle) {
 //        baselines.put("Math.cos vs. MathUtils.cos", (x) -> (float) Math.cos(x));
 //        functions.add(MathUtils::cos);
 
-        baselines.put("Math.sin vs. joltSin", (x) -> (float) Math.sin(x));
-        functions.add(PrecisionTest::joltSin);
+        baselines.put("Math.sin vs. sinJolt", (x) -> (float) Math.sin(x));
+        functions.add(PrecisionTest::sinJolt);
 
-        baselines.put("Math.cos vs. joltCos", (x) -> (float) Math.cos(x));
-        functions.add(PrecisionTest::joltCos);
+        baselines.put("Math.cos vs. cosJolt", (x) -> (float) Math.cos(x));
+        functions.add(PrecisionTest::cosJolt);
 
         for (int f = 0; f < baselines.size; f++) {
             String runName = baselines.orderedKeys().get(f);
