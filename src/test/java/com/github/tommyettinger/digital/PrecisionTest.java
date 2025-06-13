@@ -103,29 +103,69 @@ public class PrecisionTest {
      * True result   :   2.83228798
      * Worst position:   -0.00018466,0.00005901
      * Took 13.9918274 s
+     *
+     * LATER...
+     *
+     * TrigTools.atan2 :
+     * Absolute error:   0.00000105
+     * Relative error:   0.00000310
+     * Maximum error :   0.00000180
+     * Worst result  :   2.02955461
+     * True result   :   2.02955641
+     * Worst position:   -0.66515315,1.34672165
+     * Took 60.0815083 s
+     *
+     * Math.atan2 :
+     * Absolute error:   0.00000005
+     * Relative error:   0.00000002
+     * Maximum error :   0.00000012
+     * Worst result  :   2.49713755
+     * True result   :   2.49713743
+     * Worst position:   -1.67274380,1.25705338
+     * Took 89.7106749 s
+     *
+     * PrecisionTest.atan2Jolt (double) :
+     * Absolute error:   0.00000005
+     * Relative error:   0.00000002
+     * Maximum error :   0.00000013
+     * Worst result  :   -2.74888802
+     * True result   :   -2.74888789
+     * Worst position:   -1.76372182,-0.73056924
+     * Took 84.9840113 s
+     *
+     * PrecisionTest.atan2Jolt (float) :
+     * Absolute error:   0.00000007
+     * Relative error:   0.00000003
+     * Maximum error :   0.00000030
+     * Worst result  :   -2.14120007
+     * True result   :   -2.14119977
+     * Worst position:   -0.43988597,-0.68567419
+     * Took 60.416935 s
      */
     @Test
     public void testAtan2() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2", TrigTools::atan2);
         functions.put("Math.atan2", (y, x) -> (float) Math.atan2(y, x));
-        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
-        functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
-        functions.put("PrecisionTest.atan2Gilcher3", PrecisionTest::atan2Gilcher3);
-        functions.put("PrecisionTest.atan2GilcherHand", PrecisionTest::atan2GilcherHand);
-        functions.put("PrecisionTest.atan2GilcherRuud", PrecisionTest::atan2GilcherRuud);
-        functions.put("PrecisionTest.atan2GilcherTT", PrecisionTest::atan2GilcherTT);
-        functions.put("PrecisionTest.atan2GilcherA", PrecisionTest::atan2GilcherA);
+        functions.put("PrecisionTest.atan2Jolt (double)", (y1, x1) -> (float)atan2Jolt((double) y1, (double) x1));
+        functions.put("PrecisionTest.atan2Jolt (float)", PrecisionTest::atan2Jolt);
+//        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
+//        functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
+//        functions.put("PrecisionTest.atan2Gilcher3", PrecisionTest::atan2Gilcher3);
+//        functions.put("PrecisionTest.atan2GilcherHand", PrecisionTest::atan2GilcherHand);
+//        functions.put("PrecisionTest.atan2GilcherRuud", PrecisionTest::atan2GilcherRuud);
+//        functions.put("PrecisionTest.atan2GilcherTT", PrecisionTest::atan2GilcherTT);
+//        functions.put("PrecisionTest.atan2GilcherA", PrecisionTest::atan2GilcherA);
         for (Map.Entry<String, FloatBinaryOperator> entry : functions.entrySet()) {
             FloatBinaryOperator func = entry.getValue();
             double absError = 0.0, relError = 0.0, maxError = 0.0, shouldBe = 0.0, worstResult = 0.0;
             float worstY = 0, worstX = 0;
             long counter = 0L;
             long time = System.nanoTime();
-            for (int i = Float.floatToIntBits(1f), n = Float.floatToIntBits(2f); i < n; i += 511) {
-                float x = Float.intBitsToFloat(i) - 1.5f;
+            for (int i = Float.floatToIntBits(0.25f), n = Float.floatToIntBits(4f); i < n; i += 511) {
+                float x = Float.intBitsToFloat(i) - 2.125f;
                 for (int j = Float.floatToIntBits(1f); j < n; j += 511) {
-                    float y = Float.intBitsToFloat(j) - 1.5f;
+                    float y = Float.intBitsToFloat(j) - 2.125f;
                     double tru = Math.atan2(y, x),
                             result = func.applyAsFloat(y, x),
                             err = result - tru,
@@ -3859,16 +3899,32 @@ CONST f32x2 sincos(s16 int_angle) {
 //        outCos = Vec4::sXor(c, cos_sign.ReinterpretAsFloat());
 //    }
 
-    public static float atan2Jolt(final float y, float x) {
+    public static double atan2Jolt(final double y, double x) {
         double n = y / x;
         if (n != n)
             n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0)
+            return atanJolt(n);
+        else if (x < 0) {
+            if (y >= 0) return (atanJolt(n) + Math.PI);
+            return (atanJolt(n) - Math.PI);
+        } else if (y > 0)
+            return x + HALF_PI_D;
+        else if (y < 0) return x - HALF_PI_D;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    public static float atan2Jolt(final float y, float x) {
+        float n = y / x;
+        if (n != n)
+            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
         else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
         if (x > 0)
-            return (float) atanJolt(n);
+            return atanJolt(n);
         else if (x < 0) {
-            if (y >= 0) return (float) (atanJolt(n) + Math.PI);
-            return (float) (atanJolt(n) - Math.PI);
+            if (y >= 0) return atanJolt(n) + TrigTools.PI;
+            return atanJolt(n) - TrigTools.PI;
         } else if (y > 0)
             return x + HALF_PI;
         else if (y < 0) return x - HALF_PI;
@@ -3878,8 +3934,7 @@ CONST f32x2 sincos(s16 int_angle) {
     public static float atanJolt(float n) {
         // Implementation based on atanf.c from the cephes library
         // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
-        float m = Math.abs(n);
-        float x, y;
+        float m = Math.abs(n), x, y;
 
         if(m > 2.414213562373095f){
             x = -1f / m;
@@ -3900,9 +3955,7 @@ CONST f32x2 sincos(s16 int_angle) {
     public static double atanJolt(double n) {
         // Implementation based on atanf.c from the cephes library
         // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
-        double m = Math.abs(n);
-        double x, y;
-
+        double m = Math.abs(n), x, y;
         if(m > 2.414213562373095){
             x = -1. / m;
             y = HALF_PI_D;
