@@ -164,7 +164,7 @@ public class PrecisionTest {
             long time = System.nanoTime();
             for (int i = Float.floatToIntBits(0.25f), n = Float.floatToIntBits(4f); i < n; i += 511) {
                 float x = Float.intBitsToFloat(i) - 2.125f;
-                for (int j = Float.floatToIntBits(1f); j < n; j += 511) {
+                for (int j = Float.floatToIntBits(0.25f); j < n; j += 511) {
                     float y = Float.intBitsToFloat(j) - 2.125f;
                     double tru = Math.atan2(y, x),
                             result = func.applyAsFloat(y, x),
@@ -182,12 +182,12 @@ public class PrecisionTest {
                 }
             }
             System.out.printf("\n%s :\n" +
-                    "Absolute error:   %3.8f\n" +
-                    "Relative error:   %3.8f\n" +
-                    "Maximum error :   %3.8f\n" +
-                    "Worst result  :   %3.8f\n" +
-                    "True result   :   %3.8f\n" +
-                    "Worst position:   %3.8f,%3.8f\n", entry.getKey(), absError / counter, relError / counter, maxError, worstResult, shouldBe, worstX, worstY);
+                    "Absolute error:   %16.10f\n" +
+                    "Relative error:   %16.10f\n" +
+                    "Maximum error :   %16.10f\n" +
+                    "Worst result  :   %16.10f\n" +
+                    "True result   :   %16.10f\n" +
+                    "Worst position:   %16.10f,%16.10f\n", entry.getKey(), absError / counter, relError / counter, maxError, worstResult, shouldBe, worstX, worstY);
             System.out.println("Took " + (System.nanoTime() - time) * 1E-9 + " s");
         }
     }
@@ -3969,6 +3969,78 @@ CONST f32x2 sincos(s16 int_angle) {
         double z = x * x;
         return Math.copySign(y + (((8.05374449538e-2 * z - 1.38776856032e-1) * z + 1.99777106478e-1)
                 * z - 3.33329491539e-1) * z * x + x, n);
+    }
+
+    public static double atan2DegJolt(final double y, double x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0)
+            return atanDegJolt(n);
+        else if (x < 0) {
+            if (y >= 0) return (atanDegJolt(n) + 180.0);
+            return (atanDegJolt(n) - 180.0);
+        } else if (y > 0)
+            return x + 90.0;
+        else if (y < 0) return x - 90.0;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    public static float atan2DegJolt(final float y, float x) {
+        float n = y / x;
+        if (n != n)
+            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if (x > 0)
+            return atanDegJolt(n);
+        else if (x < 0) {
+            if (y >= 0) return atanDegJolt(n) + 180f;
+            return atanDegJolt(n) - 180f;
+        } else if (y > 0)
+            return x + 90f;
+        else if (y < 0) return x - 90f;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    public static float atanDegJolt(float n) {
+        // Implementation based on atanf.c from the cephes library
+        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+        float m = Math.abs(n), x, y;
+
+        if(m > 2.414213562373095f){
+            x = -1f / m;
+            y = 90f;
+        } else if(m > 0.4142135623730950f){
+            x = (m - 1f) / (m + 1f);
+            y = 45f;
+        } else {
+            x = m;
+            y = 0f;
+        }
+        float z = x * x;
+        return Math.copySign(y + ((((8.05374449538e-2f * z - 1.38776856032e-1f) * z + 1.99777106478e-1f)
+                * z - 3.33329491539e-1f) * z * x + x) * 57.29577951308232f, n);
+    }
+
+
+    public static double atanDegJolt(double n) {
+        // Implementation based on atanf.c from the cephes library
+        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+        double m = Math.abs(n), x, y;
+        if(m > 2.414213562373095){
+            x = -1. / m;
+            y = 90.0;
+        } else if(m > 0.4142135623730950){
+            x = (m - 1.) / (m + 1.);
+            y = 45.0;
+        } else {
+            x = m;
+            y = 0.;
+        }
+        double z = x * x;
+        return Math.copySign(y + ((((8.05374449538e-2 * z - 1.38776856032e-1) * z + 1.99777106478e-1)
+                * z - 3.33329491539e-1) * z * x + x) * 57.29577951308232, n);
     }
 
 //    Vec4 Vec4::ATan() const
