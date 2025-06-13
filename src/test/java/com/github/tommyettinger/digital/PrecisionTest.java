@@ -3859,6 +3859,58 @@ CONST f32x2 sincos(s16 int_angle) {
 //        outCos = Vec4::sXor(c, cos_sign.ReinterpretAsFloat());
 //    }
 
+    public static float atanJolt(float n) {
+        float m = Math.abs(n);
+        float x, y;
+
+        if(m > 2.414213562373095f){
+            x = -1f / m;
+            y = HALF_PI;
+        } else if(m > 0.4142135623730950f){
+            x = (m - 1f) / (m + 1f);
+            y = QUARTER_PI;
+        } else {
+            x = m;
+            y = 0f;
+        }
+        float z = x * x;
+        return Math.copySign(y + (((8.05374449538e-2f * z - 1.38776856032e-1f) * z + 1.99777106478e-1f)
+                * z - 3.33329491539e-1f) * z * x + x, n);
+    }
+
+//    Vec4 Vec4::ATan() const
+//    {
+//        // Implementation based on atanf.c from the cephes library
+//        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+//
+//        // Make argument positive
+//        UVec4 atan_sign = UVec4::sAnd(ReinterpretAsInt(), UVec4::sReplicate(0x80000000U));
+//        Vec4 x = Vec4::sXor(*this, atan_sign.ReinterpretAsFloat());
+//        Vec4 y = Vec4::sZero();
+//
+//        // If x > Tan(PI / 8)
+//        UVec4 greater1 = Vec4::sGreater(x, Vec4::sReplicate(0.4142135623730950f));
+//        Vec4 x1 = (x - Vec4::sOne()) / (x + Vec4::sOne());
+//
+//        // If x > Tan(3 * PI / 8)
+//        UVec4 greater2 = Vec4::sGreater(x, Vec4::sReplicate(2.414213562373095f));
+//        Vec4 x2 = Vec4::sReplicate(-1.0f) / (x JPH_IF_FLOATING_POINT_EXCEPTIONS_ENABLED(+ Vec4::sReplicate(FLT_MIN))); // Add small epsilon to prevent div by zero, works because x is always positive
+//
+//        // Apply first if
+//        x = Vec4::sSelect(x, x1, greater1);
+//        y = Vec4::sSelect(y, Vec4::sReplicate(0.25f * JPH_PI), greater1);
+//
+//        // Apply second if
+//        x = Vec4::sSelect(x, x2, greater2);
+//        y = Vec4::sSelect(y, Vec4::sReplicate(0.5f * JPH_PI), greater2);
+//
+//        // Polynomial approximation
+//        Vec4 z = x * x;
+//        y += (((8.05374449538e-2f * z - Vec4::sReplicate(1.38776856032e-1f)) * z + Vec4::sReplicate(1.99777106478e-1f)) * z - Vec4::sReplicate(3.33329491539e-1f)) * z * x + x;
+//
+//        // Put the sign back
+//        return Vec4::sXor(y, atan_sign.ReinterpretAsFloat());
+//    }
 
     /**
      * A big test that can handle lots of different comparisons.
