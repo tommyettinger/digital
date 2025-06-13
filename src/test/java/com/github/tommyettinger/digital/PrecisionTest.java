@@ -4757,4 +4757,103 @@ CONST f32x2 sincos(s16 int_angle) {
         System.out.printf("-------\n" +
                 "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
+
+    @Test
+    public void testPairs_50_50() {
+        OrderedMap<String, FloatUnaryOperator> baselines = new OrderedMap<>(8);
+        ArrayList<FloatUnaryOperator> functions = new ArrayList<>(8);
+        baselines.put("Math.atan vs. TrigTools.atan", (x) -> (float) Math.atan(x));
+        functions.add(TrigTools::atan);
+        baselines.put("Math.atan vs. TrigTools.atanUnchecked", (x) -> (float) Math.atan(x));
+        functions.add(i -> (float) TrigTools.atanUnchecked(i));
+        baselines.put("Math.atan vs. atanJolt", (x) -> (float) Math.atan(x));
+        functions.add(PrecisionTest::atanJolt);
+
+        for (int f = 0; f < baselines.size; f++) {
+            String runName = baselines.orderedKeys().get(f);
+            System.out.println("Running " + runName);
+            FloatUnaryOperator baseline = baselines.get(runName);
+            FloatUnaryOperator op = functions.get(f);
+            float absError = 0.0f, relError = 0.0f, maxAbsError = 0.0f, maxRelError = 0.0f, minRelError = Float.MAX_VALUE;
+            float worstAbsX = 0, highestRelX = 0, lowestRelX = 0;
+            long counter = 0L;
+            int degreeBits = BitConversion.floatToIntBits(50), endBits = degreeBits | 0x80000000;
+            for (int ix = degreeBits; ix >= 0; ix-= 64) {
+                final float x = BitConversion.intBitsToFloat(ix);
+                float tru = baseline.applyAsFloat(x),
+                        approx = op.applyAsFloat(x),
+                        err = tru - approx,
+                        ae = abs(err),
+                        re = MathTools.isZero(tru, 0x1p-24f) ? 0f : Math.abs(err / tru);
+                if(!MathTools.isZero(tru, 0x1p-24f)) {
+                    relError += re;
+                    if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                        highestRelX = x;
+                    }
+                    if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                        lowestRelX = x;
+                    }
+                }
+                absError += ae;
+                if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
+                    worstAbsX = x;
+                }
+                ++counter;
+            }
+            for (int ix = endBits; ix > 0x80000000; ix-= 64) {
+                final float x = BitConversion.intBitsToFloat(ix);
+                float tru = baseline.applyAsFloat(x),
+                        approx = op.applyAsFloat(x),
+                        err = tru - approx,
+                        ae = abs(err),
+                        re = MathTools.isZero(tru, 0x1p-24f) ? 0f : Math.abs(err / tru);
+                if(!MathTools.isZero(tru, 0x1p-24f)) {
+                    relError += re;
+                    if (maxRelError != (maxRelError = Math.max(maxRelError, re))) {
+                        highestRelX = x;
+                    }
+                    if (minRelError != (minRelError = Math.min(minRelError, re))) {
+                        lowestRelX = x;
+                    }
+                }
+                absError += ae;
+                if (maxAbsError != (maxAbsError = Math.max(maxAbsError, ae))) {
+                    worstAbsX = x;
+                }
+                ++counter;
+            }
+            float worstAbs = op.applyAsFloat(worstAbsX),
+                    worstTru = baseline.applyAsFloat(worstAbsX),
+                    highestTru = baseline.applyAsFloat(highestRelX),
+                    lowestTru = baseline.applyAsFloat(lowestRelX),
+                    lowestErr = lowestTru - op.applyAsFloat(lowestRelX),
+                    lowestRel = abs(lowestErr / Math.nextAfter(lowestTru, Math.copySign(Float.MAX_VALUE, lowestTru))),
+                    highestErr = highestTru - op.applyAsFloat(highestRelX),
+                    highestRel = abs(highestErr / Math.nextAfter(highestTru, Math.copySign(Float.MAX_VALUE, highestTru)));
+            System.out.printf(
+                    "Mean absolute error: %16.10f\n" +
+                            "Mean relative error: %16.10f\n" +
+                            "Maximum abs. error:  %16.10f\n" +
+                            "Maximum rel. error:  %16.10f\n" +
+                            "Lowest output rel:   %16.10f\n" +
+                            "Best input (lo):     %30.24f\n" +
+                            "Best output (lo):    %16.10f (0x%08X)\n" +
+                            "Correct output (lo): %16.10f (0x%08X)\n" +
+                            "Worst input (hi):    %30.24f\n" +
+                            "Highest output rel:  %16.10f\n" +
+                            "Worst output (hi):   %16.10f (0x%08X)\n" +
+                            "Correct output (hi): %16.10f (0x%08X)\n" +
+                            "Worst input (abs):   %30.24f\n" +
+                            "Worst output (abs):  %16.10f (0x%08X)\n" +
+                            "Correct output (abs):%16.10f (0x%08X)\n", absError / counter, relError / counter,
+                    maxAbsError, maxRelError,
+                    lowestRel, lowestRelX, op.applyAsFloat(lowestRelX), Float.floatToIntBits(op.applyAsFloat(lowestRelX)), lowestTru, Float.floatToIntBits(lowestTru),
+                    highestRelX, highestRel, op.applyAsFloat(highestRelX), Float.floatToIntBits(op.applyAsFloat(highestRelX)), highestTru, Float.floatToIntBits(highestTru),
+                    worstAbsX, worstAbs, Float.floatToIntBits(worstAbs), worstTru, Float.floatToIntBits(worstTru));
+            Assert.assertTrue("Mean absolute error is broken", absError / counter < 0.5);
+            Assert.assertTrue("Max absolute error is broken", maxAbsError < 0.5);
+        }
+        System.out.printf("-------\n" +
+                "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
+    }
 }
