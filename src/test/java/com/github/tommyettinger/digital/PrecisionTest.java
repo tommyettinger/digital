@@ -3859,7 +3859,25 @@ CONST f32x2 sincos(s16 int_angle) {
 //        outCos = Vec4::sXor(c, cos_sign.ReinterpretAsFloat());
 //    }
 
+    public static float atan2Jolt(final float y, float x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if (x > 0)
+            return (float) atanJolt(n);
+        else if (x < 0) {
+            if (y >= 0) return (float) (atanJolt(n) + Math.PI);
+            return (float) (atanJolt(n) - Math.PI);
+        } else if (y > 0)
+            return x + HALF_PI;
+        else if (y < 0) return x - HALF_PI;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
     public static float atanJolt(float n) {
+        // Implementation based on atanf.c from the cephes library
+        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float m = Math.abs(n);
         float x, y;
 
@@ -3876,6 +3894,28 @@ CONST f32x2 sincos(s16 int_angle) {
         float z = x * x;
         return Math.copySign(y + (((8.05374449538e-2f * z - 1.38776856032e-1f) * z + 1.99777106478e-1f)
                 * z - 3.33329491539e-1f) * z * x + x, n);
+    }
+
+
+    public static double atanJolt(double n) {
+        // Implementation based on atanf.c from the cephes library
+        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+        double m = Math.abs(n);
+        double x, y;
+
+        if(m > 2.414213562373095){
+            x = -1. / m;
+            y = HALF_PI_D;
+        } else if(m > 0.4142135623730950){
+            x = (m - 1.) / (m + 1.);
+            y = QUARTER_PI_D;
+        } else {
+            x = m;
+            y = 0.;
+        }
+        double z = x * x;
+        return Math.copySign(y + (((8.05374449538e-2 * z - 1.38776856032e-1) * z + 1.99777106478e-1)
+                * z - 3.33329491539e-1) * z * x + x, n);
     }
 
 //    Vec4 Vec4::ATan() const
@@ -4758,6 +4798,59 @@ CONST f32x2 sincos(s16 int_angle) {
                 "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
 
+    /**
+     * Running Math.atan vs. TrigTools.atan
+     * Mean absolute error:     0.0000009209
+     * Mean relative error:     0.2908751965
+     * Maximum abs. error:      0.0000016689
+     * Maximum rel. error:     27.9064464569
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        28.402832031250000000000000
+     * Best output (lo):        1.5356031656 (0x3FC48EA5)
+     * Correct output (lo):     1.5356031656 (0x3FC48EA5)
+     * Worst input (hi):        0.000000059605099522741510
+     * Highest output rel:     27.9064445496
+     * Worst output (hi):       0.0000017230 (0x35E740DB)
+     * Correct output (hi):     0.0000000596 (0x33800040)
+     * Worst input (abs):      49.982910156250000000000000
+     * Worst output (abs):      1.5507937670 (0x3FC68069)
+     * Correct output (abs):    1.5507920980 (0x3FC6805B)
+     * Running Math.atan vs. TrigTools.atanUnchecked
+     * Mean absolute error:     0.0000009209
+     * Mean relative error:     0.2908751965
+     * Maximum abs. error:      0.0000016689
+     * Maximum rel. error:     27.9064464569
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        28.402832031250000000000000
+     * Best output (lo):        1.5356031656 (0x3FC48EA5)
+     * Correct output (lo):     1.5356031656 (0x3FC48EA5)
+     * Worst input (hi):        0.000000059605099522741510
+     * Highest output rel:     27.9064445496
+     * Worst output (hi):       0.0000017230 (0x35E740DB)
+     * Correct output (hi):     0.0000000596 (0x33800040)
+     * Worst input (abs):      49.982910156250000000000000
+     * Worst output (abs):      1.5507937670 (0x3FC68069)
+     * Correct output (abs):    1.5507920980 (0x3FC6805B)
+     * Running Math.atan vs. atanJolt
+     * Mean absolute error:     0.0000000020
+     * Mean relative error:     0.0000000021
+     * Maximum abs. error:      0.0000002384
+     * Maximum rel. error:      0.0000002370
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        50.000000000000000000000000
+     * Best output (lo):        1.5507990122 (0x3FC68095)
+     * Correct output (lo):     1.5507990122 (0x3FC68095)
+     * Worst input (hi):        0.550205230712890600000000
+     * Highest output rel:      0.0000002370
+     * Worst output (hi):       0.5030008554 (0x3F00C4AA)
+     * Correct output (hi):     0.5030007362 (0x3F00C4A8)
+     * Worst input (abs):       3.909286499023437500000000
+     * Worst output (abs):      1.3203654289 (0x3FA901BC)
+     * Correct output (abs):    1.3203651905 (0x3FA901BA)
+     * -------
+     * Epsilon is:              0.0000000596
+     * -------
+     */
     @Test
     public void testPairs_50_50() {
         OrderedMap<String, FloatUnaryOperator> baselines = new OrderedMap<>(8);
