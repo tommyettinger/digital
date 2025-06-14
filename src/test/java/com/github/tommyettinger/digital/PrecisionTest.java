@@ -4063,6 +4063,35 @@ CONST f32x2 sincos(s16 int_angle) {
         return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
+
+    public static double atan2Deg360Jolt(final double y, double x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0) return atanDegJolt(n);
+            else return (atanDegJolt(n) + 360.0);
+        } else if (x < 0) return (atanDegJolt(n) + 180.0);
+        else if (y > 0) return x + 90.0;
+        else if (y < 0) return x + 270.0;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    public static float atan2Deg360Jolt(final float y, float x) {
+        float n = y / x;
+        if (n != n)
+            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0) return atanDegJolt(n);
+            else return atanDegJolt(n) + 360f;
+        } else if (x < 0) return atanDegJolt(n) + 180f;
+        else if (y > 0) return x + 90f;
+        else if (y < 0) return x + 270f;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
     public static float atanDegJolt(float n) {
         // Implementation based on atanf.c from the cephes library
         // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
