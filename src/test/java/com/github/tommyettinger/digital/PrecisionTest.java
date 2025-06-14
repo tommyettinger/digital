@@ -5135,6 +5135,102 @@ CONST f32x2 sincos(s16 int_angle) {
      * Worst input (abs):       3.909286499023437500000000
      * Worst output (abs):      1.3203654289 (0x3FA901BC)
      * Correct output (abs):    1.3203651905 (0x3FA901BA)
+     * Running Math.atan vs. TrigTools.atanDeg
+     * Mean absolute error:     0.0000589345
+     * Mean relative error:    17.1284866333
+     * Maximum abs. error:      0.0000991821
+     * Maximum rel. error:   1598.9610595703
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        28.520996093750000000000000
+     * Best output (lo):       87.9919281006 (0x42AFFBDE)
+     * Correct output (lo):    87.9919281006 (0x42AFFBDE)
+     * Worst input (hi):        0.000000001040298513999005
+     * Highest output rel:   1598.9609375000
+     * Worst output (hi):       0.0000953652 (0x38C7FED1)
+     * Correct output (hi):     0.0000000596 (0x3380000A)
+     * Worst input (abs):      16.784057617187500000000000
+     * Worst output (abs):     86.5902328491 (0x42AD2E33)
+     * Correct output (abs):   86.5903320313 (0x42AD2E40)
+     * Running Math.atan vs. TrigTools.atanUncheckedDeg
+     * Mean absolute error:     0.0000589345
+     * Mean relative error:    17.1284866333
+     * Maximum abs. error:      0.0000991821
+     * Maximum rel. error:   1598.9610595703
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        28.520996093750000000000000
+     * Best output (lo):       87.9919281006 (0x42AFFBDE)
+     * Correct output (lo):    87.9919281006 (0x42AFFBDE)
+     * Worst input (hi):        0.000000001040298513999005
+     * Highest output rel:   1598.9609375000
+     * Worst output (hi):       0.0000953652 (0x38C7FED1)
+     * Correct output (hi):     0.0000000596 (0x3380000A)
+     * Worst input (abs):      16.784057617187500000000000
+     * Worst output (abs):     86.5902328491 (0x42AD2E33)
+     * Correct output (abs):   86.5903320313 (0x42AD2E40)
+     * Running Math.atan vs. atanDegJolt
+     * Mean absolute error:     0.0000000285
+     * Mean relative error:     0.0000000040
+     * Maximum abs. error:      0.0000076294
+     * Maximum rel. error:      0.0000001472
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        50.000000000000000000000000
+     * Best output (lo):       88.8542404175 (0x42B1B55F)
+     * Correct output (lo):    88.8542404175 (0x42B1B55F)
+     * Worst input (hi):        0.485902786254882800000000
+     * Highest output rel:      0.0000001472
+     * Worst output (hi):      25.9152431488 (0x41CF526B)
+     * Correct output (hi):    25.9152469635 (0x41CF526D)
+     * Worst input (abs):      49.982666015625000000000000
+     * Worst output (abs):     88.8538360596 (0x42B1B52A)
+     * Correct output (abs):   88.8538436890 (0x42B1B52B)
+     * Running Math.atan vs. TrigTools.atanTurns
+     * Mean absolute error:     0.0000002302
+     * Mean relative error:     0.0490286127
+     * Maximum abs. error:      0.0000002682
+     * Maximum rel. error:      4.4410338402
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        28.225097656250000000000000
+     * Best output (lo):        0.2443635911 (0x3E7A3A73)
+     * Correct output (lo):     0.2443635911 (0x3E7A3A73)
+     * Worst input (hi):        0.000000374508090317249300
+     * Highest output rel:      4.4410333633
+     * Worst output (hi):       0.0000003243 (0x34AE1D14)
+     * Correct output (hi):     0.0000000596 (0x33800018)
+     * Worst input (abs):      16.862915039062500000000000
+     * Worst output (abs):      0.2405726165 (0x3E7658AB)
+     * Correct output (abs):    0.2405728847 (0x3E7658BD)
+     * Running Math.atan vs. TrigTools.atanUncheckedTurns
+     * Mean absolute error:     0.0000002302
+     * Mean relative error:     0.0490286127
+     * Maximum abs. error:      0.0000002682
+     * Maximum rel. error:      4.4410338402
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        28.225097656250000000000000
+     * Best output (lo):        0.2443635911 (0x3E7A3A73)
+     * Correct output (lo):     0.2443635911 (0x3E7A3A73)
+     * Worst input (hi):        0.000000374508090317249300
+     * Highest output rel:      4.4410333633
+     * Worst output (hi):       0.0000003243 (0x34AE1D14)
+     * Correct output (hi):     0.0000000596 (0x33800018)
+     * Worst input (abs):      16.862915039062500000000000
+     * Worst output (abs):      0.2405726165 (0x3E7658AB)
+     * Correct output (abs):    0.2405728847 (0x3E7658BD)
+     * Running Math.atan vs. atanTurnsJolt
+     * Mean absolute error:     0.0000000001
+     * Mean relative error:     0.0000000064
+     * Maximum abs. error:      0.0000000149
+     * Maximum rel. error:      0.0000002363
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        50.000000000000000000000000
+     * Best output (lo):        0.2468173206 (0x3E7CBDAE)
+     * Correct output (lo):     0.2468173206 (0x3E7CBDAE)
+     * Worst input (hi):        0.418380737304687500000000
+     * Highest output rel:      0.0000002363
+     * Worst output (hi):       0.0630652755 (0x3D81285E)
+     * Correct output (hi):     0.0630652606 (0x3D81285C)
+     * Worst input (abs):      49.983886718750000000000000
+     * Worst output (abs):      0.2468163073 (0x3E7CBD6A)
+     * Correct output (abs):    0.2468162924 (0x3E7CBD69)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -5149,6 +5245,18 @@ CONST f32x2 sincos(s16 int_angle) {
         functions.add(i -> (float) TrigTools.atanUnchecked(i));
         baselines.put("Math.atan vs. atanJolt", (x) -> (float) Math.atan(x));
         functions.add(PrecisionTest::atanJolt);
+        baselines.put("Math.atan vs. TrigTools.atanDeg", (x) -> (float) Math.toDegrees(Math.atan(x)));
+        functions.add(TrigTools::atanDeg);
+        baselines.put("Math.atan vs. TrigTools.atanUncheckedDeg", (x) -> (float) Math.toDegrees(Math.atan(x)));
+        functions.add(i -> (float) TrigTools.atanUncheckedDeg(i));
+        baselines.put("Math.atan vs. atanDegJolt", (x) -> (float) Math.toDegrees(Math.atan(x)));
+        functions.add(PrecisionTest::atanDegJolt);
+        baselines.put("Math.atan vs. TrigTools.atanTurns", (x) -> (float) (Math.atan(x) / PI2_D));
+        functions.add(TrigTools::atanTurns);
+        baselines.put("Math.atan vs. TrigTools.atanUncheckedTurns", (x) -> (float) (Math.atan(x) / PI2_D));
+        functions.add(i -> (float) TrigTools.atanUncheckedTurns(i));
+        baselines.put("Math.atan vs. atanTurnsJolt", (x) -> (float) (Math.atan(x) / PI2_D));
+        functions.add(PrecisionTest::atanTurnsJolt);
 
         for (int f = 0; f < baselines.size; f++) {
             String runName = baselines.orderedKeys().get(f);
