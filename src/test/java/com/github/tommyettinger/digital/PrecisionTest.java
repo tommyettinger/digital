@@ -4132,6 +4132,80 @@ CONST f32x2 sincos(s16 int_angle) {
                 * z - 3.33329491539e-1) * z * x + x) * 57.29577951308232, n);
     }
 
+    public static double atan2TurnsJolt(final double y, double x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0)
+                return atanTurnsJolt(n);
+            else
+                return atanTurnsJolt(n) + 1.0;
+        } else if (x < 0) {
+            return atanTurnsJolt(n) + 0.5;
+        } else if (y > 0) return x + 0.25;
+        else if (y < 0) return x + 0.75;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    public static float atan2TurnsJolt(final float y, float x) {
+        float n = y / x;
+        if (n != n)
+            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0)
+                return atanTurnsJolt(n);
+            else
+                return atanTurnsJolt(n) + 1.0f;
+        } else if (x < 0) {
+            return atanTurnsJolt(n) + 0.5f;
+        } else if (y > 0) return x + 0.25f;
+        else if (y < 0) return x + 0.75f;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    public static float atanTurnsJolt(float n) {
+        // Implementation based on atanf.c from the cephes library
+        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+        float m = Math.abs(n), x, y;
+
+        if(m > 2.414213562373095f){
+            x = -1f / m;
+            y = 0.25f;
+        } else if(m > 0.4142135623730950f){
+            x = (m - 1f) / (m + 1f);
+            y = 0.125f;
+        } else {
+            x = m;
+            y = 0f;
+        }
+        float z = x * x;
+        return Math.copySign(y + ((((8.05374449538e-2f * z - 1.38776856032e-1f) * z + 1.99777106478e-1f)
+                * z - 3.33329491539e-1f) * z * x + x) * 0.15915494309189535f, n);
+    }
+
+
+    public static double atanTurnsJolt(double n) {
+        // Implementation based on atanf.c from the cephes library
+        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+        double m = Math.abs(n), x, y;
+        if(m > 2.414213562373095){
+            x = -1. / m;
+            y = 0.25;
+        } else if(m > 0.4142135623730950){
+            x = (m - 1.) / (m + 1.);
+            y = 0.125;
+        } else {
+            x = m;
+            y = 0.;
+        }
+        double z = x * x;
+        return Math.copySign(y + ((((8.05374449538e-2 * z - 1.38776856032e-1) * z + 1.99777106478e-1)
+                * z - 3.33329491539e-1) * z * x + x) * 0.15915494309189535, n);
+    }
+
 //    Vec4 Vec4::ATan() const
 //    {
 //        // Implementation based on atanf.c from the cephes library
