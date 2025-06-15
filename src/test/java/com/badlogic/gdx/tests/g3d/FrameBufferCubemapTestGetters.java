@@ -18,7 +18,7 @@ import com.badlogic.gdx.math.QuaternionDouble;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 /** Render a basic scene in a FrameBufferCubemap and displays it in a rotating cube. */
-public class FrameBufferCubemapTest2 extends Basic3DSceneTest {
+public class FrameBufferCubemapTestGetters extends Basic3DSceneTest {
 	protected PerspectiveCamera camFb;
 	protected PerspectiveCamera camCube;
 	protected FrameBufferCubemap fb;
@@ -131,6 +131,6 @@ public class FrameBufferCubemapTest2 extends Basic3DSceneTest {
 		config.disableAudio(true);
 		config.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
 		config.useVsync(true);
-		new Lwjgl3Application(new FrameBufferCubemapTest2(), config);
+		new Lwjgl3Application(new FrameBufferCubemapTestGetters(), config);
 	}
 }
