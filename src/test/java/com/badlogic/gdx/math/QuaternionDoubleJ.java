@@ -22,6 +22,7 @@ import com.github.tommyettinger.digital.TrigTools;
 import java.io.Serializable;
 import java.util.Random;
 
+import static com.github.tommyettinger.digital.TrigTools.HALF_PI_D;
 import static com.github.tommyettinger.digital.TrigTools.PI_D;
 
 /** A simple quaternion class using double precision.
@@ -198,6 +199,7 @@ public class QuaternionDoubleJ implements Serializable {
 	/** Get the yaw euler angle in radians, which is the rotation around the y axis. Requires that this quaternion is normalized.
 	 * @return the rotation around the y axis in radians (between -(PI/2) and +(PI/2)) */
 	public double getYawRad () {
+//		return Math.asin(Math.tanh(2.0 * (w * y - z * x)));
 		return Math.asin(Math.min(Math.max(2.0 * (w * y - z * x), -1.0), 1.0));
 //		return Math.atan2((y * w + x * z), 0.5 - (y * y + x * x));
 	}

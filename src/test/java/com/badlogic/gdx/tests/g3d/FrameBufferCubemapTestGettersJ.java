@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.CubemapAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.FrameBufferCubemap;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.QuaternionDoubleJ;
 import com.badlogic.gdx.utils.ScreenUtils;
 
@@ -113,9 +114,9 @@ public class FrameBufferCubemapTestGettersJ extends Basic3DSceneTest {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		quat.setEulerAngles(
-				quat.getYaw() + 45 * Gdx.graphics.getDeltaTime(),
-				quat.getPitch() + 25 * Gdx.graphics.getDeltaTime(),
-				quat.getRoll() + 10 * Gdx.graphics.getDeltaTime()
+				quat.getYaw() + (MathUtils.random(5f) + 45) * Gdx.graphics.getDeltaTime(),
+				quat.getPitch() + (MathUtils.random(5f) + 25) * Gdx.graphics.getDeltaTime(),
+				quat.getRoll() + (MathUtils.random(5f) + 10) * Gdx.graphics.getDeltaTime()
 				);
 		System.out.println("Yaw: " + quat.getYaw() + ", Pitch: " + quat.getPitch() + ", Roll: " + quat.getRoll());
 		cubeInstance.transform.set((float) quat.x, (float) quat.y, (float) quat.z, (float) quat.w);
