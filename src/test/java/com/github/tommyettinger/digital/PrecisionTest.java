@@ -3759,7 +3759,7 @@ CONST f32x2 sincos(s16 int_angle) {
 }
      */
 
-    public static float sinJolt(float angle) {
+    public static float sinJoltOld(float angle) {
         // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
         // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float x = Math.abs(angle);
@@ -3806,7 +3806,7 @@ CONST f32x2 sincos(s16 int_angle) {
     }
 
 
-    public static float sinJoltB(float angle) {
+    public static float sinJolt(float angle) {
         // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
         // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float x = Math.abs(angle);
@@ -3836,7 +3836,7 @@ CONST f32x2 sincos(s16 int_angle) {
         int quadrant = (int)(0.011111111f * x + 0.5f);
         x = (x - quadrant * 90f) * (PI2 / 360f);
         float x2 = x * x, s;
-        switch (quadrant & 3) {
+        switch ((quadrant ^ (BitConversion.floatToIntBits(angle) >>> 30 & 2)) & 3) {
             case 0:
                 s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
                 break;
@@ -3849,7 +3849,7 @@ CONST f32x2 sincos(s16 int_angle) {
             default:
                 s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
         }
-        return s * Math.signum(angle);
+        return s;
     }
 
     public static float cosDegJolt(float angle) {
@@ -3882,7 +3882,7 @@ CONST f32x2 sincos(s16 int_angle) {
         int quadrant = (int)(4 * x + 0.5f);
         x = (x - quadrant * 0.25f) * PI2;
         float x2 = x * x, s;
-        switch (quadrant & 3) {
+        switch ((quadrant ^ (BitConversion.floatToIntBits(angle) >>> 30 & 2)) & 3) {
             case 0:
                 s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
                 break;
@@ -3895,7 +3895,7 @@ CONST f32x2 sincos(s16 int_angle) {
             default:
                 s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
         }
-        return s * Math.signum(angle);
+        return s;
     }
 
     public static float cosTurnsJolt(float angle) {
@@ -4411,7 +4411,7 @@ CONST f32x2 sincos(s16 int_angle) {
      * Worst input (abs):       5.759584426879883000000000
      * Worst output (abs):     -0.5000017881 (0xBF00001E)
      * Correct output (abs):   -0.5000018477 (0xBF00001F)
-     * Running Math.sin vs. sinJoltB
+     * Running Math.sin vs. sinJoltOld
      * Mean absolute error:     0.0000000002
      * Mean relative error:     0.0000000003
      * Maximum abs. error:      0.0000000596
@@ -4476,8 +4476,8 @@ CONST f32x2 sincos(s16 int_angle) {
 //        baselines.put("Math.cos vs. cosJolt", (x) -> (float) Math.cos(x));
 //        functions.add(PrecisionTest::cosJolt);
 
-        baselines.put("Math.sin vs. sinJoltB", (x) -> (float) Math.sin(x));
-        functions.add(PrecisionTest::sinJoltB);
+        baselines.put("Math.sin vs. sinJoltOld", (x) -> (float) Math.sin(x));
+        functions.add(PrecisionTest::sinJoltOld);
 
         for (int f = 0; f < baselines.size; f++) {
             String runName = baselines.orderedKeys().get(f);
