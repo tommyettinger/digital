@@ -3805,6 +3805,30 @@ CONST f32x2 sincos(s16 int_angle) {
         return s;
     }
 
+
+    public static float sinJoltB(float angle) {
+        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
+        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+        float x = Math.abs(angle);
+        int quadrant = (int)(0.6366197723675814 * x + 0.5);
+        x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
+        float x2 = x * x, s;
+        switch ((quadrant ^ (BitConversion.floatToIntBits(angle) >>> 30 & 2)) & 3) {
+            case 0:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 1:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 2:
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
+        }
+        return s;
+    }
+
     public static float sinDegJolt(float angle) {
         // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
         // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
@@ -4387,6 +4411,22 @@ CONST f32x2 sincos(s16 int_angle) {
      * Worst input (abs):       5.759584426879883000000000
      * Worst output (abs):     -0.5000017881 (0xBF00001E)
      * Correct output (abs):   -0.5000018477 (0xBF00001F)
+     * Running Math.sin vs. sinJoltB
+     * Mean absolute error:     0.0000000002
+     * Mean relative error:     0.0000000003
+     * Maximum abs. error:      0.0000000596
+     * Maximum rel. error:      0.0000001227
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        0.0000001748 (0x343BBD2E)
+     * Correct output (lo):     0.0000001748 (0x343BBD2E)
+     * Worst input (hi):        3.648786783218384000000000
+     * Highest output rel:      0.0000001227
+     * Worst output (hi):      -0.4857264757 (0xBEF8B124)
+     * Correct output (hi):    -0.4857265353 (0xBEF8B126)
+     * Worst input (abs):       5.759584426879883000000000
+     * Worst output (abs):     -0.5000017881 (0xBF00001E)
+     * Correct output (abs):   -0.5000018477 (0xBF00001F)
      * Running Math.cos vs. cosJolt
      * Mean absolute error:     0.0000000003
      * Mean relative error:     0.0000000005
@@ -4433,8 +4473,11 @@ CONST f32x2 sincos(s16 int_angle) {
         baselines.put("Math.sin vs. sinJolt", (x) -> (float) Math.sin(x));
         functions.add(PrecisionTest::sinJolt);
 
-        baselines.put("Math.cos vs. cosJolt", (x) -> (float) Math.cos(x));
-        functions.add(PrecisionTest::cosJolt);
+//        baselines.put("Math.cos vs. cosJolt", (x) -> (float) Math.cos(x));
+//        functions.add(PrecisionTest::cosJolt);
+
+        baselines.put("Math.sin vs. sinJoltB", (x) -> (float) Math.sin(x));
+        functions.add(PrecisionTest::sinJoltB);
 
         for (int f = 0; f < baselines.size; f++) {
             String runName = baselines.orderedKeys().get(f);
