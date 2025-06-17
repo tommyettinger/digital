@@ -4279,6 +4279,49 @@ CONST f32x2 sincos(s16 int_angle) {
         return Math.copySign(r, n);
     }
 
+    public static double asinJolt(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if(a <= 0.5){
+            z = a * a;
+            x = a;
+            r = ((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x;
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = HALF_PI_D - 2.0 * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return Math.copySign(r, n);
+    }
+
+    public static float acosJolt(float n) {
+        float a = Math.min(1f, Math.abs(n)), z, x, r;
+        if(a <= 0.5f){
+            z = a * a;
+            x = a;
+            r = ((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x;
+        } else {
+            z = 0.5f - 0.5f * a;
+            x = (float) Math.sqrt(z);
+            r = TrigTools.HALF_PI - 2f * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        }
+        return TrigTools.HALF_PI - Math.copySign(r, n);
+    }
+
+    public static double acosJolt(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if(a <= 0.5){
+            z = a * a;
+            x = a;
+            r = ((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x;
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = HALF_PI_D - 2.0 * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return HALF_PI_D - Math.copySign(r, n);
+    }
+
+
 //    Vec4 Vec4::ASin() const
 //    {
 //        // Implementation based on asinf.c from the cephes library
