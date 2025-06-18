@@ -4264,7 +4264,6 @@ CONST f32x2 sincos(s16 int_angle) {
 //        return Vec4::sXor(y, atan_sign.ReinterpretAsFloat());
 //    }
 
-
     public static float asinJolt(float n) {
         float a = Math.min(1f, Math.abs(n)), z, x, r;
         if(a <= 0.5f){
@@ -4291,6 +4290,49 @@ CONST f32x2 sincos(s16 int_angle) {
             r = HALF_PI_D - 2.0 * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
         }
         return Math.copySign(r, n);
+    }
+
+    private static float aEdmn(float x) {
+        final float x2 = x * x;
+        return (45.210185257899f - 18.617417552712f * x + x2) /
+                (45.210185141956f - 22.384922725383f * x + 2.0175735681637f * x2);
+    }
+
+    /**
+     * <a href="https://dsp.stackexchange.com/a/89160">By "emacs drives me nuts" on Stack Exchange</a>.
+     * @param n between -1 and 1 inclusive
+     * @return the arcsine of n
+     */
+    public static float asinEdmn(float n) {
+        float x = Math.min(1f, Math.abs(n)), r;
+        if(x <= 0.5f){
+            r = n * aEdmn(2f * x * x);
+        } else {
+            final float z = 1f - x;
+            r = Math.copySign(TrigTools.HALF_PI - (float) Math.sqrt(z + z) * aEdmn(z), n);
+        }
+        return r;
+    }
+
+    private static double aEdmn(double x) {
+        final double x2 = x * x;
+        return (45.210185257899 - 18.617417552712 * x + x2) /
+                (45.210185141956 - 22.384922725383 * x + 2.0175735681637 * x2);
+    }
+    /**
+     * <a href="https://dsp.stackexchange.com/a/89160">By "emacs drives me nuts" on Stack Exchange</a>.
+     * @param n between -1 and 1 inclusive
+     * @return the arcsine of n
+     */
+    public static double asinEdmn(double n) {
+        double x = Math.min(1.0, Math.abs(n)), r;
+        if(x <= 0.5){
+            r = n * aEdmn(2 * x * x);
+        } else {
+            final double z = 1 - x;
+            r = Math.copySign(TrigTools.HALF_PI_D - Math.sqrt(z + z) * aEdmn(z), n);
+        }
+        return r;
     }
 
     public static float acosJolt(float n) {
@@ -4320,7 +4362,6 @@ CONST f32x2 sincos(s16 int_angle) {
         }
         return HALF_PI_D - Math.copySign(r, n);
     }
-
 
 //    Vec4 Vec4::ASin() const
 //    {
@@ -4950,6 +4991,22 @@ CONST f32x2 sincos(s16 int_angle) {
      * Worst input (abs):       0.999999046325683600000000
      * Worst output (abs):      1.5694153309 (0x3FC8E29A)
      * Correct output (abs):    1.5694152117 (0x3FC8E299)
+     * Running Math.asin vs. asinEdmn
+     * Mean absolute error:     0.0000000379
+     * Mean relative error:     0.0000000658
+     * Maximum abs. error:      0.0000004172
+     * Maximum rel. error:      0.0000007878
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         1.000000000000000000000000
+     * Best output (lo):        1.5707963705 (0x3FC90FDB)
+     * Correct output (lo):     1.5707963705 (0x3FC90FDB)
+     * Worst input (hi):        0.505228996276855500000000
+     * Highest output rel:      0.0000007878
+     * Worst output (hi):       0.5296477079 (0x3F0796FE)
+     * Correct output (hi):     0.5296472907 (0x3F0796F7)
+     * Worst input (abs):       0.532564163208007800000000
+     * Worst output (abs):      0.5616276264 (0x3F0FC6D4)
+     * Correct output (abs):    0.5616272092 (0x3F0FC6CD)
      * Running Math.acos vs. acosJolt
      * Mean absolute error:     0.0000000490
      * Mean relative error:     0.0000000355
@@ -5152,13 +5209,13 @@ CONST f32x2 sincos(s16 int_angle) {
         ArrayList<FloatUnaryOperator> functions = new ArrayList<>(8);
         baselines.put("Math.asin vs. TrigTools.asin", (x) -> (float) Math.asin(x));
         functions.add(TrigTools::asin);
-        baselines.put("Math.acos vs. TrigTools.acos", (x) -> (float) Math.acos(x));
-        functions.add(TrigTools::acos);
+//        baselines.put("Math.acos vs. TrigTools.acos", (x) -> (float) Math.acos(x));
+//        functions.add(TrigTools::acos);
 
         baselines.put("Math.asin vs. MathUtils.asin", (x) -> (float) Math.asin(x));
         functions.add(MathUtils::asin);
-        baselines.put("Math.acos vs. MathUtils.acos", (x) -> (float) Math.acos(x));
-        functions.add(MathUtils::acos);
+//        baselines.put("Math.acos vs. MathUtils.acos", (x) -> (float) Math.acos(x));
+//        functions.add(MathUtils::acos);
 //
 //        baselines.put("Math.acos vs. acosHand", (x) -> (float) Math.acos(x));
 //        functions.add((x) -> (float) PrecisionTest.acosHand(x));
@@ -5172,8 +5229,11 @@ CONST f32x2 sincos(s16 int_angle) {
         baselines.put("Math.asin vs. asinJolt", (x) -> (float) Math.asin(x));
         functions.add(PrecisionTest::asinJolt);
 
-        baselines.put("Math.acos vs. acosJolt", (x) -> (float) Math.acos(x));
-        functions.add(PrecisionTest::acosJolt);
+        baselines.put("Math.asin vs. asinEdmn", (x) -> (float) Math.asin(x));
+        functions.add(PrecisionTest::asinEdmn);
+
+//        baselines.put("Math.acos vs. acosJolt", (x) -> (float) Math.acos(x));
+//        functions.add(PrecisionTest::acosJolt);
 
 //        baselines.put("Math.sin vs. sinTurns", (x) -> (float) Math.sin(x * PI2_D));
 //        functions.add(TrigTools::sinTurns);
