@@ -4504,6 +4504,19 @@ CONST f32x2 sincos(s16 int_angle) {
 //        return Vec4::sXor(y, atan_sign.ReinterpretAsFloat());
 //    }
 
+    /**
+     * Returns arcsine in radians; almost as accurate as Math.asin() and may be slightly faster.
+     * This has a maximum error of 2 ULPs in the defined range of -1 to 1.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code -HALF_PI} and {@code HALF_PI} when n is in the defined range
+     */
     public static float asinJolt(float n) {
         float a = Math.min(1f, Math.abs(n)), z, x, r;
         if(a <= 0.5f){
@@ -4518,6 +4531,19 @@ CONST f32x2 sincos(s16 int_angle) {
         return Math.copySign(r, n);
     }
 
+    /**
+     * Returns arcsine in radians; almost as accurate as Math.asin() and may be slightly faster.
+     * This has a maximum error of 2 ULPs in the defined range of -1 to 1.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code -HALF_PI_D} and {@code HALF_PI_D} when n is in the defined range
+     */
     public static double asinJolt(double n) {
         double a = Math.min(1.0, Math.abs(n)), z, x, r;
         if(a <= 0.5){
@@ -4532,6 +4558,19 @@ CONST f32x2 sincos(s16 int_angle) {
         return Math.copySign(r, n);
     }
 
+    /**
+     * Returns arccosine in radians; almost as accurate as Math.acos() and may be slightly faster.
+     * This has a maximum error of 247 ULPs in the defined range of -1 to 1.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code 0} and {@code PI} when n is in the defined range
+     */
     public static float acosJolt(float n) {
         float a = Math.min(1f, Math.abs(n)), z, x, r;
         if(a <= 0.5f){
@@ -4546,6 +4585,19 @@ CONST f32x2 sincos(s16 int_angle) {
         return TrigTools.HALF_PI - Math.copySign(r, n);
     }
 
+    /**
+     * Returns arccosine in radians; almost as accurate as Math.acos() and may be slightly faster.
+     * This has a maximum error of 247 ULPs in the defined range of -1 to 1.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code 0.0} and {@code PI_D} when n is in the defined range
+     */
     public static double acosJolt(double n) {
         double a = Math.min(1.0, Math.abs(n)), z, x, r;
         if(a <= 0.5){
