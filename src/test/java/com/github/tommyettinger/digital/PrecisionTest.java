@@ -4714,6 +4714,110 @@ CONST f32x2 sincos(s16 int_angle) {
         return 90.0 - Math.copySign(r, n);
     }
 
+    /**
+     * Returns arcsine in turns; almost as accurate as Math.asin() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code -0.25f} and {@code 0.25f} when n is in the defined range
+     */
+    public static float asinTurnsJolt(float n) {
+        float a = Math.min(1f, Math.abs(n)), z, x, r;
+        if(a <= 0.5f){
+            z = a * a;
+            x = a;
+            r = (0.25f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        } else {
+            z = 0.5f - 0.5f * a;
+            x = (float) Math.sqrt(z);
+            r = 0.25f - (0.5f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        }
+        return Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arcsine in turns; almost as accurate as Math.asin() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code -0.25} and {@code 0.25} when n is in the defined range
+     */
+    public static double asinTurnsJolt(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if(a <= 0.5){
+            z = a * a;
+            x = a;
+            r = (0.25 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = 0.25 - (0.5 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arccosine in turns; almost as accurate as Math.acos() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code 0f} and {@code 0.5f} when n is in the defined range
+     */
+    public static float acosTurnsJolt(float n) {
+        float a = Math.min(1f, Math.abs(n)), z, x, r;
+        if(a <= 0.5f){
+            z = a * a;
+            x = a;
+            r = (0.25f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        } else {
+            z = 0.5f - 0.5f * a;
+            x = (float) Math.sqrt(z);
+            r = 0.25f - (0.5f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        }
+        return 0.25f - Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arccosine in turns; almost as accurate as Math.acos() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code 0.0} and {@code 0.5} when n is in the defined range
+     */
+    public static double acosTurnsJolt(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if (a <= 0.5) {
+            z = a * a;
+            x = a;
+            r = (0.25 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = 0.25 - (0.5 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return 0.25 - Math.copySign(r, n);
+    }
+
 //    Vec4 Vec4::ASin() const
 //    {
 //        // Implementation based on asinf.c from the cephes library
