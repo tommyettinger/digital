@@ -4042,6 +4042,23 @@ CONST f32x2 sincos(s16 int_angle) {
 //        outCos = Vec4::sXor(c, cos_sign.ReinterpretAsFloat());
 //    }
 
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using radians.
+     * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in radians.
+     * It is about 2x times faster than {@link Math#atan2(double, double)} (roughly 4.01 ns instead of roughly 7.965 ns
+     * for Math, on Java 23 HotSpot).
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanJolt(double)}, calling it if x is non-zero and non-NaN,
+     * or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in radians as a double; ranges from {@code -PI} to {@code PI}
+     */
     public static double atan2Jolt(final double y, double x) {
         double n = y / x;
         if (n != n)
@@ -4058,6 +4075,23 @@ CONST f32x2 sincos(s16 int_angle) {
         return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using radians.
+     * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in radians.
+     * It is about 2x times faster than {@link Math#atan2(double, double)} (roughly 3.987 ns instead of roughly 8.523 ns
+     * for Math, on Java 23 HotSpot, with both taking float arguments and casting the result to float).
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanJolt(float)}, calling it if x is non-zero and non-NaN,
+     * or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in radians as a float; ranges from {@code -PI} to {@code PI}
+     */
     public static float atan2Jolt(final float y, float x) {
         float n = y / x;
         if (n != n)
@@ -4074,15 +4108,23 @@ CONST f32x2 sincos(s16 int_angle) {
         return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
+    /**
+     * A non-tabular approximation for arctangent in radians, accurate to at worst 2 ULPs for the -50 to 50 range.
+     * Takes and returns a float.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n may be any float
+     * @return the arctangent of n in radians, from negative {@link TrigTools#HALF_PI} to {@link TrigTools#HALF_PI}
+     */
     public static float atanJolt(float n) {
-        // Implementation based on atanf.c from the cephes library
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float m = Math.abs(n), x, y;
-
-        if(m > 2.414213562373095f){
+        if (m > 2.414213562373095f) {
             x = -1f / m;
             y = HALF_PI;
-        } else if(m > 0.4142135623730950f){
+        } else if (m > 0.4142135623730950f) {
             x = (m - 1f) / (m + 1f);
             y = QUARTER_PI;
         } else {
@@ -4094,15 +4136,23 @@ CONST f32x2 sincos(s16 int_angle) {
                 * z - 3.33329491539e-1f) * z * x + x, n);
     }
 
-
+    /**
+     * A non-tabular approximation for arctangent in radians, accurate to at worst 2 ULPs for the -50 to 50 range.
+     * Takes and returns a double.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n may be any float
+     * @return the arctangent of n in radians, from negative {@link TrigTools#HALF_PI_D} to {@link TrigTools#HALF_PI_D}
+     */
     public static double atanJolt(double n) {
-        // Implementation based on atanf.c from the cephes library
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         double m = Math.abs(n), x, y;
-        if(m > 2.414213562373095){
+        if (m > 2.414213562373095) {
             x = -1. / m;
             y = HALF_PI_D;
-        } else if(m > 0.4142135623730950){
+        } else if (m > 0.4142135623730950) {
             x = (m - 1.) / (m + 1.);
             y = QUARTER_PI_D;
         } else {
