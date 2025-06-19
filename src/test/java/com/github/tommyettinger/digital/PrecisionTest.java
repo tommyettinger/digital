@@ -4533,7 +4533,6 @@ CONST f32x2 sincos(s16 int_angle) {
 
     /**
      * Returns arcsine in radians; almost as accurate as Math.asin() and may be slightly faster.
-     * This has a maximum error of 2 ULPs in the defined range of -1 to 1.
      * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
      * input is NaN.
      * <br>
@@ -4587,7 +4586,6 @@ CONST f32x2 sincos(s16 int_angle) {
 
     /**
      * Returns arccosine in radians; almost as accurate as Math.acos() and may be slightly faster.
-     * This has a maximum error of 247 ULPs in the defined range of -1 to 1.
      * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
      * input is NaN.
      * <br>
@@ -4610,6 +4608,110 @@ CONST f32x2 sincos(s16 int_angle) {
             r = HALF_PI_D - 2.0 * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
         }
         return HALF_PI_D - Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arcsine in degrees; almost as accurate as Math.asin() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code -90f} and {@code 90f} when n is in the defined range
+     */
+    public static float asinDegJolt(float n) {
+        float a = Math.min(1f, Math.abs(n)), z, x, r;
+        if(a <= 0.5f){
+            z = a * a;
+            x = a;
+            r = (90f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        } else {
+            z = 0.5f - 0.5f * a;
+            x = (float) Math.sqrt(z);
+            r = 90f - (180f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        }
+        return Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arcsine in degrees; almost as accurate as Math.asin() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code -90.0} and {@code 90.0} when n is in the defined range
+     */
+    public static double asinDegJolt(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if(a <= 0.5){
+            z = a * a;
+            x = a;
+            r = (90.0 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = 90.0 - (180.0 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arccosine in degrees; almost as accurate as Math.acos() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code 0f} and {@code 180f} when n is in the defined range
+     */
+    public static float acosDegJolt(float n) {
+        float a = Math.min(1f, Math.abs(n)), z, x, r;
+        if(a <= 0.5f){
+            z = a * a;
+            x = a;
+            r = (90f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        } else {
+            z = 0.5f - 0.5f * a;
+            x = (float) Math.sqrt(z);
+            r = 90f - (180f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        }
+        return 90f - Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arccosine in degrees; almost as accurate as Math.acos() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code 0.0} and {@code 180.0} when n is in the defined range
+     */
+    public static double acosDegJolt(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if(a <= 0.5){
+            z = a * a;
+            x = a;
+            r = (90.0 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = 90.0 - (180.0 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return 90.0 - Math.copySign(r, n);
     }
 
 //    Vec4 Vec4::ASin() const
