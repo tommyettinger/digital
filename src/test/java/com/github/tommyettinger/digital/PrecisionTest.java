@@ -3782,33 +3782,19 @@ CONST f32x2 sincos(s16 int_angle) {
         return s * Math.signum(angle);
     }
 
-    public static float cosJolt(float angle) {
-        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
-        float x = Math.abs(angle);
-        int quadrant = (int)(0.6366197723675814f * x + 0.5);
-        x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
-        float x2 = x * x, s;
-        switch (quadrant & 3) {
-            case 3:
-                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
-                break;
-            case 0:
-                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
-                break;
-            case 1:
-                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
-                break;
-            default:
-                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
-        }
-        return s;
-    }
-
-
+    /**
+     * A non-tabular sine approximation in radians that is typically faster than {@link Math#sin(double)} and accurate
+     * to within two ULPs for inputs in the 0 to PI2 range. While this is slower than
+     * {@link TrigTools#sinSmoother(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than sinSmoother().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param angle input in radians, typically between -PI2 and PI2 for greatest precision
+     * @return the sine of the given angle, between -1 and 1 inclusive
+     */
     public static float sinJolt(float angle) {
-        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float x = Math.abs(angle);
         int quadrant = (int)(0.6366197723675814 * x + 0.5);
         x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
@@ -3829,9 +3815,52 @@ CONST f32x2 sincos(s16 int_angle) {
         return s;
     }
 
+    /**
+     * A non-tabular cosine approximation in radians that is typically faster than {@link Math#cos(double)} and
+     * accurate to within two ULPs for inputs in the 0 to PI2 range. While this is slower than
+     * {@link TrigTools#cosSmoother(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmoother().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param angle input in radians, typically between -PI2 and PI2 for greatest precision
+     * @return the cosine of the given angle, between -1 and 1 inclusive
+     */
+    public static float cosJolt(float angle) {
+        float x = Math.abs(angle);
+        int quadrant = (int)(0.6366197723675814f * x + 0.5);
+        x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
+        float x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 1:
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular sine approximation in degrees that is typically faster than {@link Math#sin(double)} and accurate
+     * to within two ULPs for inputs in the 0 to 360 range. While this is slower than
+     * {@link TrigTools#sinSmootherDeg(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than sinSmootherDeg().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param angle input in degrees, typically between -360 and 360 for greatest precision
+     * @return the sine of the given angle, between -1 and 1 inclusive
+     */
     public static float sinDegJolt(float angle) {
-        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float x = Math.abs(angle);
         int quadrant = (int)(0.011111111f * x + 0.5f);
         x = (x - quadrant * 90f) * (PI2 / 360f);
@@ -3852,9 +3881,19 @@ CONST f32x2 sincos(s16 int_angle) {
         return s;
     }
 
+    /**
+     * A non-tabular cosine approximation in degrees that is typically faster than {@link Math#cos(double)} and
+     * accurate to within two ULPs for inputs in the 0 to 360 range. While this is slower than
+     * {@link TrigTools#cosSmootherDeg(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmootherDeg().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param angle input in degrees, typically between -360 and 360 for greatest precision
+     * @return the cosine of the given angle, between -1 and 1 inclusive
+     */
     public static float cosDegJolt(float angle) {
-        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float x = Math.abs(angle);
         int quadrant = (int)(0.011111111f * x + 0.5f);
         x = (x - quadrant * 90f) * (PI2 / 360f);
@@ -3875,9 +3914,19 @@ CONST f32x2 sincos(s16 int_angle) {
         return s;
     }
 
+    /**
+     * A non-tabular sine approximation in turns that is typically faster than {@link Math#sin(double)} and accurate
+     * to within two ULPs for inputs in the 0 to 1 range. While this is slower than
+     * {@link TrigTools#sinSmootherTurns(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than sinSmootherTurns().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param angle input in turns, typically between -1 and 1 for greatest precision
+     * @return the sine of the given angle, between -1 and 1 inclusive
+     */
     public static float sinTurnsJolt(float angle) {
-        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float x = Math.abs(angle);
         int quadrant = (int)(4 * x + 0.5f);
         x = (x - quadrant * 0.25f) * PI2;
@@ -3898,9 +3947,19 @@ CONST f32x2 sincos(s16 int_angle) {
         return s;
     }
 
+    /**
+     * A non-tabular cosine approximation in turns that is typically faster than {@link Math#cos(double)} and
+     * accurate to within two ULPs for inputs in the 0 to 1 range. While this is slower than
+     * {@link TrigTools#cosSmootherTurns(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmootherTurns().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param angle input in turns, typically between -1 and 1 for greatest precision
+     * @return the cosine of the given angle, between -1 and 1 inclusive
+     */
     public static float cosTurnsJolt(float angle) {
-        // Implementation based on sinf.c from the cephes library, combines sinf and cosf in a single function, changes octants to quadrants and vectorizes it
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float x = Math.abs(angle);
         int quadrant = (int)(4 * x + 0.5f);
         x = (x - quadrant * 0.25f) * PI2;
@@ -4292,49 +4351,6 @@ CONST f32x2 sincos(s16 int_angle) {
         return Math.copySign(r, n);
     }
 
-    private static float aEdmn(float x) {
-        final float x2 = x * x;
-        return (45.210185257899f - 18.617417552712f * x + x2) /
-                (45.210185141956f - 22.384922725383f * x + 2.0175735681637f * x2);
-    }
-
-    /**
-     * <a href="https://dsp.stackexchange.com/a/89160">By "emacs drives me nuts" on Stack Exchange</a>.
-     * @param n between -1 and 1 inclusive
-     * @return the arcsine of n
-     */
-    public static float asinEdmn(float n) {
-        float x = Math.min(1f, Math.abs(n)), r;
-        if(x <= 0.5f){
-            r = n * aEdmn(2f * x * x);
-        } else {
-            final float z = 1f - x;
-            r = Math.copySign(TrigTools.HALF_PI - (float) Math.sqrt(z + z) * aEdmn(z), n);
-        }
-        return r;
-    }
-
-    private static double aEdmn(double x) {
-        final double x2 = x * x;
-        return (45.210185257899 - 18.617417552712 * x + x2) /
-                (45.210185141956 - 22.384922725383 * x + 2.0175735681637 * x2);
-    }
-    /**
-     * <a href="https://dsp.stackexchange.com/a/89160">By "emacs drives me nuts" on Stack Exchange</a>.
-     * @param n between -1 and 1 inclusive
-     * @return the arcsine of n
-     */
-    public static double asinEdmn(double n) {
-        double x = Math.min(1.0, Math.abs(n)), r;
-        if(x <= 0.5){
-            r = n * aEdmn(2 * x * x);
-        } else {
-            final double z = 1 - x;
-            r = Math.copySign(TrigTools.HALF_PI_D - Math.sqrt(z + z) * aEdmn(z), n);
-        }
-        return r;
-    }
-
     public static float acosJolt(float n) {
         float a = Math.min(1f, Math.abs(n)), z, x, r;
         if(a <= 0.5f){
@@ -4397,6 +4413,50 @@ CONST f32x2 sincos(s16 int_angle) {
 //        // Put the sign back
 //        return Vec4::sXor(z, asin_sign.ReinterpretAsFloat());
 //    }
+
+
+    private static float aEdmn(float x) {
+        final float x2 = x * x;
+        return (45.210185257899f - 18.617417552712f * x + x2) /
+                (45.210185141956f - 22.384922725383f * x + 2.0175735681637f * x2);
+    }
+
+    /**
+     * <a href="https://dsp.stackexchange.com/a/89160">By "emacs drives me nuts" on Stack Exchange</a>.
+     * @param n between -1 and 1 inclusive
+     * @return the arcsine of n
+     */
+    public static float asinEdmn(float n) {
+        float x = Math.min(1f, Math.abs(n)), r;
+        if(x <= 0.5f){
+            r = n * aEdmn(2f * x * x);
+        } else {
+            final float z = 1f - x;
+            r = Math.copySign(TrigTools.HALF_PI - (float) Math.sqrt(z + z) * aEdmn(z), n);
+        }
+        return r;
+    }
+
+    private static double aEdmn(double x) {
+        final double x2 = x * x;
+        return (45.210185257899 - 18.617417552712 * x + x2) /
+                (45.210185141956 - 22.384922725383 * x + 2.0175735681637 * x2);
+    }
+    /**
+     * <a href="https://dsp.stackexchange.com/a/89160">By "emacs drives me nuts" on Stack Exchange</a>.
+     * @param n between -1 and 1 inclusive
+     * @return the arcsine of n
+     */
+    public static double asinEdmn(double n) {
+        double x = Math.min(1.0, Math.abs(n)), r;
+        if(x <= 0.5){
+            r = n * aEdmn(2 * x * x);
+        } else {
+            final double z = 1 - x;
+            r = Math.copySign(TrigTools.HALF_PI_D - Math.sqrt(z + z) * aEdmn(z), n);
+        }
+        return r;
+    }
 
     /**
      * A big test that can handle lots of different comparisons.
