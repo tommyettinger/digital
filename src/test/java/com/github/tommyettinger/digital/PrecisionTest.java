@@ -4137,7 +4137,7 @@ CONST f32x2 sincos(s16 int_angle) {
     }
 
     /**
-     * A non-tabular approximation for arctangent in radians, accurate to at worst 2 ULPs for the -50 to 50 range.
+     * A non-tabular approximation for arctangent in radians.
      * Takes and returns a double.
      * <br>
      * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
@@ -4164,6 +4164,21 @@ CONST f32x2 sincos(s16 int_angle) {
                 * z - 3.33329491539e-1) * z * x + x, n);
     }
 
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using degrees.
+     * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in degrees.
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanDegJolt(double)}, calling it if x is non-zero and
+     * non-NaN, or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a double; ranges from {@code -180} to {@code 180}
+     */
     public static double atan2DegJolt(final double y, double x) {
         double n = y / x;
         if (n != n)
@@ -4180,6 +4195,21 @@ CONST f32x2 sincos(s16 int_angle) {
         return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using degrees.
+     * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in degrees.
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanDegJolt(float)}, calling it if x is non-zero and
+     * non-NaN, or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a float; ranges from {@code -180} to {@code 180}
+     */
     public static float atan2DegJolt(final float y, float x) {
         float n = y / x;
         if (n != n)
@@ -4196,7 +4226,23 @@ CONST f32x2 sincos(s16 int_angle) {
         return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
-
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using degrees, but never returning a
+     * negative result.
+     * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in degrees
+     * from 0 to 360 inclusive.
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanDegJolt(double)}, calling it if x is non-zero and
+     * non-NaN, or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a non-negative double; ranges from {@code 0} to {@code 360}
+     */
     public static double atan2Deg360Jolt(final double y, double x) {
         double n = y / x;
         if (n != n)
@@ -4208,9 +4254,26 @@ CONST f32x2 sincos(s16 int_angle) {
         } else if (x < 0) return (atanDegJolt(n) + 180.0);
         else if (y > 0) return x + 90.0;
         else if (y < 0) return x + 270.0;
-        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+        return x + y + 0.0; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using degrees, but never returning a
+     * negative result.
+     * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in degrees
+     * from 0 to 360 inclusive.
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanDegJolt(float)}, calling it if x is non-zero and
+     * non-NaN, or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a non-negative float; ranges from {@code 0} to {@code 360}
+     */
     public static float atan2Deg360Jolt(final float y, float x) {
         float n = y / x;
         if (n != n)
@@ -4222,12 +4285,21 @@ CONST f32x2 sincos(s16 int_angle) {
         } else if (x < 0) return atanDegJolt(n) + 180f;
         else if (y > 0) return x + 90f;
         else if (y < 0) return x + 270f;
-        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+        return x + y + 0f; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
+    /**
+     * A non-tabular approximation for arctangent in degrees, accurate to at worst 129 ULPs for the -50 to 50 range.
+     * Takes and returns a float.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n may be any float
+     * @return the arctangent of n in degrees, from negative {@code -90} to {@code 90}
+     */
     public static float atanDegJolt(float n) {
-        // Implementation based on atanf.c from the cephes library
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float m = Math.abs(n), x, y;
 
         if(m > 2.414213562373095f){
@@ -4245,10 +4317,18 @@ CONST f32x2 sincos(s16 int_angle) {
                 * z - 3.33329491539e-1f) * z * x + x) * 57.29577951308232f, n);
     }
 
-
+    /**
+     * A non-tabular approximation for arctangent in degrees.
+     * Takes and returns a double.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n may be any float
+     * @return the arctangent of n in degrees, from negative {@code -90} to {@code 90}
+     */
     public static double atanDegJolt(double n) {
-        // Implementation based on atanf.c from the cephes library
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         double m = Math.abs(n), x, y;
         if(m > 2.414213562373095){
             x = -1. / m;
@@ -4300,8 +4380,6 @@ CONST f32x2 sincos(s16 int_angle) {
     }
 
     public static float atanTurnsJolt(float n) {
-        // Implementation based on atanf.c from the cephes library
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         float m = Math.abs(n), x, y;
 
         if(m > 2.414213562373095f){
@@ -4321,8 +4399,6 @@ CONST f32x2 sincos(s16 int_angle) {
 
 
     public static double atanTurnsJolt(double n) {
-        // Implementation based on atanf.c from the cephes library
-        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
         double m = Math.abs(n), x, y;
         if(m > 2.414213562373095){
             x = -1. / m;
