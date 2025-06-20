@@ -3829,7 +3829,7 @@ CONST f32x2 sincos(s16 int_angle) {
      */
     public static float cosJolt(float angle) {
         float x = Math.abs(angle);
-        int quadrant = (int)(0.6366197723675814f * x + 0.5);
+        int quadrant = (int)(0.6366197723675814f * x + 0.5f);
         x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
         float x2 = x * x, s;
         switch (quadrant & 3) {
@@ -4040,6 +4040,63 @@ CONST f32x2 sincos(s16 int_angle) {
 //        // Correct the signs
 //        outSin = Vec4::sXor(s, sin_sign.ReinterpretAsFloat());
 //        outCos = Vec4::sXor(c, cos_sign.ReinterpretAsFloat());
+//    }
+
+    public static float tanJolt(float angle) {
+        float x = Math.abs(angle);
+        int quadrant = (int)(0.6366197723675814f * x + 0.5f);
+        x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
+        float x2 = x * x;
+        float p = (((((9.38540185543e-3f * x2 + (3.11992232697e-3f)) * x2 + (2.44301354525e-2f)) * x2
+                + (5.34112807005e-2f)) * x2 + (1.33387994085e-1f)) * x2 + (3.33331568548e-1f)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(angle) / p;
+        return Math.signum(angle) * p;
+    }
+
+    public static double tanJolt(double angle) {
+        double x = Math.abs(angle);
+        int quadrant = (int)(0.6366197723675814 * x + 0.5);
+        x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * 7.549789948768648e-8;
+        double x2 = x * x;
+        double p = (((((9.38540185543e-3 * x2 + (3.11992232697e-3)) * x2 + (2.44301354525e-2)) * x2
+                + (5.34112807005e-2)) * x2 + (1.33387994085e-1)) * x2 + (3.33331568548e-1)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(angle) / p;
+        return Math.signum(angle) * p;
+    }
+
+//    Vec4 Vec4::Tan() const
+//    {
+//        // Implementation based on tanf.c from the cephes library, see Vec4::SinCos for further details
+//        // Original implementation by Stephen L. Moshier (See: http://www.moshier.net/)
+//
+//        // Make argument positive
+//        UVec4 tan_sign = UVec4::sAnd(ReinterpretAsInt(), UVec4::sReplicate(0x80000000U));
+//        Vec4 x = Vec4::sXor(*this, tan_sign.ReinterpretAsFloat());
+//
+//        // x / (PI / 2) rounded to nearest int gives us the quadrant closest to x
+//        UVec4 quadrant = (0.6366197723675814f * x + Vec4::sReplicate(0.5f)).ToInt();
+//
+//        // Remap x to range [-PI / 4, PI / 4], see Vec4::SinCos
+//        Vec4 float_quadrant = quadrant.ToFloat();
+//        x = ((x - float_quadrant * 1.5703125f) - float_quadrant * 0.0004837512969970703125f) - float_quadrant * 7.549789948768648e-8f;
+//
+//        // Calculate x2 = x^2
+//        Vec4 x2 = x * x;
+//
+//        // Roughly equivalent to the Taylor expansion:
+//        // Tan(x) = x + x^3/3 + 2*x^5/15 + 17*x^7/315 + 62*x^9/2835 + ...
+//        Vec4 tan =
+//                (((((9.38540185543e-3f * x2 + Vec4::sReplicate(3.11992232697e-3f)) * x2 + Vec4::sReplicate(2.44301354525e-2f)) * x2
+//            + Vec4::sReplicate(5.34112807005e-2f)) * x2 + Vec4::sReplicate(1.33387994085e-1f)) * x2 + Vec4::sReplicate(3.33331568548e-1f)) * x2 * x + x;
+//
+//        // For the 2nd and 4th quadrant we need to invert the value
+//        UVec4 bit1 = quadrant.LogicalShiftLeft<31>();
+//        tan = Vec4::sSelect(tan, Vec4::sReplicate(-1.0f) / (tan JPH_IF_FLOATING_POINT_EXCEPTIONS_ENABLED(+ Vec4::sReplicate(FLT_MIN))), bit1); // Add small epsilon to prevent div by zero, works because tan is always positive
+//
+//        // Put the sign back
+//        return Vec4::sXor(tan, tan_sign.ReinterpretAsFloat());
 //    }
 
     /**
