@@ -3863,7 +3863,7 @@ CONST f32x2 sincos(s16 int_angle) {
     public static float sinDegJolt(float angle) {
         float x = Math.abs(angle);
         int quadrant = (int)(0.011111111f * x + 0.5f);
-        x = (x - quadrant * 90f) * (PI2 / 360f);
+        x = (x - quadrant * 90f) * (HALF_PI / 90f);
         float x2 = x * x, s;
         switch ((quadrant ^ (BitConversion.floatToIntBits(angle) >>> 30 & 2)) & 3) {
             case 0:
@@ -3896,7 +3896,7 @@ CONST f32x2 sincos(s16 int_angle) {
     public static float cosDegJolt(float angle) {
         float x = Math.abs(angle);
         int quadrant = (int)(0.011111111f * x + 0.5f);
-        x = (x - quadrant * 90f) * (PI2 / 360f);
+        x = (x - quadrant * 90f) * (HALF_PI / 90f);
         float x2 = x * x, s;
         switch (quadrant & 3) {
             case 3:
@@ -4058,6 +4058,54 @@ CONST f32x2 sincos(s16 int_angle) {
         double x = Math.abs(angle);
         int quadrant = (int)(0.6366197723675814 * x + 0.5);
         x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * 7.549789948768648e-8;
+        double x2 = x * x;
+        double p = (((((9.38540185543e-3 * x2 + (3.11992232697e-3)) * x2 + (2.44301354525e-2)) * x2
+                + (5.34112807005e-2)) * x2 + (1.33387994085e-1)) * x2 + (3.33331568548e-1)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(angle) / p;
+        return Math.signum(angle) * p;
+    }
+
+    public static float tanDegJolt(float angle) {
+        float x = Math.abs(angle);
+        int quadrant = (int)(0.011111111f * x + 0.5f);
+        x = (x - quadrant * 90f) * (HALF_PI / 90f);
+        float x2 = x * x;
+        float p = (((((9.38540185543e-3f * x2 + (3.11992232697e-3f)) * x2 + (2.44301354525e-2f)) * x2
+                + (5.34112807005e-2f)) * x2 + (1.33387994085e-1f)) * x2 + (3.33331568548e-1f)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(angle) / p;
+        return Math.signum(angle) * p;
+    }
+
+    public static double tanDegJolt(double angle) {
+        double x = Math.abs(angle);
+        int quadrant = (int)(0.011111111f * x + 0.5f);
+        x = (x - quadrant * 90f) * (HALF_PI / 90f);
+        double x2 = x * x;
+        double p = (((((9.38540185543e-3 * x2 + (3.11992232697e-3)) * x2 + (2.44301354525e-2)) * x2
+                + (5.34112807005e-2)) * x2 + (1.33387994085e-1)) * x2 + (3.33331568548e-1)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(angle) / p;
+        return Math.signum(angle) * p;
+    }
+
+    public static float tanTurnsJolt(float angle) {
+        float x = Math.abs(angle);
+        int quadrant = (int)(4 * x + 0.5f);
+        x = (x - quadrant * 0.25f) * PI2;
+        float x2 = x * x;
+        float p = (((((9.38540185543e-3f * x2 + (3.11992232697e-3f)) * x2 + (2.44301354525e-2f)) * x2
+                + (5.34112807005e-2f)) * x2 + (1.33387994085e-1f)) * x2 + (3.33331568548e-1f)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(angle) / p;
+        return Math.signum(angle) * p;
+    }
+
+    public static double tanTurnsJolt(double angle) {
+        double x = Math.abs(angle);
+        int quadrant = (int)(4 * x + 0.5f);
+        x = (x - quadrant * 0.25f) * PI2;
         double x2 = x * x;
         double p = (((((9.38540185543e-3 * x2 + (3.11992232697e-3)) * x2 + (2.44301354525e-2)) * x2
                 + (5.34112807005e-2)) * x2 + (1.33387994085e-1)) * x2 + (3.33331568548e-1)) * x2 * x + x;
