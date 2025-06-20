@@ -274,6 +274,10 @@ public final class TrigTools {
      * increasing angle. This should not be mutated, but it can be accessed directly for things like getting random
      * unit vectors, or implementing the "sincos" method (which assigns sin() to one item and cos() to another).
      * <br>
+     * This is calculated without using {@link Math#sin(double)} or {@link Math#cos(double)} in order to avoid any
+     * architecture-dependent behavior of special functions. Specifically, it uses the (very precise, but not 100%)
+     * approximations {@link #sinPrecise(double)} and {@link #cosPrecise(double)}.
+     * <br>
      * A quick way to get a random unit vector is to get a random number that can be no larger than the table size, as
      * with {@code int angle = (random.nextInt() & TrigTools.TABLE_MASK);}, and look up that angle in
      * {@code COS_TABLE_D} for the vector's x and {@code SIN_TABLE_D} for the vector's y.
@@ -284,8 +288,8 @@ public final class TrigTools {
     static {
         for (int i = 0; i <= TABLE_SIZE; i++) {
             double theta = ((double)i) / TABLE_SIZE * PI2_D;
-            SIN_TABLE[i] = (float) (SIN_TABLE_D[i] = Math.sin(theta));
-            COS_TABLE[i] = (float) (COS_TABLE_D[i] = Math.cos(theta));
+            SIN_TABLE[i] = (float) (SIN_TABLE_D[i] = sinPrecise(theta));
+            COS_TABLE[i] = (float) (COS_TABLE_D[i] = cosPrecise(theta));
         }
 
 /*
