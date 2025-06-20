@@ -1410,6 +1410,564 @@ public final class TrigTools {
     }
 
 //</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Precise Sine, Cosine, and Tangent">
+
+    /**
+     * A non-tabular sine approximation in radians that is typically faster than {@link Math#sin(double)} and accurate
+     * to within two ULPs for inputs in the 0 to PI2 range. While this is slower than
+     * {@link TrigTools#sinSmoother(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than sinSmoother().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param radians input in radians, typically between -PI2 and PI2 for greatest precision
+     * @return the sine of the given angle as a float, between -1 and 1 inclusive
+     */
+    public static float sinPrecise(float radians) {
+        float x = Math.abs(radians);
+        int quadrant = (int)(0.6366197723675814f * x + 0.5f);
+        x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
+        float x2 = x * x, s;
+        switch ((quadrant ^ (BitConversion.floatToIntBits(radians) >>> 30 & 2)) & 3) {
+            case 0:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 1:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 2:
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular cosine approximation in radians that is typically faster than {@link Math#cos(double)} and
+     * accurate to within two ULPs for inputs in the 0 to PI2 range. While this is slower than
+     * {@link TrigTools#cosSmoother(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmoother().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param radians input in radians, typically between -PI2 and PI2 for greatest precision
+     * @return the cosine of the given angle as a float, between -1 and 1 inclusive
+     */
+    public static float cosPrecise(float radians) {
+        float x = Math.abs(radians);
+        int quadrant = (int)(0.6366197723675814f * x + 0.5f);
+        x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
+        float x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 1:
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular sine approximation in degrees that is typically faster than {@link Math#sin(double)} and accurate
+     * to within two ULPs for inputs in the 0 to 360 range. While this is slower than
+     * {@link TrigTools#sinSmootherDeg(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than sinSmootherDeg().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param degrees input in degrees, typically between -360 and 360 for greatest precision
+     * @return the sine of the given angle as a float, between -1 and 1 inclusive
+     */
+    public static float sinDegPrecise(float degrees) {
+        float x = Math.abs(degrees);
+        int quadrant = (int)(0.011111111f * x + 0.5f);
+        x = (x - quadrant * 90f) * (HALF_PI / 90f);
+        float x2 = x * x, s;
+        switch ((quadrant ^ (BitConversion.floatToIntBits(degrees) >>> 30 & 2)) & 3) {
+            case 0:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 1:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 2:
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular cosine approximation in degrees that is typically faster than {@link Math#cos(double)} and
+     * accurate to within two ULPs for inputs in the 0 to 360 range. While this is slower than
+     * {@link TrigTools#cosSmootherDeg(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmootherDeg().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param degrees input in degrees, typically between -360 and 360 for greatest precision
+     * @return the cosine of the given angle as a float, between -1 and 1 inclusive
+     */
+    public static float cosDegPrecise(float degrees) {
+        float x = Math.abs(degrees);
+        int quadrant = (int)(0.011111111f * x + 0.5f);
+        x = (x - quadrant * 90f) * (HALF_PI / 90f);
+        float x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 1:
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular sine approximation in turns that is typically faster than {@link Math#sin(double)} and accurate
+     * to within two ULPs for inputs in the 0 to 1 range. While this is slower than
+     * {@link TrigTools#sinSmootherTurns(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than sinSmootherTurns().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param turns input in turns, typically between -1 and 1 for greatest precision
+     * @return the sine of the given angle as a float, between -1 and 1 inclusive
+     */
+    public static float sinTurnsPrecise(float turns) {
+        float x = Math.abs(turns);
+        int quadrant = (int)(4f * x + 0.5f);
+        x = (x - quadrant * 0.25f) * PI2;
+        float x2 = x * x, s;
+        switch ((quadrant ^ (BitConversion.floatToIntBits(turns) >>> 30 & 2)) & 3) {
+            case 0:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 1:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 2:
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular cosine approximation in turns that is typically faster than {@link Math#cos(double)} and
+     * accurate to within two ULPs for inputs in the 0 to 1 range. While this is slower than
+     * {@link TrigTools#cosSmootherTurns(float)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmootherTurns().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param turns input in turns, typically between -1 and 1 for greatest precision
+     * @return the cosine of the given angle as a float, between -1 and 1 inclusive
+     */
+    public static float cosTurnsPrecise(float turns) {
+        float x = Math.abs(turns);
+        int quadrant = (int)(4f * x + 0.5f);
+        x = (x - quadrant * 0.25f) * PI2;
+        float x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5f * x2 - (1.388731625493765e-3f)) * x2 + (4.166664568298827e-2f)) * x2 * x2 - 0.5f * x2 + 1f;
+                break;
+            case 1:
+                s = (((1.9515295891e-4f * x2 - 8.3321608736e-3f) * x2 + 1.6666654611e-1f) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5f * x2 + 1.388731625493765e-3f) * x2 - 4.166664568298827e-2f) * x2 * x2 + 0.5f * x2 - 1f);
+        }
+        return s;
+    }
+
+    /**
+     * Returns the tangent in radians; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmoother(float)}. This method is only very slightly more precise than tanSmoother();
+     * the difference is only about 2 ULPs for the worst-case absolute error in the -1 to 1 range, though the error
+     * almost certainly balloons significantly near the undefined inputs at odd multiples of {@link TrigTools#HALF_PI}.
+     * The main reason to use this method is that it is non-tabular. If the {@link TrigTools#SIN_TABLE} and
+     * {@link TrigTools#COS_TABLE} arrays are not in processor cache, this non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param radians a float angle in radians, where 0 to {@link TrigTools#PI2} is one rotation
+     * @return a float approximation of tan()
+     */
+    public static float tanPrecise(float radians) {
+        float x = Math.abs(radians);
+        int quadrant = (int)(0.6366197723675814f * x + 0.5f);
+        x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
+        float x2 = x * x;
+        float p = (((((9.38540185543e-3f * x2 + (3.11992232697e-3f)) * x2 + (2.44301354525e-2f)) * x2
+                + (5.34112807005e-2f)) * x2 + (1.33387994085e-1f)) * x2 + (3.33331568548e-1f)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(radians) / p;
+        return Math.signum(radians) * p;
+    }
+
+    /**
+     * Returns the tangent in degrees; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmootherDeg(float)}. This method is only very slightly more precise than tanSmootherDeg(),
+     * though the error almost certainly balloons significantly near the undefined inputs at odd multiples of 90.
+     * The main reason to use this method is that it is non-tabular. If the {@link TrigTools#SIN_TABLE} and
+     * {@link TrigTools#COS_TABLE} arrays are not in processor cache, this non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param degrees a float angle in degrees, where 0 to {@code 360} is one rotation
+     * @return a float approximation of tan()
+     */
+    public static float tanDegPrecise(float degrees) {
+        float x = Math.abs(degrees);
+        int quadrant = (int)(0.011111111f * x + 0.5f);
+        x = (x - quadrant * 90f) * (HALF_PI / 90f);
+        float x2 = x * x;
+        float p = (((((9.38540185543e-3f * x2 + (3.11992232697e-3f)) * x2 + (2.44301354525e-2f)) * x2
+                + (5.34112807005e-2f)) * x2 + (1.33387994085e-1f)) * x2 + (3.33331568548e-1f)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(degrees) / p;
+        return Math.signum(degrees) * p;
+    }
+
+    /**
+     * Returns the tangent in turns; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmootherTurns(float)}. This method is only very slightly more precise than
+     * tanSmootherTurns(), though the error almost certainly balloons significantly near the undefined inputs at odd
+     * multiples of 0.25. The main reason to use this method is that it is non-tabular. If the
+     * {@link TrigTools#SIN_TABLE} and {@link TrigTools#COS_TABLE} arrays are not in processor cache, this
+     * non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param turns a float angle in turns, where 0.0 to 1.0 is one rotation
+     * @return a float approximation of tan()
+     */
+    public static float tanTurnsPrecise(float turns) {
+        float x = Math.abs(turns);
+        int quadrant = (int)(4 * x + 0.5f);
+        x = (x - quadrant * 0.25f) * PI2;
+        float x2 = x * x;
+        float p = (((((9.38540185543e-3f * x2 + (3.11992232697e-3f)) * x2 + (2.44301354525e-2f)) * x2
+                + (5.34112807005e-2f)) * x2 + (1.33387994085e-1f)) * x2 + (3.33331568548e-1f)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(turns) / p;
+        return Math.signum(turns) * p;
+    }
+
+    /**
+     * A non-tabular sine approximation in radians that is typically faster than {@link Math#sin(double)}.
+     * While this is slower than
+     * {@link TrigTools#sinSmoother(double)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than sinSmoother().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param radians input in radians, typically between -PI2 and PI2 for greatest precision
+     * @return the sine of the given angle as a double, between -1 and 1 inclusive
+     */
+    public static double sinPrecise(double radians) {
+        double x = Math.abs(radians);
+        int quadrant = (int)(0.6366197723675814 * x + 0.5);
+        x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * 7.549789948768648e-8;
+        double x2 = x * x, s;
+        switch ((quadrant ^ (BitConversion.doubleToHighIntBits(radians) >>> 30 & 2)) & 3) {
+            case 0:
+                s = ((-1.9515295891e-4 * x2 + 8.3321608736e-3) * x2 - 1.6666654611e-1) * x2 * x + x;
+                break;
+            case 1:
+                s = ((2.443315711809948e-5 * x2 - (1.388731625493765e-3)) * x2 + (4.166664568298827e-2)) * x2 * x2 - 0.5 * x2 + 1.0;
+                break;
+            case 2:
+                s = (((1.9515295891e-4 * x2 - 8.3321608736e-3) * x2 + 1.6666654611e-1) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5 * x2 + 1.388731625493765e-3) * x2 - 4.166664568298827e-2) * x2 * x2 + 0.5 * x2 - 1.0);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular cosine approximation in radians that is typically faster than {@link Math#cos(double)}. While
+     * this is slower than
+     * {@link TrigTools#cosSmoother(double)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmoother().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param radians input in radians, typically between -PI2 and PI2 for greatest precision
+     * @return the cosine of the given angle as a double, between -1 and 1 inclusive
+     */
+    public static double cosPrecise(double radians) {
+        double x = Math.abs(radians);
+        int quadrant = (int)(0.6366197723675814 * x + 0.5);
+        x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * 7.549789948768648e-8;
+        double x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4 * x2 + 8.3321608736e-3) * x2 - 1.6666654611e-1) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5 * x2 - (1.388731625493765e-3)) * x2 + (4.166664568298827e-2)) * x2 * x2 - 0.5 * x2 + 1.0;
+                break;
+            case 1:
+                s = (((1.9515295891e-4 * x2 - 8.3321608736e-3) * x2 + 1.6666654611e-1) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5 * x2 + 1.388731625493765e-3) * x2 - 4.166664568298827e-2) * x2 * x2 + 0.5 * x2 - 1.0);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular sine approximation in degrees that is typically faster than {@link Math#sin(double)}. While this
+     * is slower than
+     * {@link TrigTools#sinSmootherDeg(double)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than sinSmootherDeg().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param degrees input in degrees, typically between -360 and 360 for greatest precision
+     * @return the sine of the given angle as a double, between -1 and 1 inclusive
+     */
+    public static double sinDegPrecise(double degrees) {
+        double x = Math.abs(degrees);
+        int quadrant = (int)(0.011111111 * x + 0.5);
+        x = (x - quadrant * 90.0) * (HALF_PI_D / 90.0);
+        double x2 = x * x, s;
+        switch ((quadrant ^ (BitConversion.doubleToHighIntBits(degrees) >>> 30 & 2)) & 3) {
+            case 0:
+                s = ((-1.9515295891e-4 * x2 + 8.3321608736e-3) * x2 - 1.6666654611e-1) * x2 * x + x;
+                break;
+            case 1:
+                s = ((2.443315711809948e-5 * x2 - (1.388731625493765e-3)) * x2 + (4.166664568298827e-2)) * x2 * x2 - 0.5 * x2 + 1;
+                break;
+            case 2:
+                s = (((1.9515295891e-4 * x2 - 8.3321608736e-3) * x2 + 1.6666654611e-1) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5 * x2 + 1.388731625493765e-3) * x2 - 4.166664568298827e-2) * x2 * x2 + 0.5 * x2 - 1);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular cosine approximation in degrees that is typically faster than {@link Math#cos(double)}.
+     * While this is slower than
+     * {@link TrigTools#cosSmootherDeg(double)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmootherDeg().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param degrees input in degrees, typically between -360 and 360 for greatest precision
+     * @return the cosine of the given angle as a double, between -1 and 1 inclusive
+     */
+    public static double cosDegPrecise(double degrees) {
+        double x = Math.abs(degrees);
+        int quadrant = (int)(0.011111111 * x + 0.5);
+        x = (x - quadrant * 90.0) * (HALF_PI_D / 90.0);
+        double x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4 * x2 + 8.3321608736e-3) * x2 - 1.6666654611e-1) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5 * x2 - (1.388731625493765e-3)) * x2 + (4.166664568298827e-2)) * x2 * x2 - 0.5 * x2 + 1.0;
+                break;
+            case 1:
+                s = (((1.9515295891e-4 * x2 - 8.3321608736e-3) * x2 + 1.6666654611e-1) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5 * x2 + 1.388731625493765e-3) * x2 - 4.166664568298827e-2) * x2 * x2 + 0.5 * x2 - 1.0);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular sine approximation in turns that is typically faster than {@link Math#sin(double)}.
+     * While this is slower than
+     * {@link TrigTools#sinSmootherTurns(double)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than sinSmootherTurns().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param turns input in turns, typically between -1 and 1 for greatest precision
+     * @return the sine of the given angle as a double, between -1 and 1 inclusive
+     */
+    public static double sinTurnsPrecise(double turns) {
+        double x = Math.abs(turns);
+        int quadrant = (int)(4.0 * x + 0.5);
+        x = (x - quadrant * 0.25) * PI2_D;
+        double x2 = x * x, s;
+        switch ((quadrant ^ (BitConversion.doubleToHighIntBits(turns) >>> 30 & 2)) & 3) {
+            case 0:
+                s = ((-1.9515295891e-4 * x2 + 8.3321608736e-3) * x2 - 1.6666654611e-1) * x2 * x + x;
+                break;
+            case 1:
+                s = ((2.443315711809948e-5 * x2 - (1.388731625493765e-3)) * x2 + (4.166664568298827e-2)) * x2 * x2 - 0.5 * x2 + 1.0;
+                break;
+            case 2:
+                s = (((1.9515295891e-4 * x2 - 8.3321608736e-3) * x2 + 1.6666654611e-1) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5 * x2 + 1.388731625493765e-3) * x2 - 4.166664568298827e-2) * x2 * x2 + 0.5 * x2 - 1.0);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular cosine approximation in turns that is typically faster than {@link Math#cos(double)}.
+     * While this is slower than
+     * {@link TrigTools#cosSmootherTurns(double)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmootherTurns().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param turns input in turns, typically between -1 and 1 for greatest precision
+     * @return the cosine of the given angle as a double, between -1 and 1 inclusive
+     */
+    public static double cosTurnsPrecise(double turns) {
+        double x = Math.abs(turns);
+        int quadrant = (int)(4.0 * x + 0.5);
+        x = (x - quadrant * 0.25) * PI2_D;
+        double x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4 * x2 + 8.3321608736e-3) * x2 - 1.6666654611e-1) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5 * x2 - (1.388731625493765e-3)) * x2 + (4.166664568298827e-2)) * x2 * x2 - 0.5 * x2 + 1.0;
+                break;
+            case 1:
+                s = (((1.9515295891e-4 * x2 - 8.3321608736e-3) * x2 + 1.6666654611e-1) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5 * x2 + 1.388731625493765e-3) * x2 - 4.166664568298827e-2) * x2 * x2 + 0.5 * x2 - 1.0);
+        }
+        return s;
+    }
+
+    /**
+     * Returns the tangent in radians; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmoother(double)}. This method is only very slightly more precise than tanSmoother(), though
+     * the error almost certainly balloons significantly for both near the undefined inputs at odd multiples of
+     * {@link TrigTools#HALF_PI_D}.
+     * The main reason to use this method is that it is non-tabular. If the {@link TrigTools#SIN_TABLE_D} and
+     * {@link TrigTools#COS_TABLE_D} arrays are not in processor cache, this non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param radians a double angle in radians, where 0 to {@link TrigTools#PI2} is one rotation
+     * @return a double approximation of tan()
+     */
+    public static double tanPrecise(double radians) {
+        double x = Math.abs(radians);
+        int quadrant = (int)(0.6366197723675814 * x + 0.5);
+        x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * 7.549789948768648e-8;
+        double x2 = x * x;
+        double p = (((((9.38540185543e-3 * x2 + (3.11992232697e-3)) * x2 + (2.44301354525e-2)) * x2
+                + (5.34112807005e-2)) * x2 + (1.33387994085e-1)) * x2 + (3.33331568548e-1)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(radians) / p;
+        return Math.signum(radians) * p;
+    }
+
+    /**
+     * Returns the tangent in degrees; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmootherDeg(double)}. This method is only very slightly more precise than tanSmootherDeg(),
+     * though the error almost certainly balloons significantly near the undefined inputs at odd multiples of 90.
+     * The main reason to use this method is that it is non-tabular. If the {@link TrigTools#SIN_TABLE_D} and
+     * {@link TrigTools#COS_TABLE_D} arrays are not in processor cache, this non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param degrees a double angle in degrees, where 0 to {@code 360} is one rotation
+     * @return a double approximation of tan()
+     */
+    public static double tanDegPrecise(double degrees) {
+        double x = Math.abs(degrees);
+        int quadrant = (int)(0.011111111f * x + 0.5f);
+        x = (x - quadrant * 90f) * (HALF_PI / 90f);
+        double x2 = x * x;
+        double p = (((((9.38540185543e-3 * x2 + (3.11992232697e-3)) * x2 + (2.44301354525e-2)) * x2
+                + (5.34112807005e-2)) * x2 + (1.33387994085e-1)) * x2 + (3.33331568548e-1)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(degrees) / p;
+        return Math.signum(degrees) * p;
+    }
+
+    /**
+     * Returns the tangent in turns; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmootherTurns(double)}. This method is only very slightly more precise than
+     * tanSmootherTurns(), though the error almost certainly balloons significantly near the undefined inputs at odd
+     * multiples of 0.25. The main reason to use this method is that it is non-tabular. If the
+     * {@link TrigTools#SIN_TABLE_D} and {@link TrigTools#COS_TABLE_D} arrays are not in processor cache, this
+     * non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param turns a double angle in turns, where 0.0 to 1.0 is one rotation
+     * @return a double approximation of tan()
+     */
+    public static double tanTurnsPrecise(double turns) {
+        double x = Math.abs(turns);
+        int quadrant = (int)(4 * x + 0.5f);
+        x = (x - quadrant * 0.25f) * PI2;
+        double x2 = x * x;
+        double p = (((((9.38540185543e-3 * x2 + (3.11992232697e-3)) * x2 + (2.44301354525e-2)) * x2
+                + (5.34112807005e-2)) * x2 + (1.33387994085e-1)) * x2 + (3.33331568548e-1)) * x2 * x + x;
+        if((quadrant & 1) == 1)
+            return -Math.signum(turns) / p;
+        return Math.signum(turns) * p;
+    }
+//</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Arctangent and atan2">
 
     /**
