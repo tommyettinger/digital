@@ -4042,76 +4042,164 @@ CONST f32x2 sincos(s16 int_angle) {
 //        outCos = Vec4::sXor(c, cos_sign.ReinterpretAsFloat());
 //    }
 
-    public static float tanJolt(float angle) {
-        float x = Math.abs(angle);
+    /**
+     * Returns the tangent in radians; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmoother(float)}. This method is only very slightly more precise than tanSmoother();
+     * the difference is only about 2 ULPs for the worst-case absolute error in the -1 to 1 range, though the error
+     * almost certainly balloons significantly near the undefined inputs at odd multiples of {@link TrigTools#HALF_PI}.
+     * The main reason to use this method is that it is non-tabular. If the {@link TrigTools#SIN_TABLE} and
+     * {@link TrigTools#COS_TABLE} arrays are not in processor cache, this non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param radians a float angle in radians, where 0 to {@link TrigTools#PI2} is one rotation
+     * @return a float approximation of tan()
+     */
+    public static float tanJolt(float radians) {
+        float x = Math.abs(radians);
         int quadrant = (int)(0.6366197723675814f * x + 0.5f);
         x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
         float x2 = x * x;
         float p = (((((9.38540185543e-3f * x2 + (3.11992232697e-3f)) * x2 + (2.44301354525e-2f)) * x2
                 + (5.34112807005e-2f)) * x2 + (1.33387994085e-1f)) * x2 + (3.33331568548e-1f)) * x2 * x + x;
         if((quadrant & 1) == 1)
-            return -Math.signum(angle) / p;
-        return Math.signum(angle) * p;
+            return -Math.signum(radians) / p;
+        return Math.signum(radians) * p;
     }
 
-    public static double tanJolt(double angle) {
-        double x = Math.abs(angle);
+    /**
+     * Returns the tangent in radians; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmoother(double)}. This method is only very slightly more precise than tanSmoother(), though
+     * the error almost certainly balloons significantly for both near the undefined inputs at odd multiples of
+     * {@link TrigTools#HALF_PI_D}.
+     * The main reason to use this method is that it is non-tabular. If the {@link TrigTools#SIN_TABLE_D} and
+     * {@link TrigTools#COS_TABLE_D} arrays are not in processor cache, this non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param radians a double angle in radians, where 0 to {@link TrigTools#PI2} is one rotation
+     * @return a double approximation of tan()
+     */
+    public static double tanJolt(double radians) {
+        double x = Math.abs(radians);
         int quadrant = (int)(0.6366197723675814 * x + 0.5);
         x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * 7.549789948768648e-8;
         double x2 = x * x;
         double p = (((((9.38540185543e-3 * x2 + (3.11992232697e-3)) * x2 + (2.44301354525e-2)) * x2
                 + (5.34112807005e-2)) * x2 + (1.33387994085e-1)) * x2 + (3.33331568548e-1)) * x2 * x + x;
         if((quadrant & 1) == 1)
-            return -Math.signum(angle) / p;
-        return Math.signum(angle) * p;
+            return -Math.signum(radians) / p;
+        return Math.signum(radians) * p;
     }
 
-    public static float tanDegJolt(float angle) {
-        float x = Math.abs(angle);
+    /**
+     * Returns the tangent in degrees; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmootherDeg(float)}. This method is only very slightly more precise than tanSmootherDeg(),
+     * though the error almost certainly balloons significantly near the undefined inputs at odd multiples of 90.
+     * The main reason to use this method is that it is non-tabular. If the {@link TrigTools#SIN_TABLE} and
+     * {@link TrigTools#COS_TABLE} arrays are not in processor cache, this non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param degrees a float angle in degrees, where 0 to {@code 360} is one rotation
+     * @return a float approximation of tan()
+     */
+    public static float tanDegJolt(float degrees) {
+        float x = Math.abs(degrees);
         int quadrant = (int)(0.011111111f * x + 0.5f);
         x = (x - quadrant * 90f) * (HALF_PI / 90f);
         float x2 = x * x;
         float p = (((((9.38540185543e-3f * x2 + (3.11992232697e-3f)) * x2 + (2.44301354525e-2f)) * x2
                 + (5.34112807005e-2f)) * x2 + (1.33387994085e-1f)) * x2 + (3.33331568548e-1f)) * x2 * x + x;
         if((quadrant & 1) == 1)
-            return -Math.signum(angle) / p;
-        return Math.signum(angle) * p;
+            return -Math.signum(degrees) / p;
+        return Math.signum(degrees) * p;
     }
 
-    public static double tanDegJolt(double angle) {
-        double x = Math.abs(angle);
+    /**
+     * Returns the tangent in degrees; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmootherDeg(double)}. This method is only very slightly more precise than tanSmootherDeg(),
+     * though the error almost certainly balloons significantly near the undefined inputs at odd multiples of 90.
+     * The main reason to use this method is that it is non-tabular. If the {@link TrigTools#SIN_TABLE_D} and
+     * {@link TrigTools#COS_TABLE_D} arrays are not in processor cache, this non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param degrees a double angle in degrees, where 0 to {@code 360} is one rotation
+     * @return a double approximation of tan()
+     */
+    public static double tanDegJolt(double degrees) {
+        double x = Math.abs(degrees);
         int quadrant = (int)(0.011111111f * x + 0.5f);
         x = (x - quadrant * 90f) * (HALF_PI / 90f);
         double x2 = x * x;
         double p = (((((9.38540185543e-3 * x2 + (3.11992232697e-3)) * x2 + (2.44301354525e-2)) * x2
                 + (5.34112807005e-2)) * x2 + (1.33387994085e-1)) * x2 + (3.33331568548e-1)) * x2 * x + x;
         if((quadrant & 1) == 1)
-            return -Math.signum(angle) / p;
-        return Math.signum(angle) * p;
+            return -Math.signum(degrees) / p;
+        return Math.signum(degrees) * p;
     }
 
-    public static float tanTurnsJolt(float angle) {
-        float x = Math.abs(angle);
+    /**
+     * Returns the tangent in turns; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmootherTurns(float)}. This method is only very slightly more precise than
+     * tanSmootherTurns(), though the error almost certainly balloons significantly near the undefined inputs at odd
+     * multiples of 0.25. The main reason to use this method is that it is non-tabular. If the
+     * {@link TrigTools#SIN_TABLE} and {@link TrigTools#COS_TABLE} arrays are not in processor cache, this
+     * non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param turns a float angle in turns, where 0.0 to 1.0 is one rotation
+     * @return a float approximation of tan()
+     */
+    public static float tanTurnsJolt(float turns) {
+        float x = Math.abs(turns);
         int quadrant = (int)(4 * x + 0.5f);
         x = (x - quadrant * 0.25f) * PI2;
         float x2 = x * x;
         float p = (((((9.38540185543e-3f * x2 + (3.11992232697e-3f)) * x2 + (2.44301354525e-2f)) * x2
                 + (5.34112807005e-2f)) * x2 + (1.33387994085e-1f)) * x2 + (3.33331568548e-1f)) * x2 * x + x;
         if((quadrant & 1) == 1)
-            return -Math.signum(angle) / p;
-        return Math.signum(angle) * p;
+            return -Math.signum(turns) / p;
+        return Math.signum(turns) * p;
     }
 
-    public static double tanTurnsJolt(double angle) {
-        double x = Math.abs(angle);
+    /**
+     * Returns the tangent in turns; non-tabular and very precise, but about half as fast as
+     * {@link TrigTools#tanSmootherTurns(double)}. This method is only very slightly more precise than
+     * tanSmootherTurns(), though the error almost certainly balloons significantly near the undefined inputs at odd
+     * multiples of 0.25. The main reason to use this method is that it is non-tabular. If the
+     * {@link TrigTools#SIN_TABLE_D} and {@link TrigTools#COS_TABLE_D} arrays are not in processor cache, this
+     * non-tabular method may become faster.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param turns a double angle in turns, where 0.0 to 1.0 is one rotation
+     * @return a double approximation of tan()
+     */
+    public static double tanTurnsJolt(double turns) {
+        double x = Math.abs(turns);
         int quadrant = (int)(4 * x + 0.5f);
         x = (x - quadrant * 0.25f) * PI2;
         double x2 = x * x;
         double p = (((((9.38540185543e-3 * x2 + (3.11992232697e-3)) * x2 + (2.44301354525e-2)) * x2
                 + (5.34112807005e-2)) * x2 + (1.33387994085e-1)) * x2 + (3.33331568548e-1)) * x2 * x + x;
         if((quadrant & 1) == 1)
-            return -Math.signum(angle) / p;
-        return Math.signum(angle) * p;
+            return -Math.signum(turns) / p;
+        return Math.signum(turns) * p;
     }
 
 //    Vec4 Vec4::Tan() const
