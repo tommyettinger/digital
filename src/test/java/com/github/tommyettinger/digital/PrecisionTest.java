@@ -3824,11 +3824,11 @@ CONST f32x2 sincos(s16 int_angle) {
      * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
      * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
      * Jolt is MIT-licensed.
-     * @param angle input in radians, typically between -PI2 and PI2 for greatest precision
-     * @return the cosine of the given angle, between -1 and 1 inclusive
+     * @param radians input in radians, typically between -PI2 and PI2 for greatest precision
+     * @return the cosine of the given angle as a float, between -1 and 1 inclusive
      */
-    public static float cosJolt(float angle) {
-        float x = Math.abs(angle);
+    public static float cosJolt(float radians) {
+        float x = Math.abs(radians);
         int quadrant = (int)(0.6366197723675814f * x + 0.5f);
         x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
         float x2 = x * x, s;
@@ -3890,11 +3890,11 @@ CONST f32x2 sincos(s16 int_angle) {
      * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
      * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
      * Jolt is MIT-licensed.
-     * @param angle input in degrees, typically between -360 and 360 for greatest precision
-     * @return the cosine of the given angle, between -1 and 1 inclusive
+     * @param degrees input in degrees, typically between -360 and 360 for greatest precision
+     * @return the cosine of the given angle as a float, between -1 and 1 inclusive
      */
-    public static float cosDegJolt(float angle) {
-        float x = Math.abs(angle);
+    public static float cosDegJolt(float degrees) {
+        float x = Math.abs(degrees);
         int quadrant = (int)(0.011111111f * x + 0.5f);
         x = (x - quadrant * 90f) * (HALF_PI / 90f);
         float x2 = x * x, s;
@@ -3956,12 +3956,12 @@ CONST f32x2 sincos(s16 int_angle) {
      * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
      * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
      * Jolt is MIT-licensed.
-     * @param angle input in turns, typically between -1 and 1 for greatest precision
-     * @return the cosine of the given angle, between -1 and 1 inclusive
+     * @param turns input in turns, typically between -1 and 1 for greatest precision
+     * @return the cosine of the given angle as a float, between -1 and 1 inclusive
      */
-    public static float cosTurnsJolt(float angle) {
-        float x = Math.abs(angle);
-        int quadrant = (int)(4 * x + 0.5f);
+    public static float cosTurnsJolt(float turns) {
+        float x = Math.abs(turns);
+        int quadrant = (int)(4f * x + 0.5f);
         x = (x - quadrant * 0.25f) * PI2;
         float x2 = x * x, s;
         switch (quadrant & 3) {
@@ -4014,6 +4014,39 @@ CONST f32x2 sincos(s16 int_angle) {
     }
 
     /**
+     * A non-tabular cosine approximation in radians that is typically faster than {@link Math#cos(double)}. While
+     * this is slower than
+     * {@link TrigTools#cosSmoother(double)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmoother().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param radians input in radians, typically between -PI2 and PI2 for greatest precision
+     * @return the cosine of the given angle as a double, between -1 and 1 inclusive
+     */
+    public static double cosJolt(double radians) {
+        double x = Math.abs(radians);
+        int quadrant = (int)(0.6366197723675814 * x + 0.5);
+        x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * 7.549789948768648e-8;
+        double x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4 * x2 + 8.3321608736e-3) * x2 - 1.6666654611e-1) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5 * x2 - (1.388731625493765e-3)) * x2 + (4.166664568298827e-2)) * x2 * x2 - 0.5 * x2 + 1.0;
+                break;
+            case 1:
+                s = (((1.9515295891e-4 * x2 - 8.3321608736e-3) * x2 + 1.6666654611e-1) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5 * x2 + 1.388731625493765e-3) * x2 - 4.166664568298827e-2) * x2 * x2 + 0.5 * x2 - 1.0);
+        }
+        return s;
+    }
+
+    /**
      * A non-tabular sine approximation in degrees that is typically faster than {@link Math#sin(double)}. While this
      * is slower than
      * {@link TrigTools#sinSmootherDeg(double)}, it is usually a little more accurate, and its worst-case results are
@@ -4047,6 +4080,39 @@ CONST f32x2 sincos(s16 int_angle) {
     }
 
     /**
+     * A non-tabular cosine approximation in degrees that is typically faster than {@link Math#cos(double)}.
+     * While this is slower than
+     * {@link TrigTools#cosSmootherDeg(double)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmootherDeg().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param degrees input in degrees, typically between -360 and 360 for greatest precision
+     * @return the cosine of the given angle as a double, between -1 and 1 inclusive
+     */
+    public static double cosDegJolt(double degrees) {
+        double x = Math.abs(degrees);
+        int quadrant = (int)(0.011111111 * x + 0.5);
+        x = (x - quadrant * 90.0) * (HALF_PI_D / 90.0);
+        double x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4 * x2 + 8.3321608736e-3) * x2 - 1.6666654611e-1) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5 * x2 - (1.388731625493765e-3)) * x2 + (4.166664568298827e-2)) * x2 * x2 - 0.5 * x2 + 1.0;
+                break;
+            case 1:
+                s = (((1.9515295891e-4 * x2 - 8.3321608736e-3) * x2 + 1.6666654611e-1) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5 * x2 + 1.388731625493765e-3) * x2 - 4.166664568298827e-2) * x2 * x2 + 0.5 * x2 - 1.0);
+        }
+        return s;
+    }
+
+    /**
      * A non-tabular sine approximation in turns that is typically faster than {@link Math#sin(double)}.
      * While this is slower than
      * {@link TrigTools#sinSmootherTurns(double)}, it is usually a little more accurate, and its worst-case results are
@@ -4071,6 +4137,39 @@ CONST f32x2 sincos(s16 int_angle) {
                 s = ((2.443315711809948e-5 * x2 - (1.388731625493765e-3)) * x2 + (4.166664568298827e-2)) * x2 * x2 - 0.5 * x2 + 1.0;
                 break;
             case 2:
+                s = (((1.9515295891e-4 * x2 - 8.3321608736e-3) * x2 + 1.6666654611e-1) * x2 * x - x);
+                break;
+            default:
+                s = (((-2.443315711809948e-5 * x2 + 1.388731625493765e-3) * x2 - 4.166664568298827e-2) * x2 * x2 + 0.5 * x2 - 1.0);
+        }
+        return s;
+    }
+
+    /**
+     * A non-tabular cosine approximation in turns that is typically faster than {@link Math#cos(double)}.
+     * While this is slower than
+     * {@link TrigTools#cosSmootherTurns(double)}, it is usually a little more accurate, and its worst-case results are
+     * significantly more accurate than cosSmootherTurns().
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     * @param turns input in turns, typically between -1 and 1 for greatest precision
+     * @return the cosine of the given angle as a double, between -1 and 1 inclusive
+     */
+    public static double cosTurnsJolt(double turns) {
+        double x = Math.abs(turns);
+        int quadrant = (int)(4.0 * x + 0.5);
+        x = (x - quadrant * 0.25) * PI2_D;
+        double x2 = x * x, s;
+        switch (quadrant & 3) {
+            case 3:
+                s = ((-1.9515295891e-4 * x2 + 8.3321608736e-3) * x2 - 1.6666654611e-1) * x2 * x + x;
+                break;
+            case 0:
+                s = ((2.443315711809948e-5 * x2 - (1.388731625493765e-3)) * x2 + (4.166664568298827e-2)) * x2 * x2 - 0.5 * x2 + 1.0;
+                break;
+            case 1:
                 s = (((1.9515295891e-4 * x2 - 8.3321608736e-3) * x2 + 1.6666654611e-1) * x2 * x - x);
                 break;
             default:
