@@ -2473,7 +2473,7 @@ public final class TrigTools {
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Precise Arctangent and atan2">
     /**
-     * Close approximation of the frequently-used trigonometric method atan2, using radians.
+     * Close approximation of the frequently-used trigonometric method atan2, using radians. Non-tabular.
      * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in radians.
      * It is about 2x times faster than {@link Math#atan2(double, double)} (roughly 4.01 ns instead of roughly 7.965 ns
      * for Math, on Java 23 HotSpot).
@@ -2506,7 +2506,7 @@ public final class TrigTools {
     }
 
     /**
-     * Close approximation of the frequently-used trigonometric method atan2, using radians.
+     * Close approximation of the frequently-used trigonometric method atan2, using radians. Non-tabular.
      * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in radians.
      * It is about 2x times faster than {@link Math#atan2(double, double)} (roughly 3.987 ns instead of roughly 8.523 ns
      * for Math, on Java 23 HotSpot, with both taking float arguments and casting the result to float).
@@ -2595,7 +2595,7 @@ public final class TrigTools {
     }
 
     /**
-     * Close approximation of the frequently-used trigonometric method atan2, using degrees.
+     * Close approximation of the frequently-used trigonometric method atan2, using degrees. Non-tabular.
      * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in degrees.
      * <br>
      * This is a simple conditional scaffold around {@link #atanDegPrecise(double)}, calling it if x is non-zero and
@@ -2626,7 +2626,7 @@ public final class TrigTools {
     }
 
     /**
-     * Close approximation of the frequently-used trigonometric method atan2, using degrees.
+     * Close approximation of the frequently-used trigonometric method atan2, using degrees. Non-tabular.
      * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in degrees.
      * <br>
      * This is a simple conditional scaffold around {@link #atanDegPrecise(float)}, calling it if x is non-zero and
@@ -2658,7 +2658,7 @@ public final class TrigTools {
 
     /**
      * Close approximation of the frequently-used trigonometric method atan2, using degrees, but never returning a
-     * negative result.
+     * negative result. Non-tabular.
      * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in degrees
      * from 0 to 360 inclusive.
      * <br>
@@ -2689,7 +2689,7 @@ public final class TrigTools {
 
     /**
      * Close approximation of the frequently-used trigonometric method atan2, using degrees, but never returning a
-     * negative result.
+     * negative result. Non-tabular.
      * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in degrees
      * from 0 to 360 inclusive.
      * <br>
@@ -2777,11 +2777,11 @@ public final class TrigTools {
 
     /**
      * Close approximation of the frequently-used trigonometric method atan2, using turns, and never returning a
-     * negative result.
+     * negative result. Non-tabular.
      * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in turns
      * from 0.0 to 1.0 inclusive.
      * <br>
-     * This is a simple conditional scaffold around {@link #atanDegPrecise(double)}, calling it if x is non-zero and
+     * This is a simple conditional scaffold around {@link #atanTurnsPrecise(double)}, calling it if x is non-zero and
      * non-NaN, or otherwise returning a value that can be computed more quickly.
      * <br>
      * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
@@ -2811,11 +2811,11 @@ public final class TrigTools {
 
     /**
      * Close approximation of the frequently-used trigonometric method atan2, using turns, and never returning a
-     * negative result.
+     * negative result. Non-tabular.
      * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in turns
      * from 0.0 to 1.0 inclusive.
      * <br>
-     * This is a simple conditional scaffold around {@link #atanDegPrecise(float)}, calling it if x is non-zero and
+     * This is a simple conditional scaffold around {@link #atanTurnsPrecise(float)}, calling it if x is non-zero and
      * non-NaN, or otherwise returning a value that can be computed more quickly.
      * <br>
      * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
@@ -3078,6 +3078,321 @@ public final class TrigTools {
             return Math.sqrt(1.0 - a) * (0.24998925277680104 + a * (-0.033759055260971525 + a * (0.011819005228947238 + a * -0.0029808606756510357)));
         }
         return 0.5 - Math.sqrt(1.0 + a) * (0.24998925277680104 + a * (0.033759055260971525 + a * (0.011819005228947238 + a * 0.0029808606756510357)));
+    }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Precise Arcsine and Arccosine">
+    /**
+     * Returns arcsine in radians; non-tabular, almost as accurate as Math.asin() and may be slightly faster.
+     * This has a maximum error of 2 ULPs in the defined range of -1 to 1.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code -HALF_PI} and {@code HALF_PI} when n is in the defined range
+     */
+    public static float asinPrecise(float n) {
+        float a = Math.min(1f, Math.abs(n)), z, x, r;
+        if(a <= 0.5f){
+            z = a * a;
+            x = a;
+            r = ((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x;
+        } else {
+            z = 0.5f - 0.5f * a;
+            x = (float) Math.sqrt(z);
+            r = TrigTools.HALF_PI - 2f * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        }
+        return Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arcsine in radians; non-tabular, almost as accurate as Math.asin() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code -HALF_PI_D} and {@code HALF_PI_D} when n is in the defined range
+     */
+    public static double asinPrecise(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if(a <= 0.5){
+            z = a * a;
+            x = a;
+            r = ((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x;
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = HALF_PI_D - 2.0 * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arccosine in radians; non-tabular, almost as accurate as Math.acos() and may be slightly faster.
+     * This has a maximum error of 247 ULPs in the defined range of -1 to 1.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code 0} and {@code PI} when n is in the defined range
+     */
+    public static float acosPrecise(float n) {
+        float a = Math.min(1f, Math.abs(n)), z, x, r;
+        if(a <= 0.5f){
+            z = a * a;
+            x = a;
+            r = ((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x;
+        } else {
+            z = 0.5f - 0.5f * a;
+            x = (float) Math.sqrt(z);
+            r = TrigTools.HALF_PI - 2f * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        }
+        return TrigTools.HALF_PI - Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arccosine in radians; non-tabular, almost as accurate as Math.acos() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code 0.0} and {@code PI_D} when n is in the defined range
+     */
+    public static double acosPrecise(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if(a <= 0.5){
+            z = a * a;
+            x = a;
+            r = ((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x;
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = HALF_PI_D - 2.0 * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return HALF_PI_D - Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arcsine in degrees; non-tabular, almost as accurate as Math.asin() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code -90f} and {@code 90f} when n is in the defined range
+     */
+    public static float asinDegPrecise(float n) {
+        float a = Math.min(1f, Math.abs(n)), z, x, r;
+        if(a <= 0.5f){
+            z = a * a;
+            x = a;
+            r = (90f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        } else {
+            z = 0.5f - 0.5f * a;
+            x = (float) Math.sqrt(z);
+            r = 90f - (180f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        }
+        return Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arcsine in degrees; non-tabular, almost as accurate as Math.asin() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code -90.0} and {@code 90.0} when n is in the defined range
+     */
+    public static double asinDegPrecise(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if(a <= 0.5){
+            z = a * a;
+            x = a;
+            r = (90.0 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = 90.0 - (180.0 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arccosine in degrees; non-tabular, almost as accurate as Math.acos() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code 0f} and {@code 180f} when n is in the defined range
+     */
+    public static float acosDegPrecise(float n) {
+        float a = Math.min(1f, Math.abs(n)), z, x, r;
+        if(a <= 0.5f){
+            z = a * a;
+            x = a;
+            r = (90f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        } else {
+            z = 0.5f - 0.5f * a;
+            x = (float) Math.sqrt(z);
+            r = 90f - (180f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        }
+        return 90f - Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arccosine in degrees; non-tabular, almost as accurate as Math.acos() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code 0.0} and {@code 180.0} when n is in the defined range
+     */
+    public static double acosDegPrecise(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if(a <= 0.5){
+            z = a * a;
+            x = a;
+            r = (90.0 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = 90.0 - (180.0 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return 90.0 - Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arcsine in turns; non-tabular, almost as accurate as Math.asin() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code -0.25f} and {@code 0.25f} when n is in the defined range
+     */
+    public static float asinTurnsPrecise(float n) {
+        float a = Math.min(1f, Math.abs(n)), z, x, r;
+        if(a <= 0.5f){
+            z = a * a;
+            x = a;
+            r = (0.25f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        } else {
+            z = 0.5f - 0.5f * a;
+            x = (float) Math.sqrt(z);
+            r = 0.25f - (0.5f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        }
+        return Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arcsine in turns; non-tabular, almost as accurate as Math.asin() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.asin does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n asin is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code -0.25} and {@code 0.25} when n is in the defined range
+     */
+    public static double asinTurnsPrecise(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if(a <= 0.5){
+            z = a * a;
+            x = a;
+            r = (0.25 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = 0.25 - (0.5 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arccosine in turns; non-tabular, almost as accurate as Math.acos() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1f and 1f, inclusive
+     * @return between {@code 0f} and {@code 0.5f} when n is in the defined range
+     */
+    public static float acosTurnsPrecise(float n) {
+        float a = Math.min(1f, Math.abs(n)), z, x, r;
+        if(a <= 0.5f){
+            z = a * a;
+            x = a;
+            r = (0.25f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        } else {
+            z = 0.5f - 0.5f * a;
+            x = (float) Math.sqrt(z);
+            r = 0.25f - (0.5f / HALF_PI) * (((((4.2163199048e-2f * z + 2.4181311049e-2f) * z + 4.5470025998e-2f) * z + 7.4953002686e-2f) * z + 1.6666752422e-1f) * z * x + x);
+        }
+        return 0.25f - Math.copySign(r, n);
+    }
+
+    /**
+     * Returns arccosine in turns; non-tabular, almost as accurate as Math.acos() and may be slightly faster.
+     * This implementation does not return NaN if given an out-of-range input (Math.acos does return NaN), unless the
+     * input is NaN.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n acos is defined only when n is between -1.0 and 1.0, inclusive
+     * @return between {@code 0.0} and {@code 0.5} when n is in the defined range
+     */
+    public static double acosTurnsPrecise(double n) {
+        double a = Math.min(1.0, Math.abs(n)), z, x, r;
+        if (a <= 0.5) {
+            z = a * a;
+            x = a;
+            r = (0.25 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        } else {
+            z = 0.5 - 0.5 * a;
+            x = Math.sqrt(z);
+            r = 0.25 - (0.5 / HALF_PI_D) * (((((4.2163199048e-2 * z + 2.4181311049e-2) * z + 4.5470025998e-2) * z + 7.4953002686e-2) * z + 1.6666752422e-1) * z * x + x);
+        }
+        return 0.25 - Math.copySign(r, n);
     }
 //</editor-fold>
 }
