@@ -2471,6 +2471,435 @@ public final class TrigTools {
         return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 //</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Precise Arctangent and atan2">
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using radians.
+     * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in radians.
+     * It is about 2x times faster than {@link Math#atan2(double, double)} (roughly 4.01 ns instead of roughly 7.965 ns
+     * for Math, on Java 23 HotSpot).
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanPrecise(double)}, calling it if x is non-zero and non-NaN,
+     * or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in radians as a double; ranges from {@code -PI} to {@code PI}
+     */
+    public static double atan2Precise(final double y, double x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0)
+            return atanPrecise(n);
+        else if (x < 0) {
+            if (y >= 0) return (atanPrecise(n) + Math.PI);
+            return (atanPrecise(n) - Math.PI);
+        } else if (y > 0)
+            return x + HALF_PI_D;
+        else if (y < 0) return x - HALF_PI_D;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using radians.
+     * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in radians.
+     * It is about 2x times faster than {@link Math#atan2(double, double)} (roughly 3.987 ns instead of roughly 8.523 ns
+     * for Math, on Java 23 HotSpot, with both taking float arguments and casting the result to float).
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanPrecise(float)}, calling it if x is non-zero and non-NaN,
+     * or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in radians as a float; ranges from {@code -PI} to {@code PI}
+     */
+    public static float atan2Precise(final float y, float x) {
+        float n = y / x;
+        if (n != n)
+            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if (x > 0)
+            return atanPrecise(n);
+        else if (x < 0) {
+            if (y >= 0) return atanPrecise(n) + TrigTools.PI;
+            return atanPrecise(n) - TrigTools.PI;
+        } else if (y > 0)
+            return x + HALF_PI;
+        else if (y < 0) return x - HALF_PI;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * A non-tabular approximation for arctangent in radians, accurate to at worst 2 ULPs for the -50 to 50 range.
+     * Takes and returns a float.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n may be any float
+     * @return the arctangent of n in radians, from negative {@link TrigTools#HALF_PI} to {@link TrigTools#HALF_PI}
+     */
+    public static float atanPrecise(float n) {
+        float m = Math.abs(n), x, y;
+        if (m > 2.414213562373095f) {
+            x = -1f / m;
+            y = HALF_PI;
+        } else if (m > 0.4142135623730950f) {
+            x = (m - 1f) / (m + 1f);
+            y = QUARTER_PI;
+        } else {
+            x = m;
+            y = 0f;
+        }
+        float z = x * x;
+        return Math.copySign(y + (((8.05374449538e-2f * z - 1.38776856032e-1f) * z + 1.99777106478e-1f)
+                * z - 3.33329491539e-1f) * z * x + x, n);
+    }
+
+    /**
+     * A non-tabular approximation for arctangent in radians.
+     * Takes and returns a double.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n may be any float
+     * @return the arctangent of n in radians, from negative {@link TrigTools#HALF_PI_D} to {@link TrigTools#HALF_PI_D}
+     */
+    public static double atanPrecise(double n) {
+        double m = Math.abs(n), x, y;
+        if (m > 2.414213562373095) {
+            x = -1. / m;
+            y = HALF_PI_D;
+        } else if (m > 0.4142135623730950) {
+            x = (m - 1.) / (m + 1.);
+            y = QUARTER_PI_D;
+        } else {
+            x = m;
+            y = 0.;
+        }
+        double z = x * x;
+        return Math.copySign(y + (((8.05374449538e-2 * z - 1.38776856032e-1) * z + 1.99777106478e-1)
+                * z - 3.33329491539e-1) * z * x + x, n);
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using degrees.
+     * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in degrees.
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanDegPrecise(double)}, calling it if x is non-zero and
+     * non-NaN, or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a double; ranges from {@code -180} to {@code 180}
+     */
+    public static double atan2DegPrecise(final double y, double x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0)
+            return atanDegPrecise(n);
+        else if (x < 0) {
+            if (y >= 0) return (atanDegPrecise(n) + 180.0);
+            return (atanDegPrecise(n) - 180.0);
+        } else if (y > 0)
+            return x + 90.0;
+        else if (y < 0) return x - 90.0;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using degrees.
+     * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in degrees.
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanDegPrecise(float)}, calling it if x is non-zero and
+     * non-NaN, or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a float; ranges from {@code -180} to {@code 180}
+     */
+    public static float atan2DegPrecise(final float y, float x) {
+        float n = y / x;
+        if (n != n)
+            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if (x > 0)
+            return atanDegPrecise(n);
+        else if (x < 0) {
+            if (y >= 0) return atanDegPrecise(n) + 180f;
+            return atanDegPrecise(n) - 180f;
+        } else if (y > 0)
+            return x + 90f;
+        else if (y < 0) return x - 90f;
+        return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using degrees, but never returning a
+     * negative result.
+     * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in degrees
+     * from 0 to 360 inclusive.
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanDegPrecise(double)}, calling it if x is non-zero and
+     * non-NaN, or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a non-negative double; ranges from {@code 0} to {@code 360}
+     */
+    public static double atan2Deg360Precise(final double y, double x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0) return atanDegPrecise(n);
+            else return (atanDegPrecise(n) + 360.0);
+        } else if (x < 0) return (atanDegPrecise(n) + 180.0);
+        else if (y > 0) return x + 90.0;
+        else if (y < 0) return x + 270.0;
+        return x + y + 0.0; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using degrees, but never returning a
+     * negative result.
+     * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in degrees
+     * from 0 to 360 inclusive.
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanDegPrecise(float)}, calling it if x is non-zero and
+     * non-NaN, or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in degrees as a non-negative float; ranges from {@code 0} to {@code 360}
+     */
+    public static float atan2Deg360Precise(final float y, float x) {
+        float n = y / x;
+        if (n != n)
+            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0) return atanDegPrecise(n);
+            else return atanDegPrecise(n) + 360f;
+        } else if (x < 0) return atanDegPrecise(n) + 180f;
+        else if (y > 0) return x + 90f;
+        else if (y < 0) return x + 270f;
+        return x + y + 0f; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * A non-tabular approximation for arctangent in degrees, accurate to at worst 129 ULPs for the -50 to 50 range.
+     * Takes and returns a float.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n may be any float
+     * @return the arctangent of n in degrees, from {@code -90} to {@code 90}
+     */
+    public static float atanDegPrecise(float n) {
+        float m = Math.abs(n), x, y;
+
+        if(m > 2.414213562373095f){
+            x = -1f / m;
+            y = 90f;
+        } else if(m > 0.4142135623730950f){
+            x = (m - 1f) / (m + 1f);
+            y = 45f;
+        } else {
+            x = m;
+            y = 0f;
+        }
+        float z = x * x;
+        return Math.copySign(y + ((((8.05374449538e-2f * z - 1.38776856032e-1f) * z + 1.99777106478e-1f)
+                * z - 3.33329491539e-1f) * z * x + x) * 57.29577951308232f, n);
+    }
+
+    /**
+     * A non-tabular approximation for arctangent in degrees.
+     * Takes and returns a double.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n may be any double
+     * @return the arctangent of n in degrees, from {@code -90} to {@code 90}
+     */
+    public static double atanDegPrecise(double n) {
+        double m = Math.abs(n), x, y;
+        if(m > 2.414213562373095){
+            x = -1. / m;
+            y = 90.0;
+        } else if(m > 0.4142135623730950){
+            x = (m - 1.) / (m + 1.);
+            y = 45.0;
+        } else {
+            x = m;
+            y = 0.;
+        }
+        double z = x * x;
+        return Math.copySign(y + ((((8.05374449538e-2 * z - 1.38776856032e-1) * z + 1.99777106478e-1)
+                * z - 3.33329491539e-1) * z * x + x) * 57.29577951308232, n);
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using turns, and never returning a
+     * negative result.
+     * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in turns
+     * from 0.0 to 1.0 inclusive.
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanDegPrecise(double)}, calling it if x is non-zero and
+     * non-NaN, or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in turns as a non-negative double; ranges from {@code 0.0} to {@code 1.0}
+     */
+    public static double atan2TurnsPrecise(final double y, double x) {
+        double n = y / x;
+        if (n != n)
+            n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0)
+                return atanTurnsPrecise(n);
+            else
+                return atanTurnsPrecise(n) + 1.0;
+        } else if (x < 0) {
+            return atanTurnsPrecise(n) + 0.5;
+        } else if (y > 0) return x + 0.25;
+        else if (y < 0) return x + 0.75;
+        return x + y + 0.0; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, using turns, and never returning a
+     * negative result.
+     * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in turns
+     * from 0.0 to 1.0 inclusive.
+     * <br>
+     * This is a simple conditional scaffold around {@link #atanDegPrecise(float)}, calling it if x is non-zero and
+     * non-NaN, or otherwise returning a value that can be computed more quickly.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in turns as a non-negative float; ranges from {@code 0f} to {@code 1f}
+     */
+    public static float atan2TurnsPrecise(final float y, float x) {
+        float n = y / x;
+        if (n != n)
+            n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if (n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if (x > 0) {
+            if (y >= 0)
+                return atanTurnsPrecise(n);
+            else
+                return atanTurnsPrecise(n) + 1.0f;
+        } else if (x < 0) {
+            return atanTurnsPrecise(n) + 0.5f;
+        } else if (y > 0) return x + 0.25f;
+        else if (y < 0) return x + 0.75f;
+        return x + y + 0f; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * A non-tabular approximation for arctangent in turns, accurate to at worst 2 ULPs for the -50 to 50 range.
+     * Takes and returns a float.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n may be any float
+     * @return the arctangent of n in turns, from {@code -0.25} to {@code 0.25}
+     */
+    public static float atanTurnsPrecise(float n) {
+        float m = Math.abs(n), x, y;
+
+        if(m > 2.414213562373095f){
+            x = -1f / m;
+            y = 0.25f;
+        } else if(m > 0.4142135623730950f){
+            x = (m - 1f) / (m + 1f);
+            y = 0.125f;
+        } else {
+            x = m;
+            y = 0f;
+        }
+        float z = x * x;
+        return Math.copySign(y + ((((8.05374449538e-2f * z - 1.38776856032e-1f) * z + 1.99777106478e-1f)
+                * z - 3.33329491539e-1f) * z * x + x) * 0.15915494309189535f, n);
+    }
+
+    /**
+     * A non-tabular approximation for arctangent in turns.
+     * Takes and returns a double.
+     * <br>
+     * Based on <a href="https://jrouwe.github.io/JoltPhysics/_vec4_8inl_source.html">Jolt's trigonometry code</a>.
+     * Jolt used an original implementation by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
+     * Jolt is MIT-licensed.
+     *
+     * @param n may be any double
+     * @return the arctangent of n in turns, from {@code -0.25} to {@code 0.25}
+     */
+    public static double atanTurnsPrecise(double n) {
+        double m = Math.abs(n), x, y;
+        if(m > 2.414213562373095){
+            x = -1. / m;
+            y = 0.25;
+        } else if(m > 0.4142135623730950){
+            x = (m - 1.) / (m + 1.);
+            y = 0.125;
+        } else {
+            x = m;
+            y = 0.;
+        }
+        double z = x * x;
+        return Math.copySign(y + ((((8.05374449538e-2 * z - 1.38776856032e-1) * z + 1.99777106478e-1)
+                * z - 3.33329491539e-1) * z * x + x) * 0.15915494309189535, n);
+    }
+//</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Arcsine and Arccosine">
 
     /**
