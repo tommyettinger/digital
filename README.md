@@ -96,19 +96,31 @@ class offers, but allowing access to the lookup tables permits
 a few novel features (see its docs). It supports float and
 double arguments/returns for all functions. It also provides
 "smooth" sin and cos approximations that aren't table-based,
-and "smoother" sin/cos/tan versions that interpolate between
-entries in the lookup table for very high precision. It should
-be pointed out that very few libraries support trigonometric
-functions that take angles in turns, but turns can be very
-useful for a variety of cases. For example, if you want to
-store a hue (which is essentially an angle) into a limited
-format such as one channel of a color to be sent to the GPU,
-storing the hue as an angle in turns keeps it in the 0.0
-to 1.0 range, but using radians or degrees would not. There's
-also a few extra methods, such as `atan2Deg360()`, which acts
-like the degree version of atan2, but always returns an angle
-between 0 (inclusive) and 360 (exclusive), since negative
-angles are less intuitive and sometimes not supported.
+"smoother" sin/cos/tan versions that interpolate between
+entries in the lookup table for very high precision, and
+"precise" versions of all methods that avoid lookup tables and
+aim for near-maximum accuracy at the cost of some speed. Note
+that very few libraries support trigonometric functions that
+take angles in turns, but turns can be very useful for a
+variety of cases. For example, if you want to store a hue
+(which is essentially an angle) into a limited format such as
+one channel of a color to be sent to the GPU, storing the hue
+as an angle in turns keeps it in the 0.0 to 1.0 range, but
+using radians or degrees would not. There's also a few extra
+methods, such as `atan2Deg360()`, which acts like the degree
+version of atan2, but always returns an angle between 0
+(inclusive) and 360 (exclusive), since negative angles are
+less intuitive and sometimes not supported. For users
+concerned about non-deterministic behavior of floating-point
+"special functions," TrigTools avoids calling `Math.sin()` and
+`Math.cos()` entirely, and any lookup tables it builds use the
+"precise" approximations to avoid the possibility of different
+results on different hardware, JVM version, or the like. This
+guarantee can't apply to transpiled code like GWT produces,
+because at least in the case of GWT, there isn't an available
+32-bit `float` type, and methods that should return a `float`
+instead return some form of approximation to a `float` that
+JavaScript permits.
 
 MathTools offers a wild grab bag of math functions and
 constants, from simple lerp, floor, ceil, and clamp methods to
@@ -323,14 +335,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.6.2"
+api "com.github.tommyettinger:digital:0.7.0"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.6.2:sources"
+api "com.github.tommyettinger:digital:0.7.0:sources"
 ```
 
 GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
@@ -363,6 +375,7 @@ This also has instructions for Maven and other build tools.
 [Apache Commons Lang](https://github.com/apache/commons-lang),
 [fastapprox](https://code.google.com/archive/p/fastapprox/),
 [root-cellar](https://github.com/EvanBalster/root-cellar/),
+[Jolt Physics](https://github.com/jrouwe/JoltPhysics),
 and [Ryu](https://github.com/ulfjack/ryu). More code
 is not from a particular repository (for example, some is from
 Wikipedia); see each file for specific author credits. The Ryu
