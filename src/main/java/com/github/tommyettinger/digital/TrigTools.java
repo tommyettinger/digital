@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 See AUTHORS file.
+ * Copyright (c) 2022-2025 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,19 @@ package com.github.tommyettinger.digital;
  * difference here is that all methods have variants that treat angles as radians, as degrees, and as turns. That is,
  * while a full rotation around a circle is {@code 2.0 * PI} radians, it is 360.0 degrees, and it is 1.0 turns.
  * <br>
- * This uses one or two fairly-sizeable lookup tables for some methods (each takes just over 64KB); one stores 16385
- * results of sin() and the other 16385 results of cos(). Yes, I know they are the same
- * data, just offset from each other; some of the methods here run so briefly that getting the index with offset nearly
- * doubled the time taken by the method. Here, {@link #sin(float)}, {@link #cos(float)}, {@link #sinSmoother(float)},
- * {@link #cosSmoother(float)}, and {@link #tanSmoother(float)} use the LUTs. Other methods here use techniques
- * ranging from basic Taylor series to Padé approximants. The lookup-table-based sin() and cos() can be extraordinarily
- * fast if the 64KB table can stay in a processor cache, while the "smooth" approximations may have comparable quality
- * but perform less quickly compared to an in-cache lookup table.
+ * This contains four fairly-sizeable lookup tables for some methods (in total RAM usage, just over 384KB); two store
+ * 16385 results of sin() (one as float, one as double) and the other two store 16385 results of cos() (as float and as
+ * double). Yes, I know they are the same data, just offset from each other or as a different type; some of the methods
+ * here run so briefly that getting the index with offset nearly doubled the time taken by the method. Here,
+ * {@link #sin(float)}, {@link #cos(float)}, {@link #sinSmoother(float)}, {@link #cosSmoother(float)}, and
+ * {@link #tanSmoother(float)} use the LUTs. Other methods here use techniques ranging from basic Taylor series to Padé
+ * approximants. The lookup-table-based sin() and cos() can be extraordinarily fast if the 64KB table can stay in a
+ * processor cache, while the "smooth" approximations may have decent quality but perform less quickly compared to an
+ * in-cache lookup table. Also available now are "precise" versions of all methods here, from {@link #sinPrecise(float)}
+ * to {@link #atan2Deg360Precise(double, double)}. The "precise" versions all avoid a lookup table entirely and tend to
+ * be the most precise approximations here, while still outperforming {@link Math} versions of their function. In a few
+ * cases, the "precise" versions are also the fastest; this occurs most often for tan or atan2 variants, or situations
+ * where a large lookup table is not possible for the processor to cache.
  * <br>
  * Relative to MathUtils in libGDX, the main new functionalities are the variants that take or
  * return measurements in turns, the now-available {@link #SIN_TABLE}, {@link #COS_TABLE}, {@link #SIN_TABLE_D}, and
@@ -41,29 +46,60 @@ package com.github.tommyettinger.digital;
  * what it returns for smoothly increasing inputs, it may be unsuitable for some usage, such as calculating tan(), or
  * some statistical code. TrigTools provides sinSmooth(), cosSmooth(), and degree/turn variants of those for when the
  * precision should be moderately high, but it is most important to have a smoothly-curving graph of returns. A
- * different smooth approximation is used for tan(). In addition to the "xyzSmooth()" methods, there are also "smoother"
- * variants: {@link #sinSmoother(float)}, {@link #cosSmoother(float)}, {@link #tanSmoother(float)}, degree/turn variants
- * on those, and double variants on all of these. {@link #sinSmoother(float)} and {@link #cosSmoother(float)} get the
- * table indices for rounding up from the given angle and for rounding down, and interpolate between the two in
- * {@link #COS_TABLE} (or {@link #COS_TABLE_D}). Unlike {@link #sinSmoother(float)} and friends,
- * {@link #tanSmoother(float)} uses both {@link #SIN_TABLE} and {@link #COS_TABLE}, does interpolation like what
- * {@link #sinSmoother(float)} does for both sine and cosine, and divides to get the tangent.
- * The "smoother" methods are all very precise compared to the others here, and aren't necessarily slower than the
- * "smooth" methods -- see below.
+ * different smooth approximation is used for tan(), though it is not very precise or fast compared to
+ * {@link #tanSmoother(float)}, and is much less precise than the also-non-tabular {@link #tanPrecise(float)}. In
+ * addition to the "xyzSmooth()" methods, there are also "smoother" variants: {@link #sinSmoother(float)},
+ * {@link #cosSmoother(float)}, {@link #tanSmoother(float)}, degree/turn variants on those, and double variants on all
+ * of these. {@link #sinSmoother(float)} and {@link #cosSmoother(float)} get the table indices for rounding up from the
+ * given angle and for rounding down, and interpolate between the two in {@link #COS_TABLE} (or {@link #COS_TABLE_D}).
+ * Unlike {@link #sinSmoother(float)} and friends, {@link #tanSmoother(float)} uses both {@link #SIN_TABLE} and
+ * {@link #COS_TABLE}, does interpolation like what {@link #sinSmoother(float)} does for both sine and cosine, and
+ * divides to get the tangent. The "smoother" methods are all quite precise compared to the others here, and aren't
+ * necessarily slower than the "smooth" methods -- see below. Nothing here beats the "precise" methods on accuracy; they
+ * often have single-digit ULP differences <em>in their worst cases</em> from what Math returns. These methods tend to
+ * be slower than other approximations here but are still always faster than Math's methods (on at least Java 23).
  * <br>
  * For sine and cosine, {@link #sin(float)} and {@link #cos(float)} are extremely fast in benchmarks, but benchmarks
  * typically will have the {@link #COS_TABLE} in cache; if that table is not in cache, then they probably don't perform
- * as well. You can get improved accuracy at the cost of reduced speed ("reduced" assumes the table is in-cache) by
- * using {@link #sinSmooth(float)} and {@link #cosSmooth(float)}; these should perform the same regardless of whether
- * the table is in cache, so they may even have an edge over sin() and cos() if the table isn't. Accuracy improves even
- * further if you use {@link #sinSmoother(float)} and {@link #cosSmoother(float)}, but these are definitely slower than
- * sin() and cos(), since they do more work. Benchmarks gave conflicting information regarding whether sinSmooth() or
- * sinSmoother() is faster; JMH benchmarks showed sinSmooth() as always being faster, while BumbleBench benchmarks
- * showed sinSmoother() as always being faster. In both cases, the speed difference was small.
+ * as well. You can get somewhat improved accuracy at the cost of reduced speed ("reduced" assumes the table is
+ * in-cache) by using {@link #sinSmooth(float)} and {@link #cosSmooth(float)}; these should perform the same regardless
+ * of whether the table is in cache, so they may even have an edge over sin() and cos() if the table isn't.
+ * Accuracy improves even further if you use {@link #sinSmoother(float)} and {@link #cosSmoother(float)}, but these are
+ * definitely slower than sin() and cos(), since they do more work. Benchmarks gave conflicting information regarding
+ * whether sinSmooth() or sinSmoother() is faster; JMH benchmarks showed sinSmooth() as always being faster, while
+ * BumbleBench benchmarks showed sinSmoother() as always being faster. In both cases, the speed difference was small.
+ * Like the "smooth" sin and cos, {@link #sinPrecise(float)} and {@link #cosPrecise(float)} are non-tabular, but are
+ * more precise instead of less precise than {@link #sinSmoother(float)} and {@link #cosSmoother(float)}. They are
+ * likely to perform slightly worse than the "smooth" variants but still better than Math's versions.
  * <br>
  * For calculating tangent, {@link #tan(float)} is somewhat faster on Java 8 (using HotSpot) and some OpenJ9 versions,
  * but {@link #tanSmoother(float)} is faster on Java 11 and up, significantly so on Java 16 and up. However, tan() does
- * not use {@link #SIN_TABLE}, while tanSmoother() does, and this may be relevant if the table is not in-cache.
+ * not use {@link #SIN_TABLE}, while tanSmoother() does, and this may be relevant if the table is not in-cache. The
+ * "precise" version, {@link #tanPrecise(float)}, is non-tabular like {@link #tan(float)}, and in cases where the lookup
+ * tables are probably in processor cache, tanPrecise() takes about twice the time as tanSmoother() but has half the
+ * mean and worst-case absolute error (which is good) and has better mean relative error as well.
+ * <br>
+ * There are inverse trigonometric methods here, too. {@link #asin(float)} and {@link #acos(float)} return results in
+ * radians, and are accompanied by {@link #asinDeg(float)} for results in degrees, {@link #asinTurns(float)} for results
+ * in turns, and acos versions of those as well. Like everything else here, there are "precise" variants on these, but
+ * {@link #acosPrecise(float)} isn't quite as accurate as the other "precise" methods. All the "precise" asin and acos
+ * methods still have substantially better absolute and relative error than the non-precise versions. We can't forget
+ * about {@link #atan(float)}, of course, nor {@link #atan2(float, float)}! There are some more options for these
+ * arctangent-related methods. {@link #atanUnchecked(double)} is used primarily by {@link #atan2(float, float)} and can
+ * also be used when you are certain your inputs will be defined for the arctangent function (that is, not an odd
+ * multiple of {@code 0.5 * Math.PI} for radians, or 90 degrees, or 0.25 turns). It is similar to
+ * {@link #atanPrecise(float)} in that both don't return something meaningful when given an input that is out of the
+ * domain for arctangent, but {@link #atan(float)} at least tries to give a better output, with dubious results.
+ * {@link #atan2Deg360(float, float)} and its "precise" counterpart act like atan2 with results in degrees, but return
+ * outputs in the range {@code [0, 360)} rather than the range of  {@link #atan2Deg(float, float)}, which is
+ * {@code (-180,180]}. {@link #atan2Turns(float, float)} and its "precise" variant return results in the {@code [0, 1)}
+ * range of turns, which can be often useful for angular values like the hue of a color when they must be in the 0-1
+ * range, such as for passing to shaders. In this case, {@link #atan2Precise(float, float)} can be faster than the
+ * "non-precise" variant, but this depends quite a bit on your circumstances. All atan2() code here avoids lookup
+ * tables, but the "precise" versions also avoid casting between float and double. This speed advantage is countered by
+ * the branching the "precise" version does; if branch prediction succeeds for a long span of calls and then suddenly
+ * starts mispredicting often, then HotSpot may deoptimize parts of atan2Precise(), making it much slower. This is also
+ * possible for atan2(), but is harder to cause there.
  * <br>
  * In the common case where you have an angle and want to get both the sin() and cos() of that angle, you can use the
  * {@link #radiansToTableIndex(float)}, {@link #degreesToTableIndex(float)}, and/or {@link #turnsToTableIndex(float)}
@@ -87,7 +123,13 @@ package com.github.tommyettinger.digital;
  * "Smoother" and the standard approximations is that the "Smoother" ones use both the floor and the ceiling of a float
  * to get indices, while the standard approximations essentially round to the nearest index. The current technique of
  * looking up in a cosine table so that we can use the absolute value of an angle (since cos(x) is the same as cos(-x))
- * is something I hadn't seen before, but I'm sure is not novel.
+ * is something I hadn't seen before, but I'm sure is not novel. The "precise" methods are all drawn from
+ * <a href="https://github.com/jrouwe/JoltPhysics">Jolt Physics</a> and its Vector4 implementation, which is where that
+ * library's trigonometry code ends up calling. Jolt uses SIMD optimization for its trigonometry and other math code,
+ * which unfortunately has no cross-platform counterpart in Java at the time of writing (June 2025); the "precise"
+ * methods here are mostly ports of the C++ methods with the SIMD-specific code replaced with scalar code. Jolt was
+ * written by Jorrit Rouwe and is MIT-licensed; the code based on Jolt here was in turn based partly on code for the
+ * Cephes library by <a href="https://www.moshier.net/">Stephen L. Moshier</a>.
  */
 @SuppressWarnings({"ExpressionComparedToItself", "PointlessArithmeticExpression"})
 public final class TrigTools {
@@ -1431,6 +1473,7 @@ public final class TrigTools {
     public static float sinPrecise(float radians) {
         float x = Math.abs(radians);
         int quadrant = (int)(0.6366197723675814f * x + 0.5f);
+        // Cody-Waite argument reduction, https://stackoverflow.com/questions/42455143/sine-cosine-modular-extended-precision-arithmetic
         x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
         float x2 = x * x, s;
         switch ((quadrant ^ (BitConversion.floatToIntBits(radians) >>> 30 & 2)) & 3) {
@@ -1464,6 +1507,7 @@ public final class TrigTools {
     public static float cosPrecise(float radians) {
         float x = Math.abs(radians);
         int quadrant = (int)(0.6366197723675814f * x + 0.5f);
+        // Cody-Waite argument reduction, https://stackoverflow.com/questions/42455143/sine-cosine-modular-extended-precision-arithmetic
         x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
         float x2 = x * x, s;
         switch (quadrant & 3) {
@@ -1632,6 +1676,7 @@ public final class TrigTools {
     public static float tanPrecise(float radians) {
         float x = Math.abs(radians);
         int quadrant = (int)(0.6366197723675814f * x + 0.5f);
+        // Cody-Waite argument reduction, https://stackoverflow.com/questions/42455143/sine-cosine-modular-extended-precision-arithmetic
         x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
         float x2 = x * x;
         float p = (((((9.38540185543e-3f * x2 + (3.11992232697e-3f)) * x2 + (2.44301354525e-2f)) * x2
@@ -1709,6 +1754,7 @@ public final class TrigTools {
     public static double sinPrecise(double radians) {
         double x = Math.abs(radians);
         int quadrant = (int)(0.6366197723675814 * x + 0.5);
+        // Cody-Waite argument reduction, https://stackoverflow.com/questions/42455143/sine-cosine-modular-extended-precision-arithmetic
         x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * 7.549789948768648e-8;
         double x2 = x * x, s;
         switch ((quadrant ^ (BitConversion.doubleToHighIntBits(radians) >>> 30 & 2)) & 3) {
@@ -1742,6 +1788,7 @@ public final class TrigTools {
     public static double cosPrecise(double radians) {
         double x = Math.abs(radians);
         int quadrant = (int)(0.6366197723675814 * x + 0.5);
+        // Cody-Waite argument reduction, https://stackoverflow.com/questions/42455143/sine-cosine-modular-extended-precision-arithmetic
         x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * 7.549789948768648e-8;
         double x2 = x * x, s;
         switch (quadrant & 3) {
@@ -1910,6 +1957,7 @@ public final class TrigTools {
     public static double tanPrecise(double radians) {
         double x = Math.abs(radians);
         int quadrant = (int)(0.6366197723675814 * x + 0.5);
+        // Cody-Waite argument reduction, https://stackoverflow.com/questions/42455143/sine-cosine-modular-extended-precision-arithmetic
         x = ((x - quadrant * 1.5703125) - quadrant * 0.0004837512969970703125) - quadrant * 7.549789948768648e-8;
         double x2 = x * x;
         double p = (((((9.38540185543e-3 * x2 + (3.11992232697e-3)) * x2 + (2.44301354525e-2)) * x2
