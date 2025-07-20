@@ -4701,6 +4701,98 @@ public class Hasher {
     }
 
     /**
+     * A hashing function that is likely to outperform {@link #hash64(CharSequence)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays. This overload uses the more common
+     * String type, rather than CharSequence, to better support hashing arrays of String in other methods.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
+     * @param data input array
+     * @return the 64-bit hash of data
+     */
+    public long hashBulk64(final String data) {
+        if (data == null) return 0;
+        return hashBulk64(data, 0, data.length());
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash64(CharSequence, int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays. This overload uses the more common
+     * String type, rather than CharSequence, to better support hashing arrays of String in other methods.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 64-bit hash of data
+     */
+    public long hashBulk64(final String data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length())
+            return 0;
+        int len = Math.min(length, data.length() - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            len -= 8;
+            h *= C;
+            h += mixStreamBulk(data.charAt(i  ), data.charAt(i+1), data.charAt(i+2), data.charAt(i+3));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data.charAt(i+4), data.charAt(i+5), data.charAt(i+6), data.charAt(i+7));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data.charAt(i++));
+        }
+        return mix(h);
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(CharSequence)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays. This overload uses the more common
+     * String type, rather than CharSequence, to better support hashing arrays of String in other methods.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
+     * @param data input array
+     * @return the 32-bit hash of data
+     */
+    public int hashBulk(final String data) {
+        if (data == null) return 0;
+        return hashBulk(data, 0, data.length());
+    }
+
+    /**
+     * A hashing function that is likely to outperform {@link #hash(CharSequence, int, int)} on much longer input arrays
+     * (length 5000 and up). It is probably a little slower on smaller input arrays. This overload uses the more common
+     * String type, rather than CharSequence, to better support hashing arrays of String in other methods.
+     * <br>
+     * The 'hashBulk' methods pass more tests for statistical quality than the 'non-bulk' methods here.
+     * @param data input array
+     * @param start starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public int hashBulk(final String data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length())
+            return 0;
+        int len = Math.min(length, data.length() - start);
+        long h = len ^ forward(seed);
+        int i = start;
+        while(len >= 8){
+            len -= 8;
+            h *= C;
+            h += mixStreamBulk(data.charAt(i  ), data.charAt(i+1), data.charAt(i+2), data.charAt(i+3));
+            h = (h << 37 | h >>> 27);
+            h += mixStreamBulk(data.charAt(i+4), data.charAt(i+5), data.charAt(i+6), data.charAt(i+7));
+            i += 8;
+        }
+        while(len >= 1){
+            len--;
+            h = mixStream(h, data.charAt(i++));
+        }
+        return (int)mix(h);
+    }
+
+    /**
      * A hashing function that is likely to outperform {@link #hash64(Object[])} on much longer input arrays
      * (length 5000 and up). It is probably a little slower on smaller input arrays.
      * <br>
