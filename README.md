@@ -240,9 +240,9 @@ a `java.util.Random` object, but that can't produce as many
 possible shuffles of mid-size arrays, and is slower, both of which
 AlternateRandom solves to some extent. If you don't use juniper,
 then AlternateRandom is a pretty good replacement for `Random`;
-if you do use juniper, then its `AceRandom` or `PasarRandom`
-generators are similar to or the same as AlternateRandom's
-algorithm, and offer many more features.
+if you do use juniper, then its `AceRandom`
+generator is similar to or the same as AlternateRandom's
+algorithm, and offers many more features.
 
 ShapeTools provides some predefined mathematical constants for
 the vertices and faces of 3D polyhedra (currently, just the 5

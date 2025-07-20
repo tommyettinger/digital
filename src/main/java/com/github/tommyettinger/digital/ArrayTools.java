@@ -124,8 +124,13 @@ public final class ArrayTools {
      * it to shuffle(). You could assign null to this, but it's a very bad idea and will probably result in a crash; a
      * better idea is to assign a subclass of Random with a large state size, such as a RandomXS128 from libGDX or any
      * generator from juniper. The default AlternateRandom has quite a large state already (320 bits), and so is likely
-     * to be better at shuffling than a RandomXS128, but RandomXS128 and all of juniper's generators allow reading and
-     * directly setting the state, so if that matters to you, use one of those.
+     * to be better at shuffling than a RandomXS128, but juniper's generators can be slightly faster (such as AceRandom)
+     * or better-suited to a particular platform (such ChopRandom on GWT).
+     * <br>
+     * Alternately, if you know you haven't changed this from its default unseeded AlternateRandom, you can call
+     * {@link AlternateRandom#setSeed(long)} or cast this to AlternateRandom and call
+     * {@link AlternateRandom#deserializeFromString(String)} if you have a previously serialized state. This can allow
+     * you to start from a single known seed in things like tests, or could be used in procedural generation.
      */
     public static Random RANDOM = new AlternateRandom();
 

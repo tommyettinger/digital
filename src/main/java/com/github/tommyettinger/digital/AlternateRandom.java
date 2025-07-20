@@ -21,10 +21,10 @@ import java.util.Random;
 
 /**
  * A drop-in replacement for {@link Random} that adds few new APIs, but is faster, has better statistical quality, and
- * has a guaranteed longer minimum period (also called cycle length). This is similar to PasarRandom in the Juniper
+ * has a guaranteed longer minimum period (also called cycle length). This is similar to AceRandom in the Juniper
  * library, and uses the same algorithm, but only extends Random, not Juniper's EnhancedRandom class. If you depend on
  * Juniper, you lose nothing from using the EnhancedRandom classes (they also extend Random), but this class doesn't
- * have as many features as Juniper's PasarRandom. AlternateRandom doesn't depend on anything outside the JDK, though,
+ * have as many features as Juniper's AceRandom. AlternateRandom doesn't depend on anything outside the JDK, though,
  * so it fits easily as a small addition into digital.
  * <br>
  * This is mostly here to speed up the default shuffling methods in {@link ArrayTools}, and to allow those to produce
@@ -42,7 +42,7 @@ import java.util.Random;
  */
 public class AlternateRandom extends Random {
     /**
-     * The first state; can be any long.
+     * The first state; can be any long. This state is the counter, and it is not affected by the other states.
      */
     public long stateA;
     /**
@@ -54,11 +54,11 @@ public class AlternateRandom extends Random {
      */
     public long stateC;
     /**
-     * The fourth state; can be any long. This state is the counter, and it is not affected by the other states.
+     * The fourth state; can be any long.
      */
     public long stateD;
     /**
-     * The fifth state; can be any long.
+     * The fifth state; can be any long. Returned verbatim on the first call to {@link #nextLong()}.
      */
     public long stateE;
 
@@ -110,18 +110,19 @@ public class AlternateRandom extends Random {
      * @param seed the initial seed; may be any long
      */
     public void setSeed (long seed) {
-        stateA = seed;
+        seed = (seed ^ 0x1C69B3F74AC4AE35L) * 0x3C79AC492BA7B653L; // an XLCG
+        stateA = seed ^ ~0xC6BC279692B5C323L;
         seed ^= seed >>> 32;
-        seed *= 0xbea225f9eb34556dL;
+        stateB = seed ^ 0xD3833E804F4C574BL;
+        seed *= 0xBEA225F9EB34556DL;                               // MX3 unary hash
         seed ^= seed >>> 29;
-        seed *= 0xbea225f9eb34556dL;
+        stateC = seed ^ ~0xD3833E804F4C574BL;                      // updates are spread across the MX3 hash
+        seed *= 0xBEA225F9EB34556DL;
         seed ^= seed >>> 32;
-        seed *= 0xbea225f9eb34556dL;
+        stateD = seed ^ 0xC6BC279692B5C323L;
+        seed *= 0xBEA225F9EB34556DL;
         seed ^= seed >>> 29;
-        stateB = seed;
-        stateC = seed ^ ~0xC6BC279692B5C323L;
-        stateD = ~seed;
-        stateE = seed ^ 0xC6BC279692B5C323L;
+        stateE = seed;
     }
 
     public long nextLong () {
@@ -130,11 +131,12 @@ public class AlternateRandom extends Random {
         final long fc = stateC;
         final long fd = stateD;
         final long fe = stateE;
-        stateA = fe * 0xF1357AEA2E62A9C5L;
-        stateB = (fa << 44 | fa >>> 20);
+        stateA = fa + 0x9E3779B97F4A7C15L;
+        stateB = fa ^ fe;
         stateC = fb + fd;
-        stateD = fd + 0x9E3779B97F4A7C15L;
-        return stateE = fa ^ fc;
+        stateD = (fc << 52 | fc >>> 12);
+        stateE = fb - fc;
+        return fe;
     }
 
     public int next (int bits) {
@@ -143,11 +145,12 @@ public class AlternateRandom extends Random {
         final long fc = stateC;
         final long fd = stateD;
         final long fe = stateE;
-        stateA = fe * 0xF1357AEA2E62A9C5L;
-        stateB = (fa << 44 | fa >>> 20);
+        stateA = fa + 0x9E3779B97F4A7C15L;
+        stateB = fa ^ fe;
         stateC = fb + fd;
-        stateD = fd + 0x9E3779B97F4A7C15L;
-        return (int) (stateE = fa ^ fc) >>> (32 - bits);
+        stateD = (fc << 52 | fc >>> 12);
+        stateE = fb - fc;
+        return (int) (fe) >>> (32 - bits);
     }
 
     public int nextInt() {
@@ -156,11 +159,12 @@ public class AlternateRandom extends Random {
         final long fc = stateC;
         final long fd = stateD;
         final long fe = stateE;
-        stateA = fe * 0xF1357AEA2E62A9C5L;
-        stateB = (fa << 44 | fa >>> 20);
+        stateA = fa + 0x9E3779B97F4A7C15L;
+        stateB = fa ^ fe;
         stateC = fb + fd;
-        stateD = fd + 0x9E3779B97F4A7C15L;
-        return (int) (stateE = fa ^ fc);
+        stateD = (fc << 52 | fc >>> 12);
+        stateE = fb - fc;
+        return (int) (fe);
     }
 
     public int nextInt (int bound) {
@@ -169,11 +173,13 @@ public class AlternateRandom extends Random {
         final long fc = stateC;
         final long fd = stateD;
         final long fe = stateE;
-        stateA = fe * 0xF1357AEA2E62A9C5L;
-        stateB = (fa << 44 | fa >>> 20);
+        final int result = (int)(bound * (fe & 0xFFFFFFFFL) >> 32) & ~(bound >> 31);
+        stateA = fa + 0x9E3779B97F4A7C15L;
+        stateB = fa ^ fe;
         stateC = fb + fd;
-        stateD = fd + 0x9E3779B97F4A7C15L;
-        return (int)(bound * ((stateE = fa ^ fc) & 0xFFFFFFFFL) >> 32) & ~(bound >> 31);
+        stateD = (fc << 52 | fc >>> 12);
+        stateE = fb - fc;
+        return result;
     }
 
     public boolean nextBoolean() {
@@ -182,11 +188,12 @@ public class AlternateRandom extends Random {
         final long fc = stateC;
         final long fd = stateD;
         final long fe = stateE;
-        stateA = fe * 0xF1357AEA2E62A9C5L;
-        stateB = (fa << 44 | fa >>> 20);
+        stateA = fa + 0x9E3779B97F4A7C15L;
+        stateB = fa ^ fe;
         stateC = fb + fd;
-        stateD = fd + 0x9E3779B97F4A7C15L;
-        return (stateE = fa ^ fc) < 0L;
+        stateD = (fc << 52 | fc >>> 12);
+        stateE = fb - fc;
+        return fe < 0L;
     }
 
     public float nextFloat () {
@@ -195,11 +202,13 @@ public class AlternateRandom extends Random {
         final long fc = stateC;
         final long fd = stateD;
         final long fe = stateE;
-        stateA = fe * 0xF1357AEA2E62A9C5L;
-        stateB = (fa << 44 | fa >>> 20);
+        final float result = (fe >>> 40) * 0x1p-24f;
+        stateA = fa + 0x9E3779B97F4A7C15L;
+        stateB = fa ^ fe;
         stateC = fb + fd;
-        stateD = fd + 0x9E3779B97F4A7C15L;
-        return ((stateE = fa ^ fc) >>> 40) * 0x1p-24f;
+        stateD = (fc << 52 | fc >>> 12);
+        stateE = fb - fc;
+        return result;
     }
 
     public double nextDouble () {
@@ -208,11 +217,13 @@ public class AlternateRandom extends Random {
         final long fc = stateC;
         final long fd = stateD;
         final long fe = stateE;
-        stateA = fe * 0xF1357AEA2E62A9C5L;
-        stateB = (fa << 44 | fa >>> 20);
+        final double result = (fe >>> 11) * 0x1.0p-53;
+        stateA = fa + 0x9E3779B97F4A7C15L;
+        stateB = fa ^ fe;
         stateC = fb + fd;
-        stateD = fd + 0x9E3779B97F4A7C15L;
-        return ((stateE = fa ^ fc) >>> 11) * 0x1.0p-53;
+        stateD = (fc << 52 | fc >>> 12);
+        stateE = fb - fc;
+        return result;
     }
 
     public double nextGaussian() {
@@ -221,12 +232,13 @@ public class AlternateRandom extends Random {
         final long fc = stateC;
         final long fd = stateD;
         final long fe = stateE;
-        stateA = fe * 0xF1357AEA2E62A9C5L;
-        stateB = (fa << 44 | fa >>> 20);
+        final double result = Distributor.normal(fe);
+        stateA = fa + 0x9E3779B97F4A7C15L;
+        stateB = fa ^ fe;
         stateC = fb + fd;
-        stateD = fd + 0x9E3779B97F4A7C15L;
-        final long bits = (stateE = fa ^ fc);
-        return Distributor.normal(bits);
+        stateD = (fc << 52 | fc >>> 12);
+        stateE = fb - fc;
+        return result;
     }
 
     @Override
