@@ -19,10 +19,17 @@
  * All code for digital is in this package, including
  * {@link com.github.tommyettinger.digital.Base number-text conversions},
  * {@link com.github.tommyettinger.digital.Hasher array and unary hashing},
+ * {@link com.github.tommyettinger.digital.Interpolations interpolation functions},
+ * {@link com.github.tommyettinger.digital.Distributor normal-distributing variables},
  * {@link com.github.tommyettinger.digital.BitConversion GWT compatibility code},
- * tools for {@link com.github.tommyettinger.digital.ArrayTools arrays},
+ * {@link com.github.tommyettinger.digital.Stringf formatting Strings across platforms},
+ * as well as tools for {@link com.github.tommyettinger.digital.ArrayTools arrays},
+ * {@link com.github.tommyettinger.digital.TextTools text},
  * {@link com.github.tommyettinger.digital.TrigTools trigonometry},
  * {@link com.github.tommyettinger.digital.ShapeTools polyhedra}, and
  * {@link com.github.tommyettinger.digital.MathTools general math}.
+ * There's a small replacement for {@link java.util.Random} here,
+ * {@link com.github.tommyettinger.digital.AlternateRandom}, as well, which is mainly
+ * used by {@link com.github.tommyettinger.digital.ArrayTools}.
  */
 package com.github.tommyettinger.digital;
