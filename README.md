@@ -4,6 +4,37 @@
 
 Utilities for handling math and showing numbers in Java.
 
+... And a bunch of other things, mostly aimed at cross-platform compatibility.
+
+## Quickstart for libGDX projects
+
+If you are making a new project with gdx-liftoff, just check the `digital`
+checkbox under Third-Party Extensions.
+
+To add to an existing project...
+
+In your `core/build.gradle`'s dependencies, add:
+
+```groovy
+api "com.github.tommyettinger:digital:0.8.0"
+```
+
+If you have a GWT module, then in `html/build.gradle`'s dependencies, add:
+
+```groovy
+api "com.github.tommyettinger:digital:0.8.0:sources"
+```
+
+And also for GWT, add this line to `GdxDefinition.gwt.xml`:
+
+```xml
+<inherits name="com.github.tommyettinger.digital" />
+```
+
+Then, you can import classes from this library in your core module or
+any other submodules that depend on core. You might be depending on this
+for any number of reasons, but platform-independent code is a common thread.
+
 ## What is it?
 
 There are only a few classes here, and any given application
@@ -313,6 +344,31 @@ using Ziggurat is about as fast as it gets for generating Gaussian variates.
 
 ## How do I get it?
 
+To depend on digital with Gradle, add this to your dependencies (in
+your core module's `build.gradle`, for libGDX projects):
+
+```groovy
+api "com.github.tommyettinger:digital:0.8.0"
+```
+
+If you target GWT using libGDX, you will also need this in your
+html module's `build.gradle`:
+
+```groovy
+api "com.github.tommyettinger:digital:0.8.0:sources"
+```
+
+If you target GWT, it needs to be told about these changes in your `GdxDefinition.gwt.xml`
+file. For any remotely recent version of digital (0.1.7 and later), use:
+
+```xml
+<inherits name="com.github.tommyettinger.digital" />
+```
+
+You can also use JitPack to get a recent commit; in that case,
+follow [its instructions here](https://jitpack.io/#tommyettinger/digital/).
+This also has instructions for Maven and other build tools.
+
 This library needs Java language level 8, but does not rely on any
 APIs introduced in Java 8. Targeting level 8 means this will work
 even if your project uses the newest Java versions (20 and later do
@@ -330,39 +386,6 @@ longer the official setup tool), but is the default for
 [gdx-liftoff](https://github.com/libgdx/gdx-liftoff) projects (which is
 the official setup tool). Liftoff also lets you just check a box to
 depend on digital.
-
-To depend on digital with Gradle, add this to your dependencies (in
-your core module's `build.gradle`, for libGDX projects):
-
-```groovy
-api "com.github.tommyettinger:digital:0.7.0"
-```
-
-If you target GWT using libGDX, you will also need this in your
-html module's `build.gradle`:
-
-```groovy
-api "com.github.tommyettinger:digital:0.7.0:sources"
-```
-
-GWT needs to be told about these changes in your `GdxDefinition.gwt.xml`
-file. For digital 0.1.7 and later, use:
-
-```xml
-<inherits name="com.github.tommyettinger.digital" />
-```
-
-If you are using 0.1.6 or older, **there are probably some GWT
-compatibility issues**, though you can try using this. You should
-**update to 0.1.7 or later instead of using this**:
-
-```xml
-<inherits name="digital" />
-```
-
-You can also use JitPack to get a recent commit; in that case,
-follow [its instructions here](https://jitpack.io/#tommyettinger/digital/).
-This also has instructions for Maven and other build tools.
 
 ## License
 
