@@ -64,7 +64,7 @@ public class Base {
     /**
      * Hexadecimal, using the digits 0-9 and then A-F (case-insensitive).
      */
-    public static final Base BASE16 = new Base("0123456789ABCDEF", true, 'p', '+', '-');
+    public static final Base BASE16 = new Base("0123456789ABCDEF", true, '$', '+', '-');
     /**
      * Hexatrigesimal, using the digits 0-9 and then A-Z (case-insensitive).
      */
@@ -93,7 +93,7 @@ public class Base {
      * drawback, if a BASE86 encoded number is stored in libGDX's "minimal JSON" format, it will often need quoting,
      * which of the other bases, only {@link #BASE64} and {@link #BASE90} require sometimes.
      */
-    public static final Base BASE86 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'/!@#$%^&*()[]{}<>:?;|_=", false, '\\', '+', '-');
+    public static final Base BASE86 = new Base("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'/!@#$%^&*()[]{}<>:?;|_=", false, ',', '+', '-');
     /**
      * The largest base here, this uses all ASCII characters from {@code %} to {@code ~} inclusive, with {@code #}
      * indicating positive and {@code !} indicating negative. Notably, it doesn't use the double quote or the dollar
