@@ -1217,7 +1217,7 @@ public class Base {
      * @return a new String containing the bits of {@code number} in the radix this specifies.
      */
     public String unsigned(double number) {
-        return '.' + unsigned(BitConversion.doubleToRawLongBits(number));
+        return paddingChar + unsigned(BitConversion.doubleToRawLongBits(number));
     }
 
     /**
@@ -1233,7 +1233,7 @@ public class Base {
      * @return {@code builder}, with the bits of {@code number} appended in the radix this specifies
      */
     public StringBuilder appendUnsigned(StringBuilder builder, double number) {
-        return appendUnsigned(builder.append('.'), BitConversion.doubleToRawLongBits(number));
+        return appendUnsigned(builder.append(paddingChar), BitConversion.doubleToRawLongBits(number));
     }
 
     /**
@@ -1561,6 +1561,12 @@ public class Base {
      * {@link #decimal(double)}, {@link #friendly(double)}, or their append versions; use
      * {@link #readDouble(CharSequence, int, int)} for that.
      * <br>
+     * If this Base's {@link #paddingChar} is the character at the {@code start} of {@code cs}, this will treat the
+     * input as the output of {@link #unsigned(double)}; otherwise, it will be treated as the output of
+     * {@link #signed(double)}. Some care should be taken if the paddingChar is used for other purposes; some code may
+     * use it as a separator because it will never appear as a digit, and that code should stick to using signed() to
+     * produce output that this can parse.
+     * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
      * early, this behaves as you would expect for a number with fewer digits, and simply doesn't fill the larger places.
@@ -1572,7 +1578,7 @@ public class Base {
      */
     public double readDoubleExact(final CharSequence cs, final int start, int end) {
         if(cs == null || cs.length() == 0) return 0.0;
-        if(cs.charAt(start) == '.') return BitConversion.longBitsToDouble(readLong(cs, start+1, end));
+        if(cs.charAt(start) == paddingChar) return BitConversion.longBitsToDouble(readLong(cs, start+1, end));
         return BitConversion.reversedLongBitsToDouble(readLong(cs, start, end));
     }
 
@@ -1586,6 +1592,12 @@ public class Base {
      * {@link #decimal(double)}, {@link #friendly(double)}, or their append versions; use
      * {@link #readDouble(char[], int, int)} for that.
      * <br>
+     * If this Base's {@link #paddingChar} is the character at the {@code start} of {@code cs}, this will treat the
+     * input as the output of {@link #unsigned(double)}; otherwise, it will be treated as the output of
+     * {@link #signed(double)}. Some care should be taken if the paddingChar is used for other purposes; some code may
+     * use it as a separator because it will never appear as a digit, and that code should stick to using signed() to
+     * produce output that this can parse.
+     * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
      * early, this behaves as you would expect for a number with fewer digits, and simply doesn't fill the larger places.
@@ -1597,7 +1609,7 @@ public class Base {
      */
     public double readDoubleExact(final char[] cs, final int start, int end) {
         if(cs == null || cs.length == 0) return 0.0;
-        if(cs[start] == '.') return BitConversion.longBitsToDouble(readLong(cs, start+1, end));
+        if(cs[start] == paddingChar) return BitConversion.longBitsToDouble(readLong(cs, start+1, end));
         return BitConversion.reversedLongBitsToDouble(readLong(cs, start, end));
     }
 
@@ -1974,7 +1986,7 @@ public class Base {
      * @return a new String containing the bits of {@code number} in the radix this specifies.
      */
     public String unsigned(float number) {
-        return '.'+unsigned(BitConversion.floatToRawIntBits(number));
+        return paddingChar+unsigned(BitConversion.floatToRawIntBits(number));
     }
 
     /**
@@ -1990,7 +2002,7 @@ public class Base {
      * @return {@code builder}, with the bits of {@code number} appended in the radix this specifies
      */
     public StringBuilder appendUnsigned(StringBuilder builder, float number) {
-        return appendUnsigned(builder.append('.'), BitConversion.floatToRawIntBits(number));
+        return appendUnsigned(builder.append(paddingChar), BitConversion.floatToRawIntBits(number));
     }
 
     /**
@@ -2318,6 +2330,12 @@ public class Base {
      * {@link #decimal(float)}, {@link #friendly(float)}, or their append versions; use
      * {@link #readFloat(CharSequence, int, int)} for that.
      * <br>
+     * If this Base's {@link #paddingChar} is the character at the {@code start} of {@code cs}, this will treat the
+     * input as the output of {@link #unsigned(float)}; otherwise, it will be treated as the output of
+     * {@link #signed(float)}. Some care should be taken if the paddingChar is used for other purposes; some code may
+     * use it as a separator because it will never appear as a digit, and that code should stick to using signed() to
+     * produce output that this can parse.
+     * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
      * early, this behaves as you would expect for a number with fewer digits, and simply doesn't fill the larger places.
@@ -2329,7 +2347,7 @@ public class Base {
      */
     public float readFloatExact(final CharSequence cs, final int start, int end) {
         if(cs == null || cs.length() == 0) return 0f;
-        if(cs.charAt(start) == '.') return BitConversion.intBitsToFloat(readInt(cs, start+1, end));
+        if(cs.charAt(start) == paddingChar) return BitConversion.intBitsToFloat(readInt(cs, start+1, end));
         return BitConversion.reversedIntBitsToFloat(readInt(cs, start, end));
     }
 
@@ -2343,6 +2361,12 @@ public class Base {
      * {@link #decimal(float)}, {@link #friendly(float)}, or their append versions; use
      * {@link #readFloat(char[], int, int)} for that.
      * <br>
+     * If this Base's {@link #paddingChar} is the character at the {@code start} of {@code cs}, this will treat the
+     * input as the output of {@link #unsigned(float)}; otherwise, it will be treated as the output of
+     * {@link #signed(float)}. Some care should be taken if the paddingChar is used for other purposes; some code may
+     * use it as a separator because it will never appear as a digit, and that code should stick to using signed() to
+     * produce output that this can parse.
+     * <br>
      * This doesn't throw on invalid input, instead returning 0 if the first char is not a valid digit, or
      * stopping the parse process early if an invalid digit is read before end is reached. If the parse is stopped
      * early, this behaves as you would expect for a number with fewer digits, and simply doesn't fill the larger places.
@@ -2354,7 +2378,7 @@ public class Base {
      */
     public float readFloatExact(final char[] cs, final int start, int end) {
         if(cs == null || cs.length == 0) return 0f;
-        if(cs[start] == '.') return BitConversion.intBitsToFloat(readInt(cs, start+1, end));
+        if(cs[start] == paddingChar) return BitConversion.intBitsToFloat(readInt(cs, start+1, end));
         return BitConversion.reversedIntBitsToFloat(readInt(cs, start, end));
     }
 

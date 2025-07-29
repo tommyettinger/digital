@@ -143,6 +143,7 @@ public class PrecisionTest {
      * Took 60.416935 s
      */
     @Test
+    @Ignore("This takes a really long time to run.")
     public void testAtan2() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2", TrigTools::atan2);
@@ -341,6 +342,7 @@ public class PrecisionTest {
      * Took 13.630663 s
      */
     @Test
+    @Ignore("This takes a really long time to run.")
     public void testAtan2Deg() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2Deg", TrigTools::atan2Deg);
@@ -5472,6 +5474,7 @@ CONST f32x2 sincos(s16 int_angle) {
      * -------
      */
     @Test
+    @Ignore("This takes a long time to run.")
     public void testPairs_0_PI2() {
         OrderedMap<String, FloatUnaryOperator> baselines = new OrderedMap<>(8);
         ArrayList<FloatUnaryOperator> functions = new ArrayList<>(8);
