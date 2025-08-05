@@ -2,7 +2,7 @@ package com.github.tommyettinger.digital;
 
 import java.util.Random;
 
-import static com.github.tommyettinger.digital.RoughMath.logRougher;
+import static com.github.tommyettinger.digital.RoughMath.logRough;
 
 /**
  * Different methods for distributing input {@code long} or {@code double} values from a given domain into specific
@@ -105,19 +105,20 @@ public final class Distributor {
     // Easier-to-read, slightly, version of probitL(long)
     // Meant to be copied with the above constants.
 //    public static double probit(long l) {
-//        double p = l * 5.421010862427522E-20 + 0.5; /* 5.421010862427522E-20 is Math.pow(2, -64) */
-//        if(0.0465 > p) {
-//            /* 5.56268464626801E-309 is the smallest number possible to add here. */
-//            double r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
-//            return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
-//        } else if(0.9535 < p) {
-//            /* 5.56268464626801E-309 is the smallest number possible to add here. */
-//            double q = 1.0 - p, r = Math.sqrt(Math.log(1.0 / (q * q + 5.56268464626801E-309)));
-//            return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
-//        } else {
-//            double q = p - 0.5, r = q * q;
-//            return q * (a2 + (a1 * r + a0) / (r * (r + b1) + b0));
-//        }
+//    /* 5.421010862427522E-20 is 0x1p-64 or Math.pow(2, -64) */
+//    final double h = l * 5.421010862427522E-20;
+//        if(-0.4535 > h) {
+//        /* 0.5000000000000001 is the smallest representable double that is greater than 0.5. */
+//        final double r = Math.sqrt(Math.log(0.5000000000000001 + h) * -2f);
+//        return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
+//    } else if(0.4535 < h) {
+//        /* 0.5000000000000001 is the smallest representable double that is greater than 0.5. */
+//        final double r = Math.sqrt(Math.log(0.5000000000000001 - h) * -2f);
+//        return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
+//    } else {
+//        final double r = h * h;
+//        return h * (a2 + (a1 * r + a0) / (r * (r + b1) + b0));
+//    }
 //    }
 
     /**
@@ -132,10 +133,10 @@ public final class Distributor {
      */
     public static float probitF(float p) {
         if(0.0465f > p){
-            final float r = (float)Math.sqrt(logRougher(1f / (p * p)));
+            final float r = (float)Math.sqrt(logRough(p) * -2f);
             return c3f * r + c2f + (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else if(0.9535f < p) {
-            final float q = 1f - p, r = (float)Math.sqrt(logRougher(1f / (q * q)));
+            final float r = (float)Math.sqrt(logRough(1f - p) * -2f);
             return -c3f * r - c2f - (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else {
             final float q = p - 0.5f, r = q * q;
@@ -156,11 +157,11 @@ public final class Distributor {
     public static double probitD(double p) {
         if(0.0465 > p){
             /* 5.56268464626801E-309 is the smallest number possible to add here. */
-            final double r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
+            final double r = Math.sqrt(Math.log(p + 5.56268464626801E-309) * -2.0);
             return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
         } else if(0.9535 < p) {
             /* 5.56268464626801E-309 is the smallest number possible to add here. */
-            final double q = 1.0 - p, r = Math.sqrt(Math.log(1.0 / (q * q + 5.56268464626801E-309)));
+            final double r = Math.sqrt(Math.log(1.0 - p + 5.56268464626801E-309) * -2.0);
             return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
         } else {
             final double q = p - 0.5, r = q * q;
@@ -182,10 +183,10 @@ public final class Distributor {
         /* 2.3283064E-10f is 0x1p-32f */
         final float h = 2.3283064E-10f * i;
         if(-0.4535f > h){
-            final float q = h + 0.5f, r = (float)Math.sqrt(logRougher(1f / (q * q)));
+            final float r = (float)Math.sqrt(logRough(0.5f + h) * -2f);
             return c3f * r + c2f + (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else if(0.4535f < h) {
-            final float q = 0.5f - h, r = (float)Math.sqrt(logRougher(1f / (q * q)));
+            final float r = (float)Math.sqrt(logRough(0.5f - h) * -2f);
             return -c3f * r - c2f - (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else {
             final float r = h * h;
@@ -204,15 +205,15 @@ public final class Distributor {
      * @return an approximately-Gaussian-distributed double between -26.48372928592822 and 26.48372928592822
      */
     public static double probitL(long l) {
-        /* 5.421010862427522E-20 is 0x1p-64 */
+        /* 5.421010862427522E-20 is 0x1p-64 or Math.pow(2, -64) */
         final double h = l * 5.421010862427522E-20;
         if(-0.4535 > h) {
-            /* 5.56268464626801E-309 is the smallest number possible to add here. */
-            final double p = h + 0.5, r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
+            /* 0.5000000000000001 is the smallest representable double that is greater than 0.5. */
+            final double r = Math.sqrt(Math.log(0.5000000000000001 + h) * -2f);
             return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
         } else if(0.4535 < h) {
-            /* 5.56268464626801E-309 is the smallest number possible to add here. */
-            final double q = 0.5 - h, r = Math.sqrt(Math.log(1.0 / (q * q + 5.56268464626801E-309)));
+            /* 0.5000000000000001 is the smallest representable double that is greater than 0.5. */
+            final double r = Math.sqrt(Math.log(0.5000000000000001 - h) * -2f);
             return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
         } else {
             final double r = h * h;
