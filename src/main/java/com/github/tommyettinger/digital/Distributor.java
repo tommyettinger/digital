@@ -122,13 +122,13 @@ public final class Distributor {
 
     /**
      * A single-precision probit() approximation that takes a float between 0 and 1 inclusive and returns an
-     * approximately-Gaussian-distributed float between -9.082295 and 9.082295 .
+     * approximately-Gaussian-distributed float between -13.003068 and 13.003068 .
      * The function maps the lowest inputs to the most negative outputs, the highest inputs to the most
      * positive outputs, and inputs near 0.5 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param p should be between 0 and 1, inclusive.
-     * @return an approximately-Gaussian-distributed float between -9.082295 and 9.082295
+     * @return an approximately-Gaussian-distributed float between -13.003068 and 13.003068
      */
     public static float probitF(float p) {
         if(0.0465f > p){
@@ -145,13 +145,13 @@ public final class Distributor {
 
     /**
      * A double-precision probit() approximation that takes a double between 0 and 1 inclusive and returns an
-     * approximately-Gaussian-distributed double between -26.48372928592822 and 26.48372928592822 .
+     * approximately-Gaussian-distributed double between -38.467454509186325 and 38.467454509186325 .
      * The function maps the lowest inputs to the most negative outputs, the highest inputs to the most
      * positive outputs, and inputs near 0.5 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param p should be between 0 and 1, inclusive.
-     * @return an approximately-Gaussian-distributed double between -26.48372928592822 and 26.48372928592822
+     * @return an approximately-Gaussian-distributed double between -38.467454509186325 and 38.467454509186325
      */
     public static double probitD(double p) {
         if(0.0465 > p){
@@ -170,13 +170,13 @@ public final class Distributor {
 
     /**
      * A single-precision probit() approximation that takes any int and returns an
-     * approximately-Gaussian-distributed float between -9.082295 and 9.082295 .
+     * approximately-Gaussian-distributed float between -13.003068 and 13.003068 .
      * The function maps the most negative inputs to the most negative outputs, the most positive inputs to the most
      * positive outputs, and inputs near 0 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param i may be any int, though very close ints will not produce different results
-     * @return an approximately-Gaussian-distributed float between -9.082295 and 9.082295
+     * @return an approximately-Gaussian-distributed float between -13.003068 and 13.003068
      */
     public static float probitI(int i) {
         /* 2.3283064E-10f is 0x1p-32f */
@@ -195,13 +195,13 @@ public final class Distributor {
 
     /**
      * A double-precision probit() approximation that takes any long and returns an
-     * approximately-Gaussian-distributed double between -26.48372928592822 and 26.48372928592822 .
+     * approximately-Gaussian-distributed double between -38.467454509186325 and 38.467454509186325 .
      * The function maps the most negative inputs to the most negative outputs, the most positive inputs to the most
      * positive outputs, and inputs near 0 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param l may be any long, though very close longs will not produce different results
-     * @return an approximately-Gaussian-distributed double between -26.48372928592822 and 26.48372928592822
+     * @return an approximately-Gaussian-distributed double between -38.467454509186325 and 38.467454509186325
      */
     public static double probitL(long l) {
         /* 5.421010862427522E-20 is 0x1p-64 or Math.pow(2, -64) */
@@ -286,9 +286,9 @@ public final class Distributor {
      * except that it performs an additional step of post-processing to
      * bring the result even closer to the normal distribution.
      * It also produces normal-distributed doubles (with standard deviation 1.0)
-     * given inputs between 0.0 and 1.0, exclusive.
+     * given inputs between 0.0 and 1.0, inclusive.
      *
-     * @param d should be between {@link Double#MIN_NORMAL}, inclusive, and 1, exclusive; subnormal values may return NaN
+     * @param d should be between 0, inclusive, and 1, inclusive
      * @return a normal-distributed double centered on 0.0
      * @see #probit(double) There is a lower-precision, faster variant on this method, which this uses internally.
      * @see #probitD(double) A more-recently-published approximation that should be faster, and may have comparable quality
