@@ -5,6 +5,20 @@ import org.junit.Test;
 import static com.github.tommyettinger.digital.BitConversion.longBitsToDouble;
 
 public class DistributorTest {
+
+    public static double probitHighPrecision(double d)
+    {
+        double x = Distributor.probit(d);
+        /* 5.885886107568E-311 was found by exhaustively searching, rejecting any numbers that would
+           make this return NaN. It is the lowest input this can accept without producing NaN. */
+        if(d > 0.0 && d < 1.0 && d != 0.5) {
+            double e = 0.5 * MathTools.erfc(x * -0.7071067811865475) - d; /* -0.7071067811865475 == -1.0 / Math.sqrt(2.0) */
+            double u = e * 2.5066282746310002 * Math.exp(0.5 * x * x); /* 2.5066282746310002 == Math.sqrt(2*Math.PI) */
+            x = x - u / (1.0 + 0.5 * x * u);
+        }
+        return x;
+    }
+
     @Test
     public void testLimits() {
         System.out.println("Distributor.probit(0.0) == " + Distributor.probit(0.0));
@@ -22,20 +36,20 @@ public class DistributorTest {
         System.out.println("Distributor.probit(1.0 - 0x1p-53) == " + Distributor.probit(1.0 - 0x1p-53));
         System.out.println("Distributor.probit(1.0) == " + Distributor.probit(1.0));
 
-        System.out.println("Distributor.probitHighPrecision(0.0) == " + Distributor.probitHighPrecision(0.0));
-        System.out.println("Distributor.probitHighPrecision(Double.MIN_VALUE) == " + Distributor.probitHighPrecision(Double.MIN_VALUE));
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(0x2L)) == " + Distributor.probitHighPrecision(longBitsToDouble(0x2L)));
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(0x0010000000000000L>>>1)) == " + Distributor.probitHighPrecision(longBitsToDouble(0x0010000000000000L>>>1)));
-        System.out.println("Distributor.probitHighPrecision(Double.MIN_NORMAL) == " + Distributor.probitHighPrecision(Double.MIN_NORMAL));
-        System.out.println("Distributor.probitHighPrecision(0x1p-53) == " + Distributor.probitHighPrecision(0x1p-53));
-        System.out.println("Distributor.probitHighPrecision(0x2p-53) == " + Distributor.probitHighPrecision(0x2p-53));
-        System.out.println("Distributor.probitHighPrecision(0.5 - 0x1p-53) == " + Distributor.probitHighPrecision(0.5 - 0x1p-53));
-        System.out.println("Distributor.probitHighPrecision(0.5 - 0x1p-54) == " + Distributor.probitHighPrecision(0.5 - 0x1p-54));
-        System.out.println("Distributor.probitHighPrecision(0.5) == " + Distributor.probitHighPrecision(0.5));
-        System.out.println("Distributor.probitHighPrecision(0.5 + 0x1p-53) == " + Distributor.probitHighPrecision(0.5 + 0x1p-53));
-        System.out.println("Distributor.probitHighPrecision(1.0 - 0x2p-53) == " + Distributor.probitHighPrecision(1.0 - 0x2p-53));
-        System.out.println("Distributor.probitHighPrecision(1.0 - 0x1p-53) == " + Distributor.probitHighPrecision(1.0 - 0x1p-53));
-        System.out.println("Distributor.probitHighPrecision(1.0) == " + Distributor.probitHighPrecision(1.0));
+        System.out.println("Distributor.probitHighPrecision(0.0) == " + probitHighPrecision(0.0));
+        System.out.println("Distributor.probitHighPrecision(Double.MIN_VALUE) == " + probitHighPrecision(Double.MIN_VALUE));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(0x2L)) == " + probitHighPrecision(longBitsToDouble(0x2L)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(0x0010000000000000L>>>1)) == " + probitHighPrecision(longBitsToDouble(0x0010000000000000L>>>1)));
+        System.out.println("Distributor.probitHighPrecision(Double.MIN_NORMAL) == " + probitHighPrecision(Double.MIN_NORMAL));
+        System.out.println("Distributor.probitHighPrecision(0x1p-53) == " + probitHighPrecision(0x1p-53));
+        System.out.println("Distributor.probitHighPrecision(0x2p-53) == " + probitHighPrecision(0x2p-53));
+        System.out.println("Distributor.probitHighPrecision(0.5 - 0x1p-53) == " + probitHighPrecision(0.5 - 0x1p-53));
+        System.out.println("Distributor.probitHighPrecision(0.5 - 0x1p-54) == " + probitHighPrecision(0.5 - 0x1p-54));
+        System.out.println("Distributor.probitHighPrecision(0.5) == " + probitHighPrecision(0.5));
+        System.out.println("Distributor.probitHighPrecision(0.5 + 0x1p-53) == " + probitHighPrecision(0.5 + 0x1p-53));
+        System.out.println("Distributor.probitHighPrecision(1.0 - 0x2p-53) == " + probitHighPrecision(1.0 - 0x2p-53));
+        System.out.println("Distributor.probitHighPrecision(1.0 - 0x1p-53) == " + probitHighPrecision(1.0 - 0x1p-53));
+        System.out.println("Distributor.probitHighPrecision(1.0) == " + probitHighPrecision(1.0));
 
         System.out.println("Distributor.normal(Long.MIN_VALUE) == " + Distributor.normal(Long.MIN_VALUE));
         System.out.println("Distributor.normal(-3L) == " + Distributor.normal(-3L));
@@ -93,31 +107,44 @@ public class DistributorTest {
     @Test
     public void testHighPrecision() {
         for (int i = 1; i < 52; i++) {
-            System.out.println("Distributor.probitHighPrecision(longBitsToDouble(1L << " + i + ")) == " + Distributor.probitHighPrecision(longBitsToDouble(1L << i)));
+            System.out.println("Distributor.probitHighPrecision(longBitsToDouble(1L << " + i + ")) == " + probitHighPrecision(longBitsToDouble(1L << i)));
         }
         System.out.println();
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(10L << 40)) == " + Distributor.probitHighPrecision(longBitsToDouble(10L << 40)));
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(11L << 40)) == " + Distributor.probitHighPrecision(longBitsToDouble(11L << 40)));
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(12L << 40)) == " + Distributor.probitHighPrecision(longBitsToDouble(12L << 40)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(10L << 40)) == " + probitHighPrecision(longBitsToDouble(10L << 40)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(11L << 40)) == " + probitHighPrecision(longBitsToDouble(11L << 40)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(12L << 40)) == " + probitHighPrecision(longBitsToDouble(12L << 40)));
         System.out.println();
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(21L << 39)) == " + Distributor.probitHighPrecision(longBitsToDouble(21L << 39)));
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble((21L << 39) + 1L)) == " + Distributor.probitHighPrecision(longBitsToDouble((21L << 39) + 1L)));
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - 1L)) == " + Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - 1L)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(21L << 39)) == " + probitHighPrecision(longBitsToDouble(21L << 39)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble((21L << 39) + 1L)) == " + probitHighPrecision(longBitsToDouble((21L << 39) + 1L)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - 1L)) == " + probitHighPrecision(longBitsToDouble((22L << 39) - 1L)));
         for (int i = 0; i < 39; i++) {
-            System.out.println("Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - (1L<<" + i + "))) == " + Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - (1L << i))));
+            System.out.println("Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - (1L<<" + i + "))) == " + probitHighPrecision(longBitsToDouble((22L << 39) - (1L << i))));
         }
         System.out.println();
         long start = (22L << 39) - (1L<<37), end = (22L << 39) - (1L<<38);
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(start)) == " + Distributor.probitHighPrecision(longBitsToDouble(start)));
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(start-1L)) == " + Distributor.probitHighPrecision(longBitsToDouble(start-1L)));
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(end+1L)) == " + Distributor.probitHighPrecision(longBitsToDouble(end+1L)));
-        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(end)) == " + Distributor.probitHighPrecision(longBitsToDouble(end)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(start)) == " + probitHighPrecision(longBitsToDouble(start)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(start-1L)) == " + probitHighPrecision(longBitsToDouble(start-1L)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(end+1L)) == " + probitHighPrecision(longBitsToDouble(end+1L)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(end)) == " + probitHighPrecision(longBitsToDouble(end)));
         System.out.println("Starting at " + start + " and working down to " + end + ":");
-        for (long i = start; i > end; i--) {
-            if(Double.isNaN(Distributor.probitHighPrecision(longBitsToDouble(i)))){
+        long i = end;
+        for (int it = 0; it < 256; it++) {
+            if(Double.isNaN(probitHighPrecision(longBitsToDouble(i)))) {
                 System.out.println(i + " is out of range!");
-                System.out.println(("Double " + longBitsToDouble(i+1L) + " is in range!"));
-                break;
+                if (!Double.isNaN(probitHighPrecision(longBitsToDouble(i+1L)))) {
+                    System.out.println(("Double " + longBitsToDouble(i + 1L) + " or long " + (i + 1L) + " (0x" + Base.BASE16.unsigned(i + 1L) + ") is in range!"));
+                    break;
+                }
+                end = i + 1L;
+                i = (end >>> 1) + (start >>> 1);
+            } else {
+                if (Double.isNaN(probitHighPrecision(longBitsToDouble(i-1L)))) {
+                    System.out.println((i - 1L) + " is out of range!");
+                    System.out.println(("Double " + longBitsToDouble(i) + " or long " + i + " (0x" + Base.BASE16.unsigned(i) + ") is in range!"));
+                    break;
+                }
+                start = i - 1L;
+                i = (end >>> 1) + (start >>> 1);
             }
         }
     }

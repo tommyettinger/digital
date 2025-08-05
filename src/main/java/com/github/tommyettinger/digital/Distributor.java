@@ -16,11 +16,10 @@ import static com.github.tommyettinger.digital.RoughMath.logRough;
  * 0 to near 0, etc. Using the suffixed probit() methods, such as {@link #probitF(float)}, is recommended when
  * generating normal-distributed floats or doubles.
  * <br>
- * All of these ways will preserve patterns in the input, so inputs close to the lowest
- * possible input (0.0 for probit(), {@link Long#MIN_VALUE} for normal(), {@link Integer#MIN_VALUE} for normalF()) will
- * produce the lowest possible output (-8.375 for probit(), -26.48372928592822 for probitD() and probitL(), or -9.082295
- * for probitF() and probitI()),
- * and similarly for the highest possible inputs producing the highest possible outputs.
+ * All of these ways will preserve patterns in the input, so inputs close to the lowest possible input (0.0 for
+ * probit(), {@link Long#MIN_VALUE} for normal(), {@link Integer#MIN_VALUE} for normalF()) will produce the lowest
+ * possible output (-38.46740568497968 for probit(), -38.467454509186325 for probitD() and probitL(), or -13.003068 for
+ * probitF() and probitI()), and similarly for the highest possible inputs producing the highest possible outputs.
  * <br>
  * There's also {@link #normal(long)} and {@link #normalF(int)}, which use the
  * <a href="https://en.wikipedia.org/wiki/Ziggurat_algorithm">Ziggurat method</a> and do not preserve input patterns.
@@ -265,14 +264,14 @@ public final class Distributor {
      * @see #probitD(double) There is a more-recent approximation that should be faster and more precise than this one.
      */
     public static double probit (final double d) {
-        if (d <= 0 || d >= 1) {
-            return Math.copySign(8.375, d - 0.5);
+        if (d <= 0.0 || d >= 1.0) {
+            return Math.copySign(38.46740568497968, d - 0.5);
         } else if (d < 0.02425) {
             final double q = Math.sqrt(-2.0 * Math.log(d));
             return (((((-7.784894002430293e-03 * q - 3.223964580411365e-01) * q - 2.400758277161838e+00) * q - 2.549732539343734e+00) * q + 4.374664141464968e+00) * q + 2.938163982698783e+00) / (
                     (((7.784695709041462e-03 * q + 3.224671290700398e-01) * q + 2.445134137142996e+00) * q + 3.754408661907416e+00) * q + 1.0);
         } else if (0.97575 < d) {
-            final double q = Math.sqrt(-2.0 * Math.log(1 - d));
+            final double q = Math.sqrt(-2.0 * Math.log(1.0 - d));
             return -(((((-7.784894002430293e-03 * q - 3.223964580411365e-01) * q - 2.400758277161838e+00) * q - 2.549732539343734e+00) * q + 4.374664141464968e+00) * q + 2.938163982698783e+00) / (
                     (((7.784695709041462e-03 * q + 3.224671290700398e-01) * q + 2.445134137142996e+00) * q + 3.754408661907416e+00) * q + 1.0);
         }
@@ -280,35 +279,6 @@ public final class Distributor {
         final double r = q * q;
         return (((((-3.969683028665376e+01 * r + 2.209460984245205e+02) * r - 2.759285104469687e+02) * r + 1.383577518672690e+02) * r - 3.066479806614716e+01) * r + 2.506628277459239e+00) * q / (
                 ((((-5.447609879822406e+01 * r + 1.615858368580409e+02) * r - 1.556989798598866e+02) * r + 6.680131188771972e+01) * r - 1.328068155288572e+01) * r + 1.0);
-    }
-
-    /**
-     * Complementary error function, partial implementation.
-     * <a href="https://en.wikipedia.org/wiki/Error_function#Complementary_error_function">See Wikipedia for more</a>.
-     * @param x any non-negative double
-     * @return a double between 0 and 1... I think?
-     */
-    private static double erfcBase(double x) {
-        return ((0.56418958354775629) / (x + 2.06955023132914151)) *
-                ((x * (x + 2.71078540045147805) + 5.80755613130301624) / (x * (x + 3.47954057099518960) + 12.06166887286239555)) *
-                ((x * (x + 3.47469513777439592) + 12.07402036406381411) / (x * (x + 3.72068443960225092) + 8.44319781003968454)) *
-                ((x * (x + 4.00561509202259545) + 9.30596659485887898) / (x * (x + 3.90225704029924078) + 6.36161630953880464)) *
-                ((x * (x + 5.16722705817812584) + 9.12661617673673262) / (x * (x + 4.03296893109262491) + 5.13578530585681539)) *
-                ((x * (x + 5.95908795446633271) + 9.19435612886969243) / (x * (x + 4.11240942957450885) + 4.48640329523408675)) *
-                Math.exp(-x * x);
-    }
-
-    /**
-     * The complementary error function, equivalent to {@code 1.0 - erf(x)}.
-     * This uses a different approximation that should have extremely low error (below {@code 0x1p-53}, or
-     * {@code 1.1102230246251565E-16}).
-     * <a href="https://en.wikipedia.org/wiki/Error_function#Complementary_error_function">See Wikipedia for more</a>.
-     *
-     * @param x any finite double
-     * @return a double between 0 and 2, inclusive
-     */
-    private static double erfc(double x) {
-        return x >= 0 ? erfcBase(x) : 2.0 - erfcBase(-x);
     }
 
     /**
@@ -326,8 +296,10 @@ public final class Distributor {
     public static double probitHighPrecision(double d)
     {
         double x = probit(d);
-        if( d > Double.MIN_VALUE && d < 1.0 && d != 0.5) {
-            double e = 0.5 * erfc(x * -0.7071067811865475) - d; /* -0.7071067811865475 == -1.0 / Math.sqrt(2.0) */
+        /* 5.885886107568E-311 was found by exhaustively searching, rejecting any numbers that would
+           make this return NaN. It is the lowest input this can accept without producing NaN. */
+        if( d >= 5.885886107568E-311 && d < 1.0 && d != 0.5) {
+            double e = 0.5 * MathTools.erfc(x * -0.7071067811865475) - d; /* -0.7071067811865475 == -1.0 / Math.sqrt(2.0) */
             double u = e * 2.5066282746310002 * Math.exp(0.5 * x * x); /* 2.5066282746310002 == Math.sqrt(2*Math.PI) */
             x = x - u / (1.0 + 0.5 * x * u);
         }
