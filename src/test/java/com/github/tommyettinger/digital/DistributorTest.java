@@ -2,10 +2,15 @@ package com.github.tommyettinger.digital;
 
 import org.junit.Test;
 
+import static com.github.tommyettinger.digital.BitConversion.longBitsToDouble;
+
 public class DistributorTest {
     @Test
     public void testLimits() {
         System.out.println("Distributor.probit(0.0) == " + Distributor.probit(0.0));
+        System.out.println("Distributor.probit(Double.MIN_VALUE) == " + Distributor.probit(Double.MIN_VALUE));
+        System.out.println("Distributor.probit(longBitsToDouble(0x2L)) == " + Distributor.probit(longBitsToDouble(0x2L)));
+        System.out.println("Distributor.probit(longBitsToDouble(0x0010000000000000L>>>1)) == " + Distributor.probit(longBitsToDouble(0x0010000000000000L>>>1)));
         System.out.println("Distributor.probit(Double.MIN_NORMAL) == " + Distributor.probit(Double.MIN_NORMAL));
         System.out.println("Distributor.probit(0x1p-53) == " + Distributor.probit(0x1p-53));
         System.out.println("Distributor.probit(0x2p-53) == " + Distributor.probit(0x2p-53));
@@ -18,6 +23,9 @@ public class DistributorTest {
         System.out.println("Distributor.probit(1.0) == " + Distributor.probit(1.0));
 
         System.out.println("Distributor.probitHighPrecision(0.0) == " + Distributor.probitHighPrecision(0.0));
+        System.out.println("Distributor.probitHighPrecision(Double.MIN_VALUE) == " + Distributor.probitHighPrecision(Double.MIN_VALUE));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(0x2L)) == " + Distributor.probitHighPrecision(longBitsToDouble(0x2L)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(0x0010000000000000L>>>1)) == " + Distributor.probitHighPrecision(longBitsToDouble(0x0010000000000000L>>>1)));
         System.out.println("Distributor.probitHighPrecision(Double.MIN_NORMAL) == " + Distributor.probitHighPrecision(Double.MIN_NORMAL));
         System.out.println("Distributor.probitHighPrecision(0x1p-53) == " + Distributor.probitHighPrecision(0x1p-53));
         System.out.println("Distributor.probitHighPrecision(0x2p-53) == " + Distributor.probitHighPrecision(0x2p-53));
