@@ -106,5 +106,19 @@ public class DistributorTest {
         for (int i = 0; i < 39; i++) {
             System.out.println("Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - (1L<<" + i + "))) == " + Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - (1L << i))));
         }
+        System.out.println();
+        long start = (22L << 39) - (1L<<37), end = (22L << 39) - (1L<<38);
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(start)) == " + Distributor.probitHighPrecision(longBitsToDouble(start)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(start-1L)) == " + Distributor.probitHighPrecision(longBitsToDouble(start-1L)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(end+1L)) == " + Distributor.probitHighPrecision(longBitsToDouble(end+1L)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(end)) == " + Distributor.probitHighPrecision(longBitsToDouble(end)));
+        System.out.println("Starting at " + start + " and working down to " + end + ":");
+        for (long i = start; i > end; i--) {
+            if(Double.isNaN(Distributor.probitHighPrecision(longBitsToDouble(i)))){
+                System.out.println(i + " is out of range!");
+                System.out.println(("Double " + longBitsToDouble(i+1L) + " is in range!"));
+                break;
+            }
+        }
     }
 }
