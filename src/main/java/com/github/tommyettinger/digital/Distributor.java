@@ -156,12 +156,12 @@ public final class Distributor {
      */
     public static double probitD(double p) {
         if(0.0465 > p){
-            /* 5.56268464626801E-309 is the smallest number possible to add here. */
-            final double r = Math.sqrt(Math.log(p + 5.56268464626801E-309) * -2.0);
+            /* 0.4.9E-324 is Double.MIN_VALUE, the smallest non-zero double */
+            final double r = Math.sqrt(Math.log(p + 4.9E-324) * -2.0);
             return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
         } else if(0.9535 < p) {
-            /* 5.56268464626801E-309 is the smallest number possible to add here. */
-            final double r = Math.sqrt(Math.log(1.0 - p + 5.56268464626801E-309) * -2.0);
+            /* 0.4.9E-324 is Double.MIN_VALUE, the smallest non-zero double */
+            final double r = Math.sqrt(Math.log(1.0 - p + 4.9E-324) * -2.0);
             return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
         } else {
             final double q = p - 0.5, r = q * q;
@@ -208,12 +208,12 @@ public final class Distributor {
         /* 5.421010862427522E-20 is 0x1p-64 or Math.pow(2, -64) */
         final double h = l * 5.421010862427522E-20;
         if(-0.4535 > h) {
-            /* 0.5000000000000001 is the smallest representable double that is greater than 0.5. */
-            final double r = Math.sqrt(Math.log(0.5000000000000001 + h) * -2f);
+            /* 0.4.9E-324 is Double.MIN_VALUE, the smallest non-zero double */
+            final double r = Math.sqrt(Math.log(0.5 + h + 4.9E-324) * -2f);
             return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
         } else if(0.4535 < h) {
-            /* 0.5000000000000001 is the smallest representable double that is greater than 0.5. */
-            final double r = Math.sqrt(Math.log(0.5000000000000001 - h) * -2f);
+            /* 0.4.9E-324 is Double.MIN_VALUE, the smallest non-zero double */
+            final double r = Math.sqrt(Math.log(0.5 - h + 4.9E-324) * -2f);
             return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
         } else {
             final double r = h * h;

@@ -57,6 +57,7 @@ public class DistributorTest {
         System.out.println("Distributor.probitI(Integer.MAX_VALUE) == " + Distributor.probitI(Integer.MAX_VALUE));
 
         System.out.println("Distributor.probitD(0.0) == " + Distributor.probitD(0.0));
+        System.out.println("Distributor.probitD(Double.MIN_VALUE) == " + Distributor.probitD(Double.MIN_VALUE));
         System.out.println("Distributor.probitD(Double.MIN_NORMAL) == " + Distributor.probitD(Double.MIN_NORMAL));
         System.out.println("Distributor.probitD(0x1p-53) == " + Distributor.probitD(0x1p-53));
         System.out.println("Distributor.probitD(0x2p-53) == " + Distributor.probitD(0x2p-53));
@@ -69,6 +70,7 @@ public class DistributorTest {
         System.out.println("Distributor.probitD(1.0) == " + Distributor.probitD(1.0));
 
         System.out.println("Distributor.probitF(0.0f) == " + Distributor.probitF(0.0f));
+        System.out.println("Distributor.probitF(Float.MIN_VALUE) == " + Distributor.probitF(Float.MIN_VALUE));
         System.out.println("Distributor.probitF(Float.MIN_NORMAL) == " + Distributor.probitF(Float.MIN_NORMAL));
         System.out.println("Distributor.probitF(0x1p-24f) == " + Distributor.probitF(0x1p-24f));
         System.out.println("Distributor.probitF(0x2p-24f) == " + Distributor.probitF(0x2p-24f));
