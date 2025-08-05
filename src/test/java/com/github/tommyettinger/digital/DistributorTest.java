@@ -89,6 +89,22 @@ public class DistributorTest {
         System.out.println("Distributor.probitF(1.0f - 0x2p-24f) == " + Distributor.probitF(1.0f - 0x2p-24f));
         System.out.println("Distributor.probitF(1.0f - 0x1p-24f) == " + Distributor.probitF(1.0f - 0x1p-24f));
         System.out.println("Distributor.probitF(1.0f) == " + Distributor.probitF(1.0f));
-
+    }
+    @Test
+    public void testHighPrecision() {
+        for (int i = 1; i < 52; i++) {
+            System.out.println("Distributor.probitHighPrecision(longBitsToDouble(1L << " + i + ")) == " + Distributor.probitHighPrecision(longBitsToDouble(1L << i)));
+        }
+        System.out.println();
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(10L << 40)) == " + Distributor.probitHighPrecision(longBitsToDouble(10L << 40)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(11L << 40)) == " + Distributor.probitHighPrecision(longBitsToDouble(11L << 40)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(12L << 40)) == " + Distributor.probitHighPrecision(longBitsToDouble(12L << 40)));
+        System.out.println();
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble(21L << 39)) == " + Distributor.probitHighPrecision(longBitsToDouble(21L << 39)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble((21L << 39) + 1L)) == " + Distributor.probitHighPrecision(longBitsToDouble((21L << 39) + 1L)));
+        System.out.println("Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - 1L)) == " + Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - 1L)));
+        for (int i = 0; i < 39; i++) {
+            System.out.println("Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - (1L<<" + i + "))) == " + Distributor.probitHighPrecision(longBitsToDouble((22L << 39) - (1L << i))));
+        }
     }
 }
