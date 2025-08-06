@@ -19,6 +19,7 @@ package com.github.tommyettinger.digital.experimental;
 
 import com.github.tommyettinger.digital.BitConversion;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
 /**
@@ -52,6 +53,7 @@ final class RyuDouble {
   private static final int[][] POW5_INV_SPLIT = new int[NEG_TABLE_SIZE][4];
 
   private static final StringBuilder result = new StringBuilder(32);
+  private static final StringBuilder bonus = new StringBuilder(32);
 
   static {
     result.setLength(32);
@@ -420,187 +422,175 @@ final class RyuDouble {
   }
   public static String decimal(double value, int lengthLimit, int precision) {
     result.setLength(0);
-    return appendDecimal(result, value, lengthLimit, precision).toString();
+    return appendDecimal(result, bonus, value, lengthLimit, precision).toString();
   }
   public static StringBuilder appendDecimal(StringBuilder builder, double value) {
     return appendDecimal(builder, value, -10000);
   }
   public static StringBuilder appendDecimal(StringBuilder builder, double value, int lengthLimit) {
-    return appendDecimal(builder, value, lengthLimit, -10000);
+    return appendDecimal(builder, bonus, value, lengthLimit, -10000);
   }
-  public static StringBuilder appendDecimal(StringBuilder builder, double value, int lengthLimit, int precision) {
-    // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
-    // First, handle all the trivial cases.
-    if (Double.isNaN(value)) {
-      int startLimiting = builder.length();
-      builder.append("NaN");
-      if(lengthLimit != -10000) {
-        if((long)startLimiting + lengthLimit < builder.length()) {
-          builder.setLength(startLimiting + lengthLimit);
-        }
-        else {
-          while (builder.length() < startLimiting + lengthLimit) {
+  public static <T extends CharSequence & Appendable> T appendDecimal(T appendable, StringBuilder builder, double value, int lengthLimit, int precision) {
+    try {
+      // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
+      // First, handle all the trivial cases.
+      if (Double.isNaN(value)) {
+        builder.setLength(0);
+        builder.append("NaN");
+        if (lengthLimit != -10000 && lengthLimit >= builder.length()) {
+          while (builder.length() < lengthLimit) {
             builder.append(' ');
           }
         }
+        if (lengthLimit == -10000)
+          appendable.append(builder);
+        else
+          appendable.append(builder, 0, lengthLimit);
+        return appendable;
       }
-      return builder;
-    }
-    if (value == Double.POSITIVE_INFINITY || value == Double.NEGATIVE_INFINITY) {
-      int startLimiting = builder.length();
-      if (value == Double.NEGATIVE_INFINITY) {
-        builder.append("-Infinity");
-      }
-      else {
-        builder.append("Infinity");
-      }
-      if(lengthLimit != -10000) {
-        if((long)startLimiting + lengthLimit < builder.length()) {
-          builder.setLength(startLimiting + lengthLimit);
-        }
-        else {
-          while (builder.length() < startLimiting + lengthLimit) {
-            builder.append(' ');
-          }
-        }
-      }
-      return builder;
-    }
-    long bits = BitConversion.doubleToLongBits(value);
-    if (bits == 0) {
-      int startLimiting = builder.length();
-      builder.append("0.0");
-      if(precision >= 0) {
-        int ideal = builder.indexOf(".", startLimiting) + precision;
-        while (builder.length() <= ideal){
-          builder.append('0');
-        }
-      }
-      if(lengthLimit != -10000) {
-        if((long)startLimiting + lengthLimit < builder.length()) {
-          builder.setLength(startLimiting + lengthLimit);
-        }
-        else {
-          while (builder.length() < startLimiting + lengthLimit) {
-            builder.append('0');
-          }
-        }
-      }
-      return builder;
-    }
-    if (bits == 0x8000000000000000L){
-      int startLimiting = builder.length();
-      builder.append("-0.0");
-      if(lengthLimit != -10000) {
-        if((long)startLimiting + lengthLimit < builder.length()) {
-          builder.setLength(startLimiting + lengthLimit);
-        }
-        else {
-          while (builder.length() < startLimiting + lengthLimit) {
-            builder.append('0');
-          }
-        }
-      }
-      return builder;
-    }
-
-    // Otherwise extract the mantissa and exponent bits and run the full algorithm.
-    int ieeeExponent = (int) ((bits >>> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK);
-    long ieeeMantissa = bits & DOUBLE_MANTISSA_MASK;
-    int e2;
-    long m2;
-    if (ieeeExponent == 0) {
-      // Denormal number - no implicit leading 1, and the exponent is 1, not 0.
-      e2 = 1 - DOUBLE_EXPONENT_BIAS - DOUBLE_MANTISSA_BITS;
-      m2 = ieeeMantissa;
-    } else {
-      // Add implicit leading 1.
-      e2 = ieeeExponent - DOUBLE_EXPONENT_BIAS - DOUBLE_MANTISSA_BITS;
-      m2 = ieeeMantissa | (1L << DOUBLE_MANTISSA_BITS);
-    }
-
-    boolean sign = bits < 0;
-
-    // Step 2: Determine the interval of legal decimal representations.
-    boolean even = (m2 & 1) == 0;
-    final long mv = 4 * m2;
-    final long mp = 4 * m2 + 2;
-    final int mmShift = ((m2 != (1L << DOUBLE_MANTISSA_BITS)) || (ieeeExponent == 1)) ? 1 : 0;
-    final long mm = 4 * m2 - 1 - mmShift;
-    e2 -= 2;
-
-    // Step 3: Convert to a decimal power base using 128-bit arithmetic.
-    // -1077 = 1 - 1023 - 53 - 2 <= e_2 - 2 <= 2046 - 1023 - 53 - 2 = 968
-    long dv, dp, dm;
-    final int e10;
-    boolean dmIsTrailingZeros = false, dvIsTrailingZeros = false;
-    if (e2 >= 0) {
-      final int q = Math.max(0, ((e2 * 78913) >>> 18) - 1);
-      // k = constant + floor(log_2(5^q))
-      final int k = POW5_INV_BITCOUNT + pow5bits(q) - 1;
-      final int i = -e2 + q + k;
-      dv = mulPow5InvDivPow2(mv, q, i);
-      dp = mulPow5InvDivPow2(mp, q, i);
-      dm = mulPow5InvDivPow2(mm, q, i);
-      e10 = q;
-
-      if (q <= 21) {
-        if (mv % 5 == 0) {
-          dvIsTrailingZeros = multipleOfPowerOf5(mv, q);
-        } else if (even) {
-          dmIsTrailingZeros = multipleOfPowerOf5(mm, q);
-        } else if (multipleOfPowerOf5(mp, q)) {
-          dp--;
-        }
-      }
-    } else {
-      final int q = Math.max(0, ((-e2 * 732923) >>> 20) - 1);
-      final int i = -e2 - q;
-      final int k = pow5bits(i) - POW5_BITCOUNT;
-      final int j = q - k;
-      dv = mulPow5divPow2(mv, i, j);
-      dp = mulPow5divPow2(mp, i, j);
-      dm = mulPow5divPow2(mm, i, j);
-      e10 = q + e2;
-      if (q <= 1) {
-        dvIsTrailingZeros = true;
-        if (even) {
-          dmIsTrailingZeros = mmShift == 1;
+      if (value == Double.POSITIVE_INFINITY || value == Double.NEGATIVE_INFINITY) {
+        builder.setLength(0);
+        if (value == Double.NEGATIVE_INFINITY) {
+          builder.append("-Infinity");
         } else {
-          dp--;
+          builder.append("Infinity");
         }
-      } else if (q < 63) {
-        dvIsTrailingZeros = (mv & ((1L << (q - 1)) - 1)) == 0;
+        if (lengthLimit != -10000 && lengthLimit >= builder.length()) {
+          while (builder.length() < lengthLimit) {
+            builder.append(' ');
+          }
+        }
+        if (lengthLimit == -10000)
+          appendable.append(builder);
+        else
+          appendable.append(builder, 0, lengthLimit);
+        return appendable;
       }
-    }
-
-    // Step 4: Find the shortest decimal representation in the interval of legal representations.
-    //
-    // We do some extra work here in order to follow Float/Double.toString semantics. In particular,
-    // that requires printing in scientific format if and only if the exponent is between -3 and 7,
-    // and it requires printing at least two decimal digits.
-    //
-    // Above, we moved the decimal dot all the way to the right, so now we need to count digits to
-    // figure out the correct exponent for scientific notation.
-    final int vplength = decimalLength(dp);
-    int exp = e10 + vplength - 1;
-
-    int removed = 0;
-
-    int lastRemovedDigit = 0;
-    long output;
-    if (dmIsTrailingZeros || dvIsTrailingZeros) {
-      while (dp / 10 > dm / 10) {
-        dmIsTrailingZeros &= dm % 10 == 0;
-        dvIsTrailingZeros &= lastRemovedDigit == 0;
-        lastRemovedDigit = (int) (dv % 10);
-        dp /= 10;
-        dv /= 10;
-        dm /= 10;
-        removed++;
+      long bits = BitConversion.doubleToLongBits(value);
+      if (bits == 0) {
+        builder.setLength(0);
+        builder.append("0.0");
+        if (precision >= 0) {
+          int ideal = 1 + precision;
+          while (builder.length() <= ideal) {
+            builder.append('0');
+          }
+        }
+        if (lengthLimit != -10000 && lengthLimit >= builder.length()) {
+          while (builder.length() < lengthLimit) {
+            builder.append('0');
+          }
+        }
+        if (lengthLimit == -10000)
+          appendable.append(builder);
+        else
+          appendable.append(builder, 0, lengthLimit);
+        return appendable;
       }
-      if (dmIsTrailingZeros) {
-        while (dm % 10 == 0) {
+      if (bits == 0x8000000000000000L) {
+        builder.setLength(0);
+        builder.append("-0.0");
+        if (lengthLimit != -10000 && lengthLimit >= builder.length()) {
+          while (builder.length() < lengthLimit) {
+            builder.append('0');
+          }
+        }
+        if (lengthLimit == -10000)
+          appendable.append(builder);
+        else
+          appendable.append(builder, 0, lengthLimit);
+        return appendable;
+      }
+      builder.setLength(0);
+
+      // Otherwise extract the mantissa and exponent bits and run the full algorithm.
+      int ieeeExponent = (int) ((bits >>> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK);
+      long ieeeMantissa = bits & DOUBLE_MANTISSA_MASK;
+      int e2;
+      long m2;
+      if (ieeeExponent == 0) {
+        // Denormal number - no implicit leading 1, and the exponent is 1, not 0.
+        e2 = 1 - DOUBLE_EXPONENT_BIAS - DOUBLE_MANTISSA_BITS;
+        m2 = ieeeMantissa;
+      } else {
+        // Add implicit leading 1.
+        e2 = ieeeExponent - DOUBLE_EXPONENT_BIAS - DOUBLE_MANTISSA_BITS;
+        m2 = ieeeMantissa | (1L << DOUBLE_MANTISSA_BITS);
+      }
+
+      boolean sign = bits < 0;
+
+      // Step 2: Determine the interval of legal decimal representations.
+      boolean even = (m2 & 1) == 0;
+      final long mv = 4 * m2;
+      final long mp = 4 * m2 + 2;
+      final int mmShift = ((m2 != (1L << DOUBLE_MANTISSA_BITS)) || (ieeeExponent == 1)) ? 1 : 0;
+      final long mm = 4 * m2 - 1 - mmShift;
+      e2 -= 2;
+
+      // Step 3: Convert to a decimal power base using 128-bit arithmetic.
+      // -1077 = 1 - 1023 - 53 - 2 <= e_2 - 2 <= 2046 - 1023 - 53 - 2 = 968
+      long dv, dp, dm;
+      final int e10;
+      boolean dmIsTrailingZeros = false, dvIsTrailingZeros = false;
+      if (e2 >= 0) {
+        final int q = Math.max(0, ((e2 * 78913) >>> 18) - 1);
+        // k = constant + floor(log_2(5^q))
+        final int k = POW5_INV_BITCOUNT + pow5bits(q) - 1;
+        final int i = -e2 + q + k;
+        dv = mulPow5InvDivPow2(mv, q, i);
+        dp = mulPow5InvDivPow2(mp, q, i);
+        dm = mulPow5InvDivPow2(mm, q, i);
+        e10 = q;
+
+        if (q <= 21) {
+          if (mv % 5 == 0) {
+            dvIsTrailingZeros = multipleOfPowerOf5(mv, q);
+          } else if (even) {
+            dmIsTrailingZeros = multipleOfPowerOf5(mm, q);
+          } else if (multipleOfPowerOf5(mp, q)) {
+            dp--;
+          }
+        }
+      } else {
+        final int q = Math.max(0, ((-e2 * 732923) >>> 20) - 1);
+        final int i = -e2 - q;
+        final int k = pow5bits(i) - POW5_BITCOUNT;
+        final int j = q - k;
+        dv = mulPow5divPow2(mv, i, j);
+        dp = mulPow5divPow2(mp, i, j);
+        dm = mulPow5divPow2(mm, i, j);
+        e10 = q + e2;
+        if (q <= 1) {
+          dvIsTrailingZeros = true;
+          if (even) {
+            dmIsTrailingZeros = mmShift == 1;
+          } else {
+            dp--;
+          }
+        } else if (q < 63) {
+          dvIsTrailingZeros = (mv & ((1L << (q - 1)) - 1)) == 0;
+        }
+      }
+
+      // Step 4: Find the shortest decimal representation in the interval of legal representations.
+      //
+      // We do some extra work here in order to follow Float/Double.toString semantics. In particular,
+      // that requires printing in scientific format if and only if the exponent is between -3 and 7,
+      // and it requires printing at least two decimal digits.
+      //
+      // Above, we moved the decimal dot all the way to the right, so now we need to count digits to
+      // figure out the correct exponent for scientific notation.
+      final int vplength = decimalLength(dp);
+      int exp = e10 + vplength - 1;
+
+      int removed = 0;
+
+      int lastRemovedDigit = 0;
+      long output;
+      if (dmIsTrailingZeros || dvIsTrailingZeros) {
+        while (dp / 10 > dm / 10) {
+          dmIsTrailingZeros &= dm % 10 == 0;
           dvIsTrailingZeros &= lastRemovedDigit == 0;
           lastRemovedDigit = (int) (dv % 10);
           dp /= 10;
@@ -608,94 +598,110 @@ final class RyuDouble {
           dm /= 10;
           removed++;
         }
-      }
-      if (dvIsTrailingZeros && (lastRemovedDigit == 5) && ((dv & 1) == 0)) {
-        // Round even if the exact numbers is .....50..0.
-        lastRemovedDigit = 4;
-      }
-      output = dv +
-          (dv == dm && !dmIsTrailingZeros || lastRemovedDigit >= 5 ? 1 : 0);
-    } else {
-      while (dp / 10 > dm / 10) {
-        lastRemovedDigit = (int) (dv % 10);
-        dp /= 10;
-        dv /= 10;
-        dm /= 10;
-        removed++;
-      }
-      output = dv + ((dv == dm || (lastRemovedDigit >= 5)) ? 1 : 0);
-    }
-    int olength = vplength - removed;
-
-    // Step 5: Print the decimal representation.
-    // We follow Double.toString semantics here.
-    int index = builder.length();
-    int startLimiting = index;
-    if (sign) {
-      builder.append('-');
-    }
-    // Values in the interval [1E-3, 1E7) are special.
-    // Otherwise, follow the Java spec for values in the interval [1E-3, 1E7).
-    if (exp < 0) {
-      // Decimal dot is before any of the digits.
-      builder.append("0.");
-      int dotPosition = builder.length();
-      int decimalPlaces = precision < 0 ? Double.MAX_EXPONENT : precision;
-      for (int i = -1; i > exp && decimalPlaces != 0; i--, decimalPlaces--) {
-        builder.append('0');
-      }
-      int current = builder.length();
-      for (int i = 0; i < olength; i++, decimalPlaces--) {
-        builder.insert(current, (char) ('0' + output % 10));
-        output /= 10;
-        index++;
-      }
-      for (int i = 0; i < decimalPlaces; i++) {
-        builder.append('0');
-      }
-      if(precision >= 0){
-        builder.setLength(dotPosition + precision);
-      }
-    } else if (exp + 1 >= olength) {
-      index = builder.length();
-      // Decimal dot is after any of the digits.
-      for (int i = 0; i < olength; i++) {
-        builder.insert(index, (char) ('0' + output % 10));
-        output /= 10;
-      }
-      for (int i = olength; i < exp + 1; i++) {
-        builder.append('0');
-      }
-      builder.append(".0");
-    } else {
-      // Decimal dot is somewhere between the digits.
-      int current = builder.length();
-      int postDot = precision < 0 ? Double.MAX_EXPONENT : exp + precision;
-      for (int i = 0; i < olength; i++) {
-        if (olength - i - 1 == exp) {
-          builder.insert(current, '.');
+        if (dmIsTrailingZeros) {
+          while (dm % 10 == 0) {
+            dvIsTrailingZeros &= lastRemovedDigit == 0;
+            lastRemovedDigit = (int) (dv % 10);
+            dp /= 10;
+            dv /= 10;
+            dm /= 10;
+            removed++;
+          }
         }
-        if (olength - i - 1 <= postDot) {
+        if (dvIsTrailingZeros && (lastRemovedDigit == 5) && ((dv & 1) == 0)) {
+          // Round even if the exact numbers is .....50..0.
+          lastRemovedDigit = 4;
+        }
+        output = dv +
+                (dv == dm && !dmIsTrailingZeros || lastRemovedDigit >= 5 ? 1 : 0);
+      } else {
+        while (dp / 10 > dm / 10) {
+          lastRemovedDigit = (int) (dv % 10);
+          dp /= 10;
+          dv /= 10;
+          dm /= 10;
+          removed++;
+        }
+        output = dv + ((dv == dm || (lastRemovedDigit >= 5)) ? 1 : 0);
+      }
+      int olength = vplength - removed;
+
+      // Step 5: Print the decimal representation.
+      // We follow Double.toString semantics here.
+      int index = builder.length();
+      if (sign) {
+        builder.append('-');
+      }
+      // Values in the interval [1E-3, 1E7) are special.
+      // Otherwise, follow the Java spec for values in the interval [1E-3, 1E7).
+      if (exp < 0) {
+        // Decimal dot is before any of the digits.
+        builder.append("0.");
+        int dotPosition = builder.length();
+        int decimalPlaces = precision < 0 ? Double.MAX_EXPONENT : precision;
+        for (int i = -1; i > exp && decimalPlaces != 0; i--, decimalPlaces--) {
+          builder.append('0');
+        }
+        int current = builder.length();
+        for (int i = 0; i < olength; i++, decimalPlaces--) {
           builder.insert(current, (char) ('0' + output % 10));
-        } else removed++;
-        output /= 10;
+          output /= 10;
+          index++;
+        }
+        for (int i = 0; i < decimalPlaces; i++) {
+          builder.append('0');
+        }
+        if (precision >= 0) {
+          builder.setLength(dotPosition + precision);
+        }
+      } else if (exp + 1 >= olength) {
+        index = builder.length();
+        // Decimal dot is after any of the digits.
+        for (int i = 0; i < olength; i++) {
+          builder.insert(index, (char) ('0' + output % 10));
+          output /= 10;
+        }
+        for (int i = olength; i < exp + 1; i++) {
+          builder.append('0');
+        }
+        builder.append(".0");
+      } else {
+        // Decimal dot is somewhere between the digits.
+        int current = builder.length();
+        int postDot = precision < 0 ? Double.MAX_EXPONENT : exp + precision;
+        for (int i = 0; i < olength; i++) {
+          if (olength - i - 1 == exp) {
+            builder.insert(current, '.');
+          }
+          if (olength - i - 1 <= postDot) {
+            builder.insert(current, (char) ('0' + output % 10));
+          } else removed++;
+          output /= 10;
+        }
       }
+      if (precision >= 0) {
+        int ideal = builder.indexOf(".") + precision;
+        while (builder.length() <= ideal) {
+          builder.append('0');
+        }
+      }
+      if (lengthLimit != -10000) {
+        for (; removed >= -1; removed--) {
+          builder.append('0');
+        }
+        if (lengthLimit >= builder.length()) {
+          while (builder.length() < lengthLimit) {
+            builder.append('0');
+          }
+        }
+        appendable.append(builder, 0, lengthLimit);
+      } else
+        appendable.append(builder);
+      return appendable;
+    } catch (IOException e) {
+      bonus.setLength(0);
     }
-    if(precision >= 0){
-      int ideal = builder.indexOf(".", startLimiting) + precision;
-      while (builder.length() <= ideal){
-        builder.append('0');
-      }
-    }
-    if(lengthLimit != -10000) {
-      for (; removed >= -1; removed--) {
-        builder.append('0');
-      }
-      if((long)startLimiting + lengthLimit < builder.length()) {
-        builder.setLength(startLimiting + lengthLimit);
-      }
-    }
-    return builder;
+    return appendable;
   }
 
   public static String scientific(double value) {
