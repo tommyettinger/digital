@@ -51,9 +51,11 @@ final class RyuDouble {
   private static final int POW5_INV_QUARTER_BITCOUNT = 31;
   private static final int[][] POW5_INV_SPLIT = new int[NEG_TABLE_SIZE][4];
 
-  private static final char[] result = new char[32];
+  private static final StringBuilder result = new StringBuilder(32);
 
   static {
+    result.setLength(32);
+
     BigInteger mask = BigInteger.ONE.shiftLeft(POW5_QUARTER_BITCOUNT).subtract(BigInteger.ONE);
     BigInteger invMask = BigInteger.ONE.shiftLeft(POW5_INV_QUARTER_BITCOUNT).subtract(BigInteger.ONE);
     for (int i = 0; i < POS_TABLE_SIZE; i++) {
@@ -85,22 +87,22 @@ final class RyuDouble {
     }
   }
 
-  public static int general(double value, char[] result) {
+  public static int general(double value, StringBuilder result) {
     return general(value, result, -3, 7);
   }
 
-  public static int general(double value, char[] result, char scientificChar) {
+  public static int general(double value, StringBuilder result, char scientificChar) {
     return general(value, result, -3, 7, scientificChar);
   }
 
   public static String general(double value) {
     final int index = general(value, result, -3, 7);
-    return new String(result, 0, index);
+    return result.substring(0, index);
   }
 
   public static String general(double value, char scientificChar) {
     final int index = general(value, result, -3, 7, scientificChar);
-    return new String(result, 0, index);
+    return result.substring(0, index);
   }
 
   public static StringBuilder appendGeneral(StringBuilder builder, double value) {
@@ -111,82 +113,82 @@ final class RyuDouble {
     return appendGeneral(builder, value, result, -3, 7, scientificChar);
   }
 
-  public static StringBuilder appendGeneral(StringBuilder builder, double value, char[] result) {
+  public static StringBuilder appendGeneral(StringBuilder builder, double value, StringBuilder result) {
     return appendGeneral(builder, value, result, -3, 7);
   }
 
-  public static StringBuilder appendGeneral(StringBuilder builder, double value, char[] result, char scientificChar) {
+  public static StringBuilder appendGeneral(StringBuilder builder, double value, StringBuilder result, char scientificChar) {
     return appendGeneral(builder, value, result, -3, 7, scientificChar);
   }
 
-  public static int friendly(double value, char[] result) {
+  public static int friendly(double value, StringBuilder result) {
     return general(value, result, -10, 10);
   }
 
   public static String friendly(double value) {
     final int index = general(value, result, -10, 10);
-    return new String(result, 0, index);
+    return result.substring(0, index);
   }
 
   public static StringBuilder appendFriendly(StringBuilder builder, double value) {
     return appendGeneral(builder, value, result, -10, 10);
   }
 
-  public static StringBuilder appendFriendly(StringBuilder builder, double value, char[] result) {
+  public static StringBuilder appendFriendly(StringBuilder builder, double value, StringBuilder result) {
     return appendGeneral(builder, value, result, -10, 10);
   }
 
-  public static StringBuilder appendGeneral(StringBuilder builder, double value, char[] result, int low, int high) {
+  public static StringBuilder appendGeneral(StringBuilder builder, double value, StringBuilder result, int low, int high) {
     final int index = general(value, result, low, high);
     return builder.append(result, 0, index);
   }
 
-  public static StringBuilder appendGeneral(StringBuilder builder, double value, char[] result, int low, int high,
+  public static StringBuilder appendGeneral(StringBuilder builder, double value, StringBuilder result, int low, int high,
                                             char scientificChar) {
     final int index = general(value, result, low, high, scientificChar);
     return builder.append(result, 0, index);
   }
 
-  public static int general(double value, char[] result, int low, int high) {
+  public static int general(double value, StringBuilder result, int low, int high) {
     return general(value, result, low, high, 'E');
   }
 
-  public static int general(double value, char[] result, int low, int high, char scientificChar) {
+  public static int general(double value, StringBuilder result, int low, int high, char scientificChar) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Double.isNaN(value)) {
-      result[0] = 'N';
-      result[1] = 'a';
-      result[2] = 'N';
+      result.setCharAt(0, 'N');
+      result.setCharAt(1, 'a');
+      result.setCharAt(2, 'N');
       return 3;
     }
     if (value == Double.POSITIVE_INFINITY || value == Double.NEGATIVE_INFINITY) {
       int idx = 0;
       if (value == Double.NEGATIVE_INFINITY) {
-        result[idx++] = '-';
+        result.setCharAt(idx++, '-');
       }
-      result[idx++] = 'I';
-      result[idx++] = 'n';
-      result[idx++] = 'f';
-      result[idx++] = 'i';
-      result[idx++] = 'n';
-      result[idx++] = 'i';
-      result[idx++] = 't';
-      result[idx++] = 'y';
+      result.setCharAt(idx++, 'I');
+      result.setCharAt(idx++, 'n');
+      result.setCharAt(idx++, 'f');
+      result.setCharAt(idx++, 'i');
+      result.setCharAt(idx++, 'n');
+      result.setCharAt(idx++, 'i');
+      result.setCharAt(idx++, 't');
+      result.setCharAt(idx++, 'y');
       return idx;
     }
     long bits = BitConversion.doubleToLongBits(value);
     if (bits == 0) {
-      result[0] = '0';
-      result[1] = '.';
-      result[2] = '0';
+      result.setCharAt(0, '0');
+      result.setCharAt(1, '.');
+      result.setCharAt(2, '0');
       return 3;
     }
     if (bits == 0x8000000000000000L){
-      result[0] = '-';
-      result[1] = '0';
-      result[2] = '.';
-      result[3] = '0';
+      result.setCharAt(0, '-');
+      result.setCharAt(1, '0');
+      result.setCharAt(2, '.');
+      result.setCharAt(3, '0');
       return 4;
     }
 
@@ -332,7 +334,7 @@ final class RyuDouble {
     // We follow Double.toString semantics here.
     int index = 0;
     if (sign) {
-      result[index++] = '-';
+      result.setCharAt(index++, '-');
     }
 
     // Values in the interval [1E-3, 1E7) are special.
@@ -340,65 +342,65 @@ final class RyuDouble {
       // Print in the format x.xxxxxE-yy.
       for (int i = 0; i < olength - 1; i++) {
         int c = (int) (output % 10); output /= 10;
-        result[index + olength - i] = (char) ('0' + c);
+        result.setCharAt(index + olength - i, (char) ('0' + c));
       }
-      result[index] = (char) ('0' + output % 10);
-      result[index + 1] = '.';
+      result.setCharAt(index, (char) ('0' + output % 10));
+      result.setCharAt(index + 1, '.');
       index += olength + 1;
       if (olength == 1) {
-        result[index++] = '0';
+        result.setCharAt(index++, '0');
       }
 
       // Print 'E' (or other scientificChar), the exponent sign, and the exponent, which has at most three digits.
-      result[index++] = scientificChar;
+      result.setCharAt(index++, scientificChar);
       if (exp < 0) {
-        result[index++] = '-';
+        result.setCharAt(index++, '-');
         exp = -exp;
       }
       if (exp >= 100) {
-        result[index++] = (char) ('0' + exp / 100);
+        result.setCharAt(index++, (char) ('0' + exp / 100));
         exp %= 100;
-        result[index++] = (char) ('0' + exp / 10);
+        result.setCharAt(index++, (char) ('0' + exp / 10));
       } else if (exp >= 10) {
-        result[index++] = (char) ('0' + exp / 10);
+        result.setCharAt(index++, (char) ('0' + exp / 10));
       }
-      result[index++] = (char) ('0' + exp % 10);
+      result.setCharAt(index++, (char) ('0' + exp % 10));
     } else {
       // Otherwise follow the Java spec for values in the interval [1E-3, 1E7).
       if (exp < 0) {
         // Decimal dot is before any of the digits.
-        result[index++] = '0';
-        result[index++] = '.';
+        result.setCharAt(index++, '0');
+        result.setCharAt(index++, '.');
         for (int i = -1; i > exp; i--) {
-          result[index++] = '0';
+          result.setCharAt(index++, '0');
         }
         int current = index;
         for (int i = 0; i < olength; i++) {
-          result[current + olength - i - 1] = (char) ('0' + output % 10);
+          result.setCharAt(current + olength - i - 1, (char) ('0' + output % 10));
           output /= 10;
           index++;
         }
       } else if (exp + 1 >= olength) {
         // Decimal dot is after any of the digits.
         for (int i = 0; i < olength; i++) {
-          result[index + olength - i - 1] = (char) ('0' + output % 10);
+          result.setCharAt(index + olength - i - 1, (char) ('0' + output % 10));
           output /= 10;
         }
         index += olength;
         for (int i = olength; i < exp + 1; i++) {
-          result[index++] = '0';
+          result.setCharAt(index++, '0');
         }
-        result[index++] = '.';
-        result[index++] = '0';
+        result.setCharAt(index++, '.');
+        result.setCharAt(index++, '0');
       } else {
         // Decimal dot is somewhere between the digits.
         int current = index + 1;
         for (int i = 0; i < olength; i++) {
           if (olength - i - 1 == exp) {
-            result[current + olength - i - 1] = '.';
+            result.setCharAt(current + olength - i - 1, '.');
             current--;
           }
-          result[current + olength - i - 1] = (char) ('0' + output % 10);
+          result.setCharAt(current + olength - i - 1, (char) ('0' + output % 10));
           output /= 10;
         }
         index += olength + 1;
@@ -408,14 +410,17 @@ final class RyuDouble {
   }
 
   public static String decimal(double value) {
-    return appendDecimal(new StringBuilder(), value, -10000).toString();
+    result.setLength(0);
+    return appendDecimal(result, value, -10000).toString();
   }
 
   public static String decimal(double value, int lengthLimit) {
-    return appendDecimal(new StringBuilder(), value, lengthLimit).toString();
+    result.setLength(0);
+    return appendDecimal(result, value, lengthLimit).toString();
   }
   public static String decimal(double value, int lengthLimit, int precision) {
-    return appendDecimal(new StringBuilder(), value, lengthLimit, precision).toString();
+    result.setLength(0);
+    return appendDecimal(result, value, lengthLimit, precision).toString();
   }
   public static StringBuilder appendDecimal(StringBuilder builder, double value) {
     return appendDecimal(builder, value, -10000);
@@ -695,12 +700,12 @@ final class RyuDouble {
 
   public static String scientific(double value) {
     final int index = scientific(value, result);
-    return new String(result, 0, index);
+    return result.substring(0, index);
   }
 
   public static String scientific(double value, char scientificChar) {
     final int index = scientific(value, result, scientificChar);
-    return new String(result, 0, index);
+    return result.substring(0, index);
   }
 
   public static StringBuilder appendScientific(StringBuilder builder, double value) {
@@ -711,21 +716,21 @@ final class RyuDouble {
     return appendScientific(builder, value, result, scientificChar);
   }
 
-  public static StringBuilder appendScientific(StringBuilder builder, double value, char[] result) {
+  public static StringBuilder appendScientific(StringBuilder builder, double value, StringBuilder result) {
     final int index = scientific(value, result);
     return builder.append(result, 0, index);
   }
 
-  public static StringBuilder appendScientific(StringBuilder builder, double value, char[] result, char scientificChar) {
+  public static StringBuilder appendScientific(StringBuilder builder, double value, StringBuilder result, char scientificChar) {
     final int index = scientific(value, result, scientificChar);
     return builder.append(result, 0, index);
   }
 
-  public static int scientific(double value, char[] result) {
+  public static int scientific(double value, StringBuilder result) {
     return scientific(value, result, 'E');
   }
 
-  public static int scientific(double value, char[] result, char scientificChar) {
+  public static int scientific(double value, StringBuilder result, char scientificChar) {
     // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
     // First, handle all the trivial cases.
     if (Double.isNaN(value)) {
