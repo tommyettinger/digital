@@ -1,0 +1,5 @@
+Search for
+Replace with
+
+result\[([^\]]+)\] =([^;]+);
+result.setCharAt($1,$2);

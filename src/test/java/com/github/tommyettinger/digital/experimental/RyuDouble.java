@@ -754,42 +754,42 @@ final class RyuDouble {
         // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
         // First, handle all the trivial cases.
         if (Double.isNaN(value)) {
-            result[0] = 'N';
-            result[1] = 'a';
-            result[2] = 'N';
+            result.setCharAt(0, 'N');
+            result.setCharAt(1, 'a');
+            result.setCharAt(2, 'N');
             return 3;
         }
         if (value == Double.POSITIVE_INFINITY || value == Double.NEGATIVE_INFINITY) {
             int idx = 0;
             if (value == Double.NEGATIVE_INFINITY) {
-                result[idx++] = '-';
+                result.setCharAt(idx++, '-');
             }
-            result[idx++] = 'I';
-            result[idx++] = 'n';
-            result[idx++] = 'f';
-            result[idx++] = 'i';
-            result[idx++] = 'n';
-            result[idx++] = 'i';
-            result[idx++] = 't';
-            result[idx++] = 'y';
+            result.setCharAt(idx++, 'I');
+            result.setCharAt(idx++, 'n');
+            result.setCharAt(idx++, 'f');
+            result.setCharAt(idx++, 'i');
+            result.setCharAt(idx++, 'n');
+            result.setCharAt(idx++, 'i');
+            result.setCharAt(idx++, 't');
+            result.setCharAt(idx++, 'y');
             return idx;
         }
         long bits = BitConversion.doubleToLongBits(value);
         if (bits == 0) {
-            result[0] = '0';
-            result[1] = '.';
-            result[2] = '0';
-            result[3] = scientificChar;
-            result[4] = '0';
+            result.setCharAt(0, '0');
+            result.setCharAt(1, '.');
+            result.setCharAt(2, '0');
+            result.setCharAt(3, scientificChar);
+            result.setCharAt(4, '0');
             return 5;
         }
         if (bits == 0x8000000000000000L) {
-            result[0] = '-';
-            result[1] = '0';
-            result[2] = '.';
-            result[3] = '0';
-            result[4] = scientificChar;
-            result[5] = '0';
+            result.setCharAt(0, '-');
+            result.setCharAt(1, '0');
+            result.setCharAt(2, '.');
+            result.setCharAt(3, '0');
+            result.setCharAt(4, scientificChar);
+            result.setCharAt(5, '0');
             return 6;
         }
 
@@ -932,7 +932,7 @@ final class RyuDouble {
         // We follow Double.toString semantics here.
         int index = 0;
         if (sign) {
-            result[index++] = '-';
+            result.setCharAt(index++, '-');
         }
 
         // Values in the interval [1E-3, 1E7) are special.
@@ -940,29 +940,29 @@ final class RyuDouble {
         for (int i = 0; i < olength - 1; i++) {
             int c = (int) (output % 10);
             output /= 10;
-            result[index + olength - i] = (char) ('0' + c);
+            result.setCharAt(index + olength - i, (char) ('0' + c));
         }
-        result[index] = (char) ('0' + output % 10);
-        result[index + 1] = '.';
+        result.setCharAt(index, (char) ('0' + output % 10));
+        result.setCharAt(index + 1, '.');
         index += olength + 1;
         if (olength == 1) {
-            result[index++] = '0';
+            result.setCharAt(index++, '0');
         }
 
         // Print 'E' (or other scientificChar), the exponent sign, and the exponent, which has at most three digits.
-        result[index++] = scientificChar;
+        result.setCharAt(index++, scientificChar);
         if (exp < 0) {
-            result[index++] = '-';
+            result.setCharAt(index++, '-');
             exp = -exp;
         }
         if (exp >= 100) {
-            result[index++] = (char) ('0' + exp / 100);
+            result.setCharAt(index++, (char) ('0' + exp / 100));
             exp %= 100;
-            result[index++] = (char) ('0' + exp / 10);
+            result.setCharAt(index++, (char) ('0' + exp / 10));
         } else if (exp >= 10) {
-            result[index++] = (char) ('0' + exp / 10);
+            result.setCharAt(index++, (char) ('0' + exp / 10));
         }
-        result[index++] = (char) ('0' + exp % 10);
+        result.setCharAt(index++, (char) ('0' + exp % 10));
         return index;
     }
 
@@ -1031,7 +1031,7 @@ final class RyuDouble {
         long bits01 = mLow * POW5_SPLIT[i][2];  // 31
         long bits10 = mHigh * POW5_SPLIT[i][3]; // 31
         long bits00 = mLow * POW5_SPLIT[i][3];  // 0
-        int actualShift = j - 3 * 31 - 21;
+        int actualShift = j - 3 * 31 - 21 | 0;
         if (actualShift < 0) {
             throw new IllegalArgumentException("" + actualShift);
         }
@@ -1059,7 +1059,7 @@ final class RyuDouble {
         long bits10 = mHigh * POW5_INV_SPLIT[i][3];
         long bits00 = mLow * POW5_INV_SPLIT[i][3];
 
-        int actualShift = j - 3 * 31 - 21;
+        int actualShift = j - 3 * 31 - 21 | 0;
         if (actualShift < 0) {
             throw new IllegalArgumentException("" + actualShift);
         }
