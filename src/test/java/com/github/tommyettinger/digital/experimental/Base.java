@@ -19,6 +19,7 @@ package com.github.tommyettinger.digital.experimental;
 
 import com.github.tommyettinger.digital.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -371,7 +372,7 @@ public class Base {
      * @param number  any long
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendUnsigned(StringBuilder builder, long number) {
+    public <T extends CharSequence & Appendable> T appendUnsigned(T builder, long number) {
         final int len = length8Byte - 1;
         final int halfBase = base >>> 1;
         for (int i = 0; i <= len; i++) {
@@ -379,7 +380,11 @@ public class Base {
             progress.setCharAt(len - i, toEncoded[(int) (number - quotient * base)]);
             number = quotient;
         }
-        return builder.append(progress, 0, length8Byte);
+        try {
+            builder.append(progress, 0, length8Byte);
+        } catch (IOException ignored) {
+        }
+        return builder;
     }
 
     /**
@@ -415,7 +420,7 @@ public class Base {
      * @param number  any long
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendSigned(StringBuilder builder, long number) {
+    public <T extends CharSequence & Appendable> T appendSigned(T builder, long number) {
         int run = length8Byte;
         final long sign = number >> -1;
         // number is made negative because 0x8000000000000000L and -(0x8000000000000000L) are both negative.
@@ -429,7 +434,11 @@ public class Base {
         if (sign != 0) {
             progress.setCharAt(--run, negativeSign);
         }
-        return builder.append(progress, run, length8Byte + 1 - run);
+        try {
+            builder.append(progress, run, length8Byte + 1 - run);
+        } catch(IOException ignored){
+        }
+        return builder;
     }
 
     /**
@@ -631,7 +640,7 @@ public class Base {
      * @param number  any int
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendSigned(StringBuilder builder, int number) {
+    public <T extends CharSequence & Appendable> T appendSigned(T builder, int number) {
         int run = length8Byte;
         final int sign = number >> -1;
         // number is made negative because 0x80000000 and -(0x80000000) are both negative.
@@ -645,7 +654,12 @@ public class Base {
         if (sign != 0) {
             progress.setCharAt(--run, negativeSign);
         }
-        return builder.append(progress, run, length8Byte + 1 - run);
+        try {
+            builder.append(progress, run, length8Byte + 1 - run);
+        } catch (IOException ignored) {
+        }
+        return builder;
+
     }
 
     /**
@@ -847,7 +861,7 @@ public class Base {
      * @param number  any short
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendSigned(StringBuilder builder, short number) {
+    public <T extends CharSequence & Appendable> T appendSigned(T builder, short number) {
         int run = length8Byte;
         final int sign = number >> -1;
         // number is made negative because 0x80000000 and -(0x80000000) are both negative.
@@ -861,7 +875,12 @@ public class Base {
         if (sign != 0) {
             progress.setCharAt(--run, negativeSign);
         }
-        return builder.append(progress, run, length8Byte + 1 - run);
+        try {
+            builder.append(progress, run, length8Byte + 1 - run);
+        } catch (IOException ignored) {
+        }
+        return builder;
+
     }
 
     /**
@@ -1063,7 +1082,7 @@ public class Base {
      * @param number  any byte
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendSigned(StringBuilder builder, byte number) {
+    public <T extends CharSequence & Appendable> T appendSigned(T builder, byte number) {
         int run = length8Byte;
         final int sign = number >> -1;
         // number is made negative because 0x80000000 and -(0x80000000) are both negative.
@@ -1077,7 +1096,12 @@ public class Base {
         if (sign != 0) {
             progress.setCharAt(--run, negativeSign);
         }
-        return builder.append(progress, run, length8Byte + 1 - run);
+        try {
+            builder.append(progress, run, length8Byte + 1 - run);
+        } catch (IOException ignored) {
+        }
+        return builder;
+
     }
 
     /**
@@ -1236,8 +1260,13 @@ public class Base {
      * @param number  any double
      * @return {@code builder}, with the bits of {@code number} appended in the radix this specifies
      */
-    public StringBuilder appendUnsigned(StringBuilder builder, double number) {
-        return appendUnsigned(builder.append(paddingChar), BitConversion.doubleToRawLongBits(number));
+    public <T extends CharSequence & Appendable> T appendUnsigned(T builder, double number) {
+        try {
+            builder.append(paddingChar);
+            appendUnsigned(builder, BitConversion.doubleToRawLongBits(number));
+        } catch (IOException ignored) {
+        }
+        return builder;
     }
 
     /**
@@ -1268,7 +1297,7 @@ public class Base {
      * @param number  any double
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendSigned(StringBuilder builder, double number) {
+    public <T extends CharSequence & Appendable> T appendSigned(T builder, double number) {
         return appendSigned(builder, BitConversion.doubleToReversedLongBits(number));
     }
 
@@ -2037,7 +2066,7 @@ public class Base {
      * @param number  any float
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendSigned(StringBuilder builder, float number) {
+    public <T extends CharSequence & Appendable> T appendSigned(T builder, float number) {
         return appendSigned(builder, BitConversion.floatToReversedIntBits(number));
     }
 
@@ -2808,14 +2837,18 @@ public class Base {
      * @param number  any char
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendSigned(StringBuilder builder, char number) {
+    public <T extends CharSequence & Appendable> T appendSigned(T builder, char number) {
         int run = length8Byte;
         for (; ; run--) {
             progress.setCharAt(run, toEncoded[number % base]);
             if ((number /= base) == 0)
                 break;
         }
-        return builder.append(progress, run, length8Byte + 1 - run);
+        try {
+            builder.append(progress, run, length8Byte + 1 - run);
+        } catch (IOException ignored) {
+        }
+        return builder;
     }
 
     /**
@@ -3522,7 +3555,7 @@ public class Base {
 
     /**
      * Given a double array and a delimiter to separate the items of that array, produces a String containing all doubles
-     * from elements, in this Base, separated by delimiter. This uses {@link #appendSigned(StringBuilder, double)},
+     * from elements, in this Base, separated by delimiter. This uses {@link #appendSigned(CharSequence, double)},
      * which means this does not produce human-readable numbers.
      *
      * @param delimiter the separator to put between numbers
@@ -3544,7 +3577,7 @@ public class Base {
     /**
      * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all doubles from elements, in this Base, separated by delimiter. This uses
-     * {@link #appendSigned(StringBuilder, double)}, which means this does not produce human-readable numbers.
+     * {@link #appendSigned(CharSequence, double)}, which means this does not produce human-readable numbers.
      *
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
@@ -3564,7 +3597,7 @@ public class Base {
 
     /**
      * Given a float array and a delimiter to separate the items of that array, produces a String containing all floats
-     * from elements, in this Base, separated by delimiter. This uses {@link #appendSigned(StringBuilder, float)},
+     * from elements, in this Base, separated by delimiter. This uses {@link #appendSigned(CharSequence, float)},
      * which means this does not produce human-readable numbers.
      *
      * @param delimiter the separator to put between numbers
@@ -3586,7 +3619,7 @@ public class Base {
     /**
      * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all floats from elements, in this Base, separated by delimiter. This uses
-     * {@link #appendSigned(StringBuilder, float)}, which means this does not produce human-readable numbers.
+     * {@link #appendSigned(CharSequence, float)}, which means this does not produce human-readable numbers.
      *
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
@@ -4993,7 +5026,7 @@ public class Base {
     /**
      * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
      * {@code builder}. This can vary in how many chars it uses, since it does not show leading zeroes and may use a
-     * {@code -} sign. This is identical to calling {@link #appendSigned(StringBuilder, int)} on {@link #BASE10}.
+     * {@code -} sign. This is identical to calling {@link #appendSigned(CharSequence, int)} on {@link #BASE10}.
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any int
