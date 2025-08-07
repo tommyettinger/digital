@@ -28,6 +28,7 @@ import java.math.BigInteger;
  * <br>
  * Ryu is licensed under Apache 2.0, the same as digital. It was written by Ulf Adams and contributors.
  */
+@SuppressWarnings("PointlessBitwiseExpression")
 final class RyuDouble {
     /**
      * No need to instantiate.
@@ -728,22 +729,30 @@ final class RyuDouble {
         return result.substring(0, index);
     }
 
-    public static StringBuilder appendScientific(StringBuilder builder, double value) {
-        return appendScientific(builder, value, result);
+    public static <T extends CharSequence & Appendable> T appendScientific(T appendable, double value) {
+        return appendScientific(appendable, value, result);
     }
 
-    public static StringBuilder appendScientific(StringBuilder builder, double value, char scientificChar) {
-        return appendScientific(builder, value, result, scientificChar);
+    public static <T extends CharSequence & Appendable> T appendScientific(T appendable, double value, char scientificChar) {
+        return appendScientific(appendable, value, result, scientificChar);
     }
 
-    public static StringBuilder appendScientific(StringBuilder builder, double value, StringBuilder result) {
+    public static <T extends CharSequence & Appendable> T appendScientific(T appendable, double value, StringBuilder result) {
         final int index = scientific(value, result);
-        return builder.append(result, 0, index);
+        try {
+            appendable.append(result, 0, index);
+        } catch (IOException ignored) {
+        }
+        return appendable;
     }
 
-    public static StringBuilder appendScientific(StringBuilder builder, double value, StringBuilder result, char scientificChar) {
+    public static <T extends CharSequence & Appendable> T appendScientific(T appendable, double value, StringBuilder result, char scientificChar) {
         final int index = scientific(value, result, scientificChar);
-        return builder.append(result, 0, index);
+        try {
+            appendable.append(result, 0, index);
+        } catch (IOException ignored) {
+        }
+        return appendable;
     }
 
     public static int scientific(double value, StringBuilder result) {
