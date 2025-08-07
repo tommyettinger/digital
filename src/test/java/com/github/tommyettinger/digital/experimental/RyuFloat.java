@@ -19,6 +19,7 @@ package com.github.tommyettinger.digital.experimental;
 
 import com.github.tommyettinger.digital.BitConversion;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
 /**
@@ -88,6 +89,14 @@ final class RyuFloat {
         }
     }
 
+    public static int general(float value, StringBuilder result) {
+        return general(value, result, -3, 7);
+    }
+
+    public static int general(float value, StringBuilder result, char scientificChar) {
+        return general(value, result, -3, 7, scientificChar);
+    }
+
     public static String general(float value) {
         final int index = general(value, result, -3, 7);
         return result.substring(0, index);
@@ -98,28 +107,20 @@ final class RyuFloat {
         return result.substring(0, index);
     }
 
-    public static StringBuilder appendGeneral(StringBuilder builder, float value) {
-        return appendGeneral(builder, value, result, -3, 7);
+    public static <T extends CharSequence & Appendable> T appendGeneral(T appendable, float value) {
+        return appendGeneral(appendable, value, result, -3, 7);
     }
 
-    public static StringBuilder appendGeneral(StringBuilder builder, float value, char scientificChar) {
-        return appendGeneral(builder, value, result, -3, 7, scientificChar);
+    public static <T extends CharSequence & Appendable> T appendGeneral(T appendable, float value, char scientificChar) {
+        return appendGeneral(appendable, value, result, -3, 7, scientificChar);
     }
 
-    public static StringBuilder appendGeneral(StringBuilder builder, float value, StringBuilder result) {
-        return appendGeneral(builder, value, result, -3, 7);
+    public static <T extends CharSequence & Appendable> T appendGeneral(T appendable, float value, StringBuilder result) {
+        return appendGeneral(appendable, value, result, -3, 7);
     }
 
-    public static StringBuilder appendGeneral(StringBuilder builder, float value, StringBuilder result, char scientificChar) {
-        return appendGeneral(builder, value, result, -3, 7, scientificChar);
-    }
-
-    public static int general(float value, StringBuilder result) {
-        return general(value, result, -3, 7);
-    }
-
-    public static int general(float value, StringBuilder result, char scientificChar) {
-        return general(value, result, -3, 7, scientificChar);
+    public static <T extends CharSequence & Appendable> T appendGeneral(T appendable, float value, StringBuilder result, char scientificChar) {
+        return appendGeneral(appendable, value, result, -3, 7, scientificChar);
     }
 
     public static int friendly(float value, StringBuilder result) {
@@ -131,22 +132,31 @@ final class RyuFloat {
         return result.substring(0, index);
     }
 
-    public static StringBuilder appendFriendly(StringBuilder builder, float value) {
-        return appendGeneral(builder, value, result, -10, 10);
+    public static <T extends CharSequence & Appendable> T appendFriendly(T appendable, float value) {
+        return appendGeneral(appendable, value, result, -10, 10);
     }
 
-    public static StringBuilder appendFriendly(StringBuilder builder, float value, StringBuilder result) {
-        return appendGeneral(builder, value, result, -10, 10);
+    public static <T extends CharSequence & Appendable> T appendFriendly(T appendable, float value, StringBuilder result) {
+        return appendGeneral(appendable, value, result, -10, 10);
     }
 
-    public static StringBuilder appendGeneral(StringBuilder builder, float value, StringBuilder result, int low, int high) {
+    public static <T extends CharSequence & Appendable> T appendGeneral(T appendable, float value, StringBuilder result, int low, int high) {
         final int index = general(value, result, low, high);
-        return builder.append(result, 0, index);
+        try {
+            appendable.append(result, 0, index);
+        } catch (IOException ignored) {
+        }
+        return appendable;
     }
 
-    public static StringBuilder appendGeneral(StringBuilder builder, float value, StringBuilder result, int low, int high, char scientificChar) {
+    public static <T extends CharSequence & Appendable> T appendGeneral(T appendable, float value, StringBuilder result, int low, int high,
+                                                                        char scientificChar) {
         final int index = general(value, result, low, high, scientificChar);
-        return builder.append(result, 0, index);
+        try {
+            appendable.append(result, 0, index);
+        } catch (IOException ignored) {
+        }
+        return appendable;
     }
 
     public static int general(float value, StringBuilder result, int low, int high) {
