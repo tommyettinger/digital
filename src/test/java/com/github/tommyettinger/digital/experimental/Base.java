@@ -1531,7 +1531,7 @@ public class Base {
      * @return {@code builder}, with the base-10 {@code number} appended
      */
     public <T extends CharSequence & Appendable> T appendDecimal(T builder, double number, int lengthLimit, int precision) {
-        return RyuDouble.appendDecimal(builder, progress, number, lengthLimit, precision);
+        return RyuDouble.appendDecimal(builder, number, lengthLimit, precision);
     }
 
     /**
@@ -2758,7 +2758,7 @@ public class Base {
         final int len = length2Byte - 1;
         for (int i = 0; i <= len; i++) {
             int quotient = number / base;
-            progress[len - i] = toEncoded[(number & 0xFFFF) - quotient * base];
+            progress.setCharAt(len - i, toEncoded[(number & 0xFFFF) - quotient * base]);
             number = (char) quotient;
         }
         return progress.substring(0, length2Byte);
@@ -2776,7 +2776,7 @@ public class Base {
         final int len = length2Byte - 1;
         for (int i = 0; i <= len; i++) {
             int quotient = number / base;
-            progress[len - i] = toEncoded[(number & 0xFFFF) - quotient * base];
+            progress.setCharAt(len - i, toEncoded[(number & 0xFFFF) - quotient * base]);
             number = (char) quotient;
         }
         return builder.append(progress, 0, length2Byte);
@@ -2792,7 +2792,7 @@ public class Base {
     public String signed(char number) {
         int run = length8Byte;
         for (; ; run--) {
-            progress[run] = toEncoded[number % base];
+            progress.setCharAt(run, toEncoded[number % base]);
             if ((number /= base) == 0)
                 break;
         }
@@ -2811,7 +2811,7 @@ public class Base {
     public StringBuilder appendSigned(StringBuilder builder, char number) {
         int run = length8Byte;
         for (; ; run--) {
-            progress[run] = toEncoded[number % base];
+            progress.setCharAt(run, toEncoded[number % base]);
             if ((number /= base) == 0)
                 break;
         }
@@ -5291,8 +5291,8 @@ public class Base {
      */
     public static String readable(float number) {
         int i = RyuFloat.general(number, Base.BASE2.progress);
-        Base.BASE2.progress[i] = 'f';
-        return String.valueOf(Base.BASE2.progress, 0, i+1);
+        Base.BASE2.progress.setCharAt(i, 'f');
+        return Base.BASE2.progress.substring(0, i+1);
     }
 
     /**

@@ -445,6 +445,10 @@ final class RyuDouble {
         return appendDecimal(appendable, bonus, value, lengthLimit, -10000);
     }
 
+    public static <T extends CharSequence & Appendable> T appendDecimal(T appendable, double value, int lengthLimit, int precision) {
+        return appendDecimal(appendable, bonus, value, lengthLimit, precision);
+    }
+
     public static <T extends CharSequence & Appendable> T appendDecimal(T appendable, StringBuilder builder, double value, int lengthLimit, int precision) {
         try {
             // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
