@@ -189,7 +189,7 @@ public class RyuChecks {
      * numbers marked with a type qualifier (e.g. 123L).</p>
      *
      * <p>Non-hexadecimal strings beginning with a leading zero are
-     * treated as octal values. Thus the string {@code 09} will return
+     * treated as octal values. Thus, the string {@code 09} will return
      * {@code false}, since {@code 9} is not a valid octal value.
      * However, numbers beginning with {@code 0.} are treated as decimal.</p>
      *
@@ -248,7 +248,7 @@ public class RyuChecks {
                 return true;
             }
         }
-        sz--; // don't want to loop to the last char, check it afterwards
+        sz--; // don't want to loop to the last char, check it afterward
         // for type qualifiers
         int i = start;
         // loop to the next to last char or to the last char if we need another digit to
@@ -373,7 +373,7 @@ public class RyuChecks {
         // deal with any possible sign up front
         char first = str.charAt(begin);
         final int start = first == '-' || first == '+' ? begin + 1 : begin;
-        end--; // don't want to loop to the last char, check it afterwards for type qualifiers
+        end--; // don't want to loop to the last char, check it afterward for type qualifiers
         int i = start;
         // loop to the next to last char or to the last char if we need another digit to
         // make a valid number (e.g. chars[0..5] = "1234E")

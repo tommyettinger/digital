@@ -1284,7 +1284,7 @@ public class Base {
      */
     public String general(double number) {
         int i = RyuDouble.general(number, progress);
-        return String.valueOf(progress, 0, i);
+        return progress.substring(0, i);
     }
 
     /**
@@ -1314,7 +1314,7 @@ public class Base {
      */
     public String general(double number, boolean capitalize) {
         int i = RyuDouble.general(number, progress, capitalize ? 'E' : 'e');
-        return String.valueOf(progress, 0, i);
+        return progress.substring(0, i);
     }
 
     /**
@@ -1346,7 +1346,7 @@ public class Base {
      */
     public String friendly(double number) {
         int i = RyuDouble.friendly(number, progress);
-        return String.valueOf(progress, 0, i);
+        return progress.substring(0, i);
     }
 
     /**
@@ -1377,7 +1377,7 @@ public class Base {
      */
     public String scientific(double number) {
         int i = RyuDouble.scientific(number, progress);
-        return String.valueOf(progress, 0, i);
+        return progress.substring(0, i);
     }
 
     /**
@@ -1405,7 +1405,7 @@ public class Base {
      */
     public String scientific(double number, boolean capitalize) {
         int i = RyuDouble.scientific(number, progress, capitalize ? 'E' :'e');
-        return String.valueOf(progress, 0, i);
+        return progress.substring(0, i);
     }
     /**
      * Converts the given {@code number} to a base-10 representation that uses scientific notation,
@@ -1456,8 +1456,8 @@ public class Base {
     }
     /**
      * Converts the given {@code number} to a base-10 representation that uses decimal notation.
-     * Returns a new String. This allocates a temporary StringBuilder internally, and you may instead want to reuse a
-     * StringBuilder with {@link #appendDecimal(StringBuilder, double, int, int)}.
+     * Returns a new String. You may instead want to reuse a
+     * StringBuilder or other Appendable CharSequence with {@link #appendDecimal(CharSequence, double, int, int)}.
      * You can specify how long the returned String is permitted to be using {@code lengthLimit}. The length limit
      * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
      * (though this should never actually return a String that long on its own, it will add padding to meet the limit).
@@ -1530,8 +1530,8 @@ public class Base {
      * @param precision how many decimal places to show; if negative, they will not be limited
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendDecimal(StringBuilder builder, double number, int lengthLimit, int precision) {
-        return RyuDouble.appendDecimal(builder, number, lengthLimit, precision);
+    public <T extends CharSequence & Appendable> T appendDecimal(T builder, double number, int lengthLimit, int precision) {
+        return RyuDouble.appendDecimal(builder, progress, number, lengthLimit, precision);
     }
 
     /**
@@ -2053,7 +2053,7 @@ public class Base {
      */
     public String general(float number) {
         int i = RyuFloat.general(number, progress);
-        return String.valueOf(progress, 0, i);
+        return progress.substring(0, i);
     }
 
     /**
@@ -2083,7 +2083,7 @@ public class Base {
      */
     public String general(float number, boolean capitalize) {
         int i = RyuFloat.general(number, progress, capitalize ? 'E' : 'e');
-        return String.valueOf(progress, 0, i);
+        return progress.substring(0, i);
     }
 
     /**
@@ -2115,7 +2115,7 @@ public class Base {
      */
     public String friendly(float number) {
         int i = RyuFloat.friendly(number, progress);
-        return String.valueOf(progress, 0, i);
+        return progress.substring(0, i);
     }
 
     /**
@@ -2146,7 +2146,7 @@ public class Base {
      */
     public String scientific(float number) {
         int i = RyuFloat.scientific(number, progress);
-        return String.valueOf(progress, 0, i);
+        return progress.substring(0, i);
     }
 
     /**
@@ -2174,7 +2174,7 @@ public class Base {
      */
     public String scientific(float number, boolean capitalize) {
         int i = RyuFloat.scientific(number, progress, capitalize ? 'E' :'e');
-        return String.valueOf(progress, 0, i);
+        return progress.substring(0, i);
     }
     /**
      * Converts the given {@code number} to a base-10 representation that uses scientific notation,
@@ -5068,7 +5068,8 @@ public class Base {
     public static String readable(long number) {
         final int length8Byte = Base.BASE10.length8Byte;
         final int base = 10;
-        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE10.toEncoded;
+        final StringBuilder progress = Base.BASE2.progress;
+        final char[] toEncoded = Base.BASE10.toEncoded;
         final char negativeSign = '-';
         int run = length8Byte;
         final long sign = number >> -1;
@@ -5076,15 +5077,15 @@ public class Base {
         // then modulus later will also return a negative number or 0, and we can negate that to get a good index.
         number = -(number + sign ^ sign);
         for (; ; run--) {
-            progress[run] = toEncoded[(int) -(number % base)];
+            progress.setCharAt(run, toEncoded[(int) -(number % base)]);
             if ((number /= 10) == 0)
                 break;
         }
         if (sign != 0) {
             progress.setCharAt(--run, negativeSign);
         }
-        progress[length8Byte+1] = 'L';
-        return String.valueOf(progress, run, length8Byte + 2 - run);
+        progress.setCharAt(length8Byte+1, 'L');
+        return progress.substring(run, length8Byte + 2);
     }
 
     /**
@@ -5099,7 +5100,8 @@ public class Base {
     public static StringBuilder appendReadable(StringBuilder builder, long number) {
         final int length8Byte = Base.BASE10.length8Byte;
         final int base = 10;
-        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE10.toEncoded;
+        final StringBuilder progress = Base.BASE2.progress;
+        final char[] toEncoded = Base.BASE10.toEncoded;
         final char negativeSign = '-';
         int run = length8Byte;
         final long sign = number >> -1;
@@ -5107,15 +5109,15 @@ public class Base {
         // then modulus later will also return a negative number or 0, and we can negate that to get a good index.
         number = -(number + sign ^ sign);
         for (; ; run--) {
-            progress[run] = toEncoded[(int) -(number % base)];
+            progress.setCharAt(run, toEncoded[(int) -(number % base)]);
             if ((number /= base) == 0)
                 break;
         }
         if (sign != 0) {
             progress.setCharAt(--run, negativeSign);
         }
-        progress[length8Byte+1] = 'L';
-        return builder.append(progress, run, length8Byte + 2 - run);
+        progress.setCharAt(length8Byte+1, 'L');
+        return builder.append(progress, run, length8Byte + 2);
     }
 
     /**
@@ -5408,17 +5410,19 @@ public class Base {
             case '\'': return "'\\''";
             case '\\': return "'\\\\'";
         }
-        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE16.toEncoded;
+        final StringBuilder progress = Base.BASE2.progress;
+        final char[] toEncoded = Base.BASE10.toEncoded;
         final int len = 3;
         for (int i = 0; i <= len; i++) {
             int quotient = number >>> 4;
-            progress[len - i + 3] = toEncoded[(number & 0xFFFF) - (quotient << 4)];
+            progress.setCharAt(len - i + 3, toEncoded[(number & 0xFFFF) - (quotient << 4)]);
             number = (char) quotient;
         }
-        progress[1] = '\\';
-        progress[2] = 'u';
-        progress[0] = progress[7] = '\'';
-        return String.valueOf(progress, 0, 8);
+        progress.setCharAt(1, '\\');
+        progress.setCharAt(2, 'u');
+        progress.setCharAt(0, '\'');
+        progress.setCharAt(7, '\'');
+        return progress.substring(0, 8);
     }
 
     /**
@@ -5439,16 +5443,18 @@ public class Base {
             case '\'': return builder.append("'\\''");
             case '\\': return builder.append("'\\\\'");
         }
-        final char[] progress = Base.BASE2.progress, toEncoded = Base.BASE16.toEncoded;
+        final StringBuilder progress = Base.BASE2.progress;
+        final char[] toEncoded = Base.BASE10.toEncoded;
         final int len = 3;
         for (int i = 0; i <= len; i++) {
             int quotient = number >>> 4;
-            progress[len - i + 3] = toEncoded[(number & 0xFFFF) - (quotient << 4)];
+            progress.setCharAt(len - i + 3, toEncoded[(number & 0xFFFF) - (quotient << 4)]);
             number = (char) quotient;
         }
-        progress[1] = '\\';
-        progress[2] = 'u';
-        progress[0] = progress[7] = '\'';
+        progress.setCharAt(1, '\\');
+        progress.setCharAt(2, 'u');
+        progress.setCharAt(0, '\'');
+        progress.setCharAt(7, '\'');
         return builder.append(progress, 0, 8);
     }
 
