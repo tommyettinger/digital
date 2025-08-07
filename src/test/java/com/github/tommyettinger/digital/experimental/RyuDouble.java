@@ -712,7 +712,6 @@ final class RyuDouble {
                 appendable.append(builder, 0, lengthLimit);
             } else
                 appendable.append(builder);
-            return appendable;
         } catch (IOException e) {
             bonus.setLength(0);
         }
