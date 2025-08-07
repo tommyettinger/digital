@@ -596,7 +596,7 @@ public class Base {
      * @param number  any int
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendUnsigned(StringBuilder builder, int number) {
+    public <T extends CharSequence & Appendable> T appendUnsigned(T builder, int number) {
         final int len = length4Byte - 1;
         final int halfBase = base >>> 1;
         for (int i = 0; i <= len; i++) {
@@ -604,7 +604,11 @@ public class Base {
             progress.setCharAt(len - i, toEncoded[number - quotient * base | 0]); // | 0 is needed for GWT.
             number = quotient;
         }
-        return builder.append(progress, 0, length4Byte);
+        try {
+            builder.append(progress, 0, length4Byte);
+        } catch (IOException ignored) {
+        }
+        return builder;
     }
 
     /**
@@ -817,7 +821,7 @@ public class Base {
      * @param number  any short
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendUnsigned(StringBuilder builder, short number) {
+    public <T extends CharSequence & Appendable> T appendUnsigned(T builder, short number) {
         final int len = length2Byte - 1;
         final int halfBase = base >>> 1;
         for (int i = 0; i <= len; i++) {
@@ -825,7 +829,11 @@ public class Base {
             progress.setCharAt(len - i, toEncoded[(number & 0xFFFF) - quotient * base]);
             number = (short) quotient;
         }
-        return builder.append(progress, 0, length2Byte);
+        try {
+            builder.append(progress, 0, length2Byte);
+        } catch (IOException ignored) {
+        }
+        return builder;
     }
 
     /**
@@ -1038,7 +1046,7 @@ public class Base {
      * @param number  any byte
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendUnsigned(StringBuilder builder, byte number) {
+    public <T extends CharSequence & Appendable> T appendUnsigned(T builder, byte number) {
         final int len = length1Byte - 1;
         final int halfBase = base >>> 1;
         for (int i = 0; i <= len; i++) {
@@ -1046,7 +1054,11 @@ public class Base {
             progress.setCharAt(len - i, toEncoded[(number & 0xFF) - quotient * base]);
             number = (byte) quotient;
         }
-        return builder.append(progress, 0, length1Byte);
+        try {
+            builder.append(progress, 0, length1Byte);
+        } catch (IOException ignored) {
+        }
+        return builder;
     }
 
     /**
@@ -1101,7 +1113,6 @@ public class Base {
         } catch (IOException ignored) {
         }
         return builder;
-
     }
 
     /**
@@ -2034,8 +2045,12 @@ public class Base {
      * @param number  any float
      * @return {@code builder}, with the bits of {@code number} appended in the radix this specifies
      */
-    public StringBuilder appendUnsigned(StringBuilder builder, float number) {
-        return appendUnsigned(builder.append(paddingChar), BitConversion.floatToRawIntBits(number));
+    public <T extends CharSequence & Appendable> T appendUnsigned(T builder, float number) {
+        try {
+            builder.append(paddingChar);
+        } catch (IOException ignored) {
+        }
+        return appendUnsigned(builder, BitConversion.floatToRawIntBits(number));
     }
 
     /**
@@ -2801,14 +2816,18 @@ public class Base {
      * @param number  any char
      * @return {@code builder}, with the encoded {@code number} appended
      */
-    public StringBuilder appendUnsigned(StringBuilder builder, char number) {
+    public <T extends CharSequence & Appendable> T appendUnsigned(T builder, char number) {
         final int len = length2Byte - 1;
         for (int i = 0; i <= len; i++) {
             int quotient = number / base;
             progress.setCharAt(len - i, toEncoded[(number & 0xFFFF) - quotient * base]);
             number = (char) quotient;
         }
-        return builder.append(progress, 0, length2Byte);
+        try{
+            builder.append(progress, 0, length2Byte);
+        } catch (IOException ignored) {
+        }
+        return builder;
     }
 
     /**
