@@ -109,20 +109,20 @@ final class RyuDouble {
         return result.substring(0, index);
     }
 
-    public static StringBuilder appendGeneral(StringBuilder builder, double value) {
-        return appendGeneral(builder, value, result, -3, 7);
+    public static <T extends CharSequence & Appendable> T appendGeneral(T appendable, double value) {
+        return appendGeneral(appendable, value, result, -3, 7);
     }
 
-    public static StringBuilder appendGeneral(StringBuilder builder, double value, char scientificChar) {
-        return appendGeneral(builder, value, result, -3, 7, scientificChar);
+    public static <T extends CharSequence & Appendable> T appendGeneral(T appendable, double value, char scientificChar) {
+        return appendGeneral(appendable, value, result, -3, 7, scientificChar);
     }
 
-    public static StringBuilder appendGeneral(StringBuilder builder, double value, StringBuilder result) {
-        return appendGeneral(builder, value, result, -3, 7);
+    public static <T extends CharSequence & Appendable> T appendGeneral(T appendable, double value, StringBuilder result) {
+        return appendGeneral(appendable, value, result, -3, 7);
     }
 
-    public static StringBuilder appendGeneral(StringBuilder builder, double value, StringBuilder result, char scientificChar) {
-        return appendGeneral(builder, value, result, -3, 7, scientificChar);
+    public static <T extends CharSequence & Appendable> T appendGeneral(T appendable, double value, StringBuilder result, char scientificChar) {
+        return appendGeneral(appendable, value, result, -3, 7, scientificChar);
     }
 
     public static int friendly(double value, StringBuilder result) {
@@ -134,12 +134,12 @@ final class RyuDouble {
         return result.substring(0, index);
     }
 
-    public static StringBuilder appendFriendly(StringBuilder builder, double value) {
-        return appendGeneral(builder, value, result, -10, 10);
+    public static <T extends CharSequence & Appendable> T appendFriendly(T appendable, double value) {
+        return appendGeneral(appendable, value, result, -10, 10);
     }
 
-    public static StringBuilder appendFriendly(StringBuilder builder, double value, StringBuilder result) {
-        return appendGeneral(builder, value, result, -10, 10);
+    public static <T extends CharSequence & Appendable> T appendFriendly(T appendable, double value, StringBuilder result) {
+        return appendGeneral(appendable, value, result, -10, 10);
     }
 
     public static <T extends CharSequence & Appendable> T appendGeneral(T appendable, double value, StringBuilder result, int low, int high) {
