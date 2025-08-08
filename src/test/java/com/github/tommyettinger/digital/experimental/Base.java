@@ -1337,7 +1337,7 @@ public class Base {
      * @param number  any double
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendGeneral(StringBuilder builder, double number) {
+    public <T extends CharSequence & Appendable> T appendGeneral(T builder, double number) {
         return RyuDouble.appendGeneral(builder, number, progress);
     }
 
@@ -1368,7 +1368,7 @@ public class Base {
      * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendGeneral(StringBuilder builder, double number, boolean capitalize) {
+    public <T extends CharSequence & Appendable> T appendGeneral(T builder, double number, boolean capitalize) {
         return RyuDouble.appendGeneral(builder, number, progress, capitalize ? 'E' :'e');
     }
 
@@ -1402,7 +1402,7 @@ public class Base {
      * @param number  any double
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendFriendly(StringBuilder builder, double number) {
+    public <T extends CharSequence & Appendable> T appendFriendly(T builder, double number) {
         return RyuDouble.appendFriendly(builder, number, progress);
     }
 
@@ -1429,7 +1429,7 @@ public class Base {
      * @param number  any double
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendScientific(StringBuilder builder, double number) {
+    public <T extends CharSequence & Appendable> T appendScientific(T builder, double number) {
         return RyuDouble.appendScientific(builder, number, progress);
     }
 
@@ -1457,7 +1457,7 @@ public class Base {
      * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendScientific(StringBuilder builder, double number, boolean capitalize) {
+    public <T extends CharSequence & Appendable> T appendScientific(T builder, double number, boolean capitalize) {
         return RyuDouble.appendScientific(builder, number, progress, capitalize ? 'E' :'e');
     }
 
@@ -1527,7 +1527,7 @@ public class Base {
      * @param number  any double
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendDecimal(StringBuilder builder, double number) {
+    public <T extends CharSequence & Appendable> T appendDecimal(T builder, double number) {
         return RyuDouble.appendDecimal(builder, number);
     }
 
@@ -1547,7 +1547,7 @@ public class Base {
      * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the appended section
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendDecimal(StringBuilder builder, double number, int lengthLimit) {
+    public <T extends CharSequence & Appendable> T appendDecimal(T builder, double number, int lengthLimit) {
         return RyuDouble.appendDecimal(builder, number, lengthLimit);
     }
 
@@ -2110,7 +2110,7 @@ public class Base {
      * @param number  any float
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendGeneral(StringBuilder builder, float number) {
+    public <T extends CharSequence & Appendable> T appendGeneral(T builder, float number) {
         return RyuFloat.appendGeneral(builder, number, progress);
     }
 
@@ -2141,7 +2141,7 @@ public class Base {
      * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendGeneral(StringBuilder builder, float number, boolean capitalize) {
+    public <T extends CharSequence & Appendable> T appendGeneral(T builder, float number, boolean capitalize) {
         return RyuFloat.appendGeneral(builder, number, progress, capitalize ? 'E' :'e');
     }
 
@@ -2175,7 +2175,7 @@ public class Base {
      * @param number  any float
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendFriendly(StringBuilder builder, float number) {
+    public <T extends CharSequence & Appendable> T appendFriendly(T builder, float number) {
         return RyuFloat.appendFriendly(builder, number, progress);
     }
 
@@ -2202,7 +2202,7 @@ public class Base {
      * @param number  any float
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendScientific(StringBuilder builder, float number) {
+    public <T extends CharSequence & Appendable> T appendScientific(T builder, float number) {
         return RyuFloat.appendScientific(builder, number, progress);
     }
 
@@ -2230,7 +2230,7 @@ public class Base {
      * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendScientific(StringBuilder builder, float number, boolean capitalize) {
+    public <T extends CharSequence & Appendable> T appendScientific(T builder, float number, boolean capitalize) {
         return RyuFloat.appendScientific(builder, number, progress, capitalize ? 'E' :'e');
     }
 
@@ -2300,7 +2300,7 @@ public class Base {
      * @param number  any float
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendDecimal(StringBuilder builder, float number) {
+    public <T extends CharSequence & Appendable> T appendDecimal(T builder, float number) {
         return RyuFloat.appendDecimal(builder, number);
     }
 
@@ -2320,7 +2320,7 @@ public class Base {
      * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the appended section
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendDecimal(StringBuilder builder, float number, int lengthLimit) {
+    public <T extends CharSequence & Appendable> T appendDecimal(T builder, float number, int lengthLimit) {
         return RyuFloat.appendDecimal(builder, number, lengthLimit);
     }
 
@@ -2343,7 +2343,7 @@ public class Base {
      * @param precision how many decimal places to show; if negative, they will not be limited
      * @return {@code builder}, with the base-10 {@code number} appended
      */
-    public StringBuilder appendDecimal(StringBuilder builder, float number, int lengthLimit, int precision) {
+    public <T extends CharSequence & Appendable> T appendDecimal(T builder, float number, int lengthLimit, int precision) {
         return RyuFloat.appendDecimal(builder, number, lengthLimit, precision);
     }
 
