@@ -5171,13 +5171,14 @@ public class Base {
      * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
      * {@code builder}. This can vary in how many chars it uses, since it does not show leading zeroes and may use a
      * {@code -} sign. This is identical to calling {@link #appendSigned(CharSequence, int)} on {@link #BASE10}.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param sb      a non-null StringBuilder (or similar) to append to
      * @param number  any int
      * @return {@code builder}, with the encoded {@code number} appended in base-10
      */
-    public static StringBuilder appendReadable(StringBuilder builder, int number) {
-        return BASE10.appendSigned(builder, number);
+    public static <T extends CharSequence & Appendable> T appendReadable(T sb, int number) {
+        return BASE10.appendSigned(sb, number);
     }
 
     /**
@@ -5197,13 +5198,14 @@ public class Base {
      * Given an int array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all ints from elements, in a way Java can read each item as a literal, separated by delimiter.
      * This is identical to calling {@link #appendJoined(CharSequence, String, int[])} on {@link #BASE10}.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        a non-null StringBuilder (or similar) to append to
      * @param delimiter the separator to put between numbers
      * @param elements  an int array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, int[] elements) {
+    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, String delimiter, int[] elements) {
         return BASE10.appendJoined(sb, delimiter, elements);
     }
 
@@ -5267,14 +5269,15 @@ public class Base {
 
     /**
      * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
-     * {@code builder}. This can vary in how many chars it uses, since it does not show leading zeroes and may use a
+     * {@code sb}. This can vary in how many chars it uses, since it does not show leading zeroes and may use a
      * {@code -} sign.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param sb a non-null StringBuilder (or similar) that will be modified (appended to)
      * @param number  any long
-     * @return {@code builder}, with the encoded {@code number} and 'L' appended
+     * @return {@code sb}, with the encoded {@code number} and 'L' appended
      */
-    public static StringBuilder appendReadable(StringBuilder builder, long number) {
+    public static <T extends CharSequence & Appendable> T appendReadable(T sb, long number) {
         final int length8Byte = Base.BASE10.length8Byte;
         final int base = 10;
         final StringBuilder progress = Base.BASE2.progress;
@@ -5294,7 +5297,11 @@ public class Base {
             progress.setCharAt(--run, negativeSign);
         }
         progress.setCharAt(length8Byte+1, 'L');
-        return builder.append(progress, run, length8Byte + 2);
+        try {
+            sb.append(progress, run, length8Byte + 2);
+        } catch (IOException ignored) {
+        }
+        return sb;
     }
 
     /**
@@ -5320,19 +5327,23 @@ public class Base {
     /**
      * Given a long array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all longs from elements, in a way Java can read each item as a literal, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a long array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, long[] elements) {
+    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, String delimiter, long[] elements) {
         if (elements == null || elements.length == 0)
             return sb;
         appendReadable(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendReadable(sb, elements[i]);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendReadable(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -5392,15 +5403,16 @@ public class Base {
 
     /**
      * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
-     * {@code builder}. This can vary in how many chars it uses.
+     * {@code sb}. This can vary in how many chars it uses.
      * This is identical to calling {@link #appendGeneral(CharSequence, double)} on {@link #BASE10}.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param sb a non-null StringBuilder (or similar) that will be modified (appended to)
      * @param number  any double
-     * @return {@code builder}, with the encoded {@code number} appended in base-10
+     * @return {@code sb}, with the encoded {@code number} appended in base-10
      */
-    public static StringBuilder appendReadable(StringBuilder builder, double number) {
-        return BASE10.appendGeneral(builder, number);
+    public static <T extends CharSequence & Appendable> T appendReadable(T sb, double number) {
+        return BASE10.appendGeneral(sb, number);
     }
 
     /**
@@ -5420,13 +5432,14 @@ public class Base {
      * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all doubles from elements, in a way Java can read each item as a literal, separated by delimiter.
      * This is identical to calling {@link #appendJoined(CharSequence, String, double[])} on {@link #BASE10}.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, double[] elements) {
+    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, String delimiter, double[] elements) {
         return BASE10.appendJoined(sb, delimiter, elements);
     }
 
@@ -5474,16 +5487,21 @@ public class Base {
 
     /**
      * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
-     * {@code builder}. This can vary in how many chars it uses.
+     * {@code sb}. This can vary in how many chars it uses.
      * This is identical to calling {@link #appendGeneral(CharSequence, float)} on {@link #BASE10} and then calling
      * {@link StringBuilder#append(char)} on that to append {@code 'f'}.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param sb a non-null StringBuilder (or similar) that will be modified (appended to)
      * @param number  any float
-     * @return {@code builder}, with the encoded {@code number} appended in base-10
+     * @return {@code sb}, with the encoded {@code number} appended in base-10
      */
-    public static StringBuilder appendReadable(StringBuilder builder, float number) {
-        return BASE10.appendGeneral(builder, number).append('f');
+    public static <T extends CharSequence & Appendable> T appendReadable(T sb, float number) {
+        try {
+            BASE10.appendGeneral(sb, number).append('f');
+        } catch (IOException ignored) {
+        }
+        return sb;
     }
 
     /**
@@ -5509,22 +5527,25 @@ public class Base {
     /**
      * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all floats from elements, in a way Java can read each item as a literal, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10, separated by delimiter
      */
-    public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, float[] elements) {
-        if (elements == null || elements.length == 0)
+    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, String delimiter, float[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendReadable(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendReadable(sb, elements[i]);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendReadable(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
-
     }
 
     /**
@@ -5608,31 +5629,40 @@ public class Base {
      * Because the quartets {@code 000A}, {@code 000D}, {@code 0027}, and {@code 005C} aren't valid after a backslash-u
      * pair, this must write them using their escaped forms {@code \ n }, {@code \ r }, {@code \ ' }, and {@code \ \ }
      * (without any spaces).
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param builder a non-null StringBuilder that will be modified (appended to)
+     * @param builder a non-null StringBuilder (or similar) that will be modified (appended to)
      * @param number  any char
      * @return {@code builder}, with the encoded {@code number} appended as a char literal in single quotes
      */
-    public static StringBuilder appendReadable(StringBuilder builder, char number) {
-        switch (number) {
-            case '\r': return builder.append("'\\r'");
-            case '\n': return builder.append("'\\n'");
-            case '\'': return builder.append("'\\''");
-            case '\\': return builder.append("'\\\\'");
+    public static <T extends CharSequence & Appendable> T appendReadable(T builder, char number) {
+        try {
+            switch (number) {
+                case '\r':
+                    builder.append("'\\r'"); return builder;
+                case '\n':
+                    builder.append("'\\n'"); return builder;
+                case '\'':
+                    builder.append("'\\''"); return builder;
+                case '\\':
+                    builder.append("'\\\\'"); return builder;
+            }
+            final StringBuilder progress = Base.BASE2.progress;
+            final char[] toEncoded = Base.BASE10.toEncoded;
+            final int len = 3;
+            for (int i = 0; i <= len; i++) {
+                int quotient = number >>> 4;
+                progress.setCharAt(len - i + 3, toEncoded[(number & 0xFFFF) - (quotient << 4)]);
+                number = (char) quotient;
+            }
+            progress.setCharAt(1, '\\');
+            progress.setCharAt(2, 'u');
+            progress.setCharAt(0, '\'');
+            progress.setCharAt(7, '\'');
+            builder.append(progress, 0, 8);
+        } catch (IOException ignored) {
         }
-        final StringBuilder progress = Base.BASE2.progress;
-        final char[] toEncoded = Base.BASE10.toEncoded;
-        final int len = 3;
-        for (int i = 0; i <= len; i++) {
-            int quotient = number >>> 4;
-            progress.setCharAt(len - i + 3, toEncoded[(number & 0xFFFF) - (quotient << 4)]);
-            number = (char) quotient;
-        }
-        progress.setCharAt(1, '\\');
-        progress.setCharAt(2, 'u');
-        progress.setCharAt(0, '\'');
-        progress.setCharAt(7, '\'');
-        return builder.append(progress, 0, 8);
+        return builder;
     }
 
     /**
@@ -5664,19 +5694,24 @@ public class Base {
      * Because the quartets {@code 000A}, {@code 000D}, {@code 0027}, and {@code 005C} aren't valid after a backslash-u
      * pair, this must write them using their escaped forms {@code \ n }, {@code \ r }, {@code \ ' }, and {@code \ \ }
      * (without any spaces).
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a char array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static StringBuilder appendJoinedReadable(StringBuilder sb, String delimiter, char[] elements) {
+    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, String delimiter, char[] elements) {
         if (elements == null || elements.length == 0)
             return sb;
         appendReadable(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendReadable(sb, elements[i]);
+        try {
+
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendReadable(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
