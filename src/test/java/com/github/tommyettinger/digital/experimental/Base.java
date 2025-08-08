@@ -3879,22 +3879,26 @@ public class Base {
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all longs from elements, in this
      * Base, separated by minor delimiter and then by major delimiter. For any non-null, non-empty elements, this will
      * append at least one major delimiter before it appends any items.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param sb             the StringBuilder (or similar) to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a long 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
-    public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, long[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, long[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements == null || elements.length == 0)
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(majorDelimiter);
-            appendJoined(sb, minorDelimiter, elements[i]);
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(majorDelimiter);
+                appendJoined(sb, minorDelimiter, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -3904,22 +3908,26 @@ public class Base {
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all ints from elements, in this
      * Base, separated by minor delimiter and then by major delimiter. For any non-null, non-empty elements, this will
      * append at least one major delimiter before it appends any items.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param sb             the StringBuilder (or similar) to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       an int 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
-    public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, int[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, int[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements == null || elements.length == 0)
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(majorDelimiter);
-            appendJoined(sb, minorDelimiter, elements[i]);
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(majorDelimiter);
+                appendJoined(sb, minorDelimiter, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -3929,22 +3937,26 @@ public class Base {
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all shorts from elements, in this
      * Base, separated by minor delimiter and then by major delimiter. For any non-null, non-empty elements, this will
      * append at least one major delimiter before it appends any items.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param sb             the StringBuilder (or similar) to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a short 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
-    public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, short[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, short[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements == null || elements.length == 0)
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(majorDelimiter);
-            appendJoined(sb, minorDelimiter, elements[i]);
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(majorDelimiter);
+                appendJoined(sb, minorDelimiter, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -3954,22 +3966,26 @@ public class Base {
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all bytes from elements, in this
      * Base, separated by minor delimiter and then by major delimiter. For any non-null, non-empty elements, this will
      * append at least one major delimiter before it appends any items.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param sb             the StringBuilder (or similar) to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a byte 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
-    public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, byte[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, byte[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements == null || elements.length == 0)
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(majorDelimiter);
-            appendJoined(sb, minorDelimiter, elements[i]);
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(majorDelimiter);
+                appendJoined(sb, minorDelimiter, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -3979,22 +3995,26 @@ public class Base {
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all chars from elements, in this
      * Base, separated by minor delimiter and then by major delimiter. For any non-null, non-empty elements, this will
      * append at least one major delimiter before it appends any items.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param sb             the StringBuilder (or similar) to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a char 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
-    public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, char[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, char[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements == null || elements.length == 0)
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(majorDelimiter);
-            appendJoined(sb, minorDelimiter, elements[i]);
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(majorDelimiter);
+                appendJoined(sb, minorDelimiter, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -4002,25 +4022,29 @@ public class Base {
     /**
      * Given a double 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all doubles from elements, in this
-     * Base using {@link #appendJoinedExact(StringBuilder, String, double[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoinedExact(CharSequence, String, double[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items. Like appendJoinedExact(), this does not produce human-readable numbers.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param sb             the StringBuilder (or similar) to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a double 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
-    public StringBuilder appendJoinedExact2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, double[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoinedExact2D(T sb, String majorDelimiter, String minorDelimiter, double[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements == null || elements.length == 0)
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(majorDelimiter);
-            appendJoinedExact(sb, minorDelimiter, elements[i]);
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(majorDelimiter);
+                appendJoinedExact(sb, minorDelimiter, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -4028,27 +4052,31 @@ public class Base {
     /**
      * Given a double 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all doubles from elements, in this
-     * Base using {@link #appendJoinedDecimal(StringBuilder, String, int, double[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoinedDecimal(CharSequence, String, int, double[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param sb             the StringBuilder (or similar) to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements       a double 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
-    public StringBuilder appendJoinedDecimal2D(StringBuilder sb, String majorDelimiter, String minorDelimiter,
+    public <T extends CharSequence & Appendable> T appendJoinedDecimal2D(T sb, String majorDelimiter, String minorDelimiter,
                                                int lengthLimit, double[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements == null || elements.length == 0)
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(majorDelimiter);
-            appendJoinedDecimal(sb, minorDelimiter, lengthLimit, elements[i]);
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(majorDelimiter);
+                appendJoinedDecimal(sb, minorDelimiter, lengthLimit, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -4056,25 +4084,29 @@ public class Base {
     /**
      * Given a double 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all doubles from elements, in this
-     * Base using {@link #appendJoined(StringBuilder, String, double[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoined(CharSequence, String, double[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items. Like appendJoined(), this produces human-readable numbers using {@link #general(double)}.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param sb             the StringBuilder (or similar) to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a double 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
-    public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, double[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, double[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements == null || elements.length == 0)
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(majorDelimiter);
-            appendJoined(sb, minorDelimiter, elements[i]);
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(majorDelimiter);
+                appendJoined(sb, minorDelimiter, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -4082,25 +4114,29 @@ public class Base {
     /**
      * Given a float 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all floats from elements, in this
-     * Base using {@link #appendJoinedExact(StringBuilder, String, float[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoinedExact(CharSequence, String, float[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items. Like appendJoinedExact(), this does not produce human-readable numbers.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param sb             the StringBuilder (or similar) to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a float 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
-    public StringBuilder appendJoinedExact2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, float[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoinedExact2D(T sb, String majorDelimiter, String minorDelimiter, float[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements == null || elements.length == 0)
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(majorDelimiter);
-            appendJoinedExact(sb, minorDelimiter, elements[i]);
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(majorDelimiter);
+                appendJoinedExact(sb, minorDelimiter, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -4108,27 +4144,31 @@ public class Base {
     /**
      * Given a float 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all floats from elements, in this
-     * Base using {@link #appendJoinedDecimal(StringBuilder, String, int, float[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoinedDecimal(CharSequence, String, int, float[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param sb             the StringBuilder (or similar) to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements       a float 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
-    public StringBuilder appendJoinedDecimal2D(StringBuilder sb, String majorDelimiter, String minorDelimiter,
-                                               int lengthLimit, float[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoinedDecimal2D(T sb, String majorDelimiter, String minorDelimiter,
+                                                                         int lengthLimit, float[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements == null || elements.length == 0)
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(majorDelimiter);
-            appendJoinedDecimal(sb, minorDelimiter, lengthLimit, elements[i]);
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(majorDelimiter);
+                appendJoinedDecimal(sb, minorDelimiter, lengthLimit, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -4136,25 +4176,29 @@ public class Base {
     /**
      * Given a float 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all floats from elements, in this
-     * Base using {@link #appendJoined(StringBuilder, String, float[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoined(CharSequence, String, float[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items. Like appendJoined(), this produces human-readable numbers using {@link #general(float)}.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb             the StringBuilder to append to; if null, this returns null
+     * @param sb             the StringBuilder (or similar) to append to; if null, this returns null
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a float 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
      */
-    public StringBuilder appendJoined2D(StringBuilder sb, String majorDelimiter, String minorDelimiter, float[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, float[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
                 majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
-        if (elements == null || elements.length == 0)
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(majorDelimiter);
-            appendJoined(sb, minorDelimiter, elements[i]);
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(majorDelimiter);
+                appendJoined(sb, minorDelimiter, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -4165,7 +4209,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * long array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, long[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, String, String, long[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4201,7 +4245,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * long array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, long[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, String, String, long[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4218,7 +4262,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * int array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, int[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, String, String, int[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4254,7 +4298,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * int array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, int[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, String, String, int[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4271,7 +4315,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * short array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, short[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, String, String, short[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4307,7 +4351,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * short array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, short[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, String, String, short[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4324,7 +4368,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * byte array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, byte[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, String, String, byte[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4360,7 +4404,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * byte array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, byte[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, String, String, byte[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4377,7 +4421,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * char array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, char[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, String, String, char[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4413,7 +4457,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * char array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, char[][])}, including the initial majorDelimiter before
+     * {@link #appendJoined2D(CharSequence, String, String, char[][])}, including the initial majorDelimiter before
      * each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
@@ -4431,7 +4475,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoinedExact2D(StringBuilder, String, String, double[][])}, including the initial majorDelimiter
+     * {@link #appendJoinedExact2D(CharSequence, String, String, double[][])}, including the initial majorDelimiter
      * before each sequence.
      * This can read in doubles produced by this Base using {@link #signed(double)} or {@link #unsigned(double)}, but
      * not {@link #decimal(double)}, {@link #scientific(double)}, {@link #general(double)}, or {@link #friendly(double)}.
@@ -4470,7 +4514,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoinedExact2D(StringBuilder, String, String, double[][])}, including the initial majorDelimiter
+     * {@link #appendJoinedExact2D(CharSequence, String, String, double[][])}, including the initial majorDelimiter
      * before each sequence.
      * This can read in doubles produced by this Base using {@link #signed(double)} or {@link #unsigned(double)}, but
      * not {@link #decimal(double)}, {@link #scientific(double)}, {@link #general(double)}, or {@link #friendly(double)}.
@@ -4488,8 +4532,8 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, double[][])} or
-     * {@link #appendJoinedDecimal2D(StringBuilder, String, String, int, double[][])},
+     * {@link #appendJoined2D(CharSequence, String, String, double[][])} or
+     * {@link #appendJoinedDecimal2D(CharSequence, String, String, int, double[][])},
      * including the initial majorDelimiter before each sequence.
      * This can read in doubles produced by any Base using {@link #decimal(double)}, {@link #scientific(double)},
      * {@link #general(double)}, or {@link #friendly(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}.
@@ -4528,8 +4572,8 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, double[][])} or
-     * {@link #appendJoinedDecimal2D(StringBuilder, String, String, int, double[][])},
+     * {@link #appendJoined2D(CharSequence, String, String, double[][])} or
+     * {@link #appendJoinedDecimal2D(CharSequence, String, String, int, double[][])},
      * including the initial majorDelimiter before each sequence.
      * This can read in doubles produced by any Base using {@link #decimal(double)}, {@link #scientific(double)},
      * {@link #general(double)}, or {@link #friendly(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}.
@@ -4549,7 +4593,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoinedExact2D(StringBuilder, String, String, float[][])}, including the initial majorDelimiter
+     * {@link #appendJoinedExact2D(CharSequence, String, String, float[][])}, including the initial majorDelimiter
      * before each sequence.
      * This can read in floats produced by this Base using {@link #signed(float)} or {@link #unsigned(float)}, but
      * not {@link #decimal(float)}, {@link #scientific(float)}, {@link #general(float)}, or {@link #friendly(float)}.
@@ -4588,8 +4632,8 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, float[][])} or
-     * {@link #appendJoinedDecimal2D(StringBuilder, String, String, int, float[][])},
+     * {@link #appendJoined2D(CharSequence, String, String, float[][])} or
+     * {@link #appendJoinedDecimal2D(CharSequence, String, String, int, float[][])},
      * including the initial majorDelimiter before each sequence.
      * This can read in floats produced by this Base using {@link #signed(float)} or {@link #unsigned(float)}, but
      * not {@link #decimal(float)}, {@link #scientific(float)}, {@link #general(float)}, or {@link #friendly(float)}.
@@ -4607,8 +4651,8 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, float[][])} or
-     * {@link #appendJoinedDecimal2D(StringBuilder, String, String, int, float[][])},
+     * {@link #appendJoined2D(CharSequence, String, String, float[][])} or
+     * {@link #appendJoinedDecimal2D(CharSequence, String, String, int, float[][])},
      * including the initial majorDelimiter before each sequence.
      * This can read in floats produced by any Base using {@link #decimal(float)}, {@link #scientific(float)},
      * {@link #general(float)}, or {@link #friendly(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
@@ -4647,7 +4691,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(StringBuilder, String, String, float[][])}, including the initial majorDelimiter
+     * {@link #appendJoined2D(CharSequence, String, String, float[][])}, including the initial majorDelimiter
      * before each sequence.
      * This can read in floats produced by any Base using {@link #decimal(float)}, {@link #scientific(float)},
      * {@link #general(float)}, or {@link #friendly(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
@@ -5116,7 +5160,7 @@ public class Base {
     /**
      * Given an int array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all ints from elements, in a way Java can read each item as a literal, separated by delimiter.
-     * This is identical to calling {@link #appendJoined(StringBuilder, String, int[])} on {@link #BASE10}.
+     * This is identical to calling {@link #appendJoined(CharSequence, String, int[])} on {@link #BASE10}.
      *
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
@@ -5339,7 +5383,7 @@ public class Base {
     /**
      * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all doubles from elements, in a way Java can read each item as a literal, separated by delimiter.
-     * This is identical to calling {@link #appendJoined(StringBuilder, String, double[])} on {@link #BASE10}.
+     * This is identical to calling {@link #appendJoined(CharSequence, String, double[])} on {@link #BASE10}.
      *
      * @param sb        the StringBuilder to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
