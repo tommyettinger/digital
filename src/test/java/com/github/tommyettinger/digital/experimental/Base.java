@@ -4731,22 +4731,26 @@ public class Base {
     /**
      * Given a long array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all longs from elements, in this Base, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a long array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, long[] elements, int start, int length) {
-        if (elements == null || elements.length <= start || length <= 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, long[] elements, int start, int length) {
+        if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
-        for (int c = 1; c < length && start < elements.length; start++, c++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+        try {
+            for (int c = 1; c < length && start < elements.length; start++, c++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[start]);
+            }
+        } catch(IOException ignored) {
         }
         return sb;
     }
@@ -4775,24 +4779,28 @@ public class Base {
     }
 
     /**
-     * Given a int array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
+     * Given an int array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all ints from elements, in this Base, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
-     * @param elements  a int array; if null, this returns sb without changes
+     * @param elements  an int array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, int[] elements, int start, int length) {
-        if (elements == null || elements.length <= start || length <= 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, int[] elements, int start, int length) {
+        if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
-        for (int c = 1; c < length && start < elements.length; start++, c++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+        try {
+            for (int c = 1; c < length && start < elements.length; start++, c++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[start]);
+            }
+        } catch(IOException ignored) {
         }
         return sb;
     }
@@ -4823,22 +4831,26 @@ public class Base {
     /**
      * Given a short array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all shorts from elements, in this Base, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a short array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, short[] elements, int start, int length) {
-        if (elements == null || elements.length <= start || length <= 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, short[] elements, int start, int length) {
+        if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
-        for (int c = 1; c < length && start < elements.length; start++, c++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+        try {
+            for (int c = 1; c < length && start < elements.length; start++, c++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[start]);
+            }
+        } catch(IOException ignored) {
         }
         return sb;
     }
@@ -4869,22 +4881,26 @@ public class Base {
     /**
      * Given a char array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all chars from elements, in this Base, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a char array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, char[] elements, int start, int length) {
-        if (elements == null || elements.length <= start || length <= 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, char[] elements, int start, int length) {
+        if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
-        for (int c = 1; c < length && start < elements.length; start++, c++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+        try {
+            for (int c = 1; c < length && start < elements.length; start++, c++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[start]);
+            }
+        } catch(IOException ignored) {
         }
         return sb;
     }
@@ -4915,22 +4931,26 @@ public class Base {
     /**
      * Given a byte array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all bytes from elements, in this Base, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a byte array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, byte[] elements, int start, int length) {
-        if (elements == null || elements.length <= start || length <= 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, byte[] elements, int start, int length) {
+        if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
-        for (int c = 1; c < length && start < elements.length; start++, c++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+        try {
+            for (int c = 1; c < length && start < elements.length; start++, c++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[start]);
+            }
+        } catch(IOException ignored) {
         }
         return sb;
     }
@@ -4961,22 +4981,26 @@ public class Base {
     /**
      * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all floats from elements, in this Base, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, float[] elements, int start, int length) {
-        if (elements == null || elements.length <= start || length <= 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, float[] elements, int start, int length) {
+        if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendGeneral(sb, elements[start]);
         ++start;
-        for (int c = 1; c < length && start < elements.length; start++, c++) {
-            sb.append(delimiter);
-            appendGeneral(sb, elements[start]);
+        try {
+            for (int c = 1; c < length && start < elements.length; start++, c++) {
+                sb.append(delimiter);
+                appendGeneral(sb, elements[start]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -5007,22 +5031,26 @@ public class Base {
     /**
      * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all doubles from elements, in this Base, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, double[] elements, int start, int length) {
-        if (elements == null || elements.length <= start || length <= 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, double[] elements, int start, int length) {
+        if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendGeneral(sb, elements[start]);
         ++start;
-        for (int c = 1; c < length && start < elements.length; start++, c++) {
-            sb.append(delimiter);
-            appendGeneral(sb, elements[start]);
+        try {
+            for (int c = 1; c < length && start < elements.length; start++, c++) {
+                sb.append(delimiter);
+                appendGeneral(sb, elements[start]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -5053,22 +5081,26 @@ public class Base {
     /**
      * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all floats from elements, in this Base, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, float[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, String delimiter, float[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
-        for (int c = 1; c < length && start < elements.length; start++, c++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+        try {
+            for (int c = 1; c < length && start < elements.length; start++, c++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[start]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -5099,22 +5131,26 @@ public class Base {
     /**
      * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all doubles from elements, in this Base, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, double[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, String delimiter, double[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
         ++start;
-        for (int c = 1; c < length && start < elements.length; start++, c++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[start]);
+        try {
+            for (int c = 1; c < length && start < elements.length; start++, c++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[start]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
