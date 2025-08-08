@@ -1464,7 +1464,7 @@ public class Base {
     /**
      * Converts the given {@code number} to a base-10 representation that uses decimal notation.
      * Returns a new String. This allocates a temporary StringBuilder internally, and you may instead want to reuse a
-     * StringBuilder with {@link #appendDecimal(StringBuilder, double)}.
+     * StringBuilder with {@link #appendDecimal(CharSequence, double)}.
      * This can vary in how many chars it uses, and can rarely use hundreds.
      * The digits this outputs can be read back with {@link #readDouble}, but not {@link #readDoubleExact}.
      *
@@ -1478,7 +1478,7 @@ public class Base {
     /**
      * Converts the given {@code number} to a base-10 representation that uses decimal notation.
      * Returns a new String. This allocates a temporary StringBuilder internally, and you may instead want to reuse a
-     * StringBuilder with {@link #appendDecimal(StringBuilder, double, int)}.
+     * StringBuilder with {@link #appendDecimal(CharSequence, double, int)}.
      * You can specify how long the returned String is permitted to be using {@code lengthLimit}. The length limit
      * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
      * (though this should never actually return a String that long on its own, it will add padding to meet the limit).
@@ -2237,7 +2237,7 @@ public class Base {
     /**
      * Converts the given {@code number} to a base-10 representation that uses decimal notation.
      * Returns a new String. This allocates a temporary StringBuilder internally, and you may instead want to reuse a
-     * StringBuilder with {@link #appendDecimal(StringBuilder, float)}.
+     * StringBuilder with {@link #appendDecimal(CharSequence, float)}.
      * This can vary in how many chars it uses, and can rarely use hundreds.
      * The digits this outputs can be read back with {@link #readFloat}, but not {@link #readFloatExact}.
      *
@@ -2251,7 +2251,7 @@ public class Base {
     /**
      * Converts the given {@code number} to a base-10 representation that uses decimal notation.
      * Returns a new String. This allocates a temporary StringBuilder internally, and you may instead want to reuse a
-     * StringBuilder with {@link #appendDecimal(StringBuilder, float, int)}.
+     * StringBuilder with {@link #appendDecimal(CharSequence, float, int)}.
      * You can specify how long the returned String is permitted to be using {@code lengthLimit}. The length limit
      * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
      * (though this should never actually return a String that long on its own, it will add padding to meet the limit).
@@ -2271,7 +2271,7 @@ public class Base {
     /**
      * Converts the given {@code number} to a base-10 representation that uses decimal notation.
      * Returns a new String. This allocates a temporary StringBuilder internally, and you may instead want to reuse a
-     * StringBuilder with {@link #appendDecimal(StringBuilder, float, int, int)}.
+     * StringBuilder with {@link #appendDecimal(CharSequence, float, int, int)}.
      * You can specify how long the returned String is permitted to be using {@code lengthLimit}. The length limit
      * should be at least 3 (to allow at least the fewest number of digits, such as in 1.5) and at most about 1000
      * (though this should never actually return a String that long on its own, it will add padding to meet the limit).
@@ -3394,20 +3394,24 @@ public class Base {
 
     /**
      * Given a long array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
-     * the StringBuilder all longs from elements, in this Base, separated by delimiter.
+     * the StringBuilder all longs from elements, in this Base, separated by delimiter. This also accepts
+     * {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a long array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, long[] elements) {
-        if (elements == null || elements.length == 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, long[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[i]);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -3434,20 +3438,24 @@ public class Base {
 
     /**
      * Given an int array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
-     * the StringBuilder all ints from elements, in this Base, separated by delimiter.
+     * the StringBuilder all ints from elements, in this Base, separated by delimiter. This also accepts
+     * {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  an int array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, int[] elements) {
-        if (elements == null || elements.length == 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, int[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[i]);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -3474,20 +3482,24 @@ public class Base {
 
     /**
      * Given a short array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
-     * the StringBuilder all shorts from elements, in this Base, separated by delimiter.
+     * the StringBuilder all shorts from elements, in this Base, separated by delimiter. This also accepts
+     * {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a short array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, short[] elements) {
-        if (elements == null || elements.length == 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, short[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[i]);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -3514,20 +3526,24 @@ public class Base {
 
     /**
      * Given a byte array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
-     * the StringBuilder all bytes from elements, in this Base, separated by delimiter.
+     * the StringBuilder all bytes from elements, in this Base, separated by delimiter. This also accepts
+     * {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a byte array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, byte[] elements) {
-        if (elements == null || elements.length == 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, byte[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[i]);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -3554,20 +3570,24 @@ public class Base {
 
     /**
      * Given a char array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
-     * the StringBuilder all chars (as numbers) from elements, in this Base, separated by delimiter.
+     * the StringBuilder all chars from elements, in this Base, separated by delimiter.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a char array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, char[] elements) {
-        if (elements == null || elements.length == 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, char[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[i]);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -3597,19 +3617,23 @@ public class Base {
      * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all doubles from elements, in this Base, separated by delimiter. This uses
      * {@link #appendSigned(CharSequence, double)}, which means this does not produce human-readable numbers.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, double[] elements) {
-        if (elements == null || elements.length == 0)
+    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, String delimiter, double[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[i]);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -3639,26 +3663,30 @@ public class Base {
      * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all floats from elements, in this Base, separated by delimiter. This uses
      * {@link #appendSigned(CharSequence, float)}, which means this does not produce human-readable numbers.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public StringBuilder appendJoinedExact(StringBuilder sb, String delimiter, float[] elements) {
-        if (elements == null || elements.length == 0)
+    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, String delimiter, float[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendSigned(sb, elements[i]);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendSigned(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
 
     /**
      * Given a double array and a delimiter to separate the items of that array, produces a String containing all doubles
-     * from elements, in this Base, separated by delimiter. This uses {@link #appendGeneral(StringBuilder, double)},
+     * from elements, in this Base, separated by delimiter. This uses {@link #appendGeneral(CharSequence, double)},
      * which means this always uses base-10, and may use decimal or scientific notation.
      *
      * @param delimiter the separator to put between numbers
@@ -3680,21 +3708,25 @@ public class Base {
     /**
      * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all doubles from elements, in this Base, separated by delimiter. This uses
-     * {@link #appendGeneral(StringBuilder, double)}, which means this always uses base-10, and may use decimal or
+     * {@link #appendGeneral(CharSequence, double)}, which means this always uses base-10, and may use decimal or
      * scientific notation.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, double[] elements) {
-        if (elements == null || elements.length == 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, double[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendGeneral(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendGeneral(sb, elements[i]);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendGeneral(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -3702,7 +3734,7 @@ public class Base {
     /**
      * Given a double array and a delimiter to separate the items of that array, produces a String containing all doubles
      * from elements, in this Base, separated by delimiter. This uses
-     * {@link #appendDecimal(StringBuilder, double, int)}, which means this always uses base-10 with decimal notation.
+     * {@link #appendDecimal(CharSequence, double, int)}, which means this always uses base-10 with decimal notation.
      *
      * @param delimiter the separator to put between numbers
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
@@ -3724,28 +3756,32 @@ public class Base {
     /**
      * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all doubles from elements, in this Base, separated by delimiter. This uses
-     * {@link #appendDecimal(StringBuilder, double, int)}, which means this always uses base-10 with decimal notation.
+     * {@link #appendDecimal(CharSequence, double, int)}, which means this always uses base-10 with decimal notation.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements  a double array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
      */
-    public StringBuilder appendJoinedDecimal(StringBuilder sb, String delimiter, int lengthLimit, double[] elements) {
-        if (elements == null || elements.length == 0)
+    public <T extends CharSequence & Appendable> T appendJoinedDecimal(T sb, String delimiter, int lengthLimit, double[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendDecimal(sb, elements[0], lengthLimit);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendDecimal(sb, elements[i], lengthLimit);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendDecimal(sb, elements[i], lengthLimit);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
 
     /**
      * Given a float array and a delimiter to separate the items of that array, produces a String containing all floats
-     * from elements, in this Base, separated by delimiter. This uses {@link #appendGeneral(StringBuilder, float)},
+     * from elements, in this Base, separated by delimiter. This uses {@link #appendGeneral(CharSequence, float)},
      * which means this always uses base-10, and may use decimal or scientific notation.
      *
      * @param delimiter the separator to put between numbers
@@ -3767,28 +3803,33 @@ public class Base {
     /**
      * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all floats from elements, in this Base, separated by delimiter. This uses
-     * {@link #appendGeneral(StringBuilder, float)}, which means this always uses base-10, and may use decimal or
+     * {@link #appendGeneral(CharSequence, float)}, which means this always uses base-10, and may use decimal or
      * scientific notation.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
      */
-    public StringBuilder appendJoined(StringBuilder sb, String delimiter, float[] elements) {
-        if (elements == null || elements.length == 0)
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, float[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendGeneral(sb, elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendGeneral(sb, elements[i]);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendGeneral(sb, elements[i]);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
+
     /**
      * Given a float array and a delimiter to separate the items of that array, produces a String containing all floats
      * from elements, in this Base, separated by delimiter. This uses
-     * {@link #appendDecimal(StringBuilder, float, int)}, which means this always uses base-10 with decimal notation.
+     * {@link #appendDecimal(CharSequence, float, int)}, which means this always uses base-10 with decimal notation.
      *
      * @param delimiter the separator to put between numbers
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
@@ -3810,21 +3851,25 @@ public class Base {
     /**
      * Given a float array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all floats from elements, in this Base, separated by delimiter. This uses
-     * {@link #appendDecimal(StringBuilder, float, int)}, which means this always uses base-10 with decimal notation.
+     * {@link #appendDecimal(CharSequence, float, int)}, which means this always uses base-10 with decimal notation.
+     * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements  a float array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
      */
-    public StringBuilder appendJoinedDecimal(StringBuilder sb, String delimiter, int lengthLimit, float[] elements) {
-        if (elements == null || elements.length == 0)
+    public <T extends CharSequence & Appendable> T appendJoinedDecimal(T sb, String delimiter, int lengthLimit, float[] elements) {
+        if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendDecimal(sb, elements[0], lengthLimit);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter);
-            appendDecimal(sb, elements[i], lengthLimit);
+        try {
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                appendDecimal(sb, elements[i], lengthLimit);
+            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
@@ -5268,7 +5313,7 @@ public class Base {
     /**
      * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
      * {@code builder}. This can vary in how many chars it uses.
-     * This is identical to calling {@link #appendGeneral(StringBuilder, double)} on {@link #BASE10}.
+     * This is identical to calling {@link #appendGeneral(CharSequence, double)} on {@link #BASE10}.
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any double
@@ -5350,7 +5395,7 @@ public class Base {
     /**
      * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
      * {@code builder}. This can vary in how many chars it uses.
-     * This is identical to calling {@link #appendGeneral(StringBuilder, float)} on {@link #BASE10} and then calling
+     * This is identical to calling {@link #appendGeneral(CharSequence, float)} on {@link #BASE10} and then calling
      * {@link StringBuilder#append(char)} on that to append {@code 'f'}.
      *
      * @param builder a non-null StringBuilder that will be modified (appended to)
