@@ -435,7 +435,7 @@ public class Base {
             progress.setCharAt(--run, negativeSign);
         }
         try {
-            builder.append(progress, run, length8Byte + 1 - run);
+            builder.append(progress, run, length8Byte + 1);
         } catch(IOException ignored){
         }
         return builder;
@@ -632,7 +632,7 @@ public class Base {
         if (sign != 0) {
             progress.setCharAt(--run, negativeSign);
         }
-        return progress.substring(run, length8Byte + 1 - run);
+        return progress.substring(run, length8Byte + 1);
     }
 
     /**
@@ -659,7 +659,7 @@ public class Base {
             progress.setCharAt(--run, negativeSign);
         }
         try {
-            builder.append(progress, run, length8Byte + 1 - run);
+            builder.append(progress, run, length8Byte + 1);
         } catch (IOException ignored) {
         }
         return builder;
@@ -857,7 +857,7 @@ public class Base {
         if (sign != 0) {
             progress.setCharAt(--run, negativeSign);
         }
-        return progress.substring(run, length8Byte + 1 - run);
+        return progress.substring(run, length8Byte + 1);
     }
 
     /**
@@ -884,7 +884,7 @@ public class Base {
             progress.setCharAt(--run, negativeSign);
         }
         try {
-            builder.append(progress, run, length8Byte + 1 - run);
+            builder.append(progress, run, length8Byte + 1);
         } catch (IOException ignored) {
         }
         return builder;
@@ -1082,7 +1082,7 @@ public class Base {
         if (sign != 0) {
             progress.setCharAt(--run, negativeSign);
         }
-        return progress.substring(run, length8Byte + 1 - run);
+        return progress.substring(run, length8Byte + 1);
     }
 
     /**
@@ -1109,7 +1109,7 @@ public class Base {
             progress.setCharAt(--run, negativeSign);
         }
         try {
-            builder.append(progress, run, length8Byte + 1 - run);
+            builder.append(progress, run, length8Byte + 1);
         } catch (IOException ignored) {
         }
         return builder;
@@ -2844,7 +2844,7 @@ public class Base {
             if ((number /= base) == 0)
                 break;
         }
-        return progress.substring(run, length8Byte + 1 - run);
+        return progress.substring(run, length8Byte + 1);
     }
 
     /**
@@ -2864,7 +2864,7 @@ public class Base {
                 break;
         }
         try {
-            builder.append(progress, run, length8Byte + 1 - run);
+            builder.append(progress, run, length8Byte + 1);
         } catch (IOException ignored) {
         }
         return builder;
