@@ -166,6 +166,7 @@ final class RyuDouble {
     }
 
     public static int general(double value, StringBuilder result, int low, int high, char scientificChar) {
+        result.setLength(32);
         // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
         // First, handle all the trivial cases.
         if (Double.isNaN(value)) {

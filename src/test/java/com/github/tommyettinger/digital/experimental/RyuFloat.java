@@ -164,6 +164,7 @@ final class RyuFloat {
     }
 
     public static int general(float value, StringBuilder result, int low, int high, char scientificChar) {
+        result.setLength(32);
         // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
         // First, handle all the trivial cases.
         if (Float.isNaN(value)) {
@@ -719,6 +720,7 @@ final class RyuFloat {
     }
 
     public static int scientific(float value, StringBuilder result, char scientificChar) {
+        result.setLength(32);
         // Step 1: Decode the floating point number, and unify normalized and subnormal cases.
         // First, handle all the trivial cases.
         if (Float.isNaN(value)) {

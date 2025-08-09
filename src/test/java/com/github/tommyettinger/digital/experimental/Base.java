@@ -17,7 +17,9 @@
 
 package com.github.tommyettinger.digital.experimental;
 
-import com.github.tommyettinger.digital.*;
+import com.github.tommyettinger.digital.BitConversion;
+import com.github.tommyettinger.digital.Hasher;
+import com.github.tommyettinger.digital.TextTools;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -1323,8 +1325,7 @@ public class Base {
      * @return a new String containing {@code number} in either decimal or scientific notation, always base-10
      */
     public String general(double number) {
-        int i = RyuDouble.general(number, progress);
-        return progress.substring(0, i);
+        return RyuDouble.general(number);
     }
 
     /**
@@ -1338,7 +1339,7 @@ public class Base {
      * @return {@code builder}, with the base-10 {@code number} appended
      */
     public <T extends CharSequence & Appendable> T appendGeneral(T builder, double number) {
-        return RyuDouble.appendGeneral(builder, number, progress);
+        return RyuDouble.appendGeneral(builder, number);
     }
 
     /**
@@ -1353,8 +1354,7 @@ public class Base {
      * @return a new String containing {@code number} in either decimal or scientific notation, always base-10
      */
     public String general(double number, boolean capitalize) {
-        int i = RyuDouble.general(number, progress, capitalize ? 'E' : 'e');
-        return progress.substring(0, i);
+        return RyuDouble.general(number, capitalize ? 'E' : 'e');
     }
 
     /**
@@ -1369,7 +1369,7 @@ public class Base {
      * @return {@code builder}, with the base-10 {@code number} appended
      */
     public <T extends CharSequence & Appendable> T appendGeneral(T builder, double number, boolean capitalize) {
-        return RyuDouble.appendGeneral(builder, number, progress, capitalize ? 'E' :'e');
+        return RyuDouble.appendGeneral(builder, number, capitalize ? 'E' :'e');
     }
 
     /**
@@ -1385,8 +1385,7 @@ public class Base {
      * @return a new String containing {@code number} in either decimal or scientific notation, always base-10
      */
     public String friendly(double number) {
-        int i = RyuDouble.friendly(number, progress);
-        return progress.substring(0, i);
+        return RyuDouble.friendly(number);
     }
 
     /**
@@ -1403,7 +1402,7 @@ public class Base {
      * @return {@code builder}, with the base-10 {@code number} appended
      */
     public <T extends CharSequence & Appendable> T appendFriendly(T builder, double number) {
-        return RyuDouble.appendFriendly(builder, number, progress);
+        return RyuDouble.appendFriendly(builder, number);
     }
 
     /**
@@ -1416,8 +1415,7 @@ public class Base {
      * @return a new String containing {@code number} in scientific notation, always base-10
      */
     public String scientific(double number) {
-        int i = RyuDouble.scientific(number, progress);
-        return progress.substring(0, i);
+        return RyuDouble.scientific(number);
     }
 
     /**
@@ -1430,7 +1428,7 @@ public class Base {
      * @return {@code builder}, with the base-10 {@code number} appended
      */
     public <T extends CharSequence & Appendable> T appendScientific(T builder, double number) {
-        return RyuDouble.appendScientific(builder, number, progress);
+        return RyuDouble.appendScientific(builder, number);
     }
 
     /**
@@ -1444,8 +1442,7 @@ public class Base {
      * @return a new String containing {@code number} in scientific notation, always base-10
      */
     public String scientific(double number, boolean capitalize) {
-        int i = RyuDouble.scientific(number, progress, capitalize ? 'E' :'e');
-        return progress.substring(0, i);
+        return RyuDouble.scientific(number, capitalize ? 'E' :'e');
     }
     /**
      * Converts the given {@code number} to a base-10 representation that uses scientific notation,
@@ -1458,7 +1455,7 @@ public class Base {
      * @return {@code builder}, with the base-10 {@code number} appended
      */
     public <T extends CharSequence & Appendable> T appendScientific(T builder, double number, boolean capitalize) {
-        return RyuDouble.appendScientific(builder, number, progress, capitalize ? 'E' :'e');
+        return RyuDouble.appendScientific(builder, number, capitalize ? 'E' :'e');
     }
 
     /**
@@ -2096,8 +2093,7 @@ public class Base {
      * @return a new String containing {@code number} in either decimal or scientific notation, always base-10
      */
     public String general(float number) {
-        int i = RyuFloat.general(number, progress);
-        return progress.substring(0, i);
+        return RyuFloat.general(number);
     }
 
     /**
@@ -2111,7 +2107,7 @@ public class Base {
      * @return {@code builder}, with the base-10 {@code number} appended
      */
     public <T extends CharSequence & Appendable> T appendGeneral(T builder, float number) {
-        return RyuFloat.appendGeneral(builder, number, progress);
+        return RyuFloat.appendGeneral(builder, number);
     }
 
     /**
@@ -2126,8 +2122,7 @@ public class Base {
      * @return a new String containing {@code number} in either decimal or scientific notation, always base-10
      */
     public String general(float number, boolean capitalize) {
-        int i = RyuFloat.general(number, progress, capitalize ? 'E' : 'e');
-        return progress.substring(0, i);
+        return RyuFloat.general(number, capitalize ? 'E' : 'e');
     }
 
     /**
@@ -2142,7 +2137,7 @@ public class Base {
      * @return {@code builder}, with the base-10 {@code number} appended
      */
     public <T extends CharSequence & Appendable> T appendGeneral(T builder, float number, boolean capitalize) {
-        return RyuFloat.appendGeneral(builder, number, progress, capitalize ? 'E' :'e');
+        return RyuFloat.appendGeneral(builder, number, capitalize ? 'E' :'e');
     }
 
     /**
@@ -2158,8 +2153,7 @@ public class Base {
      * @return a new String containing {@code number} in either decimal or scientific notation, always base-10
      */
     public String friendly(float number) {
-        int i = RyuFloat.friendly(number, progress);
-        return progress.substring(0, i);
+        return RyuFloat.friendly(number);
     }
 
     /**
@@ -2176,7 +2170,7 @@ public class Base {
      * @return {@code builder}, with the base-10 {@code number} appended
      */
     public <T extends CharSequence & Appendable> T appendFriendly(T builder, float number) {
-        return RyuFloat.appendFriendly(builder, number, progress);
+        return RyuFloat.appendFriendly(builder, number);
     }
 
     /**
@@ -2189,8 +2183,7 @@ public class Base {
      * @return a new String containing {@code number} in scientific notation, always base-10
      */
     public String scientific(float number) {
-        int i = RyuFloat.scientific(number, progress);
-        return progress.substring(0, i);
+        return RyuFloat.scientific(number);
     }
 
     /**
@@ -2203,7 +2196,7 @@ public class Base {
      * @return {@code builder}, with the base-10 {@code number} appended
      */
     public <T extends CharSequence & Appendable> T appendScientific(T builder, float number) {
-        return RyuFloat.appendScientific(builder, number, progress);
+        return RyuFloat.appendScientific(builder, number);
     }
 
     /**
@@ -2217,8 +2210,7 @@ public class Base {
      * @return a new String containing {@code number} in scientific notation, always base-10
      */
     public String scientific(float number, boolean capitalize) {
-        int i = RyuFloat.scientific(number, progress, capitalize ? 'E' :'e');
-        return progress.substring(0, i);
+        return RyuFloat.scientific(number, capitalize ? 'E' :'e');
     }
     /**
      * Converts the given {@code number} to a base-10 representation that uses scientific notation,
@@ -2231,7 +2223,7 @@ public class Base {
      * @return {@code builder}, with the base-10 {@code number} appended
      */
     public <T extends CharSequence & Appendable> T appendScientific(T builder, float number, boolean capitalize) {
-        return RyuFloat.appendScientific(builder, number, progress, capitalize ? 'E' :'e');
+        return RyuFloat.appendScientific(builder, number, capitalize ? 'E' :'e');
     }
 
     /**
@@ -5480,9 +5472,7 @@ public class Base {
      * @return a new String containing {@code number} in base-10
      */
     public static String readable(float number) {
-        int i = RyuFloat.general(number, Base.BASE2.progress);
-        Base.BASE2.progress.setCharAt(i, 'f');
-        return Base.BASE2.progress.substring(0, i+1);
+        return RyuFloat.general(number) + "f";
     }
 
     /**

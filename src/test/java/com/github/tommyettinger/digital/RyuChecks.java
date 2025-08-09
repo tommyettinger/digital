@@ -11,7 +11,8 @@ public class RyuChecks {
     }
 
     public static void mainBounds(String[] args) {
-        char[] buffer = new char[100];
+        StringBuilder buffer = new StringBuilder(100);
+        buffer.setLength(100);
         for (int low = -3; low >= -32; low--) {
             int limit = 0;
             double d = -Math.pow(10.0, low);
