@@ -16,13 +16,13 @@ To add to an existing project...
 In your `core/build.gradle`'s dependencies, add:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.8.2"
+api "com.github.tommyettinger:digital:0.9.0"
 ```
 
 If you have a GWT module, then in `html/build.gradle`'s dependencies, add:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.8.2:sources"
+api "com.github.tommyettinger:digital:0.9.0:sources"
 ```
 
 And also for GWT, add this line to `GdxDefinition.gwt.xml`:
@@ -57,11 +57,12 @@ It also has, purely for GWT purposes, an `imul()` method that
 acts just like integer multiplication on most platforms, but
 compiles down to a call to the JavaScript `Math.imul()`
 function on GWT, which automatically handles overflow in the
-same way a desktop JVM would. Similarly, `countLeadingZeros()`
-compiles to the JavaScript `Math.clz32()` function on GWT (or
-for `long` arguments, some small code that calls that), while
-using `Integer.numberOfLeadingZeros()` (or its `Long`
-counterpart) on non-GWT platforms. Counting leading zeros is
+same way a desktop JVM would, and won't lose precision.
+Similarly, `countLeadingZeros()` compiles to the JavaScript 
+`Math.clz32()` function on GWT (or for `long` arguments, some
+small code that calls that), while using
+`Integer.numberOfLeadingZeros()` (or its `Long` counterpart)
+on non-GWT platforms. Counting leading zeros is
 an operation that shows up in a surprising assortment of
 places and is supposed to be fast, so having an alternative to
 [this monstrosity](https://github.com/gwtproject/gwt/blob/main/user/super/com/google/gwt/emul/java/lang/Integer.java#L118)
@@ -74,10 +75,10 @@ intrinsics on HotSpot and `Math.clz32()` on GWT. There's also
 compiles into a single call to
 `Integer.numberOfTrailingZeros()` (or using `Long`) on most
 platforms, or a JS two-liner on GWT that uses `Math.clz32()`.
-Also purely for GWT support, `lowestOneBit()` works around a
-bug that was present in GWT 2.8.2 and may still be present,
-where its built-in `Long.lowestOneBit()` method could return
-very wrong results for larger inputs.
+Another method purely for GWT support, `lowestOneBit()` works
+around a bug that was present in GWT 2.8.2 and may still be
+present, where its built-in `Long.lowestOneBit()` method could
+return very wrong results for larger inputs.
 
 Base is much larger, and allows converting any Java primitive
 number type to a specific base/radix/number-system. Here,
@@ -117,6 +118,9 @@ method can read a long produced by `Base.readable(long)` just
 fine, because readLong() ignores invalid characters after the
 number (such as `L` in longs). Reading in the char literals
 this can produce requires using `Base.readCharReadable()`.
+Base can append to existing StringBuilder, StringBuffer,
+CharBuffer, or other types, as long as they implement both
+CharSequence and Appendable.
 
 TrigTools tries to be as complete as possible at covering
 trigonometric functions, offering sin, cos, tan, asin, acos,
@@ -342,20 +346,30 @@ algorithm, which has higher-quality output in the trail of the distribution,
 but does not preserve patterns from input to output. The `normal()` method
 using Ziggurat is about as fast as it gets for generating Gaussian variates.
 
+Base, AlternateRandom, and Hasher can all have their instances written to a
+String in a compact serialized form, or appended to a StringBuilder,
+StringBuffer, CharBuffer, or other Appendable CharSequence. They can also
+have that compact form read back, either into an existing AlternateRandom or
+Base, or into a new Hasher (because Hasher is immutable).
+Interpolations.Interpolator can't be serialized like this universally, but
+if you use only predefined Interpolator instances or register all
+Interpolator types you use before loading any, you can write the
+`Interpolator.getTag()` and load it using `Interpolations.get(String)` .
+
 ## How do I get it?
 
 To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.8.2"
+api "com.github.tommyettinger:digital:0.9.0"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.8.2:sources"
+api "com.github.tommyettinger:digital:0.9.0:sources"
 ```
 
 If you target GWT, it needs to be told about these changes in your `GdxDefinition.gwt.xml`
