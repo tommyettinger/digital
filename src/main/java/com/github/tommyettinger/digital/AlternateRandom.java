@@ -35,10 +35,11 @@ import java.util.Random;
  * <br>
  * This does have some small additions to what a Random can provide: There is a constructor that takes all five states
  * verbatim, the states themselves are all public longs, there is a {@link #copy()} method that does what it says, and
- * there are {@link #serializeToString()} and {@link #deserializeFromString(String)} methods to read and write the state
- * using {@link Base#SIMPLE64}. The serialization format is very terse, just 11 chars per state, in A through E order,
- * appended one after the next without spaces. This format is not at all compatible with Juniper. Having all this allows
- * AlternateRandom to be correctly handled by jdkgdxds-interop for libGDX Json serialization, and kryo-more for Kryo.
+ * there are {@link #serializeToString()} and {@link #deserializeFromString(CharSequence)} methods to read and write the
+ * state using {@link Base#SIMPLE64}. The serialization format is very terse, just 11 chars per state, in A through E
+ * order, appended one after the next without spaces. This format is not at all compatible with Juniper. Having all this
+ * allows AlternateRandom to be correctly handled by jdkgdxds-interop for libGDX Json serialization, kryo-digital for
+ * Kryo serialization, and tantrum-digital for Fory serialization.
  */
 public class AlternateRandom extends Random {
     /**
@@ -252,35 +253,58 @@ public class AlternateRandom extends Random {
 
     /**
      * Produces a String that holds the entire state of this AlternateRandom. You can recover this state from such a
-     * String by calling {@link #deserializeFromString(String)} on any AlternateRandom, which will set that
+     * String by calling {@link #deserializeFromString(CharSequence)} on any AlternateRandom, which will set that
      * AlternateRandom's state. This does not serialize any fields inherited from {@link Random}, so the methods that
      * use Random's side entirely, such as the Stream methods, won't be affected if this state is loaded.
-     * @return a String holding the current state of this AlternateRandom, to be loaded by {@link #deserializeFromString(String)}
+     * @return a String holding the current state of this AlternateRandom, to be loaded by {@link #deserializeFromString(CharSequence)}
      */
     public String serializeToString() {
-        StringBuilder sb = new StringBuilder(55);
+        return appendSerialized(new StringBuilder(55)).toString();
+    }
+    /**
+     * Appends the string form of this AlternateRandom to the given StringBuilder, StringBuffer, CharBuffer, or similar.
+     * You can recover this state from such a
+     * String by calling {@link #deserializeFromString(CharSequence)} on any AlternateRandom, which will set that
+     * AlternateRandom's state. This does not serialize any fields inherited from {@link Random}, so the methods that
+     * use Random's side entirely, such as the Stream methods, won't be affected if this state is loaded.
+     * @return a String holding the current state of this AlternateRandom, to be loaded by {@link #deserializeFromString(CharSequence)}
+     */
+    public  <T extends CharSequence & Appendable> T appendSerialized(T sb) {
         Base.SIMPLE64.appendUnsigned(sb, stateA);
         Base.SIMPLE64.appendUnsigned(sb, stateB);
         Base.SIMPLE64.appendUnsigned(sb, stateC);
         Base.SIMPLE64.appendUnsigned(sb, stateD);
         Base.SIMPLE64.appendUnsigned(sb, stateE);
-        return sb.toString();
+        return sb;
     }
 
     /**
-     * Given a String produced by {@link #serializeToString()}, this sets the state of this AlternateRandom to the state
-     * stored in that String.This does not deserialize any fields inherited from {@link Random}, so the methods that
-     * use Random's side entirely, such as the Stream methods, won't be affected by this state.
-     * @param data a String produced by {@link #serializeToString()}
+     * Given a String or other CharSequence produced by {@link #serializeToString()}, this sets the state of this
+     * AlternateRandom to the state stored in the start of that CharSequence. This does not deserialize any fields
+     * inherited from {@link Random}, so the methods that use Random's side entirely, such as the Stream methods, won't
+     * be affected by this state.
+     * @param data a String or other CharSequence produced by {@link #serializeToString()}
      * @return this AlternateRandom, after its state has been loaded from the given String
      */
-    public AlternateRandom deserializeFromString(String data) {
-        if(data == null || data.length() < 55) return this;
-        stateA = Base.SIMPLE64.readLong(data, 0, 11);
-        stateB = Base.SIMPLE64.readLong(data, 11, 22);
-        stateC = Base.SIMPLE64.readLong(data, 22, 33);
-        stateD = Base.SIMPLE64.readLong(data, 33, 44);
-        stateE = Base.SIMPLE64.readLong(data, 44, 55);
+    public AlternateRandom deserializeFromString(CharSequence data) {
+        return deserializeFromString(data, 0);
+    }
+    /**
+     * Given a String or other CharSequence produced by {@link #serializeToString()} and an offset to indicate where to
+     * read 55 chars from that CharSequence, this sets the state of this AlternateRandom to the state stored in that
+     * CharSequence. This does not deserialize any fields inherited from {@link Random}, so the methods that
+     * use Random's side entirely, such as the Stream methods, won't be affected by this state.
+     * @param data a String or other CharSequence produced by {@link #serializeToString()}
+     * @param offset where to start reading the 55 chars of a serialized state from data
+     * @return this AlternateRandom, after its state has been loaded from the given String
+     */
+    public AlternateRandom deserializeFromString(CharSequence data, int offset) {
+        if(data == null || offset < 0 || data.length() - offset < 55) return this;
+        stateA = Base.SIMPLE64.readLong(data, offset     , offset + 11);
+        stateB = Base.SIMPLE64.readLong(data, offset + 11, offset + 22);
+        stateC = Base.SIMPLE64.readLong(data, offset + 22, offset + 33);
+        stateD = Base.SIMPLE64.readLong(data, offset + 33, offset + 44);
+        stateE = Base.SIMPLE64.readLong(data, offset + 44, offset + 55);
         return this;
     }
 
