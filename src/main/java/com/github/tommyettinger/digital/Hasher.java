@@ -6688,6 +6688,59 @@ public class Hasher {
         return seed == hasher.seed;
     }
 
+    /**
+     * Produces a String that holds the entire seed of this Hasher. A Hasher is immutable, so to load the serialized
+     * state you must create a new Hasher with {@link #deserializeFromString(CharSequence)}.
+     * @return a String holding the seed of this Hasher, to be loaded by {@link #deserializeFromString(CharSequence)}
+     */
+    public String serializeToString() {
+        return appendSerialized(new StringBuilder(11)).toString();
+    }
+    /**
+     * Appends the textual form of this Hasher to the given StringBuilder, StringBuffer, CharBuffer, or similar.
+     * You can recover this state from such a textual form by calling {@link #deserializeFromString(CharSequence)} to
+     * create a new Hasher.
+     * @param sb an Appendable CharSequence that will be modified
+     * @return {@code sb}, for chaining
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
+     */
+    public <T extends CharSequence & Appendable> T appendSerialized(T sb) {
+        Base.SIMPLE64.appendUnsigned(sb, seed);
+        return sb;
+    }
+
+    /**
+     * Given a String or other CharSequence produced by {@link #serializeToString()}, this creates a new Hasher with the
+     * seed stored in the start of that CharSequence.
+     *
+     * @param data a String or other CharSequence produced by {@link #serializeToString()}
+     * @return a new Hasher with a seed loaded from the given String or other CharSequence
+     */
+    public static Hasher deserializeFromString(CharSequence data) {
+        return deserializeFromString(data, 0);
+    }
+    /**
+     * Given a String or other CharSequence produced by {@link #serializeToString()} or
+     * {@link #appendSerialized(CharSequence)} and an offset to indicate where to
+     * read 11 chars from that CharSequence, this creates a new Hasher with the seed stored in that CharSequence.
+     * @param data a String or other CharSequence produced by {@link #serializeToString()}
+     * @param offset where to start reading the 11 chars of a serialized state from data
+     * @return a new Hasher with a seed loaded from the given String or other CharSequence
+     */
+    public static Hasher deserializeFromString(CharSequence data, int offset) {
+        if(data == null || offset < 0 || data.length() - offset < 11) return Hasher.hydrogen;
+        return new Hasher(Base.SIMPLE64.readLong(data, offset, offset + 11));
+    }
+
+    /**
+     * This shouldn't ever be necessary, because a Hasher is entirely immutable, but if for some reason you need a
+     * duplicate of an existing Hasher, this exists. Normally you can just reference an existing Hasher, though!
+     * @return a new Hasher with the same seed as this one
+     */
+    public Hasher copy() {
+        return new Hasher(seed);
+    }
+
     @Override
     public int hashCode() {
         return (int) (seed ^ (seed >>> 32));

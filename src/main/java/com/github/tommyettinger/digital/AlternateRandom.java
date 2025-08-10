@@ -267,9 +267,11 @@ public class AlternateRandom extends Random {
      * String by calling {@link #deserializeFromString(CharSequence)} on any AlternateRandom, which will set that
      * AlternateRandom's state. This does not serialize any fields inherited from {@link Random}, so the methods that
      * use Random's side entirely, such as the Stream methods, won't be affected if this state is loaded.
-     * @return a String holding the current state of this AlternateRandom, to be loaded by {@link #deserializeFromString(CharSequence)}
+     * @param sb an Appendable CharSequence that will be modified
+     * @return {@code sb}, for chaining
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public  <T extends CharSequence & Appendable> T appendSerialized(T sb) {
+    public <T extends CharSequence & Appendable> T appendSerialized(T sb) {
         Base.SIMPLE64.appendUnsigned(sb, stateA);
         Base.SIMPLE64.appendUnsigned(sb, stateB);
         Base.SIMPLE64.appendUnsigned(sb, stateC);
