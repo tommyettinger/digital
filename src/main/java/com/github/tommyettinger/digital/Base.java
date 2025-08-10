@@ -197,18 +197,18 @@ public class Base {
      * and all chars in it should usually be ASCII. In many cases, Unicode numbering systems outside of ASCII, but
      * within a block of 128 or fewer chars may work, but this isn't assured.
      *
-     * @param digits          a String with two or more ASCII characters, all unique; none can be the same as the later sign parameters
+     * @param digits          a String or other CharSequence with two or more ASCII characters, all unique; none can be the same as the later sign parameters
      * @param caseInsensitive if true, digits will be converted to upper-case before any operations on them.
      * @param padding         only used to guarantee a separator is possible between numbers
      * @param positiveSign    typically '+'
      * @param negativeSign    typically '-'
      */
-    public Base(String digits, boolean caseInsensitive, char padding, char positiveSign, char negativeSign) {
+    public Base(CharSequence digits, boolean caseInsensitive, char padding, char positiveSign, char negativeSign) {
         paddingChar = padding;
         this.caseInsensitive = caseInsensitive;
         this.positiveSign = positiveSign;
         this.negativeSign = negativeSign;
-        toEncoded = digits.toCharArray();
+        toEncoded = digits.toString().toCharArray();
         base = toEncoded.length;
         fromEncoded = new int[128];
 
@@ -319,14 +319,37 @@ public class Base {
 
     /**
      * Stores this Base as a compact String; the String this produces is usually given to
-     * {@link #deserializeFromString(String)} to restore the Base. Note that if you are using
+     * {@link #deserializeFromString(CharSequence)} to restore the Base. Note that if you are using
      * {@link #scrambledBase(Random)}, you are also able to serialize the Random or its state, and that
      * can be used to produce a scrambled base again; this could be useful to conceal a scrambled base slightly.
      *
-     * @return a String that can be given to {@link #deserializeFromString(String)} to obtain this Base again
+     * @return a String that can be given to {@link #deserializeFromString(CharSequence)} to obtain this Base again
      */
     public String serializeToString() {
         return String.valueOf(toEncoded) + (caseInsensitive ? '1' : '0') + paddingChar + positiveSign + negativeSign;
+    }
+
+    /**
+     * Appends a compact textual form of this Base to the given StringBuilder, StringBuffer, CharBuffer, or similar.
+     * You can read this back in using {@link #deserializeFromString(CharSequence)}.
+     *
+     * @param sb an Appendable CharSequence that will be modified
+     * @return {@code sb}, for chaining
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
+     */
+    public  <T extends CharSequence & Appendable> T appendSerialized(T sb) {
+        try {
+            for (int i = 0; i < toEncoded.length; i++) {
+                sb.append(toEncoded[i]);
+            }
+            sb.append(caseInsensitive ? '1' : '0');
+            sb.append(paddingChar);
+            sb.append(positiveSign);
+            sb.append(negativeSign);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return sb;
     }
 
     /**
@@ -336,10 +359,27 @@ public class Base {
      * @param data a String that was almost always produced by {@link #serializeToString()}
      * @return the Base that {@code data} stores
      */
-    public static Base deserializeFromString(String data) {
+    public static Base deserializeFromString(CharSequence data) {
         int len;
         if ((len = data.length()) >= 5) {
-            return new Base(data.substring(0, len - 4), data.charAt(len - 4) != '0', data.charAt(len - 3), data.charAt(len - 2), data.charAt(len - 1));
+            return new Base(data.subSequence(0, len - 4), data.charAt(len - 4) != '0', data.charAt(len - 3), data.charAt(len - 2), data.charAt(len - 1));
+        }
+        throw new IllegalArgumentException("The given data does not store a serialized Base.");
+    }
+
+    /**
+     * Given a String of a serialized Base (generally produced by {@link #serializeToString()} or
+     * {@link #appendSerialized(CharSequence)}) and the start (inclusive) and end (exclusive) indices to read from, this
+     * re-creates that Base and returns it.
+     *
+     * @param data a String that was almost always produced by {@link #serializeToString()}
+     * @param startIndex the first index (inclusive) to read from {@code data}
+     * @param endIndex the last index (exclusive) to read from {@code data}; often the length of a String
+     * @return the Base that {@code data} stores in the given section
+     */
+    public static Base deserializeFromString(CharSequence data, int startIndex, int endIndex) {
+        if (startIndex >= 0 && endIndex > startIndex && endIndex - startIndex >= 5) {
+            return new Base(data.subSequence(startIndex, endIndex - 4), data.charAt(endIndex - 4) != '0', data.charAt(endIndex - 3), data.charAt(endIndex - 2), data.charAt(endIndex - 1));
         }
         throw new IllegalArgumentException("The given data does not store a serialized Base.");
     }
