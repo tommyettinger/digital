@@ -3408,7 +3408,7 @@ public class Base {
      * @param elements  a long array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, long[] elements) {
+    public String join(CharSequence delimiter, long[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -3430,7 +3430,7 @@ public class Base {
      * @param elements  a long array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, long[] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, long[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
@@ -3452,7 +3452,7 @@ public class Base {
      * @param elements  an int array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, int[] elements) {
+    public String join(CharSequence delimiter, int[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -3474,7 +3474,7 @@ public class Base {
      * @param elements  an int array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, int[] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, int[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
@@ -3496,7 +3496,7 @@ public class Base {
      * @param elements  a short array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, short[] elements) {
+    public String join(CharSequence delimiter, short[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -3518,7 +3518,7 @@ public class Base {
      * @param elements  a short array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, short[] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, short[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
@@ -3540,7 +3540,7 @@ public class Base {
      * @param elements  a byte array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, byte[] elements) {
+    public String join(CharSequence delimiter, byte[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -3562,7 +3562,7 @@ public class Base {
      * @param elements  a byte array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, byte[] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, byte[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
@@ -3584,7 +3584,7 @@ public class Base {
      * @param elements  a char array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, char[] elements) {
+    public String join(CharSequence delimiter, char[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -3606,7 +3606,7 @@ public class Base {
      * @param elements  a char array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, char[] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, char[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
@@ -3629,7 +3629,7 @@ public class Base {
      * @param elements  a double array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
-    public String joinExact(String delimiter, double[] elements) {
+    public String joinExact(CharSequence delimiter, double[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -3652,7 +3652,7 @@ public class Base {
      * @param elements  a double array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, String delimiter, double[] elements) {
+    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, double[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
@@ -3675,7 +3675,7 @@ public class Base {
      * @param elements  a float array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in this Base, separated by delimiter
      */
-    public String joinExact(String delimiter, float[] elements) {
+    public String joinExact(CharSequence delimiter, float[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -3698,7 +3698,7 @@ public class Base {
      * @param elements  a float array; if null, this returns sb without changes
      * @return sb, with items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, String delimiter, float[] elements) {
+    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, float[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendSigned(sb, elements[0]);
@@ -3721,7 +3721,7 @@ public class Base {
      * @param elements  a double array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
      */
-    public String join(String delimiter, double[] elements) {
+    public String join(CharSequence delimiter, double[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -3745,7 +3745,7 @@ public class Base {
      * @param elements  a double array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, double[] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, double[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendGeneral(sb, elements[0]);
@@ -3769,7 +3769,7 @@ public class Base {
      * @param elements  a double array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
      */
-    public String joinDecimal(String delimiter, int lengthLimit, double[] elements) {
+    public String joinDecimal(CharSequence delimiter, int lengthLimit, double[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -3793,7 +3793,7 @@ public class Base {
      * @param elements  a double array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
      */
-    public <T extends CharSequence & Appendable> T appendJoinedDecimal(T sb, String delimiter, int lengthLimit, double[] elements) {
+    public <T extends CharSequence & Appendable> T appendJoinedDecimal(T sb, CharSequence delimiter, int lengthLimit, double[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendDecimal(sb, elements[0], lengthLimit);
@@ -3816,7 +3816,7 @@ public class Base {
      * @param elements  a float array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
      */
-    public String join(String delimiter, float[] elements) {
+    public String join(CharSequence delimiter, float[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -3840,7 +3840,7 @@ public class Base {
      * @param elements  a float array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, float[] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, float[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendGeneral(sb, elements[0]);
@@ -3864,7 +3864,7 @@ public class Base {
      * @param elements  a float array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
      */
-    public String joinDecimal(String delimiter, int lengthLimit, float[] elements) {
+    public String joinDecimal(CharSequence delimiter, int lengthLimit, float[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -3888,7 +3888,7 @@ public class Base {
      * @param elements  a float array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
      */
-    public <T extends CharSequence & Appendable> T appendJoinedDecimal(T sb, String delimiter, int lengthLimit, float[] elements) {
+    public <T extends CharSequence & Appendable> T appendJoinedDecimal(T sb, CharSequence delimiter, int lengthLimit, float[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendDecimal(sb, elements[0], lengthLimit);
@@ -4050,7 +4050,7 @@ public class Base {
     /**
      * Given a double 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all doubles from elements, in this
-     * Base using {@link #appendJoinedExact(CharSequence, String, double[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoinedExact(CharSequence, CharSequence, double[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items. Like appendJoinedExact(), this does not produce human-readable numbers.
      * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
@@ -4080,7 +4080,7 @@ public class Base {
     /**
      * Given a double 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all doubles from elements, in this
-     * Base using {@link #appendJoinedDecimal(CharSequence, String, int, double[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoinedDecimal(CharSequence, CharSequence, int, double[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items.
      * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
@@ -4112,7 +4112,7 @@ public class Base {
     /**
      * Given a double 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all doubles from elements, in this
-     * Base using {@link #appendJoined(CharSequence, String, double[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoined(CharSequence, CharSequence, double[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items. Like appendJoined(), this produces human-readable numbers using {@link #general(double)}.
      * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
@@ -4142,7 +4142,7 @@ public class Base {
     /**
      * Given a float 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all floats from elements, in this
-     * Base using {@link #appendJoinedExact(CharSequence, String, float[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoinedExact(CharSequence, CharSequence, float[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items. Like appendJoinedExact(), this does not produce human-readable numbers.
      * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
@@ -4172,7 +4172,7 @@ public class Base {
     /**
      * Given a float 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all floats from elements, in this
-     * Base using {@link #appendJoinedDecimal(CharSequence, String, int, float[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoinedDecimal(CharSequence, CharSequence, int, float[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items.
      * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
@@ -4204,7 +4204,7 @@ public class Base {
     /**
      * Given a float 2D array, a major delimiter to separate the inner arrays, a minor delimiter to separate the items in
      * each inner array, and a StringBuilder to append to, appends to the StringBuilder all floats from elements, in this
-     * Base using {@link #appendJoined(CharSequence, String, float[])}, separated by minor delimiter and then by
+     * Base using {@link #appendJoined(CharSequence, CharSequence, float[])}, separated by minor delimiter and then by
      * major delimiter. For any non-null, non-empty elements, this will append at least one major delimiter before it
      * appends any items. Like appendJoined(), this produces human-readable numbers using {@link #general(float)}.
      * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
@@ -4743,7 +4743,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, long[] elements, int start, int length) {
+    public String join(CharSequence delimiter, long[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
@@ -4768,7 +4768,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, long[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, long[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
@@ -4793,7 +4793,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, int[] elements, int start, int length) {
+    public String join(CharSequence delimiter, int[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
@@ -4818,7 +4818,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, int[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, int[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
@@ -4843,7 +4843,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, short[] elements, int start, int length) {
+    public String join(CharSequence delimiter, short[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
@@ -4868,7 +4868,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, short[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, short[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
@@ -4893,7 +4893,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, char[] elements, int start, int length) {
+    public String join(CharSequence delimiter, char[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
@@ -4918,7 +4918,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, char[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, char[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
@@ -4943,7 +4943,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, byte[] elements, int start, int length) {
+    public String join(CharSequence delimiter, byte[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
@@ -4968,7 +4968,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, byte[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, byte[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
@@ -4993,7 +4993,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, float[] elements, int start, int length) {
+    public String join(CharSequence delimiter, float[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
@@ -5018,7 +5018,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, float[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, float[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendGeneral(sb, elements[start]);
@@ -5043,7 +5043,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
-    public String join(String delimiter, double[] elements, int start, int length) {
+    public String join(CharSequence delimiter, double[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
@@ -5068,7 +5068,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoined(T sb, String delimiter, double[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, double[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
         appendGeneral(sb, elements[start]);
@@ -5093,7 +5093,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
-    public String joinExact(String delimiter, float[] elements, int start, int length) {
+    public String joinExact(CharSequence delimiter, float[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
@@ -5118,7 +5118,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, String delimiter, float[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, float[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
@@ -5143,7 +5143,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return a String containing at most length numbers from elements, written in this Base, separated by delimiter
      */
-    public String joinExact(String delimiter, double[] elements, int start, int length) {
+    public String joinExact(CharSequence delimiter, double[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return "";
         StringBuilder sb = new StringBuilder(length << 3);
@@ -5168,7 +5168,7 @@ public class Base {
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, String delimiter, double[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, double[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return sb;
         appendSigned(sb, elements[start]);
@@ -5212,20 +5212,20 @@ public class Base {
     /**
      * Given an int array and a delimiter to separate the items of that array, produces a String containing all ints
      * from elements, in a way Java can read each item as a literal, separated by delimiter.
-     * This is identical to calling {@link #join(String, int[])} on {@link #BASE10}.
+     * This is identical to calling {@link #join(CharSequence, int[])} on {@link #BASE10}.
      *
      * @param delimiter the separator to put between numbers
      * @param elements  an int array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static String joinReadable(String delimiter, int[] elements) {
+    public static String joinReadable(CharSequence delimiter, int[] elements) {
         return BASE10.join(delimiter, elements);
     }
 
     /**
      * Given an int array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all ints from elements, in a way Java can read each item as a literal, separated by delimiter.
-     * This is identical to calling {@link #appendJoined(CharSequence, String, int[])} on {@link #BASE10}.
+     * This is identical to calling {@link #appendJoined(CharSequence, CharSequence, int[])} on {@link #BASE10}.
      * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
      * @param sb        a non-null StringBuilder (or similar) to append to
@@ -5233,7 +5233,7 @@ public class Base {
      * @param elements  an int array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, String delimiter, int[] elements) {
+    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, int[] elements) {
         return BASE10.appendJoined(sb, delimiter, elements);
     }
 
@@ -5340,7 +5340,7 @@ public class Base {
      * @param elements  a long array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static String joinReadable(String delimiter, long[] elements) {
+    public static String joinReadable(CharSequence delimiter, long[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -5362,7 +5362,7 @@ public class Base {
      * @param elements  a long array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, String delimiter, long[] elements) {
+    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, long[] elements) {
         if (elements == null || elements.length == 0)
             return sb;
         appendReadable(sb, elements[0]);
@@ -5446,20 +5446,20 @@ public class Base {
     /**
      * Given a double array and a delimiter to separate the items of that array, produces a String containing all doubles
      * from elements, in a way Java can read each item as a literal, separated by delimiter.
-     * This is identical to calling {@link #join(String, double[])} on {@link #BASE10}.
+     * This is identical to calling {@link #join(CharSequence, double[])} on {@link #BASE10}.
      *
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static String joinReadable(String delimiter, double[] elements) {
+    public static String joinReadable(CharSequence delimiter, double[] elements) {
         return BASE10.join(delimiter, elements);
     }
 
     /**
      * Given a double array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
      * the StringBuilder all doubles from elements, in a way Java can read each item as a literal, separated by delimiter.
-     * This is identical to calling {@link #appendJoined(CharSequence, String, double[])} on {@link #BASE10}.
+     * This is identical to calling {@link #appendJoined(CharSequence, CharSequence, double[])} on {@link #BASE10}.
      * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
@@ -5467,7 +5467,7 @@ public class Base {
      * @param elements  a double array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, String delimiter, double[] elements) {
+    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, double[] elements) {
         return BASE10.appendJoined(sb, delimiter, elements);
     }
 
@@ -5538,7 +5538,7 @@ public class Base {
      * @param elements  a float array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written in base-10, separated by delimiter
      */
-    public static String joinReadable(String delimiter, float[] elements) {
+    public static String joinReadable(CharSequence delimiter, float[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length << 3);
@@ -5560,7 +5560,7 @@ public class Base {
      * @param elements  a float array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10, separated by delimiter
      */
-    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, String delimiter, float[] elements) {
+    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, float[] elements) {
         if (sb == null || elements == null || elements.length == 0)
             return sb;
         appendReadable(sb, elements[0]);
@@ -5702,7 +5702,7 @@ public class Base {
      * @param elements  a char array; if null, this returns an empty String
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static String joinReadable(String delimiter, char[] elements) {
+    public static String joinReadable(CharSequence delimiter, char[] elements) {
         if (elements == null || elements.length == 0)
             return "";
         StringBuilder sb = new StringBuilder(elements.length * 10);
@@ -5727,7 +5727,7 @@ public class Base {
      * @param elements  a char array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
      */
-    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, String delimiter, char[] elements) {
+    public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, char[] elements) {
         if (elements == null || elements.length == 0)
             return sb;
         appendReadable(sb, elements[0]);
