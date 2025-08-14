@@ -334,7 +334,7 @@ public class Base {
      * You can read this back in using {@link #deserializeFromString(CharSequence)}.
      *
      * @param sb an Appendable CharSequence that will be modified
-     * @return {@code sb}, for chaining
+     * @return {@code sb}, after modifications, for chaining
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendSerialized(T sb) {
@@ -3459,7 +3459,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a long array; if null, this returns sb without changes
-     * @return sb, with items appended
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, long[] elements) {
@@ -3504,7 +3504,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  an int array; if null, this returns sb without changes
-     * @return sb, with items appended
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, int[] elements) {
@@ -3549,7 +3549,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a short array; if null, this returns sb without changes
-     * @return sb, with items appended
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, short[] elements) {
@@ -3594,7 +3594,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a byte array; if null, this returns sb without changes
-     * @return sb, with items appended
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, byte[] elements) {
@@ -3639,7 +3639,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a char array; if null, this returns sb without changes
-     * @return sb, with items appended
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, char[] elements) {
@@ -3686,7 +3686,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
-     * @return sb, with items appended
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, double[] elements) {
@@ -3733,7 +3733,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
-     * @return sb, with items appended
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, float[] elements) {
@@ -3781,7 +3781,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, double[] elements) {
@@ -3830,7 +3830,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements  a double array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedDecimal(T sb, CharSequence delimiter, int lengthLimit, double[] elements) {
@@ -3878,7 +3878,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, float[] elements) {
@@ -3927,7 +3927,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements  a float array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedDecimal(T sb, CharSequence delimiter, int lengthLimit, float[] elements) {
@@ -3955,7 +3955,7 @@ public class Base {
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a long 2D array; if null or empty, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, long[][] elements) {
@@ -3985,7 +3985,7 @@ public class Base {
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       an int 2D array; if null or empty, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, int[][] elements) {
@@ -4015,7 +4015,7 @@ public class Base {
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a short 2D array; if null or empty, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, short[][] elements) {
@@ -4045,7 +4045,7 @@ public class Base {
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a byte 2D array; if null or empty, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, byte[][] elements) {
@@ -4075,7 +4075,7 @@ public class Base {
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a char 2D array; if null or empty, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, char[][] elements) {
@@ -4106,7 +4106,7 @@ public class Base {
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a double 2D array; if null or empty, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedExact2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, double[][] elements) {
@@ -4138,7 +4138,7 @@ public class Base {
      * @param minorDelimiter the separator to put between numbers
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements       a double 2D array; if null or empty, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedDecimal2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter,
@@ -4170,7 +4170,7 @@ public class Base {
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a double 2D array; if null or empty, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, double[][] elements) {
@@ -4201,7 +4201,7 @@ public class Base {
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a float 2D array; if null or empty, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedExact2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, float[][] elements) {
@@ -4233,7 +4233,7 @@ public class Base {
      * @param minorDelimiter the separator to put between numbers
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements       a float 2D array; if null or empty, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedDecimal2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter,
@@ -4265,7 +4265,7 @@ public class Base {
      * @param majorDelimiter the separator to put between arrays
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a float 2D array; if null or empty, this returns sb without changes
-     * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, float[][] elements) {
@@ -4819,7 +4819,7 @@ public class Base {
      * @param elements  a long array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return sb, with at most length items appended
+     * @return {@code sb}, with at most {@code length} items appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, long[] elements, int start, int length) {
@@ -4870,7 +4870,7 @@ public class Base {
      * @param elements  an int array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return sb, with at most length items appended
+     * @return {@code sb}, with at most {@code length} items appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, int[] elements, int start, int length) {
@@ -4921,7 +4921,7 @@ public class Base {
      * @param elements  a short array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return sb, with at most length items appended
+     * @return {@code sb}, with at most {@code length} items appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, short[] elements, int start, int length) {
@@ -4972,7 +4972,7 @@ public class Base {
      * @param elements  a char array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return sb, with at most length items appended
+     * @return {@code sb}, with at most {@code length} items appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, char[] elements, int start, int length) {
@@ -5023,7 +5023,7 @@ public class Base {
      * @param elements  a byte array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return sb, with at most length items appended
+     * @return {@code sb}, with at most {@code length} items appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, byte[] elements, int start, int length) {
@@ -5074,7 +5074,7 @@ public class Base {
      * @param elements  a float array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return sb, with at most length items appended
+     * @return {@code sb}, with at most {@code length} items appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, float[] elements, int start, int length) {
@@ -5125,7 +5125,7 @@ public class Base {
      * @param elements  a double array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return sb, with at most length items appended
+     * @return {@code sb}, with at most {@code length} items appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, double[] elements, int start, int length) {
@@ -5176,7 +5176,7 @@ public class Base {
      * @param elements  a float array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return sb, with at most length items appended
+     * @return {@code sb}, with at most {@code length} items appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, float[] elements, int start, int length) {
@@ -5227,7 +5227,7 @@ public class Base {
      * @param elements  a double array; if null, this returns sb without changes
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
-     * @return sb, with at most length items appended
+     * @return {@code sb}, with at most {@code length} items appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, double[] elements, int start, int length) {
@@ -5259,13 +5259,13 @@ public class Base {
 
     /**
      * Converts the given {@code number} to a String that Java can read in as a literal, appending the result to
-     * {@code builder}. This can vary in how many chars it uses, since it does not show leading zeroes and may use a
+     * {@code sb}. This can vary in how many chars it uses, since it does not show leading zeroes and may use a
      * {@code -} sign. This is identical to calling {@link #appendSigned(CharSequence, int)} on {@link #BASE10}.
      * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
      * @param sb      a non-null StringBuilder (or similar) to append to
      * @param number  any int
-     * @return {@code builder}, with the encoded {@code number} appended in base-10
+     * @return {@code sb}, with the encoded {@code number} appended in base-10
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendReadable(T sb, int number) {
@@ -5294,7 +5294,7 @@ public class Base {
      * @param sb        a non-null StringBuilder (or similar) to append to
      * @param delimiter the separator to put between numbers
      * @param elements  an int array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written as literals, separated by delimiter
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, int[] elements) {
@@ -5425,7 +5425,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a long array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written as literals, separated by delimiter
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, long[] elements) {
@@ -5532,7 +5532,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written as literals, separated by delimiter
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, double[] elements) {
@@ -5627,7 +5627,7 @@ public class Base {
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written in base-10, separated by delimiter
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, float[] elements) {
@@ -5793,10 +5793,10 @@ public class Base {
      * (without any spaces).
      * This also accepts {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
      *
-     * @param sb        the StringBuilder to append to; if null, this returns null
+     * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a char array; if null, this returns sb without changes
-     * @return a String containing all numbers in elements, written as literals, separated by delimiter
+     * @return {@code sb}, with {@code elements} appended
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, char[] elements) {
