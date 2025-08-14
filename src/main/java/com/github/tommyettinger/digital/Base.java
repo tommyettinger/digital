@@ -409,6 +409,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any long
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendUnsigned(T builder, long number) {
         final int len = length8Byte - 1;
@@ -457,6 +458,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any long
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendSigned(T builder, long number) {
         int run = length8Byte;
@@ -633,6 +635,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any int
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendUnsigned(T builder, int number) {
         final int len = length4Byte - 1;
@@ -681,6 +684,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any int
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendSigned(T builder, int number) {
         int run = length8Byte;
@@ -858,6 +862,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any short
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendUnsigned(T builder, short number) {
         final int len = length2Byte - 1;
@@ -906,6 +911,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any short
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendSigned(T builder, short number) {
         int run = length8Byte;
@@ -1083,6 +1089,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any byte
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendUnsigned(T builder, byte number) {
         final int len = length1Byte - 1;
@@ -1131,6 +1138,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any byte
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendSigned(T builder, byte number) {
         int run = length8Byte;
@@ -1308,6 +1316,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any double
      * @return {@code builder}, with the bits of {@code number} appended in the radix this specifies
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendUnsigned(T builder, double number) {
         try {
@@ -1345,6 +1354,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any double
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendSigned(T builder, double number) {
         return appendSigned(builder, BitConversion.doubleToReversedLongBits(number));
@@ -1373,6 +1383,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any double
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendGeneral(T builder, double number) {
         return RyuDouble.appendGeneral(builder, number);
@@ -1403,6 +1414,7 @@ public class Base {
      * @param number  any double
      * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendGeneral(T builder, double number, boolean capitalize) {
         return RyuDouble.appendGeneral(builder, number, capitalize ? 'E' :'e');
@@ -1436,6 +1448,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any double
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendFriendly(T builder, double number) {
         return RyuDouble.appendFriendly(builder, number);
@@ -1462,6 +1475,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any double
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendScientific(T builder, double number) {
         return RyuDouble.appendScientific(builder, number);
@@ -1489,6 +1503,7 @@ public class Base {
      * @param number  any double
      * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendScientific(T builder, double number, boolean capitalize) {
         return RyuDouble.appendScientific(builder, number, capitalize ? 'E' :'e');
@@ -1559,6 +1574,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any double
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendDecimal(T builder, double number) {
         return RyuDouble.appendDecimal(builder, number);
@@ -1579,6 +1595,7 @@ public class Base {
      * @param number  any double
      * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the appended section
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendDecimal(T builder, double number, int lengthLimit) {
         return RyuDouble.appendDecimal(builder, number, lengthLimit);
@@ -1602,6 +1619,7 @@ public class Base {
      * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the appended section
      * @param precision how many decimal places to show; if negative, they will not be limited
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendDecimal(T builder, double number, int lengthLimit, int precision) {
         return RyuDouble.appendDecimal(builder, number, lengthLimit, precision);
@@ -2077,6 +2095,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any float
      * @return {@code builder}, with the bits of {@code number} appended in the radix this specifies
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendUnsigned(T builder, float number) {
         try {
@@ -2113,6 +2132,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any float
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendSigned(T builder, float number) {
         return appendSigned(builder, BitConversion.floatToReversedIntBits(number));
@@ -2141,6 +2161,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any float
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendGeneral(T builder, float number) {
         return RyuFloat.appendGeneral(builder, number);
@@ -2171,6 +2192,7 @@ public class Base {
      * @param number  any float
      * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendGeneral(T builder, float number, boolean capitalize) {
         return RyuFloat.appendGeneral(builder, number, capitalize ? 'E' :'e');
@@ -2204,6 +2226,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any float
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendFriendly(T builder, float number) {
         return RyuFloat.appendFriendly(builder, number);
@@ -2230,6 +2253,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any float
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendScientific(T builder, float number) {
         return RyuFloat.appendScientific(builder, number);
@@ -2257,6 +2281,7 @@ public class Base {
      * @param number  any float
      * @param capitalize if true and if scientific notation is used, this will use 'E' for the exponent; 'e' otherwise
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendScientific(T builder, float number, boolean capitalize) {
         return RyuFloat.appendScientific(builder, number, capitalize ? 'E' :'e');
@@ -2327,6 +2352,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any float
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendDecimal(T builder, float number) {
         return RyuFloat.appendDecimal(builder, number);
@@ -2347,6 +2373,7 @@ public class Base {
      * @param number  any float
      * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the appended section
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendDecimal(T builder, float number, int lengthLimit) {
         return RyuFloat.appendDecimal(builder, number, lengthLimit);
@@ -2370,6 +2397,7 @@ public class Base {
      * @param lengthLimit an int that should be between 3 and 1000, used as the maximum length for the appended section
      * @param precision how many decimal places to show; if negative, they will not be limited
      * @return {@code builder}, with the base-10 {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendDecimal(T builder, float number, int lengthLimit, int precision) {
         return RyuFloat.appendDecimal(builder, number, lengthLimit, precision);
@@ -2843,6 +2871,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any char
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendUnsigned(T builder, char number) {
         final int len = length2Byte - 1;
@@ -2883,6 +2912,7 @@ public class Base {
      * @param builder a non-null StringBuilder that will be modified (appended to)
      * @param number  any char
      * @return {@code builder}, with the encoded {@code number} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendSigned(T builder, char number) {
         int run = length8Byte;
@@ -3422,13 +3452,15 @@ public class Base {
 
     /**
      * Given a long array, a delimiter to separate the items of that array, and a StringBuilder to append to, appends to
-     * the StringBuilder all longs from elements, in this Base, separated by delimiter. This also accepts
-     * {@link StringBuffer}, {@link java.nio.CharBuffer}, and other CharSequence and Appendable types.
+     * the StringBuilder all longs from elements, in this Base, separated by delimiter.
+     * This accepts any types for {@code sb} that are both CharSequence and Appendable, such as {@link StringBuilder},
+     * {@link StringBuffer}, and {@link java.nio.CharBuffer}.
      *
      * @param sb        the StringBuilder (or similar) to append to; if null, this returns null
      * @param delimiter the separator to put between numbers
      * @param elements  a long array; if null, this returns sb without changes
      * @return sb, with items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, long[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -3473,6 +3505,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  an int array; if null, this returns sb without changes
      * @return sb, with items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, int[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -3517,6 +3550,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  a short array; if null, this returns sb without changes
      * @return sb, with items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, short[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -3561,6 +3595,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  a byte array; if null, this returns sb without changes
      * @return sb, with items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, byte[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -3605,6 +3640,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  a char array; if null, this returns sb without changes
      * @return sb, with items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, char[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -3651,6 +3687,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
      * @return sb, with items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, double[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -3697,6 +3734,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
      * @return sb, with items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, float[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -3744,6 +3782,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, double[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -3792,6 +3831,7 @@ public class Base {
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements  a double array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedDecimal(T sb, CharSequence delimiter, int lengthLimit, double[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -3839,6 +3879,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal or scientific notation, separated by delimiter
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, float[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -3887,6 +3928,7 @@ public class Base {
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements  a float array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10 decimal notation, separated by delimiter
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedDecimal(T sb, CharSequence delimiter, int lengthLimit, float[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -3914,10 +3956,11 @@ public class Base {
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a long 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, long[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, long[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (sb == null || elements == null || elements.length == 0)
             return sb;
@@ -3943,10 +3986,11 @@ public class Base {
      * @param minorDelimiter the separator to put between numbers
      * @param elements       an int 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, int[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, int[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (sb == null || elements == null || elements.length == 0)
             return sb;
@@ -3972,10 +4016,11 @@ public class Base {
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a short 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, short[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, short[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (sb == null || elements == null || elements.length == 0)
             return sb;
@@ -4001,10 +4046,11 @@ public class Base {
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a byte 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, byte[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, byte[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (sb == null || elements == null || elements.length == 0)
             return sb;
@@ -4030,10 +4076,11 @@ public class Base {
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a char 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, char[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, char[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (sb == null || elements == null || elements.length == 0)
             return sb;
@@ -4060,10 +4107,11 @@ public class Base {
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a double 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public <T extends CharSequence & Appendable> T appendJoinedExact2D(T sb, String majorDelimiter, String minorDelimiter, double[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoinedExact2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, double[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (sb == null || elements == null || elements.length == 0)
             return sb;
@@ -4091,11 +4139,12 @@ public class Base {
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements       a double 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public <T extends CharSequence & Appendable> T appendJoinedDecimal2D(T sb, String majorDelimiter, String minorDelimiter,
+    public <T extends CharSequence & Appendable> T appendJoinedDecimal2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter,
                                                int lengthLimit, double[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (sb == null || elements == null || elements.length == 0)
             return sb;
@@ -4122,10 +4171,11 @@ public class Base {
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a double 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, double[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, double[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (sb == null || elements == null || elements.length == 0)
             return sb;
@@ -4152,10 +4202,11 @@ public class Base {
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a float 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public <T extends CharSequence & Appendable> T appendJoinedExact2D(T sb, String majorDelimiter, String minorDelimiter, float[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoinedExact2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, float[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (sb == null || elements == null || elements.length == 0)
             return sb;
@@ -4183,11 +4234,12 @@ public class Base {
      * @param lengthLimit an int that should be between 3 and 1000, used as the exact length for each appended number
      * @param elements       a float 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public <T extends CharSequence & Appendable> T appendJoinedDecimal2D(T sb, String majorDelimiter, String minorDelimiter,
+    public <T extends CharSequence & Appendable> T appendJoinedDecimal2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter,
                                                                          int lengthLimit, float[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (sb == null || elements == null || elements.length == 0)
             return sb;
@@ -4214,10 +4266,11 @@ public class Base {
      * @param minorDelimiter the separator to put between numbers
      * @param elements       a float 2D array; if null or empty, this returns sb without changes
      * @return a String containing all numbers in elements, written in this Base, separated by the delimiters
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, String majorDelimiter, String minorDelimiter, float[][] elements) {
+    public <T extends CharSequence & Appendable> T appendJoined2D(T sb, CharSequence majorDelimiter, CharSequence minorDelimiter, float[][] elements) {
         if(majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (sb == null || elements == null || elements.length == 0)
             return sb;
@@ -4237,7 +4290,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * long array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, long[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, long[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4248,7 +4301,7 @@ public class Base {
      */
     public long[][] longSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
         if(source == null || majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return long2D;
@@ -4273,7 +4326,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * long array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, long[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, long[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4290,7 +4343,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * int array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, int[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, int[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4301,7 +4354,7 @@ public class Base {
      */
     public int[][] intSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
         if(source == null || majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return int2D;
@@ -4326,7 +4379,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * int array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, int[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, int[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4343,7 +4396,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * short array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, short[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, short[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4354,7 +4407,7 @@ public class Base {
      */
     public short[][] shortSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
         if(source == null || majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return short2D;
@@ -4379,7 +4432,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * short array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, short[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, short[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4396,7 +4449,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * byte array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, byte[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, byte[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4407,7 +4460,7 @@ public class Base {
      */
     public byte[][] byteSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
         if(source == null || majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return byte2D;
@@ -4432,7 +4485,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * byte array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, byte[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, byte[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4449,7 +4502,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * char array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, char[][])}, including the initial majorDelimiter before each sequence.
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, char[][])}, including the initial majorDelimiter before each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
      * @param majorDelimiter the separator between sequences
@@ -4460,7 +4513,7 @@ public class Base {
      */
     public char[][] charSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
         if(source == null || majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return char2D;
@@ -4485,7 +4538,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * char array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, char[][])}, including the initial majorDelimiter before
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, char[][])}, including the initial majorDelimiter before
      * each sequence.
      *
      * @param source         a String of numbers in this base, separated by a delimiter, with no trailing delimiter
@@ -4503,7 +4556,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoinedExact2D(CharSequence, String, String, double[][])}, including the initial majorDelimiter
+     * {@link #appendJoinedExact2D(CharSequence, CharSequence, CharSequence, double[][])}, including the initial majorDelimiter
      * before each sequence.
      * This can read in doubles produced by this Base using {@link #signed(double)} or {@link #unsigned(double)}, but
      * not {@link #decimal(double)}, {@link #scientific(double)}, {@link #general(double)}, or {@link #friendly(double)}.
@@ -4517,7 +4570,7 @@ public class Base {
      */
     public double[][] doubleSplitExact2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
         if(source == null || majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return double2D;
@@ -4542,7 +4595,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoinedExact2D(CharSequence, String, String, double[][])}, including the initial majorDelimiter
+     * {@link #appendJoinedExact2D(CharSequence, CharSequence, CharSequence, double[][])}, including the initial majorDelimiter
      * before each sequence.
      * This can read in doubles produced by this Base using {@link #signed(double)} or {@link #unsigned(double)}, but
      * not {@link #decimal(double)}, {@link #scientific(double)}, {@link #general(double)}, or {@link #friendly(double)}.
@@ -4560,8 +4613,8 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, double[][])} or
-     * {@link #appendJoinedDecimal2D(CharSequence, String, String, int, double[][])},
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, double[][])} or
+     * {@link #appendJoinedDecimal2D(CharSequence, CharSequence, CharSequence, int, double[][])},
      * including the initial majorDelimiter before each sequence.
      * This can read in doubles produced by any Base using {@link #decimal(double)}, {@link #scientific(double)},
      * {@link #general(double)}, or {@link #friendly(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}.
@@ -4575,7 +4628,7 @@ public class Base {
      */
     public double[][] doubleSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
         if(source == null || majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return double2D;
@@ -4600,8 +4653,8 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * double array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, double[][])} or
-     * {@link #appendJoinedDecimal2D(CharSequence, String, String, int, double[][])},
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, double[][])} or
+     * {@link #appendJoinedDecimal2D(CharSequence, CharSequence, CharSequence, int, double[][])},
      * including the initial majorDelimiter before each sequence.
      * This can read in doubles produced by any Base using {@link #decimal(double)}, {@link #scientific(double)},
      * {@link #general(double)}, or {@link #friendly(double)}, but not {@link #signed(double)} or {@link #unsigned(double)}.
@@ -4621,7 +4674,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoinedExact2D(CharSequence, String, String, float[][])}, including the initial majorDelimiter
+     * {@link #appendJoinedExact2D(CharSequence, CharSequence, CharSequence, float[][])}, including the initial majorDelimiter
      * before each sequence.
      * This can read in floats produced by this Base using {@link #signed(float)} or {@link #unsigned(float)}, but
      * not {@link #decimal(float)}, {@link #scientific(float)}, {@link #general(float)}, or {@link #friendly(float)}.
@@ -4635,7 +4688,7 @@ public class Base {
      */
     public float[][] floatSplitExact2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
         if(source == null || majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return float2D;
@@ -4660,8 +4713,8 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, float[][])} or
-     * {@link #appendJoinedDecimal2D(CharSequence, String, String, int, float[][])},
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, float[][])} or
+     * {@link #appendJoinedDecimal2D(CharSequence, CharSequence, CharSequence, int, float[][])},
      * including the initial majorDelimiter before each sequence.
      * This can read in floats produced by this Base using {@link #signed(float)} or {@link #unsigned(float)}, but
      * not {@link #decimal(float)}, {@link #scientific(float)}, {@link #general(float)}, or {@link #friendly(float)}.
@@ -4679,8 +4732,8 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, float[][])} or
-     * {@link #appendJoinedDecimal2D(CharSequence, String, String, int, float[][])},
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, float[][])} or
+     * {@link #appendJoinedDecimal2D(CharSequence, CharSequence, CharSequence, int, float[][])},
      * including the initial majorDelimiter before each sequence.
      * This can read in floats produced by any Base using {@link #decimal(float)}, {@link #scientific(float)},
      * {@link #general(float)}, or {@link #friendly(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
@@ -4694,7 +4747,7 @@ public class Base {
      */
     public float[][] floatSplit2D(String source, String majorDelimiter, String minorDelimiter, int startIndex, int endIndex) {
         if(source == null || majorDelimiter == null || minorDelimiter == null ||
-                majorDelimiter.equals(minorDelimiter) || majorDelimiter.isEmpty() || minorDelimiter.isEmpty())
+                majorDelimiter.equals(minorDelimiter) || majorDelimiter.length() <= 0 || minorDelimiter.length() <= 0)
             throw new IllegalArgumentException("The delimiters must be different, non-null, and non-empty.");
         if (endIndex <= startIndex || startIndex < 0 || startIndex >= source.length())
             return float2D;
@@ -4719,7 +4772,7 @@ public class Base {
      * Given a String containing sequences of numbers in this Base, with the sequences separated by instances of
      * majorDelimiter and the numbers within a sequence separated by minorDelimiter, returns those numbers as a 2D
      * float array. This is specifically meant to read the format produced by
-     * {@link #appendJoined2D(CharSequence, String, String, float[][])}, including the initial majorDelimiter
+     * {@link #appendJoined2D(CharSequence, CharSequence, CharSequence, float[][])}, including the initial majorDelimiter
      * before each sequence.
      * This can read in floats produced by any Base using {@link #decimal(float)}, {@link #scientific(float)},
      * {@link #general(float)}, or {@link #friendly(float)}, but not {@link #signed(float)} or {@link #unsigned(float)}.
@@ -4767,6 +4820,7 @@ public class Base {
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, long[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
@@ -4817,6 +4871,7 @@ public class Base {
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, int[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
@@ -4867,6 +4922,7 @@ public class Base {
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, short[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
@@ -4917,6 +4973,7 @@ public class Base {
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, char[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
@@ -4967,6 +5024,7 @@ public class Base {
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, byte[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
@@ -5017,6 +5075,7 @@ public class Base {
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, float[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
@@ -5067,6 +5126,7 @@ public class Base {
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, double[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
@@ -5117,6 +5177,7 @@ public class Base {
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, float[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
@@ -5167,6 +5228,7 @@ public class Base {
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public <T extends CharSequence & Appendable> T appendJoinedExact(T sb, CharSequence delimiter, double[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
@@ -5204,6 +5266,7 @@ public class Base {
      * @param sb      a non-null StringBuilder (or similar) to append to
      * @param number  any int
      * @return {@code builder}, with the encoded {@code number} appended in base-10
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendReadable(T sb, int number) {
         return BASE10.appendSigned(sb, number);
@@ -5232,6 +5295,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  an int array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, int[] elements) {
         return BASE10.appendJoined(sb, delimiter, elements);
@@ -5304,6 +5368,7 @@ public class Base {
      * @param sb a non-null StringBuilder (or similar) that will be modified (appended to)
      * @param number  any long
      * @return {@code sb}, with the encoded {@code number} and 'L' appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendReadable(T sb, long number) {
         final int length8Byte = Base.BASE10.length8Byte;
@@ -5361,6 +5426,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  a long array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, long[] elements) {
         if (elements == null || elements.length == 0)
@@ -5438,6 +5504,7 @@ public class Base {
      * @param sb a non-null StringBuilder (or similar) that will be modified (appended to)
      * @param number  any double
      * @return {@code sb}, with the encoded {@code number} appended in base-10
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendReadable(T sb, double number) {
         return BASE10.appendGeneral(sb, number);
@@ -5466,6 +5533,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  a double array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, double[] elements) {
         return BASE10.appendJoined(sb, delimiter, elements);
@@ -5521,6 +5589,7 @@ public class Base {
      * @param sb a non-null StringBuilder (or similar) that will be modified (appended to)
      * @param number  any float
      * @return {@code sb}, with the encoded {@code number} appended in base-10
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendReadable(T sb, float number) {
         try {
@@ -5559,6 +5628,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  a float array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written in base-10, separated by delimiter
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, float[] elements) {
         if (sb == null || elements == null || elements.length == 0)
@@ -5660,6 +5730,7 @@ public class Base {
      * @param builder a non-null StringBuilder (or similar) that will be modified (appended to)
      * @param number  any char
      * @return {@code builder}, with the encoded {@code number} appended as a char literal in single quotes
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendReadable(T builder, char number) {
         try {
@@ -5726,6 +5797,7 @@ public class Base {
      * @param delimiter the separator to put between numbers
      * @param elements  a char array; if null, this returns sb without changes
      * @return a String containing all numbers in elements, written as literals, separated by delimiter
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedReadable(T sb, CharSequence delimiter, char[] elements) {
         if (elements == null || elements.length == 0)
