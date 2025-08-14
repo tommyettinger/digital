@@ -337,7 +337,7 @@ public class Base {
      * @return {@code sb}, for chaining
      * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public  <T extends CharSequence & Appendable> T appendSerialized(T sb) {
+    public <T extends CharSequence & Appendable> T appendSerialized(T sb) {
         try {
             for (int i = 0; i < toEncoded.length; i++) {
                 sb.append(toEncoded[i]);
