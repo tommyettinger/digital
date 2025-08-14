@@ -53,10 +53,13 @@ public final class TextTools {
     /**
      * Appends every {@code char[]} item in {@code elements} to {@code sb}, with each {@code char[]} separated by
      * {@code delimiter}. Each {@code char[]} is written using the rules of {@link String#valueOf(char[])}.
-     * @param sb a StringBuilder that will be modified in-place
+     * This accepts any types for {@code sb} that are both CharSequence and Appendable, such as {@link StringBuilder},
+     * {@link StringBuffer}, and {@link java.nio.CharBuffer}.
+     * @param sb a StringBuilder or similar that will be modified in-place
      * @param delimiter a CharSequence to place between each {@code char[]}
      * @param elements an array or varargs of char arrays; if null, this returns the empty String
      * @return {@code sb}, after having {@code elements} appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedArrays(T sb, CharSequence delimiter, char[]... elements) {
         if (sb == null || elements == null || elements.length == 0) return sb;
@@ -140,9 +143,12 @@ public final class TextTools {
     /**
      * Joins the boolean array {@code elements} without delimiters into a StringBuilder, using "1" for true and "0" for
      * false. This is "dense" because it doesn't have any delimiters between elements.
-     * @param sb a StringBuilder that will be modified in-place
+     * This accepts any types for {@code sb} that are both CharSequence and Appendable, such as {@link StringBuilder},
+     * {@link StringBuffer}, and {@link java.nio.CharBuffer}.
+     * @param sb a StringBuilder or similar that will be modified in-place
      * @param elements an array or vararg of booleans
      * @return sb after modifications (if elements was non-null)
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedDense(T sb, boolean... elements) {
         return appendJoinedDense(sb, '1', '0', elements);
@@ -152,11 +158,14 @@ public final class TextTools {
      * Joins the boolean array {@code elements} without delimiters into a StringBuilder, using the char {@code t} for
      * true and the char {@code f} for false. This is "dense" because it doesn't have any delimiters between
      * elements.
-     * @param sb a StringBuilder that will be modified in-place
+     * This accepts any types for {@code sb} that are both CharSequence and Appendable, such as {@link StringBuilder},
+     * {@link StringBuffer}, and {@link java.nio.CharBuffer}.
+     * @param sb a StringBuilder or similar that will be modified in-place
      * @param t the char to write for true values
      * @param f the char to write for false values
      * @param elements an array or vararg of booleans
      * @return sb after modifications (if elements was non-null)
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedDense(T sb, char t, char f, boolean... elements) {
         if (sb == null || elements == null || elements.length == 0) return sb;
@@ -174,10 +183,14 @@ public final class TextTools {
      * Joins the part of the boolean array {@code elements} starting at {@code start} and extending for {@code length}
      * items, without delimiters, into a String, using the char {@code '1'} for true and the char {@code '0'} for false.
      * This is "dense" because it doesn't have any delimiters between elements.
+     * This accepts any types for {@code sb} that are both CharSequence and Appendable, such as {@link StringBuilder},
+     * {@link StringBuffer}, and {@link java.nio.CharBuffer}.
+     * @param sb a StringBuilder or similar that will be modified in-place
      * @param elements an array or vararg of booleans
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedDense(T sb, boolean[] elements, int start, int length) {
         return appendJoinedDense(sb, '1', '0', elements, start, length);
@@ -187,12 +200,16 @@ public final class TextTools {
      * Joins the part of the boolean array {@code elements} starting at {@code start} and extending for {@code length}
      * items, without delimiters, into a String, using the char {@code t} for true and the char {@code f} for false.
      * This is "dense" because it doesn't have any delimiters between elements.
+     * This accepts any types for {@code sb} that are both CharSequence and Appendable, such as {@link StringBuilder},
+     * {@link StringBuffer}, and {@link java.nio.CharBuffer}.
+     * @param sb a StringBuilder or similar that will be modified in-place
      * @param t the char to write for true values
      * @param f the char to write for false values
      * @param elements an array or vararg of booleans
      * @param start the first index in elements to use
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
     public static <T extends CharSequence & Appendable> T appendJoinedDense(T sb, char t, char f, boolean[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
@@ -336,18 +353,25 @@ public final class TextTools {
      * null items), and separating each item with {@code delimiter}. Unlike other join methods in this class, this does
      * not take a vararg of Object items, since that would cause confusion with the overloads that take one object, such
      * as {@link #join(CharSequence, Iterable)}; it takes a non-vararg Object array instead.
-     * @param sb a StringBuilder that will be modified in-place
+     * This accepts any types for {@code sb} that are both CharSequence and Appendable, such as {@link StringBuilder},
+     * {@link StringBuffer}, and {@link java.nio.CharBuffer}.
+     * @param sb a StringBuilder or similar that will be modified in-place
      * @param delimiter the String or other CharSequence to separate items in elements with; if null, uses ""
      * @param elements the Object items to stringify and join into one String; if the array is null or empty, this
      *                 returns an empty String, and if items are null, they are shown as "null"
      * @return sb after modifications (if elements was non-null)
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public static StringBuilder appendJoined(StringBuilder sb, CharSequence delimiter, Object[] elements) {
+    public static <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, Object[] elements) {
         if (sb == null || elements == null || elements.length == 0) return sb;
-        sb.append(elements[0]);
-        if(delimiter == null) delimiter = "";
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter).append(elements[i]);
+        try {
+            sb.append(elements[0].toString());
+            if (delimiter == null) delimiter = "";
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter).append(elements[i].toString());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return sb;
     }
@@ -359,22 +383,29 @@ public final class TextTools {
      * Unlike other join methods in this class, this does
      * not take a vararg of Object items, since that would cause confusion with the overloads that take one object, such
      * as {@link #join(CharSequence, Iterable)}; it takes a non-vararg Object array instead.
-     * @param sb a StringBuilder that will be modified in-place
+     * This accepts any types for {@code sb} that are both CharSequence and Appendable, such as {@link StringBuilder},
+     * {@link StringBuffer}, and {@link java.nio.CharBuffer}.
+     * @param sb a StringBuilder or similar that will be modified in-place
      * @param delimiter the String or other CharSequence to separate items in elements with; if null, uses ""
      * @param elements  the Object items to stringify and join into one String; if the array is null or empty, this
      *                  returns an empty String, and if items are null, they are shown as "null"
      * @param start     the first index, inclusive, in elements to read from
      * @param length    the number of items, at most, to join together
      * @return sb after modifications (if elements was non-null)
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public StringBuilder appendJoined(StringBuilder sb, CharSequence delimiter, Object[] elements, int start, int length) {
+    public <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, Object[] elements, int start, int length) {
         if (sb == null || elements == null || elements.length <= start || length <= 0)
             return sb;
-        sb.append(elements[start]);
-        if(delimiter == null) delimiter = "";
-        ++start;
-        for (int c = 1; c < length && start < elements.length; start++, c++) {
-            sb.append(delimiter).append(elements[start]);
+        try {
+            sb.append(elements[start].toString());
+            if (delimiter == null) delimiter = "";
+            ++start;
+            for (int c = 1; c < length && start < elements.length; start++, c++) {
+                sb.append(delimiter).append(elements[start].toString());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return sb;
     }
@@ -384,20 +415,27 @@ public final class TextTools {
      * Joins the items in {@code elements} by calling their toString method on them (or just using the String "null" for
      * null items), and separating each item with {@code delimiter}. This can take any Iterable of any type for its
      * {@code elements} parameter.
-     * @param sb a StringBuilder that will be modified in-place
+     * This accepts any types for {@code sb} that are both CharSequence and Appendable, such as {@link StringBuilder},
+     * {@link StringBuffer}, and {@link java.nio.CharBuffer}.
+     * @param sb a StringBuilder or similar that will be modified in-place
      * @param delimiter the String or other CharSequence to separate items in elements with; if null, uses ""
      * @param elements the Object items to stringify and join into one String; if Iterable is null or empty, this
      *                 returns an empty String, and if items are null, they are shown as "null"
      * @return sb after modifications (if elements was non-null)
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public static StringBuilder appendJoined(StringBuilder sb, CharSequence delimiter, Iterable<?> elements) {
+    public static <T extends CharSequence & Appendable> T appendJoined(T sb, CharSequence delimiter, Iterable<?> elements) {
         if (sb == null || elements == null) return sb;
         Iterator<?> it = elements.iterator();
         if(!it.hasNext()) return sb;
-        sb.append(it.next());
-        if(delimiter == null) delimiter = "";
-        while(it.hasNext()) {
-            sb.append(delimiter).append(it.next());
+        try {
+            sb.append(it.next().toString());
+            if (delimiter == null) delimiter = "";
+            while (it.hasNext()) {
+                sb.append(delimiter).append(it.next().toString());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return sb;
     }
