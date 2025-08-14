@@ -629,6 +629,22 @@ public final class TextTools {
     }
 
     /**
+     * Like {@link CharSequence#subSequence(int, int)} but returns "" instead of throwing any sort of Exception.
+     * @param source the CharSequence to get a sub-sequence from
+     * @param beginIndex the first index, inclusive; will be treated as 0 if negative
+     * @param endIndex the index after the last character (exclusive); if negative this will be {@code source.length()}
+     * @return the sub-sequence of source between beginIndex and endIndex, or "" if any parameters are null/invalid
+     */
+    public static CharSequence safeSubSequence(CharSequence source, int beginIndex, int endIndex)
+    {
+        if(source == null || source.length() <= 0) return "";
+        if(beginIndex < 0) beginIndex = 0;
+        if(endIndex < 0 || endIndex > source.length()) endIndex = source.length();
+        if(beginIndex >= endIndex) return "";
+        return source.subSequence(beginIndex, endIndex);
+    }
+
+    /**
      * Like {@link String#split(String)} but doesn't use any regex for splitting (the delimiter is a literal String).
      * This can be used to split groups of Strings joined by {@link #join(CharSequence, Object[])}.
      * @param source the String to get split-up substrings from
@@ -834,34 +850,47 @@ public final class TextTools {
     /**
      * Appends the text {@code item} to the StringBuilder {@code sb} repeatedly, {@code amount} times.
      * Returns {@code sb}.
-     * @param sb a non-null StringBuilder that will be appended to
+     * This accepts any types for {@code sb} that are both CharSequence and Appendable, such as {@link StringBuilder},
+     * {@link StringBuffer}, and {@link java.nio.CharBuffer}.
+     * @param sb a non-null StringBuilder or similar that will be appended to
      * @param item any non-null CharSequence, such as a String, to repeat
      * @param amount how many times to repeat {@code item}
      * @return {@code sb}, after modifications
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public static StringBuilder appendRepeated(StringBuilder sb, CharSequence item, int amount) {
+    public static <T extends CharSequence & Appendable> T appendRepeated(T sb, CharSequence item, int amount) {
         if(sb == null || item == null || amount <= 0) return sb;
-        for (int i = 0; i < amount; i++) {
-            sb.append(item);
+        try {
+            for (int i = 0; i < amount; i++) {
+                sb.append(item);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return sb;
     }
 
     /**
      * Appends the text {@code item} to the StringBuilder {@code sb} repeatedly, {@code amount} times, separating
-     * repetitions of {@code item} with {@code delimiter}.
-     * Returns {@code sb}.
-     * @param sb a non-null StringBuilder that will be appended to
+     * repetitions of {@code item} with {@code delimiter}. Returns {@code sb}.
+     * This accepts any types for {@code sb} that are both CharSequence and Appendable, such as {@link StringBuilder},
+     * {@link StringBuffer}, and {@link java.nio.CharBuffer}.
+     * @param sb a non-null StringBuilder or similar that will be appended to
      * @param item any non-null CharSequence, such as a String, to repeat
      * @param amount how many times to repeat {@code item}
      * @param delimiter a non-null CharSequence to append between repetitions of {@code item}
      * @return {@code sb}, after modifications
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
      */
-    public static StringBuilder appendRepeated(StringBuilder sb, CharSequence item, int amount, CharSequence delimiter) {
+    public static <T extends CharSequence & Appendable> T appendRepeated(T sb, CharSequence item, int amount, CharSequence delimiter) {
         if(sb == null || item == null || delimiter == null || amount <= 0) return sb;
-        sb.append(item);
-        for (int i = 1; i < amount; i++) {
-            sb.append(delimiter).append(item);
+        try {
+            sb.append(item);
+            for (int i = 1; i < amount; i++) {
+                sb.append(delimiter).append(item);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return sb;
     }
