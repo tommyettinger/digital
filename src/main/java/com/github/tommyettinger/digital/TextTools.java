@@ -17,6 +17,7 @@
 
 package com.github.tommyettinger.digital;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 /**
@@ -57,11 +58,20 @@ public final class TextTools {
      * @param elements an array or varargs of char arrays; if null, this returns the empty String
      * @return {@code sb}, after having {@code elements} appended
      */
-    public static StringBuilder appendJoinedArrays(StringBuilder sb, CharSequence delimiter, char[]... elements) {
+    public static <T extends CharSequence & Appendable> T appendJoinedArrays(T sb, CharSequence delimiter, char[]... elements) {
         if (sb == null || elements == null || elements.length == 0) return sb;
-        sb.append(elements[0]);
-        for (int i = 1; i < elements.length; i++) {
-            sb.append(delimiter).append(elements[i]);
+        try {
+            for (int i = 0, n = elements[0].length; i < n; i++) {
+                sb.append(elements[0][i]);
+            }
+            for (int i = 1; i < elements.length; i++) {
+                sb.append(delimiter);
+                for (int j = 0, n = elements[i].length; j < n; j++) {
+                    sb.append(elements[i][j]);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return sb;
     }
@@ -134,7 +144,7 @@ public final class TextTools {
      * @param elements an array or vararg of booleans
      * @return sb after modifications (if elements was non-null)
      */
-    public static StringBuilder appendJoinedDense(StringBuilder sb, boolean... elements) {
+    public static <T extends CharSequence & Appendable> T appendJoinedDense(T sb, boolean... elements) {
         return appendJoinedDense(sb, '1', '0', elements);
     }
 
@@ -148,11 +158,14 @@ public final class TextTools {
      * @param elements an array or vararg of booleans
      * @return sb after modifications (if elements was non-null)
      */
-    public static StringBuilder appendJoinedDense(StringBuilder sb, char t, char f, boolean... elements) {
-        if (sb == null || elements == null) return sb;
-        if(elements.length == 0) return sb;
-        for (int i = 0; i < elements.length; i++) {
-            sb.append(elements[i] ? t : f);
+    public static <T extends CharSequence & Appendable> T appendJoinedDense(T sb, char t, char f, boolean... elements) {
+        if (sb == null || elements == null || elements.length == 0) return sb;
+        try {
+            for (int i = 0; i < elements.length; i++) {
+                sb.append(elements[i] ? t : f);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return sb;
     }
@@ -166,7 +179,7 @@ public final class TextTools {
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public static StringBuilder appendJoinedDense(StringBuilder sb, boolean[] elements, int start, int length) {
+    public static <T extends CharSequence & Appendable> T appendJoinedDense(T sb, boolean[] elements, int start, int length) {
         return appendJoinedDense(sb, '1', '0', elements, start, length);
     }
 
@@ -181,11 +194,15 @@ public final class TextTools {
      * @param length how many items to use from elements, at most
      * @return sb, with at most length items appended
      */
-    public static StringBuilder appendJoinedDense(StringBuilder sb, char t, char f, boolean[] elements, int start, int length) {
+    public static <T extends CharSequence & Appendable> T appendJoinedDense(T sb, char t, char f, boolean[] elements, int start, int length) {
         if (elements == null || elements.length <= start || length <= 0)
             return sb;
-        for (int c = 0; c < length && start < elements.length; start++, c++) {
-            sb.append(elements[start] ? t : f);
+        try {
+            for (int c = 0; c < length && start < elements.length; start++, c++) {
+                sb.append(elements[start] ? t : f);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return sb;
     }
