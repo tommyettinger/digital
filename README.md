@@ -16,13 +16,13 @@ To add to an existing project...
 In your `core/build.gradle`'s dependencies, add:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.9.0"
+api "com.github.tommyettinger:digital:0.9.1"
 ```
 
 If you have a GWT module, then in `html/build.gradle`'s dependencies, add:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.9.0:sources"
+api "com.github.tommyettinger:digital:0.9.1:sources"
 ```
 
 And also for GWT, add this line to `GdxDefinition.gwt.xml`:
@@ -362,18 +362,18 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.9.0"
+api "com.github.tommyettinger:digital:0.9.1"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.9.0:sources"
+api "com.github.tommyettinger:digital:0.9.1:sources"
 ```
 
 If you target GWT, it needs to be told about these changes in your `GdxDefinition.gwt.xml`
-file. For any remotely recent version of digital (0.1.7 and later), use:
+file. For any remotely-recent version of digital (0.1.7 and later), use:
 
 ```xml
 <inherits name="com.github.tommyettinger.digital" />
