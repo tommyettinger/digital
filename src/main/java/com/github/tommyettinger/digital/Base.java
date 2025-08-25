@@ -126,7 +126,11 @@ public class Base {
     }
 
     /**
-     * The digits this will encode to, in order from smallest to largest. These must all be in the ASCII range.
+     * The digits this will encode to, in order from smallest to largest. These are usually all in the ASCII range,
+     * but if you call {@link #produceScrambledUnicode(Random)}, the output will be changed to (barely) randomized
+     * characters from the Unified Canadian Aboriginal Syllabics block of Unicode, which isn't the best way to conceal
+     * their meaning but at least it harder to confuse scrambled-base output with ASCII text, such as characters used
+     * for XML or JSON syntax.
      * <br>
      * This should not be changed after the Base has been used; changing this makes a Base incompatible with its
      * previously-returned numbers as Strings.
@@ -317,6 +321,24 @@ public class Base {
         for (int i = 0; i < base.base; i++) {
             // Makes from and to arrays match.
             base.fromEncoded[base.toEncoded[i] & 127] = i;
+        }
+        return base;
+    }
+
+    /**
+     * Changes the output characters of this Base to be selected from the Unified Canadian Aboriginal Syllabics block
+     * of Unicode, which has 640 glyphs that the up-to-128 output chars a Base can have will be assigned to. Only the
+     * lower 7 bits of each char are actually used, so the actual char chosen from the 640 possible only serves to
+     * obfuscate the scrambled base a little, and to differentiate Base output from ASCII text, such as the characters
+     * used for XML and JSON syntax. The {@link #paddingChar}, {@link #positiveSign}, and {@link #negativeSign} are not
+     * changed at all.
+     * @param random used to select which of 5 possible glyphs to use for each output char
+     * @return a new Base that produces Unicode output, with only limited ASCII chars it can include
+     */
+    public Base produceScrambledUnicode(Random random) {
+        Base base = new Base(this);
+        for (int i = 0; i < base.toEncoded.length; i++) {
+            base.toEncoded[i] ^= (char) (0x1400 + (random.nextInt(5) << 7));
         }
         return base;
     }
