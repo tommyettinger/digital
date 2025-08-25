@@ -273,7 +273,11 @@ public class Base {
             options[ii] = temp;
         }
 
-        char pad = options[options.length - 3], plus = options[options.length - 2], minus = options[options.length - 1];
+        // We can't use arbitrary pad and plus because alphanumeric characters are used for tags, and we need to allow
+        // any alphanumeric characters for at least that purpose without also using alphanumeric chars as separators.
+        // The negative sign can be arbitrary.
+//        char pad = options[options.length - 3], plus = options[options.length - 2], minus = options[options.length - 1];
+        char pad = '<', plus = '>', minus = options[options.length - 1];
 
         // The actual chars here don't matter, because they are replaced with the shuffled options.
         Base base = new Base("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?!@#$%^&*-", false, pad, plus, minus);
