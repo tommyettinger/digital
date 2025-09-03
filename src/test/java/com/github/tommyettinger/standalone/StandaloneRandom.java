@@ -307,7 +307,6 @@ public class StandaloneRandom extends Random {
         stateE = fb - fc;
         return result;
     }
-    // constants used by probitL() and probitD()
 
     /**
      * Gets a pseudo-random double between 0 (inclusive) and {@code outerBound} (exclusive).
@@ -334,6 +333,7 @@ public class StandaloneRandom extends Random {
         return innerBound + nextDouble() * (outerBound - innerBound);
     }
 
+    // constants used by probitL()
     private static final double
             a0 = 0.195740115269792,
             a1 = -0.652871358365296,
@@ -392,6 +392,19 @@ public class StandaloneRandom extends Random {
      */
     public double nextGaussian(double mean, double stdDev) {
         return mean + stdDev * nextGaussian();
+    }
+
+    /**
+     * Returns a non-negative {@code double} value pseudorandomly chosen from
+     * an exponential distribution whose mean is 1.
+     *
+     * @return a non-negative {@code double} value pseudorandomly chosen from an
+     *         exponential distribution with a mean of 1
+     *
+     * @implNote This implementation is simply {@code return -Math.log(1.0 - nextDouble());} .
+     */
+    public double nextExponential() {
+        return -Math.log(1.0 - nextDouble());
     }
 
     @Override
