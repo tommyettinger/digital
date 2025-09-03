@@ -194,6 +194,51 @@ public class StandaloneRandom extends Random {
     public int nextInt(int innerBound, int outerBound) {
         return (int) (innerBound + ((((outerBound - innerBound) & 0xFFFFFFFFL) * (nextLong() & 0xFFFFFFFFL) >>> 32) & ~((long) outerBound - (long) innerBound >> 63)));
     }
+
+    /**
+     * Returns a pseudorandom, uniformly distributed {@code long} value
+     * between 0 (inclusive) and the specified value (exclusive), drawn from
+     * this random number generator's sequence.  The general contract of
+     * {@code nextLong} is that one {@code long} value in the specified range
+     * is pseudorandomly generated and returned.  All {@code bound} possible
+     * {@code long} values are produced with (approximately) equal
+     * probability, though there is a small amount of bias depending on the bound.
+     *
+     * <br> Note that this advances the state by the same amount as a single call to
+     * {@link #nextLong()}. This will also advance the state if {@code bound} is 0
+     * or negative, so usage with a variable bound will advance the state reliably.
+     *
+     * @param bound the upper bound (exclusive). If negative or 0, this always returns 0.
+     * @return the next pseudorandom, uniformly distributed {@code long}
+     * value between zero (inclusive) and {@code bound} (exclusive)
+     * from this random number generator's sequence
+     */
+    public long nextLong(long bound) {
+        return nextLong(0L, bound);
+    }
+
+    /**
+     * Returns a pseudorandom, uniformly distributed {@code long} value between the
+     * specified {@code innerBound} (inclusive) and the specified {@code outerBound}
+     * (exclusive). If {@code outerBound} is less than or equal to {@code innerBound},
+     * this always returns {@code innerBound}.
+     *
+     * @param inner the inclusive inner bound; may be any long, allowing negative
+     * @param outer the exclusive outer bound; must be greater than innerBound (otherwise this returns innerBound)
+     * @return a pseudorandom long between innerBound (inclusive) and outerBound (exclusive)
+     */
+    public long nextLong(long inner, long outer) {
+        final long rand = nextLong();
+        if (inner >= outer)
+            return inner;
+        final long bound = outer - inner;
+        final long randLow = rand & 0xFFFFFFFFL;
+        final long boundLow = bound & 0xFFFFFFFFL;
+        final long randHigh = (rand >>> 32);
+        final long boundHigh = (bound >>> 32);
+        return inner + (randHigh * boundLow >>> 32) + (randLow * boundHigh >>> 32) + randHigh * boundHigh;
+    }
+
     public boolean nextBoolean() {
         final long fa = stateA;
         final long fb = stateB;
