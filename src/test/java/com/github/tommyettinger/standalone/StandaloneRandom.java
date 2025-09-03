@@ -179,6 +179,21 @@ public class StandaloneRandom extends Random {
         return result;
     }
 
+    /**
+     * Returns a pseudorandom, uniformly distributed {@code int} value between the
+     * specified {@code innerBound} (inclusive) and the specified {@code outerBound}
+     * (exclusive). If {@code outerBound} is less than or equal to {@code innerBound},
+     * this always returns {@code innerBound}.
+     *
+     * <br> If outerBound is less than innerBound here, this simply returns innerBound.
+     *
+     * @param innerBound the inclusive inner bound; may be any int, allowing negative
+     * @param outerBound the exclusive outer bound; must be greater than innerBound (otherwise this returns innerBound)
+     * @return a pseudorandom int between innerBound (inclusive) and outerBound (exclusive)
+     */
+    public int nextInt(int innerBound, int outerBound) {
+        return (int) (innerBound + ((((outerBound - innerBound) & 0xFFFFFFFFL) * (nextLong() & 0xFFFFFFFFL) >>> 32) & ~((long) outerBound - (long) innerBound >> 63)));
+    }
     public boolean nextBoolean() {
         final long fa = stateA;
         final long fb = stateB;
