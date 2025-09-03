@@ -268,6 +268,31 @@ public class StandaloneRandom extends Random {
         return result;
     }
 
+    /**
+     * Gets a pseudo-random float between 0 (inclusive) and {@code outerBound} (exclusive).
+     * The outerBound may be positive or negative.
+     * Exactly the same as {@code nextFloat() * outerBound}.
+     *
+     * @param outerBound the exclusive outer bound
+     * @return a float between 0 (inclusive) and {@code outerBound} (exclusive)
+     */
+    public float nextFloat(float outerBound) {
+        return nextFloat() * outerBound;
+    }
+
+    /**
+     * Gets a pseudo-random float between {@code innerBound} (inclusive) and {@code outerBound} (exclusive).
+     * Neither, either, or both of innerBound and outerBound may be negative; this does not change which is
+     * inclusive and which is exclusive.
+     *
+     * @param innerBound the inclusive inner bound; may be negative
+     * @param outerBound the exclusive outer bound; may be negative
+     * @return a float between {@code innerBound} (inclusive) and {@code outerBound} (exclusive)
+     */
+    public float nextFloat(float innerBound, float outerBound) {
+        return innerBound + nextFloat() * (outerBound - innerBound);
+    }
+
     public double nextDouble () {
         final long fa = stateA;
         final long fb = stateB;
@@ -283,6 +308,32 @@ public class StandaloneRandom extends Random {
         return result;
     }
     // constants used by probitL() and probitD()
+
+    /**
+     * Gets a pseudo-random double between 0 (inclusive) and {@code outerBound} (exclusive).
+     * The outerBound may be positive or negative.
+     * Exactly the same as {@code nextDouble() * outerBound}.
+     *
+     * @param outerBound the exclusive outer bound
+     * @return a double between 0 (inclusive) and {@code outerBound} (exclusive)
+     */
+    public double nextDouble(double outerBound) {
+        return nextDouble() * outerBound;
+    }
+
+    /**
+     * Gets a pseudo-random double between {@code innerBound} (inclusive) and {@code outerBound} (exclusive).
+     * Neither, either, or both of innerBound and outerBound may be negative; this does not change which is
+     * inclusive and which is exclusive.
+     *
+     * @param innerBound the inclusive inner bound; may be negative
+     * @param outerBound the exclusive outer bound; may be negative
+     * @return a double between {@code innerBound} (inclusive) and {@code outerBound} (exclusive)
+     */
+    public double nextDouble(double innerBound, double outerBound) {
+        return innerBound + nextDouble() * (outerBound - innerBound);
+    }
+
     private static final double
             a0 = 0.195740115269792,
             a1 = -0.652871358365296,
