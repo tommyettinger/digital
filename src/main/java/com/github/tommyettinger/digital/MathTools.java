@@ -1082,6 +1082,32 @@ public static long mmi(final long a) {
 */
 
     /**
+     * Given a {@link Hasher.UnaryHash64} (or likely a lambda that takes and returns a long) that only modifies its bits
+     * in a "non-downward" direction, such as a function that multiplies, adds, XORs, ORs, ANDs, or shifts left, but not
+     * one that divides, shifts right, rotates/swaps bits, or performs modulus, this creates a UnaryHash64 that performs
+     * the inverse operation to the given unary hash. That is, if you call {@code long y = upward.applyAsLong(x);}, then
+     * you can call {@code long xAgain = invertUpwardFunction(upward).applyAsLong(y);} and x will equal xAgain.
+     * <br>
+     * This is mostly useful to invert a specific "tricky" bijective operation, xor-square-or (XQO), which is
+     * "non-downward" but otherwise has no features that make it possible to invert -- this is the only known way.
+     * <br>
+     * Credit to <a href="https://github.com/skeeto/hash-prospector/issues/23#issuecomment-1288120841">fp64</a>, who
+     * thought this was possibly an "obvious" implementation. It isn't obvious to me, so I'm appreciative!
+     * @param upward a long-input, long-output function that only changes bits in a non-downward direction (see above)
+     * @return a new long-input, long-output function that is the inverse of {@code upward}, getting its input from its output
+     */
+    public static Hasher.UnaryHash64 invertUpwardFunction(final Hasher.UnaryHash64 upward) {
+        return (final long x) -> {
+            long r = 0L;
+            for (int i = 0; i < 64; i++) {
+                final long test = ((upward.applyAsLong(r) ^ x) & (-1L >>> ~i));
+                r ^= ((test | -test) >>> 63) << i;
+            }
+            return r;
+        };
+    }
+
+    /**
      * A generalization on bias and gain functions that can represent both; this version is branch-less.
      * This is based on <a href="https://arxiv.org/abs/2010.09714">this micro-paper</a> by Jon Barron, which
      * generalizes the earlier bias and gain rational functions by Schlick. The second and final page of the

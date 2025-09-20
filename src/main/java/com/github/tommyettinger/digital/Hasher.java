@@ -168,6 +168,17 @@ public class Hasher {
     }
 
     /**
+     * A functional interface type for 64-bit hash64() functions that take a long input and return a long output.
+     * The functional method is {@link #applyAsLong(long)}.
+     * <br>
+     * This is essentially equivalent to JDK 8's LongUnaryOperator functional interface, but that type isn't defined on
+     * RoboVM, so defining it ourselves is required.
+     */
+    public interface UnaryHash64 {
+        long applyAsLong(long seed);
+    }
+
+    /**
      * The seed used by all non-static hash() and hash64() methods in this class (the methods that don't take a seed).
      * You can create many different Hasher objects, all with different seeds, and get very different hashes as a result
      * of any calls on them. Because making this field hidden in some way doesn't meaningfully contribute to security,
