@@ -1,5 +1,6 @@
 package com.github.tommyettinger.digital;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static com.github.tommyettinger.digital.TrigTools.PI2;
@@ -253,6 +254,22 @@ public class MathToolsTest {
         }
     }
 
+    @Test
+    public void testInvertUpward() {
+        Hasher.UnaryHash64 xqo1 = MathTools.xorSquareOr(1L);
+        Hasher.UnaryHash64 xqo1Inverse = MathTools.invertUpwardFunction(xqo1);
+
+        AlternateRandom random = new AlternateRandom(123L);
+
+        for (int i = 0; i < 1000; i++) {
+            long x = random.nextLong();
+            long y = xqo1.applyAsLong(x);
+            long xAgain = xqo1Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+        }
+
+    }
+
     public static float cbrtNewton0(float y) {
         return BitConversion.intBitsToFloat(0x2a510680 + (BitConversion.floatToIntBits(y) / 3)); // log-approx hack
     }
@@ -443,7 +460,7 @@ mSteps=-16, x1=-6, c1=-6, x2=0, c2=-5:
         System.out.println("fourthRootNewton2(): ");
         testApprox(4, MathToolsTest::fourthRootNewton2, testMin, testMax);
 
-        //change to false to disable a very long process to configure fourthRootConfigurable()
+        //change to false if you want to disable a very long process that configures fourthRootConfigurable()
         if(false) {
         /*
 BEST:
@@ -462,7 +479,7 @@ mSteps=-16, x1=-6, c1=-6, x2=0, c2=-5:
                     bestError = meanSquareError;
                     bestM = mSteps;
                 }
-                System.out.printf("Current best mean squared error: %.16f\nCompleted step %d/\n", bestError, (mSteps + 30001), 30130>>4);
+                System.out.printf("Current best mean squared error: %.16f\nCompleted step %d/\n", bestError, (mSteps + 30001));
             }
             System.out.printf("\n\nBEST:\nMean squared error: %.16f\nmSteps=%d:\n", bestError, bestM);
         }

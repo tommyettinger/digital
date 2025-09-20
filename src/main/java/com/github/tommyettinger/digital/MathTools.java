@@ -1082,6 +1082,21 @@ public static long mmi(final long a) {
 */
 
     /**
+     * Creates a function that takes and returns a long, and performs the xor-square-or operation on its parameter using
+     * the given {@code orConstant} as the parameter for the bitwise OR. The {@code orConstant} must be an odd number
+     * if the returned function should be invertible.
+     * <br>
+     * This simply returns a function that takes a long {@code x} and returns {@code x ^ (x * x | orConstant)}.
+     * <br>
+     * Mostly meant as a building block for finding inverses for larger functions.
+     * @param orConstant should be odd if the result should be an invertible function; there are no other restrictions
+     * @return a new long-input, long-output function that performs the xor-square-or operation with the given constant
+     */
+    public static Hasher.UnaryHash64 xorSquareOr(final long orConstant) {
+        return (final long x) -> x ^ (x * x | orConstant);
+    }
+
+    /**
      * Given a {@link Hasher.UnaryHash64} (or likely a lambda that takes and returns a long) that only modifies its bits
      * in a "non-downward" direction, such as a function that multiplies, adds, XORs, ORs, ANDs, or shifts left, but not
      * one that divides, shifts right, rotates/swaps bits, or performs modulus, this creates a UnaryHash64 that performs
