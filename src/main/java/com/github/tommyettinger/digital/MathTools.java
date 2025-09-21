@@ -1097,6 +1097,26 @@ public static long mmi(final long a) {
     }
 
     /**
+     * Creates a function that takes and returns a long, performs three (usually different) bitwise left rotations
+     * on that long, and returns the XOR of those rotations. Each rotation should be in the 0-63 range, inclusive, but
+     * values outside of that range will be implicitly masked. A common usage of this operation has a rotation of 0 for
+     * {@code a}. You can make any of the rotations equivalent to a right rotation by passing in a negative number for
+     * a, b, or c, such as passing -5 for a bitwise right rotation by 5, or 5 for a bitwise left rotation by 5.
+     * <br>
+     * This simply returns a function that takes a long {@code x} and returns
+     * {@code (x << a | x >>> -a) ^ (x << b | x >>> -b) ^ (x << c | x >>> -c)}.
+     * <br>
+     * Mostly meant as a building block for finding inverses for larger functions.
+     * @param a the first rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
+     * @param b the second rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
+     * @param c the third rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
+     * @return a new long-input, long-output function that performs three bitwise left rotations and XORs them
+     */
+    public static Hasher.UnaryHash64 xorRotations(final int a, final int b, final int c) {
+        return (final long x) -> (x << a | x >>> -a) ^ (x << b | x >>> -b) ^ (x << c | x >>> -c);
+    }
+
+    /**
      * Given a {@link Hasher.UnaryHash64} (or likely a lambda that takes and returns a long) that only modifies its bits
      * in a "non-downward" direction, such as a function that multiplies, adds, XORs, ORs, ANDs, or shifts left, but not
      * one that divides, shifts right, rotates/swaps bits, or performs modulus, this creates a UnaryHash64 that performs
