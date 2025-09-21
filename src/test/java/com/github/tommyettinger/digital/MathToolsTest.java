@@ -267,7 +267,33 @@ public class MathToolsTest {
             long xAgain = xqo1Inverse.applyAsLong(y);
             Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
         }
+    }
 
+    @Test
+    public void testInvertXorRotations() {
+        Hasher.UnaryHash64 a0b1c2 = MathTools.xorRotations(0, 1, 2);
+        Hasher.UnaryHash64 a0b1c2Inverse = MathTools.invertXorRotations(0, 1, 2);
+
+        Hasher.UnaryHash64 a1b3c5 = MathTools.xorRotations(1, 3, 5);
+        Hasher.UnaryHash64 a1b3c5Inverse = MathTools.invertXorRotations(1, 3, 5);
+
+        Hasher.UnaryHash64 a61b53c45 = MathTools.xorRotations(61, 53, 45);
+        Hasher.UnaryHash64 a61b53c45Inverse = MathTools.invertXorRotations(61, 53, 45);
+
+        AlternateRandom random = new AlternateRandom(123L);
+
+        for (int i = 0; i < 1000; i++) {
+            long x = random.nextLong();
+            long y = a0b1c2.applyAsLong(x);
+            long xAgain = a0b1c2Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+            y = a1b3c5.applyAsLong(x);
+            xAgain = a1b3c5Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+            y = a61b53c45.applyAsLong(x);
+            xAgain = a61b53c45Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+        }
     }
 
     public static float cbrtNewton0(float y) {
