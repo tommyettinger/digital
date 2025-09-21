@@ -259,12 +259,26 @@ public class MathToolsTest {
         Hasher.UnaryHash64 xqo1 = MathTools.xorSquareOr(1L);
         Hasher.UnaryHash64 xqo1Inverse = MathTools.invertUpwardFunction(xqo1);
 
+        Hasher.UnaryHash64 xqo5 = MathTools.xorSquareOr(5L);
+        Hasher.UnaryHash64 xqo5Inverse = MathTools.invertUpwardFunction(xqo5);
+
+        Hasher.UnaryHash64 xqo25 = MathTools.xorSquareOr(25L);
+        Hasher.UnaryHash64 xqo25Inverse = MathTools.invertUpwardFunction(xqo25);
+
         AlternateRandom random = new AlternateRandom(123L);
 
         for (int i = 0; i < 1000; i++) {
             long x = random.nextLong();
             long y = xqo1.applyAsLong(x);
             long xAgain = xqo1Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+
+            y = xqo5.applyAsLong(x);
+            xAgain = xqo5Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+
+            y = xqo25.applyAsLong(x);
+            xAgain = xqo25Inverse.applyAsLong(y);
             Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
         }
     }

@@ -298,6 +298,39 @@ public class Hasher {
         return state ^ state >>> 29;
     }
 
+
+    /**
+     * A somewhat-experimental randomizing method that is meant to be easier for a human to memorize, while still being
+     * a bijection that can pass tests for randomness. This is based closely on the HornRandom generator in the juniper
+     * library, which passes 64TB of PractRand tests, but with modifications to how it handles its initial state so it
+     * works better as a "stateless" generator that can operate on any counter.
+     * <br>
+     * This is inspired by the <a href="https://arxiv.org/abs/2004.06278">Squares generator</a>, which uses a
+     * roughly-similar concept as a stateless hash on a simple counter, but shares no code with Squares. The use of
+     * squaring as a primitive turns out to be good for efficiency reasons, so we use the bijective
+     *<a href="https://github.com/skeeto/hash-prospector/issues/23">Xor-Square-Or</a> operation instead of... whatever
+     * it is that Squares uses, which is not bijective in any case.
+     * <br>
+     * While several of the building blocks of this method do not have fix-points (where the input and output are the
+     * same), the method as a whole may have some over the full input range. The input is expected to be a simple
+     * counter that adds or subtracts 1, but other values (or more exotic update patterns) should all work well.
+     *
+     * @param state any long; subsequent calls should change by an odd number, such as with {@code ++state}
+     * @return any long
+     */
+    public static long randomizeH(long state) {
+        // XLCG, bijective and also full-period if run repeatedly.
+        state = (state ^ 5L) * 5555555555555555555L;
+        // Xor-Square-Or with orConstant 7.
+        state ^= state * state | 7L;
+        // Bitwise right rotation by 27.
+        state = (state >>> 27 | state << 37);
+        // Xor-Square-Or with orConstant 7.
+        state ^= state * state | 7L;
+        // Right xor-shift by 27.
+        return state ^ state >>> 27;
+    }
+
     /**
      * Fast static randomizing method that takes its state as a parameter and limits output to an int between 0
      * (inclusive) and bound (exclusive); state is expected to change between calls to this. It is recommended that you
