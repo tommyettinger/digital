@@ -1117,6 +1117,33 @@ public static long mmi(final long a) {
     }
 
     /**
+     * Given a {@link Hasher.UnaryHash64} returned by {@link #xorRotations(int, int, int)} with the same a, b, and c,
+     * this creates a UnaryHash64 that perform the inverse operation to xorRotations(). That is, if you call
+     * {@code long y = xorRotations(1, 2, 3).applyAsLong(x);}, then you can call
+     * {@code long xAgain = invertXorRotations(1, 2, 3).applyAsLong(y);} and x will equal xAgain.
+     * <br>
+     * This is mostly useful to invert a specific "tricky" bijective operation, {@link #xorRotations(int, int, int)}.
+     * <br>
+     * Credit to <a href="https://marc-b-reynolds.github.io/math/2017/10/13/XorRotate.html">Marc B. Reynolds</a>.
+     *
+     * @param a the first rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
+     * @param b the second rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
+     * @param c the third rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
+     * @return a new long-input, long-output function that is the inverse of {@link #xorRotations(int, int, int)} of a, b, c.
+     */
+    public static Hasher.UnaryHash64 invertXorRotations(final int a, final int b, final int c) {
+        return (final long i) -> {
+            long x = (i << a | i >>> -a) ^ (i << b | i >>> -b) ^ (i << c | i >>> -c);
+            x = (x << (a << 1) | x >>> (-a << 1)) ^ (x << (b << 1) | x >>> (-b << 1)) ^ (x << (c << 1) | x >>> (-c << 1));
+            x = (x << (a << 2) | x >>> (-a << 2)) ^ (x << (b << 2) | x >>> (-b << 2)) ^ (x << (c << 2) | x >>> (-c << 2));
+            x = (x << (a << 3) | x >>> (-a << 3)) ^ (x << (b << 3) | x >>> (-b << 3)) ^ (x << (c << 3) | x >>> (-c << 3));
+            x = (x << (a << 4) | x >>> (-a << 4)) ^ (x << (b << 4) | x >>> (-b << 4)) ^ (x << (c << 4) | x >>> (-c << 4));
+            x = (x << (a << 5) | x >>> (-a << 5)) ^ (x << (b << 5) | x >>> (-b << 5)) ^ (x << (c << 5) | x >>> (-c << 5));
+            return x;
+        };
+    }
+
+    /**
      * Given a {@link Hasher.UnaryHash64} (or likely a lambda that takes and returns a long) that only modifies its bits
      * in a "non-downward" direction, such as a function that multiplies, adds, XORs, ORs, ANDs, or shifts left, but not
      * one that divides, shifts right, rotates/swaps bits, or performs modulus, this creates a UnaryHash64 that performs
@@ -1128,15 +1155,16 @@ public static long mmi(final long a) {
      * <br>
      * Credit to <a href="https://github.com/skeeto/hash-prospector/issues/23#issuecomment-1288120841">fp64</a>, who
      * thought this was possibly an "obvious" implementation. It isn't obvious to me, so I'm appreciative!
+     *
      * @param upward a long-input, long-output function that only changes bits in a non-downward direction (see above)
      * @return a new long-input, long-output function that is the inverse of {@code upward}, getting its input from its output
      */
     public static Hasher.UnaryHash64 invertUpwardFunction(final Hasher.UnaryHash64 upward) {
-        return (final long x) -> {
+        return (final long i) -> {
             long r = 0L;
-            for (int i = 0; i < 64; i++) {
-                final long test = ((upward.applyAsLong(r) ^ x) & (-1L >>> ~i));
-                r ^= ((test | -test) >>> 63) << i;
+            for (int b = 0; b < 64; b++) {
+                final long test = ((upward.applyAsLong(r) ^ i) & (-1L >>> ~b));
+                r ^= ((test | -test) >>> 63) << b;
             }
             return r;
         };
