@@ -1119,6 +1119,8 @@ public static long mmi(final long a) {
      * (logical) right shift on that long by {@code a}.
      * The rotation {@code a} should be in the 0-63 range, inclusive, but values outside of that range will be
      * implicitly masked. Using a negative value for a will not make this shift left.
+     * This has a special case for when {@code a == 0} (or 64, or any multiple of 64), where this returns the identity
+     * function for a long.
      * <br>
      * This simply returns a function that takes a long {@code x} and returns
      * {@code (x ^ x >>> a)}.
@@ -1138,6 +1140,8 @@ public static long mmi(final long a) {
      * that long by {@code a}.
      * The rotation {@code a} should be in the 0-63 range, inclusive, but values outside of that range will be
      * implicitly masked. Using a negative value for a will not make this shift right.
+     * This has a special case for when {@code a == 0} (or 64, or any multiple of 64), where this returns the identity
+     * function for a long.
      * <br>
      * This simply returns a function that takes a long {@code x} and returns
      * {@code (x ^ x << a)}.
@@ -1193,9 +1197,11 @@ public static long mmi(final long a) {
      * operation to {@code xorShiftRight(a)}. That is, if you call
      * {@code long y = xorShiftRight(1).applyAsLong(x);}, then you can call
      * {@code long xAgain = invertXorShiftRight(1).applyAsLong(y);} and x will equal xAgain.
+     * This has a special case for when {@code a == 0} (or 64, or any multiple of 64), where this returns the identity
+     * function for a long.
      * <br>
      * This is mostly useful to invert a specific "tricky" bijective operation, {@link #xorShiftRight(int)}.
-     * Counterintuitively, a right xor-shift is inverted by a series of more right xor-shifts
+     * Counterintuitively, a right xor-shift is inverted by a series of more right xor-shifts.
      *
      * @param a the distance for a 64-bit bitwise xor-shift right to invert; will be masked to be between 0 and 63
      * @return a new long-input, long-output function that is the inverse of {@link #xorShiftRight(int)} of a
@@ -1204,11 +1210,38 @@ public static long mmi(final long a) {
         if((a & 63) == 0) return (final long i) -> i;
         return (final long i) -> {
             long x = i ^ i >>> a;
-            x ^= x >>> (a << 1);
-            x ^= x >>> (a << 2);
-            x ^= x >>> (a << 3);
-            x ^= x >>> (a << 4);
-            x ^= x >>> (a << 5);
+            if(a < 32) x ^= x >>> (a << 1);
+            if(a < 16) x ^= x >>> (a << 2);
+            if(a < 8)  x ^= x >>> (a << 3);
+            if(a < 4)  x ^= x >>> (a << 4);
+            if(a < 2)  x ^= x >>> (a << 5);
+            return x;
+        };
+    }
+
+    /**
+     * Given an amount {@code a} for a left xor-shift to invert, this creates a UnaryHash64 that perform the inverse
+     * operation to {@code xorShiftLeft(a)}. That is, if you call
+     * {@code long y = xorShiftLeft(1).applyAsLong(x);}, then you can call
+     * {@code long xAgain = invertXorShiftLeft(1).applyAsLong(y);} and x will equal xAgain.
+     * This has a special case for when {@code a == 0} (or 64, or any multiple of 64), where this returns the identity
+     * function for a long.
+     * <br>
+     * This is mostly useful to invert a specific "tricky" bijective operation, {@link #xorShiftLeft(int)}.
+     * Counterintuitively, a left xor-shift is inverted by a series of more left xor-shifts.
+     *
+     * @param a the distance for a 64-bit bitwise xor-shift left to invert; will be masked to be between 0 and 63
+     * @return a new long-input, long-output function that is the inverse of {@link #xorShiftLeft(int)} of a
+     */
+    public static Hasher.UnaryHash64 invertXorShiftLeft(final int a) {
+        if((a & 63) == 0) return (final long i) -> i;
+        return (final long i) -> {
+            long x = i ^ i << a;
+            if(a < 32) x ^= x << (a << 1);
+            if(a < 16) x ^= x << (a << 2);
+            if(a < 8)  x ^= x << (a << 3);
+            if(a < 4)  x ^= x << (a << 4);
+            if(a < 2)  x ^= x << (a << 5);
             return x;
         };
     }
@@ -1249,6 +1282,7 @@ public static long mmi(final long a) {
      * <br>
      * This is mostly useful to invert a specific "tricky" bijective operation, xor-square-or (XQO), which is
      * "non-downward" but otherwise has no features that make it possible to invert -- this is the only known way.
+     * You can get a XQO UnaryHash64 via {@link #xorSquareOr(long)}.
      * <br>
      * Credit to <a href="https://github.com/skeeto/hash-prospector/issues/23#issuecomment-1288120841">fp64</a>, who
      * thought this was possibly an "obvious" implementation. It isn't obvious to me, so I'm appreciative!

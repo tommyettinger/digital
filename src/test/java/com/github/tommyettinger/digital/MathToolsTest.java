@@ -310,6 +310,87 @@ public class MathToolsTest {
         }
     }
 
+    @Test
+    public void testInvertRotation() {
+        Hasher.UnaryHash64 a3 = MathTools.rotation(3);
+        Hasher.UnaryHash64 a3Inverse = MathTools.invertRotation(3);
+
+        Hasher.UnaryHash64 a1 = MathTools.rotation(1);
+        Hasher.UnaryHash64 a1Inverse = MathTools.invertRotation(1);
+
+        Hasher.UnaryHash64 a60 = MathTools.rotation(60);
+        Hasher.UnaryHash64 a60Inverse = MathTools.invertRotation(60);
+
+        AlternateRandom random = new AlternateRandom(123L);
+
+        for (int i = 0; i < 1000; i++) {
+            long x = random.nextLong();
+            long y = a3.applyAsLong(x);
+            long xAgain = a3Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+            y = a1.applyAsLong(x);
+            xAgain = a1Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+            y = a60.applyAsLong(x);
+            xAgain = a60Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+        }
+    }
+
+    @Test
+    public void testInvertXorShiftRight() {
+        Hasher.UnaryHash64 a3 = MathTools.xorShiftRight(3);
+        Hasher.UnaryHash64 a3Inverse = MathTools.invertXorShiftRight(3);
+
+        Hasher.UnaryHash64 a1 = MathTools.xorShiftRight(1);
+        Hasher.UnaryHash64 a1Inverse = MathTools.invertXorShiftRight(1);
+
+        Hasher.UnaryHash64 a60 = MathTools.xorShiftRight(60);
+        Hasher.UnaryHash64 a60Inverse = MathTools.invertXorShiftRight(60);
+
+        AlternateRandom random = new AlternateRandom(123L);
+
+        for (int i = 0; i < 1000; i++) {
+            long x = random.nextLong();
+            long y = a3.applyAsLong(x);
+            long xAgain = a3Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+            y = a1.applyAsLong(x);
+            xAgain = a1Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+            y = a60.applyAsLong(x);
+            xAgain = a60Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+        }
+    }
+
+    @Test
+    public void testInvertXorShiftLeft() {
+        Hasher.UnaryHash64 a3 = MathTools.xorShiftLeft(3);
+        Hasher.UnaryHash64 a3Inverse = MathTools.invertXorShiftLeft(3);
+
+        Hasher.UnaryHash64 a1 = MathTools.xorShiftLeft(1);
+        Hasher.UnaryHash64 a1Inverse = MathTools.invertXorShiftLeft(1);
+
+        Hasher.UnaryHash64 a60 = MathTools.xorShiftLeft(60);
+        Hasher.UnaryHash64 a60Inverse = MathTools.invertXorShiftLeft(60);
+
+        AlternateRandom random = new AlternateRandom(123L);
+
+        for (int i = 0; i < 1000; i++) {
+            long x = random.nextLong();
+            long y = a3.applyAsLong(x);
+            long xAgain = a3Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+            y = a1.applyAsLong(x);
+            xAgain = a1Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+            y = a60.applyAsLong(x);
+            xAgain = a60Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+        }
+    }
+
     public static float cbrtNewton0(float y) {
         return BitConversion.intBitsToFloat(0x2a510680 + (BitConversion.floatToIntBits(y) / 3)); // log-approx hack
     }
