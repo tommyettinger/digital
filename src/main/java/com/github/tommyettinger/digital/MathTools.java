@@ -1171,8 +1171,8 @@ public static long mmi(final long a) {
     }
 
     /**
-     * Given a {@link Hasher.UnaryHash64} returned by {@link #rotation(int)} with the same a,
-     * this creates a UnaryHash64 that perform the inverse operation to rotation(). That is, if you call
+     * Given an amount {@code a} for a bitwise left rotation, this creates a UnaryHash64 that perform the inverse
+     * operation to {@code rotation(a)}. That is, if you call
      * {@code long y = rotation(1).applyAsLong(x);}, then you can call
      * {@code long xAgain = invertRotation(1).applyAsLong(y);} and x will equal xAgain.
      * <br>
@@ -1184,6 +1184,30 @@ public static long mmi(final long a) {
      */
     public static Hasher.UnaryHash64 invertRotation(final int a) {
         return (final long i) -> (i >>> a | i << -a);
+    }
+
+    /**
+     * Given an amount {@code a} for a right xor-shift to invert, this creates a UnaryHash64 that perform the inverse
+     * operation to {@code xorShiftRight(a)}. That is, if you call
+     * {@code long y = xorShiftRight(1).applyAsLong(x);}, then you can call
+     * {@code long xAgain = invertXorShiftRight(1).applyAsLong(y);} and x will equal xAgain.
+     * <br>
+     * This is mostly useful to invert a specific "tricky" bijective operation, {@link #xorShiftRight(int)}.
+     * Counterintuitively, a right xor-shift is inverted by a series of more right xor-shifts
+     *
+     * @param a the distance for a 64-bit bitwise xor-shift right to invert; will be masked to be between 0 and 63
+     * @return a new long-input, long-output function that is the inverse of {@link #xorShiftRight(int)} of a
+     */
+    public static Hasher.UnaryHash64 invertXorShiftRight(final int a) {
+        return (final long i) -> {
+            long x = i ^ i >>> a;
+            x ^= x >>> (a << 1);
+            x ^= x >>> (a << 2);
+            x ^= x >>> (a << 3);
+            x ^= x >>> (a << 4);
+            x ^= x >>> (a << 5);
+            return x;
+        };
     }
 
     /**
