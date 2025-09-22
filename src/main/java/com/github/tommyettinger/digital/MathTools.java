@@ -1129,6 +1129,7 @@ public static long mmi(final long a) {
      * @return a new long-input, long-output function that performs a xor-shift right on its argument by a
      */
     public static Hasher.UnaryHash64 xorShiftRight(final int a) {
+        if((a & 63) == 0) return (final long x) -> x;
         return (final long x) -> (x ^ x >>> a);
     }
 
@@ -1147,6 +1148,7 @@ public static long mmi(final long a) {
      * @return a new long-input, long-output function that performs a xor-shift left on its argument by a
      */
     public static Hasher.UnaryHash64 xorShiftLeft(final int a) {
+        if((a & 63) == 0) return (final long x) -> x;
         return (final long x) -> (x ^ x << a);
     }
 
@@ -1199,6 +1201,7 @@ public static long mmi(final long a) {
      * @return a new long-input, long-output function that is the inverse of {@link #xorShiftRight(int)} of a
      */
     public static Hasher.UnaryHash64 invertXorShiftRight(final int a) {
+        if((a & 63) == 0) return (final long i) -> i;
         return (final long i) -> {
             long x = i ^ i >>> a;
             x ^= x >>> (a << 1);
