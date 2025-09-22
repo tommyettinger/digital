@@ -1107,7 +1107,7 @@ public static long mmi(final long a) {
      * <br>
      * Mostly meant as a building block for finding inverses for larger functions.
      *
-     * @param a the first rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
+     * @param a the rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
      * @return a new long-input, long-output function that performs a bitwise left rotations on its argument by a
      */
     public static Hasher.UnaryHash64 rotation(final int a) {
@@ -1168,6 +1168,22 @@ public static long mmi(final long a) {
      */
     public static Hasher.UnaryHash64 xorRotations(final int a, final int b, final int c) {
         return (final long x) -> (x << a | x >>> -a) ^ (x << b | x >>> -b) ^ (x << c | x >>> -c);
+    }
+
+    /**
+     * Given a {@link Hasher.UnaryHash64} returned by {@link #rotation(int)} with the same a,
+     * this creates a UnaryHash64 that perform the inverse operation to rotation(). That is, if you call
+     * {@code long y = rotation(1).applyAsLong(x);}, then you can call
+     * {@code long xAgain = invertRotation(1).applyAsLong(y);} and x will equal xAgain.
+     * <br>
+     * This is mostly useful to invert a specific "easy" bijective operation, {@link #rotation(int)}. It is "easy"
+     * because this only needs to perform a right rotation by the same amount to invert a left rotation.
+     *
+     * @param a the rotation amount for a 64-bit bitwise left rotation to invert; will be masked to be between 0 and 63
+     * @return a new long-input, long-output function that is the inverse of {@link #rotation(int)} of a
+     */
+    public static Hasher.UnaryHash64 invertRotation(final int a) {
+        return (final long i) -> (i >>> a | i << -a);
     }
 
     /**
