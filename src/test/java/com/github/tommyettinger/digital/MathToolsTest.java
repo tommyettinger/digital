@@ -391,6 +391,42 @@ public class MathToolsTest {
         }
     }
 
+    @Test
+    public void testInvertRandomizeH() {
+        final long mul = 5555555555555555555L;
+        final long mmi = MathTools.modularMultiplicativeInverse(mul);
+        final Hasher.UnaryHash64 xqo = MathTools.xorSquareOr(7);
+        final Hasher.UnaryHash64 xqoInverse = MathTools.invertUpwardFunction(xqo);
+        final Hasher.UnaryHash64 rotateInverse = MathTools.invertRotation(37);
+        final Hasher.UnaryHash64 xsInverse = MathTools.invertXorShiftRight(27);
+
+        long zero;
+        zero = xqoInverse.applyAsLong(0);
+        System.out.printf("xqo( 0x%016XL ) == 0x%016XL\n", zero, xqo.applyAsLong(zero));
+
+        zero = xsInverse.applyAsLong(0);
+        zero = xqoInverse.applyAsLong(zero);
+        zero = rotateInverse.applyAsLong(zero);
+        zero = xqoInverse.applyAsLong(zero);
+        zero = (zero * mmi) ^ 5;
+
+        System.out.printf("randomizeH( 0x%016XL ) == 0x%016XL\n", zero, Hasher.randomizeH(zero));
+
+        AlternateRandom random = new AlternateRandom(123L);
+
+        for (int i = 0; i < 1000; i++) {
+            long x = random.nextLong();
+            long y = Hasher.randomizeH(x);
+            long xAgain = xsInverse.applyAsLong(y);
+            xAgain = xqoInverse.applyAsLong(xAgain);
+            xAgain = rotateInverse.applyAsLong(xAgain);
+            xAgain = xqoInverse.applyAsLong(xAgain);
+            xAgain = (xAgain * mmi) ^ 5;
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+        }
+
+    }
+
     public static float cbrtNewton0(float y) {
         return BitConversion.intBitsToFloat(0x2a510680 + (BitConversion.floatToIntBits(y) / 3)); // log-approx hack
     }
