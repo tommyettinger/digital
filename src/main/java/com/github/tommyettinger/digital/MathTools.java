@@ -1097,6 +1097,60 @@ public static long mmi(final long a) {
     }
 
     /**
+     * Creates a function that takes and returns a long, and returns a bitwise left rotation on that long.
+     * The rotation {@code a} should be in the 0-63 range, inclusive, but values outside of that range will be
+     * implicitly masked. You can make the rotation equivalent to a right rotation by passing in a negative number for
+     * a, such as passing -5 for a bitwise right rotation by 5, or 5 for a bitwise left rotation by 5.
+     * <br>
+     * This simply returns a function that takes a long {@code x} and returns
+     * {@code (x << a | x >>> -a)}.
+     * <br>
+     * Mostly meant as a building block for finding inverses for larger functions.
+     *
+     * @param a the first rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
+     * @return a new long-input, long-output function that performs a bitwise left rotations on its argument by a
+     */
+    public static Hasher.UnaryHash64 rotation(final int a) {
+        return (final long x) -> (x << a | x >>> -a);
+    }
+
+    /**
+     * Creates a function that takes and returns a long, and returns the bitwise XOR of that long and an unsigned
+     * (logical) right shift on that long by {@code a}.
+     * The rotation {@code a} should be in the 0-63 range, inclusive, but values outside of that range will be
+     * implicitly masked. Using a negative value for a will not make this shift left.
+     * <br>
+     * This simply returns a function that takes a long {@code x} and returns
+     * {@code (x ^ x >>> a)}.
+     * <br>
+     * Mostly meant as a building block for finding inverses for larger functions.
+     *
+     * @param a the shift amount for a 64-bit bitwise right shift; will be masked to be between 0 and 63
+     * @return a new long-input, long-output function that performs a xor-shift right on its argument by a
+     */
+    public static Hasher.UnaryHash64 xorShiftRight(final int a) {
+        return (final long x) -> (x ^ x >>> a);
+    }
+
+    /**
+     * Creates a function that takes and returns a long, and returns the bitwise XOR of that long and a left shift on
+     * that long by {@code a}.
+     * The rotation {@code a} should be in the 0-63 range, inclusive, but values outside of that range will be
+     * implicitly masked. Using a negative value for a will not make this shift right.
+     * <br>
+     * This simply returns a function that takes a long {@code x} and returns
+     * {@code (x ^ x << a)}.
+     * <br>
+     * Mostly meant as a building block for finding inverses for larger functions.
+     *
+     * @param a the shift amount for a 64-bit bitwise left shift; will be masked to be between 0 and 63
+     * @return a new long-input, long-output function that performs a xor-shift left on its argument by a
+     */
+    public static Hasher.UnaryHash64 xorShiftLeft(final int a) {
+        return (final long x) -> (x ^ x << a);
+    }
+
+    /**
      * Creates a function that takes and returns a long, performs three (usually different) bitwise left rotations
      * on that long, and returns the XOR of those rotations. Each rotation should be in the 0-63 range, inclusive, but
      * values outside of that range will be implicitly masked. A common usage of this operation has a rotation of 0 for
