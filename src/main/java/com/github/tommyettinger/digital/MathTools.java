@@ -45,6 +45,22 @@ import static com.github.tommyettinger.digital.TrigTools.PI_D;
  */
 public final class MathTools {
     /**
+     * A functional interface type for functions that take a 64-bit long input and return a 64-bit long output.
+     * The functional method is {@link #applyAsLong(long)}.
+     * <br>
+     * This is essentially equivalent to JDK 8's LongUnaryOperator functional interface, but that type isn't defined on
+     * RoboVM, so defining it ourselves is required.
+     */
+    public interface LongToLongFunction {
+        /**
+         * The one method defined by LongToLongFunction, this takes a long and returns a (potentially different) long.
+         * @param input any long, unless otherwise indicated
+         * @return any long, unless otherwise indicated
+         */
+        long applyAsLong(long input);
+    }
+
+    /**
      * No need to instantiate.
      */
     private MathTools() {
@@ -1029,7 +1045,7 @@ public final class MathTools {
     }
 
 //</editor-fold>
-//<editor-fold defaultstate="collapsed" desc="Higher Math">
+//<editor-fold defaultstate="collapsed" desc="Inverses">
     /**
      * Given any odd int {@code a}, this finds another odd int {@code b} such that {@code a * b == 1}.
      * Note that this is now GWT-compatible thanks to {@link BitConversion#imul(int, int)}, though this
@@ -1092,7 +1108,7 @@ public static long mmi(final long a) {
      * @param orConstant should be odd if the result should be an invertible function; there are no other restrictions
      * @return a new long-input, long-output function that performs the xor-square-or operation with the given constant
      */
-    public static Hasher.UnaryHash64 xorSquareOr(final long orConstant) {
+    public static LongToLongFunction xorSquareOr(final long orConstant) {
         return (final long x) -> x ^ (x * x | orConstant);
     }
 
@@ -1110,7 +1126,7 @@ public static long mmi(final long a) {
      * @param a the rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
      * @return a new long-input, long-output function that performs a bitwise left rotations on its argument by a
      */
-    public static Hasher.UnaryHash64 rotation(final int a) {
+    public static LongToLongFunction rotation(final int a) {
         return (final long x) -> (x << a | x >>> -a);
     }
 
@@ -1130,7 +1146,7 @@ public static long mmi(final long a) {
      * @param a the shift amount for a 64-bit bitwise right shift; will be masked to be between 0 and 63
      * @return a new long-input, long-output function that performs a xor-shift right on its argument by a
      */
-    public static Hasher.UnaryHash64 xorShiftRight(final int a) {
+    public static LongToLongFunction xorShiftRight(final int a) {
         if((a & 63) == 0) return (final long x) -> x;
         return (final long x) -> (x ^ x >>> a);
     }
@@ -1151,7 +1167,7 @@ public static long mmi(final long a) {
      * @param a the shift amount for a 64-bit bitwise left shift; will be masked to be between 0 and 63
      * @return a new long-input, long-output function that performs a xor-shift left on its argument by a
      */
-    public static Hasher.UnaryHash64 xorShiftLeft(final int a) {
+    public static LongToLongFunction xorShiftLeft(final int a) {
         if((a & 63) == 0) return (final long x) -> x;
         return (final long x) -> (x ^ x << a);
     }
@@ -1172,12 +1188,12 @@ public static long mmi(final long a) {
      * @param c the third rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
      * @return a new long-input, long-output function that performs three bitwise left rotations and XORs them
      */
-    public static Hasher.UnaryHash64 xorRotations(final int a, final int b, final int c) {
+    public static LongToLongFunction xorRotations(final int a, final int b, final int c) {
         return (final long x) -> (x << a | x >>> -a) ^ (x << b | x >>> -b) ^ (x << c | x >>> -c);
     }
 
     /**
-     * Given an amount {@code a} for a bitwise left rotation, this creates a UnaryHash64 that perform the inverse
+     * Given an amount {@code a} for a bitwise left rotation, this creates a LongToLongFunction that perform the inverse
      * operation to {@code rotation(a)}. That is, if you call
      * {@code long y = rotation(1).applyAsLong(x);}, then you can call
      * {@code long xAgain = invertRotation(1).applyAsLong(y);} and x will equal xAgain.
@@ -1188,13 +1204,13 @@ public static long mmi(final long a) {
      * @param a the rotation amount for a 64-bit bitwise left rotation to invert; will be masked to be between 0 and 63
      * @return a new long-input, long-output function that is the inverse of {@link #rotation(int)} of a
      */
-    public static Hasher.UnaryHash64 invertRotation(final int a) {
+    public static LongToLongFunction invertRotation(final int a) {
         return (final long i) -> (i >>> a | i << -a);
     }
 
     /**
-     * Given an amount {@code a} for a right xor-shift to invert, this creates a UnaryHash64 that perform the inverse
-     * operation to {@code xorShiftRight(a)}. That is, if you call
+     * Given an amount {@code a} for a right xor-shift to invert, this creates a LongToLongFunction that perform the
+     * inverse operation to {@code xorShiftRight(a)}. That is, if you call
      * {@code long y = xorShiftRight(1).applyAsLong(x);}, then you can call
      * {@code long xAgain = invertXorShiftRight(1).applyAsLong(y);} and x will equal xAgain.
      * This has a special case for when {@code a == 0} (or 64, or any multiple of 64), where this returns the identity
@@ -1206,7 +1222,7 @@ public static long mmi(final long a) {
      * @param a the distance for a 64-bit bitwise xor-shift right to invert; will be masked to be between 0 and 63
      * @return a new long-input, long-output function that is the inverse of {@link #xorShiftRight(int)} of a
      */
-    public static Hasher.UnaryHash64 invertXorShiftRight(final int a) {
+    public static LongToLongFunction invertXorShiftRight(final int a) {
         if((a & 63) == 0) return (final long i) -> i;
         return (final long i) -> {
             long x = i ^ i >>> a;
@@ -1220,8 +1236,8 @@ public static long mmi(final long a) {
     }
 
     /**
-     * Given an amount {@code a} for a left xor-shift to invert, this creates a UnaryHash64 that perform the inverse
-     * operation to {@code xorShiftLeft(a)}. That is, if you call
+     * Given an amount {@code a} for a left xor-shift to invert, this creates a LongToLongFunction that perform the
+     * inverse operation to {@code xorShiftLeft(a)}. That is, if you call
      * {@code long y = xorShiftLeft(1).applyAsLong(x);}, then you can call
      * {@code long xAgain = invertXorShiftLeft(1).applyAsLong(y);} and x will equal xAgain.
      * This has a special case for when {@code a == 0} (or 64, or any multiple of 64), where this returns the identity
@@ -1233,7 +1249,7 @@ public static long mmi(final long a) {
      * @param a the distance for a 64-bit bitwise xor-shift left to invert; will be masked to be between 0 and 63
      * @return a new long-input, long-output function that is the inverse of {@link #xorShiftLeft(int)} of a
      */
-    public static Hasher.UnaryHash64 invertXorShiftLeft(final int a) {
+    public static LongToLongFunction invertXorShiftLeft(final int a) {
         if((a & 63) == 0) return (final long i) -> i;
         return (final long i) -> {
             long x = i ^ i << a;
@@ -1247,8 +1263,8 @@ public static long mmi(final long a) {
     }
 
     /**
-     * Given a {@link Hasher.UnaryHash64} returned by {@link #xorRotations(int, int, int)} with the same a, b, and c,
-     * this creates a UnaryHash64 that perform the inverse operation to xorRotations(). That is, if you call
+     * Given a {@link LongToLongFunction} returned by {@link #xorRotations(int, int, int)} with the same a, b, and c,
+     * this creates a LongToLongFunction that perform the inverse operation to xorRotations(). That is, if you call
      * {@code long y = xorRotations(1, 2, 3).applyAsLong(x);}, then you can call
      * {@code long xAgain = invertXorRotations(1, 2, 3).applyAsLong(y);} and x will equal xAgain.
      * <br>
@@ -1261,7 +1277,7 @@ public static long mmi(final long a) {
      * @param c the third rotation amount for a 64-bit bitwise left rotation; will be masked to be between 0 and 63
      * @return a new long-input, long-output function that is the inverse of {@link #xorRotations(int, int, int)} of a, b, c.
      */
-    public static Hasher.UnaryHash64 invertXorRotations(final int a, final int b, final int c) {
+    public static LongToLongFunction invertXorRotations(final int a, final int b, final int c) {
         return (final long i) -> {
             long x = (i << a | i >>> -a) ^ (i << b | i >>> -b) ^ (i << c | i >>> -c);
             x = (x << (a << 1) | x >>> (-a << 1)) ^ (x << (b << 1) | x >>> (-b << 1)) ^ (x << (c << 1) | x >>> (-c << 1));
@@ -1274,15 +1290,16 @@ public static long mmi(final long a) {
     }
 
     /**
-     * Given a {@link Hasher.UnaryHash64} (or likely a lambda that takes and returns a long) that only modifies its bits
+     * Given a {@link LongToLongFunction} (or likely a lambda that takes and returns a long) that only modifies its bits
      * in a "non-downward" direction, such as a function that multiplies, adds, XORs, ORs, ANDs, or shifts left, but not
-     * one that divides, shifts right, rotates/swaps bits, or performs modulus, this creates a UnaryHash64 that performs
-     * the inverse operation to the given unary hash. That is, if you call {@code long y = upward.applyAsLong(x);}, then
-     * you can call {@code long xAgain = invertUpwardFunction(upward).applyAsLong(y);} and x will equal xAgain.
+     * one that divides, shifts right, rotates/swaps bits, or performs modulus, this creates a LongToLongFunction that
+     * performs the inverse operation to the given function. That is, if you call
+     * {@code long y = upward.applyAsLong(x);}, then you can call
+     * {@code long xAgain = invertUpwardFunction(upward).applyAsLong(y);} and x will equal xAgain.
      * <br>
      * This is mostly useful to invert a specific "tricky" bijective operation, xor-square-or (XQO), which is
      * "non-downward" but otherwise has no features that make it possible to invert -- this is the only known way.
-     * You can get a XQO UnaryHash64 via {@link #xorSquareOr(long)}.
+     * You can get a XQO LongToLongFunction via {@link #xorSquareOr(long)}.
      * <br>
      * Credit to <a href="https://github.com/skeeto/hash-prospector/issues/23#issuecomment-1288120841">fp64</a>, who
      * thought this was possibly an "obvious" implementation. It isn't obvious to me, so I'm appreciative!
@@ -1290,7 +1307,7 @@ public static long mmi(final long a) {
      * @param upward a long-input, long-output function that only changes bits in a non-downward direction (see above)
      * @return a new long-input, long-output function that is the inverse of {@code upward}, getting its input from its output
      */
-    public static Hasher.UnaryHash64 invertUpwardFunction(final Hasher.UnaryHash64 upward) {
+    public static LongToLongFunction invertUpwardFunction(final LongToLongFunction upward) {
         return (final long i) -> {
             long r = 0L;
             for (int b = 0; b < 64; b++) {
@@ -1300,6 +1317,9 @@ public static long mmi(final long a) {
             return r;
         };
     }
+
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Higher Math">
 
     /**
      * A generalization on bias and gain functions that can represent both; this version is branch-less.
@@ -3330,5 +3350,6 @@ public static long mmi(final long a) {
             0x92789E2B0740C0CFL, 0x907D70B362B15D3FL, 0x8E891F68C4D68C4DL, 0x8C9B928A2A4DAE11L, 0x8AB4B2A8D0179CD7L,
             0x88D468A716C9E203L, 0x86FA9DB7699A1B09L, 0x85273B5B293637D3L, 0x835A2B619A5C69D3L, 0x819357E6D825C8C5L
     };
+
 //</editor-fold>
 }

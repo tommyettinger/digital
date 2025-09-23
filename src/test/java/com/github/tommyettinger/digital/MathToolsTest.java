@@ -256,14 +256,14 @@ public class MathToolsTest {
 
     @Test
     public void testInvertUpward() {
-        Hasher.UnaryHash64 xqo1 = MathTools.xorSquareOr(1L);
-        Hasher.UnaryHash64 xqo1Inverse = MathTools.invertUpwardFunction(xqo1);
+        MathTools.LongToLongFunction xqo1 = MathTools.xorSquareOr(1L);
+        MathTools.LongToLongFunction xqo1Inverse = MathTools.invertUpwardFunction(xqo1);
 
-        Hasher.UnaryHash64 xqo5 = MathTools.xorSquareOr(5L);
-        Hasher.UnaryHash64 xqo5Inverse = MathTools.invertUpwardFunction(xqo5);
+        MathTools.LongToLongFunction xqo5 = MathTools.xorSquareOr(5L);
+        MathTools.LongToLongFunction xqo5Inverse = MathTools.invertUpwardFunction(xqo5);
 
-        Hasher.UnaryHash64 xqo25 = MathTools.xorSquareOr(25L);
-        Hasher.UnaryHash64 xqo25Inverse = MathTools.invertUpwardFunction(xqo25);
+        MathTools.LongToLongFunction xqo25 = MathTools.xorSquareOr(25L);
+        MathTools.LongToLongFunction xqo25Inverse = MathTools.invertUpwardFunction(xqo25);
 
         AlternateRandom random = new AlternateRandom(123L);
 
@@ -285,14 +285,14 @@ public class MathToolsTest {
 
     @Test
     public void testInvertXorRotations() {
-        Hasher.UnaryHash64 a0b1c2 = MathTools.xorRotations(0, 1, 2);
-        Hasher.UnaryHash64 a0b1c2Inverse = MathTools.invertXorRotations(0, 1, 2);
+        MathTools.LongToLongFunction a0b1c2 = MathTools.xorRotations(0, 1, 2);
+        MathTools.LongToLongFunction a0b1c2Inverse = MathTools.invertXorRotations(0, 1, 2);
 
-        Hasher.UnaryHash64 a1b3c5 = MathTools.xorRotations(1, 3, 5);
-        Hasher.UnaryHash64 a1b3c5Inverse = MathTools.invertXorRotations(1, 3, 5);
+        MathTools.LongToLongFunction a1b3c5 = MathTools.xorRotations(1, 3, 5);
+        MathTools.LongToLongFunction a1b3c5Inverse = MathTools.invertXorRotations(1, 3, 5);
 
-        Hasher.UnaryHash64 a61b53c45 = MathTools.xorRotations(61, 53, 45);
-        Hasher.UnaryHash64 a61b53c45Inverse = MathTools.invertXorRotations(61, 53, 45);
+        MathTools.LongToLongFunction a61b53c45 = MathTools.xorRotations(61, 53, 45);
+        MathTools.LongToLongFunction a61b53c45Inverse = MathTools.invertXorRotations(61, 53, 45);
 
         AlternateRandom random = new AlternateRandom(123L);
 
@@ -312,14 +312,14 @@ public class MathToolsTest {
 
     @Test
     public void testInvertRotation() {
-        Hasher.UnaryHash64 a3 = MathTools.rotation(3);
-        Hasher.UnaryHash64 a3Inverse = MathTools.invertRotation(3);
+        MathTools.LongToLongFunction a3 = MathTools.rotation(3);
+        MathTools.LongToLongFunction a3Inverse = MathTools.invertRotation(3);
 
-        Hasher.UnaryHash64 a1 = MathTools.rotation(1);
-        Hasher.UnaryHash64 a1Inverse = MathTools.invertRotation(1);
+        MathTools.LongToLongFunction a1 = MathTools.rotation(1);
+        MathTools.LongToLongFunction a1Inverse = MathTools.invertRotation(1);
 
-        Hasher.UnaryHash64 a60 = MathTools.rotation(60);
-        Hasher.UnaryHash64 a60Inverse = MathTools.invertRotation(60);
+        MathTools.LongToLongFunction a60 = MathTools.rotation(60);
+        MathTools.LongToLongFunction a60Inverse = MathTools.invertRotation(60);
 
         AlternateRandom random = new AlternateRandom(123L);
 
@@ -339,14 +339,14 @@ public class MathToolsTest {
 
     @Test
     public void testInvertXorShiftRight() {
-        Hasher.UnaryHash64 a3 = MathTools.xorShiftRight(3);
-        Hasher.UnaryHash64 a3Inverse = MathTools.invertXorShiftRight(3);
+        MathTools.LongToLongFunction a3 = MathTools.xorShiftRight(3);
+        MathTools.LongToLongFunction a3Inverse = MathTools.invertXorShiftRight(3);
 
-        Hasher.UnaryHash64 a1 = MathTools.xorShiftRight(1);
-        Hasher.UnaryHash64 a1Inverse = MathTools.invertXorShiftRight(1);
+        MathTools.LongToLongFunction a1 = MathTools.xorShiftRight(1);
+        MathTools.LongToLongFunction a1Inverse = MathTools.invertXorShiftRight(1);
 
-        Hasher.UnaryHash64 a60 = MathTools.xorShiftRight(60);
-        Hasher.UnaryHash64 a60Inverse = MathTools.invertXorShiftRight(60);
+        MathTools.LongToLongFunction a60 = MathTools.xorShiftRight(60);
+        MathTools.LongToLongFunction a60Inverse = MathTools.invertXorShiftRight(60);
 
         AlternateRandom random = new AlternateRandom(123L);
 
@@ -366,14 +366,14 @@ public class MathToolsTest {
 
     @Test
     public void testInvertXorShiftLeft() {
-        Hasher.UnaryHash64 a3 = MathTools.xorShiftLeft(3);
-        Hasher.UnaryHash64 a3Inverse = MathTools.invertXorShiftLeft(3);
+        MathTools.LongToLongFunction a3 = MathTools.xorShiftLeft(3);
+        MathTools.LongToLongFunction a3Inverse = MathTools.invertXorShiftLeft(3);
 
-        Hasher.UnaryHash64 a1 = MathTools.xorShiftLeft(1);
-        Hasher.UnaryHash64 a1Inverse = MathTools.invertXorShiftLeft(1);
+        MathTools.LongToLongFunction a1 = MathTools.xorShiftLeft(1);
+        MathTools.LongToLongFunction a1Inverse = MathTools.invertXorShiftLeft(1);
 
-        Hasher.UnaryHash64 a60 = MathTools.xorShiftLeft(60);
-        Hasher.UnaryHash64 a60Inverse = MathTools.invertXorShiftLeft(60);
+        MathTools.LongToLongFunction a60 = MathTools.xorShiftLeft(60);
+        MathTools.LongToLongFunction a60Inverse = MathTools.invertXorShiftLeft(60);
 
         AlternateRandom random = new AlternateRandom(123L);
 
@@ -395,10 +395,10 @@ public class MathToolsTest {
     public void testInvertRandomizeH() {
         final long mul = 5555555555555555555L;
         final long mmi = MathTools.modularMultiplicativeInverse(mul);
-        final Hasher.UnaryHash64 xqo = MathTools.xorSquareOr(7);
-        final Hasher.UnaryHash64 xqoInverse = MathTools.invertUpwardFunction(xqo);
-        final Hasher.UnaryHash64 rotateInverse = MathTools.invertRotation(37);
-        final Hasher.UnaryHash64 xsInverse = MathTools.invertXorShiftRight(27);
+        final MathTools.LongToLongFunction xqo = MathTools.xorSquareOr(7);
+        final MathTools.LongToLongFunction xqoInverse = MathTools.invertUpwardFunction(xqo);
+        final MathTools.LongToLongFunction rotateInverse = MathTools.invertRotation(37);
+        final MathTools.LongToLongFunction xsInverse = MathTools.invertXorShiftRight(27);
 
         long zero;
         zero = xqoInverse.applyAsLong(0);
@@ -446,8 +446,8 @@ public class MathToolsTest {
         final long mmi2 = MathTools.modularMultiplicativeInverse(mul2);
         final long mul3 = 0xAEF17502108EF2D9L;
         final long mmi3 = MathTools.modularMultiplicativeInverse(mul3);
-        final Hasher.UnaryHash64 xsInverse27 = MathTools.invertXorShiftRight(27);
-        final Hasher.UnaryHash64 xsInverse25 = MathTools.invertXorShiftRight(25);
+        final MathTools.LongToLongFunction xsInverse27 = MathTools.invertXorShiftRight(27);
+        final MathTools.LongToLongFunction xsInverse25 = MathTools.invertXorShiftRight(25);
 
         long zero;
         zero = xsInverse25.applyAsLong(0);
