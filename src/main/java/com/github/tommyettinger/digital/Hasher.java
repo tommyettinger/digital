@@ -131,6 +131,7 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
  *
  * @author Tommy Ettinger
  */
+@SuppressWarnings("ShiftOutOfRange")
 public class Hasher {
 
     /**
@@ -303,7 +304,9 @@ public class Hasher {
      * A somewhat-experimental randomizing method that is meant to be easier for a human to memorize, while still being
      * a bijection that can pass tests for randomness. This is based closely on the HornRandom generator in the juniper
      * library, which passes 64TB of PractRand tests, but with modifications to how it handles its initial state so it
-     * works better as a "stateless" generator that can operate on any counter.
+     * works better as a "stateless" generator that can operate on any counter. The "H" in the name is for "Horn",
+     * so-called because a horn fits on a ram, and this is meant to fit in a human's memory (RAM). It isn't yet clear
+     * where it fits between {@link #randomize1(long)} and {@link #randomize3(long)}, but it seems to pass tests well.
      * <br>
      * This is inspired by the <a href="https://arxiv.org/abs/2004.06278">Squares generator</a>, which uses a
      * roughly-similar concept as a stateless hash on a simple counter, but shares no code with Squares. The use of
@@ -314,17 +317,39 @@ public class Hasher {
      * While several of the building blocks of this method do not have fix-points (where the input and output are the
      * same), the method as a whole may have some over the full input range. The input is expected to be a simple
      * counter that adds or subtracts 1, but other values (or more exotic update patterns) should all work well.
+     * <br>
+     * For memorization purposes, if anyone wants to try, all constants here are either 7L (for XOR and OR with any
+     * constant, the number is 7L), 5555555555555555555L (for multiplication by a constant, the number is nineteen '5'
+     * digits repeated as a base-10 long), or 27 (for the one bitwise rotation, it's a right rotation by 27, and for the
+     * one right shift, it's also by 27). The operation we use twice here, xor-square-or, isn't that hard to remember,
+     * but the order matters: {@code x ^= x * x | 7L;}. This is equivalent to {@code x = x ^ ((x * x) | 7L);}, to make
+     * the grouping explicit.
+     * <br>
+     * This starts by changing state with {@code state = (state ^ 7L) * 5555555555555555555L;} because normally, the
+     * easiest way to cause a pattern in a generator that starts with a multiplication is to give it inputs that are
+     * multiples of the {@link MathTools#modularMultiplicativeInverse(long)} of the multiplier. The multiplier here is
+     * 5555555555555555555L, and its inverse is 0x6FD41CEB07C4CCCBL . The XOR before the multiplier means that in order
+     * to cause a pattern in the inputs, you would need to repeatedly add 0x6FD41CEB07C4CCCBL and then XOR with 7L
+     * before passing the input in here, which would be very unusual to encounter in any coding situation. This is in
+     * part because there is a type of basic random number generator that could use 0x6FD41CEB07C4CCCBL as a multiplier
+     * (an "XLCG"), but it requires a specific number to be XORed in with it during assignment, and 7 isn't a match.
+     * <br>
+     * Random number generators like {@code xoshiro256**} can have issues because they end with a single multiplication,
+     * in that case by 9, and any cases where the modular multiplicative inverse of 9 is used to process the output of
+     * the {@code **} scrambler end up "descrambling" it to some extent. Because Xoshiro without a scrambler has
+     * low-quality low-order bits, those bits end up failing statistical tests when not just the modular multiplicative
+     * inverse of 9 is used, but any multiplier that shares its low byte (0x39).
      *
-     * @param state any long; subsequent calls should change by an odd number, such as with {@code ++state}
+     @param state any long; subsequent calls should change by an odd number, such as with {@code ++state}
      * @return any long
      */
     public static long randomizeH(long state) {
-        // XLCG, bijective and also full-period if run repeatedly.
-        state = (state ^ 5L) * 5555555555555555555L;
+        // Intentionally NOT an XLCG, nor is its inverse, but this is bijective.
+        state = (state ^ 7L) * 5555555555555555555L;
         // Xor-Square-Or with orConstant 7.
         state ^= state * state | 7L;
         // Bitwise right rotation by 27.
-        state = (state >>> 27 | state << 37);
+        state = (state >>> 27 | state << -27);
         // Xor-Square-Or with orConstant 7.
         state ^= state * state | 7L;
         // Right xor-shift by 27.

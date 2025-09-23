@@ -402,14 +402,16 @@ public class MathToolsTest {
 
         long zero;
         zero = xqoInverse.applyAsLong(0);
+        // zero is 0x2279DF88F9ECB617L
         System.out.printf("xqo( 0x%016XL ) == 0x%016XL\n", zero, xqo.applyAsLong(zero));
 
         zero = xsInverse.applyAsLong(0);
         zero = xqoInverse.applyAsLong(zero);
         zero = rotateInverse.applyAsLong(zero);
         zero = xqoInverse.applyAsLong(zero);
-        zero = (zero * mmi) ^ 5;
+        zero = (zero * mmi) ^ 7L;
 
+        //zero is 0x80341AC54EB04A96L
         System.out.printf("randomizeH( 0x%016XL ) == 0x%016XL\n", zero, Hasher.randomizeH(zero));
 
         AlternateRandom random = new AlternateRandom(123L);
@@ -421,7 +423,7 @@ public class MathToolsTest {
             xAgain = xqoInverse.applyAsLong(xAgain);
             xAgain = rotateInverse.applyAsLong(xAgain);
             xAgain = xqoInverse.applyAsLong(xAgain);
-            xAgain = (xAgain * mmi) ^ 5;
+            xAgain = (xAgain * mmi) ^ 7L;
             Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
         }
 
