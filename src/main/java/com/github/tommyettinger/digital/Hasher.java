@@ -391,8 +391,8 @@ public class Hasher {
     /**
      * Mid-quality static randomizing method that takes its state as a parameter and limits output to an int between 0
      * (inclusive) and bound (exclusive); state is expected to change between calls to this. It is suggested that you
-     * use {@code randomize2Bounded(++state)} or {@code randomize2Bounded(--state)} to produce a sequence of
-     * different numbers, but any increments are allowed (even-number increments won't be able to produce all outputs,
+     * use {@code randomize2Bounded(++state, bound)} or {@code randomize2Bounded(--state, bound)} to produce a sequence
+     * of numbers, but any increments are allowed (even-number increments won't be able to produce all outputs,
      * but their quality will be fine for the numbers they can produce). All longs are accepted by this method, but not
      * all ints between 0 and bound are guaranteed to be produced with equal likelihood (for any odd-number values for
      * bound, this isn't possible for most generators). The bound can be negative.
@@ -423,8 +423,8 @@ public class Hasher {
     /**
      * Very thorough static randomizing method that takes its state as a parameter and limits output to an int between 0
      * (inclusive) and bound (exclusive); state is expected to change between calls to this. It is suggested that you
-     * use {@code randomize3Bounded(++state)} or {@code randomize3(--state)} to produce a sequence of
-     * different numbers, but any increments are allowed (even-number increments won't be able to produce all outputs,
+     * use {@code randomize3Bounded(++state, bound)} or {@code randomize3Bounded(--state, bound)} to produce a sequence
+     * of numbers, but any increments are allowed (even-number increments won't be able to produce all outputs,
      * but their quality will be fine for the numbers they can produce). All longs are accepted by this method, but not
      * all ints between 0 and bound are guaranteed to be produced with equal likelihood (for any odd-number values for
      * bound, this isn't possible for most generators). The bound can be negative.
@@ -456,6 +456,27 @@ public class Hasher {
         state ^= state >>> 32;
         state *= 0xBEA225F9EB34556DL;
         return (bound = (int) ((bound * ((state ^ state >>> 29) & 0xFFFFFFFFL)) >> 32)) + (bound >>> 31);
+    }
+
+    /**
+     * Good, fast, static randomizing method that takes its state as a parameter and limits output to an int between 0
+     * (inclusive) and bound (exclusive); state is expected to change between calls to this. It is suggested that you
+     * use {@code randomize3Bounded(++state, bound)} or {@code randomize3Bounded(--state, bound)} to produce a sequence
+     * of numbers, but any increments are allowed (even-number increments won't be able to produce all outputs,
+     * but their quality will be fine for the numbers they can produce). All longs are accepted by this method, but not
+     * all ints between 0 and bound are guaranteed to be produced with equal likelihood (for any odd-number values for
+     * bound, this isn't possible for most generators). The bound can be negative.
+     *
+     * @param state any long; subsequent calls should change by an odd number, such as with {@code ++state}
+     * @param bound the outer exclusive bound, as an int
+     * @return an int between 0 (inclusive) and bound (exclusive)
+     */
+    public static long randomizeHBounded(long state, int bound) {
+        state = (state ^ 7L) * 5555555555555555555L;
+        state ^= state * state | 7L;
+        state = (state >>> 27 | state << -27);
+        state ^= state * state | 7L;
+        return (bound = (int) ((bound * ((state ^ state >>> 27) & 0xFFFFFFFFL)) >> 32)) + (bound >>> 31);
     }
 
     /**
@@ -556,6 +577,27 @@ public class Hasher {
     }
 
     /**
+     * Returns a random float that is deterministic based on state; if state is the same on two calls to this, this will
+     * return the same float. This is expected to be called with a changing variable, e.g.
+     * {@code randomizeHFloat(++state)}, where the increment for state can be any value and should usually be odd
+     * (even-number increments reduce the period). The period is 2 to the 64 if you increment or decrement by any odd
+     * number, but there are only 2 to the 30 possible floats between 0 and 1, and this can only return 2 to the 24 of
+     * them (a requirement for the returned values to be uniform).
+     *
+     * @param state a variable that should be different every time you want a different random result;
+     *              using {@code randomizeHFloat(++state)} is recommended to go forwards or
+     *              {@code randomizeHFloat(--state)} to generate numbers in reverse order
+     * @return a pseudo-random float between 0f (inclusive) and 1f (exclusive), determined by {@code state}
+     */
+    public static float randomizeHFloat(long state) {
+        state = (state ^ 7L) * 5555555555555555555L;
+        state ^= state * state | 7L;
+        state = (state >>> 27 | state << -27);
+        state ^= state * state | 7L;
+        return (state >>> 40) * EPSILON;
+    }
+
+    /**
      * Returns a random double that is deterministic based on state; if state is the same on two calls to this, this
      * will return the same float. This is expected to be called with a changing variable, e.g.
      * {@code randomize1Double(++state)}, where the increment for state should generally be 1. The period is 2 to the 64
@@ -647,6 +689,26 @@ public class Hasher {
         state ^= state >>> 32;
         state *= 0xBEA225F9EB34556DL;
         return (state >>> 11 ^ state >>> 40) * EPSILON_D;
+    }
+
+    /**
+     * Returns a random double that is deterministic based on state; if state is the same on two calls to this, this
+     * will return the same float. This is expected to be called with a changing variable, e.g.
+     * {@code randomizeHDouble(++state)}, where the increment for state can be any number but should usually be odd
+     * (even-number increments reduce the period). The period is 2 to the 64 if you increment or decrement by 1, but
+     * there are only 2 to the 62 possible doubles between 0 and 1.
+     *
+     * @param state a variable that should be different every time you want a different random result;
+     *              using {@code randomizeHDouble(++state)} is recommended to go forwards or
+     *              {@code randomizeHDouble(--state)} to generate numbers in reverse order
+     * @return a pseudo-random double between 0.0 (inclusive) and 1.0 (exclusive), determined by {@code state}
+     */
+    public static double randomizeHDouble(long state) {
+        state = (state ^ 7L) * 5555555555555555555L;
+        state ^= state * state | 7L;
+        state = (state >>> 27 | state << -27);
+        state ^= state * state | 7L;
+        return (state >>> 11 ^ state >>> 38) * EPSILON_D;
     }
 
     /**
