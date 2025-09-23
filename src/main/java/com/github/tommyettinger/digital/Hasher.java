@@ -211,8 +211,8 @@ public class Hasher {
      * Fast static randomizing method that takes its state as a parameter; state is expected to change between calls to
      * this. It is recommended that you use {@code randomize1(++state)} or {@code randomize1(--state)}
      * to produce a sequence of different numbers, and you may have slightly worse quality with increments or decrements
-     * other than 1. All longs are accepted by this method, and all longs can be produced. Passing 0 here does not
-     * cause this to return 0.
+     * other than 1. All longs are accepted by this method, and all longs can be produced. This returns 0L when given
+     * 0xBFEA1C7849140B5DL .
      * <br>
      * You have a choice between different randomize strengths in this class. {@code randomize1()} is simpler, and will
      * behave well when the inputs are sequential, while {@code randomize2()} is a completely different algorithm, Pelle
@@ -239,8 +239,8 @@ public class Hasher {
      * calls to this. It is suggested that you use {@code DiverRNG.randomize(++state)} or
      * {@code DiverRNG.randomize(--state)} to produce a sequence of different numbers, but any increments are allowed
      * (even-number increments won't be able to produce all outputs, but their quality will be fine for the numbers they
-     * can produce). All longs are accepted by this method, and all longs can be produced. Passing 0 here does not
-     * cause this to return 0.
+     * can produce). All longs are accepted by this method, and all longs can be produced. This returns 0L when given
+     * 0xD1B54A32D192ED03L .
      * <br>
      * You have a choice between different randomize strengths in this class. {@code randomize1()} is simpler, and will
      * behave well when the inputs are sequential, while {@code randomize2()} is a completely different algorithm, Pelle
@@ -270,7 +270,7 @@ public class Hasher {
      * calls to this. It is suggested that you use {@code randomize3(++state)} or {@code randomize3(--state)}
      * to produce a sequence of different numbers, but any odd-number increment should work well, as could another
      * source of different longs, such as a flawed random number generator. All longs are accepted by this method, and
-     * all longs can be produced. Passing 0 here does not cause this to return 0.
+     * all longs can be produced. This returns 0L when given 0xABC98388FB8FAC03L .
      * <br>
      * You have a choice between different randomize strengths in this class. {@code randomize1()} is simpler, and will
      * behave well when the inputs are sequential, while {@code randomize2()} is a completely different algorithm, Pelle
@@ -316,7 +316,10 @@ public class Hasher {
      * <br>
      * While several of the building blocks of this method do not have fix-points (where the input and output are the
      * same), the method as a whole may have some over the full input range. The input is expected to be a simple
-     * counter that adds or subtracts 1, but other values (or more exotic update patterns) should all work well.
+     * counter that adds or subtracts 1, but other values (or more exotic update patterns) should all work well. It can
+     * be noted that to invert the output of randomizeH() and get back to the initial state is always possible, but
+     * takes over 30 times as many arithmetic operations as the non-inverted function. This produces each output exactly
+     * once if given every {@code long} as an input exactly once. It returns 0L when given 0x80341AC54EB04A96L .
      * <br>
      * For memorization purposes, if anyone wants to try, all constants here are either 7L (for XOR and OR with any
      * constant, the number is 7L), 5555555555555555555L (for multiplication by a constant, the number is nineteen '5'

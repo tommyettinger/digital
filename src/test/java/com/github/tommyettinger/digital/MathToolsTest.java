@@ -429,6 +429,53 @@ public class MathToolsTest {
 
     }
 
+    @Test
+    public void testInvertRandomize1() {
+        //return (
+        //  state = (
+        //    (state = ((
+        //        (state * 0x632BE59BD9B4E019L)
+        //        ^ 0x9E3779B97F4A7C15L)
+        //      * 0xC6BC279692B5CC83L))
+        //      ^ state >>> 27)
+        //  * 0xAEF17502108EF2D9L
+        //) ^ state >>> 25;
+        final long mul1 = 0x632BE59BD9B4E019L;
+        final long mmi1 = MathTools.modularMultiplicativeInverse(mul1);
+        final long mul2 = 0xC6BC279692B5CC83L;
+        final long mmi2 = MathTools.modularMultiplicativeInverse(mul2);
+        final long mul3 = 0xAEF17502108EF2D9L;
+        final long mmi3 = MathTools.modularMultiplicativeInverse(mul3);
+        final Hasher.UnaryHash64 xsInverse27 = MathTools.invertXorShiftRight(27);
+        final Hasher.UnaryHash64 xsInverse25 = MathTools.invertXorShiftRight(25);
+
+        long zero;
+        zero = xsInverse25.applyAsLong(0);
+        zero *= mmi3;
+        zero = xsInverse27.applyAsLong(zero);
+        zero *= mmi2;
+        zero ^= 0x9E3779B97F4A7C15L;
+        zero *= mmi1;
+
+        //zero is 0xBFEA1C7849140B5DL
+        System.out.printf("randomize1( 0x%016XL ) == 0x%016XL\n", zero, Hasher.randomize1(zero));
+
+        AlternateRandom random = new AlternateRandom(123L);
+
+        for (int i = 0; i < 1000; i++) {
+            long x = random.nextLong();
+            long y = Hasher.randomize1(x);
+            long xAgain = xsInverse25.applyAsLong(y);
+            xAgain *= mmi3;
+            xAgain = xsInverse27.applyAsLong(xAgain);
+            xAgain *= mmi2;
+            xAgain ^= 0x9E3779B97F4A7C15L;
+            xAgain *= mmi1;
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+        }
+
+    }
+
     public static float cbrtNewton0(float y) {
         return BitConversion.intBitsToFloat(0x2a510680 + (BitConversion.floatToIntBits(y) / 3)); // log-approx hack
     }
