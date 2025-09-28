@@ -17,7 +17,6 @@
 package com.github.tommyettinger.digital;
 
 import java.util.LinkedHashMap;
-import java.util.function.DoubleUnaryOperator;
 
 import static com.github.tommyettinger.digital.MathTools.barronSpline;
 import static com.github.tommyettinger.digital.MathTools.fract;
