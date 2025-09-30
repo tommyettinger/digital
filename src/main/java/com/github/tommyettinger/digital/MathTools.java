@@ -1113,6 +1113,19 @@ public static long mmi(final long a) {
     }
 
     /**
+     * Takes and returns a long, performing the and-multiply-plus (AMP) operation on its parameter.
+     * This is an operation that can be inverted with {@link #invertUpwardFunction(LongToLongFunction)}.
+     * <br>
+     * This simply takes a long {@code x} and returns {@code x * x + x + (x & 1L)}.
+     * <br>
+     * Mostly meant as a building block for finding inverses for larger functions.
+     * @return a new long-input, long-output function that performs the AMP operation
+     */
+    public static long andMultiplyPlus(long x) {
+        return x * x + x + (x & 1L);
+    }
+
+    /**
      * Creates a function that takes and returns a long, and returns a bitwise left rotation on that long.
      * The rotation {@code a} should be in the 0-63 range, inclusive, but values outside of that range will be
      * implicitly masked. You can make the rotation equivalent to a right rotation by passing in a negative number for
@@ -3039,7 +3052,7 @@ public static long mmi(final long a) {
      * @return the triangular number at the given index
      */
     public static int triangularNumber(int index) {
-        return (index + 1) * index >>> 1;
+        return index * index + index >>> 1;
     }
 
     /**
@@ -3049,7 +3062,7 @@ public static long mmi(final long a) {
      * @return an offset into {@link #GOLDEN_LONGS} that allows looking up {@code dimension} decreasing long items
      */
     public static int goldenLongsOffset(int dimension) {
-        return (dimension - 1) * dimension >>> 1;
+        return dimension * dimension - dimension >>> 1;
     }
 
     /**
