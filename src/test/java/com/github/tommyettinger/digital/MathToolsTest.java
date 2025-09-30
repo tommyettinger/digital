@@ -265,6 +265,9 @@ public class MathToolsTest {
         MathTools.LongToLongFunction xqo25 = MathTools.xorSquareOr(25L);
         MathTools.LongToLongFunction xqo25Inverse = MathTools.invertUpwardFunction(xqo25);
 
+        MathTools.LongToLongFunction amp = MathTools::andMultiplyPlus;
+        MathTools.LongToLongFunction ampInverse = MathTools.invertUpwardFunction(amp);
+
         AlternateRandom random = new AlternateRandom(123L);
 
         for (int i = 0; i < 1000; i++) {
@@ -279,6 +282,10 @@ public class MathToolsTest {
 
             y = xqo25.applyAsLong(x);
             xAgain = xqo25Inverse.applyAsLong(y);
+            Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
+
+            y = amp.applyAsLong(x);
+            xAgain = ampInverse.applyAsLong(y);
             Assert.assertEquals("Inverse failed! Inverting " + y + " did not produce " + x, x, xAgain);
         }
     }
