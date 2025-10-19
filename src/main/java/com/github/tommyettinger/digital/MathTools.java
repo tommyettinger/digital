@@ -2589,9 +2589,7 @@ public static long mmi(final long a) {
      * @return a double between -1.0 and 1.0, both inclusive
      */
     public static double triangleWave(double t) {
-        return Math.abs(t -
-                Math.round(t)
-        ) * 4.0 - 1.0;
+        return Math.abs(t - Math.round(t)) * 4.0 - 1.0;
     }
 
     /**
