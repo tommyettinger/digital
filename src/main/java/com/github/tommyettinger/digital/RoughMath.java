@@ -244,6 +244,73 @@ public final class RoughMath {
         return 1.0f / (1.0f + BitConversion.intBitsToFloat( (int)(0x800000 * (Math.max(-126.0f, -1.442695040f * x) + 126.94269504f))));
     }
 
+    /**
+     * Returns a Gaussian ("normally") distributed {@code float} value
+     * with mean {@code 0.0} and standard deviation {@code 1.0} based
+     * on the input {@code x}, which should be a uniformly-distributed
+     * {@code long} value.
+     * <p>
+     * This uses an imperfect approximation, but one that is much faster than
+     * the Box-Muller transform, Marsaglia Polar method, or a transform using the
+     * probit function. Like {@link Distributor#normalF(int)}, this does not
+     * preserve any relationship between input {@code x} and the results it returns.
+     * This is different from {@link Distributor#probitI(int)} in that way.
+     * <p>
+     * This can't produce as extreme results in extremely-rare cases as methods
+     * like Box-Muller and Marsaglia Polar can. All possible results are between
+     * {@code -7.92908} and {@code 7.92908}, inclusive. This method is fairly
+	 * accurate to the normal distribution; the center has a rounded top.
+     * <p>
+     * <a href="https://marc-b-reynolds.github.io/distribution/2021/03/18/CheapGaussianApprox.html">Credit
+     * to Marc B. Reynolds</a> for coming up with this clever fusion of the
+     * already-bell-curved bit count and a triangular distribution to smooth
+     * it out. Using one random long split into four parts instead of two
+     * random longs being needed is the contribution here.
+     * Using x * x + x is another contribution; it's slightly faster.
+     *
+     * @param x any long; should be close to uniformly-random to get a normal-distributed results
+     * @return an approximately Gaussian-distributed float between -7.92908 and 7.92908, inclusive
+     */
+    public static float normalRough (final long x) {
+        final long c = Long.bitCount(x) - 32L << 16;
+        final long u = x * x + x;
+        return 0x1.fb760cp-19f * (c + (short)(u) - (u >> 48) - (short)(u >> 32) - (short)(u >> 16));
+    }
+
+    /**
+     * Returns a Gaussian ("normally") distributed {@code float} value
+     * with mean {@code 0.0} and standard deviation {@code 1.0} based
+     * on the input {@code x}, which should be a uniformly-distributed
+     * {@code long} value.
+     * <p>
+     * This uses an imperfect approximation, but one that is much faster than
+     * the Box-Muller transform, Marsaglia Polar method, or a transform using the
+     * probit function. Like {@link Distributor#normalF(int)}, this does not
+     * preserve any relationship between input {@code x} and the results it returns.
+     * This is different from {@link Distributor#probitI(int)} in that way.
+     * <p>
+     * This can't produce as extreme results in extremely-rare cases as methods
+     * like Box-Muller and Marsaglia Polar can. All possible results are between
+     * {@code -7.92908} and {@code 7.92908}, inclusive. This method isn't as
+     * accurate to the normal distribution; the center has a pointed top rather
+     * than a rounded one.
+     * <p>
+     * <a href="https://marc-b-reynolds.github.io/distribution/2021/03/18/CheapGaussianApprox.html">Credit
+     * to Marc B. Reynolds</a> for coming up with this clever fusion of the
+     * already-bell-curved bit count and a triangular distribution to smooth
+     * it out. Using one random long instead of two is the contribution here.
+     * Using x * x + x is another contribution; it's slightly faster.
+     *
+     * @param x any long; should be close to uniformly-random to get a normal-distributed results
+     * @return an approximately Gaussian-distributed float between -7.92908 and 7.92908, inclusive
+     */
+    public static float normalRougher (final long x) {
+        final long c = Long.bitCount(x) - 32L << 32;
+        final long u = x * x + x;
+        return 0x1.fb760cp-35f * (c + (u & 0xFFFFFFFFL) - (u >>> 32));
+    }
+
+
     // TRIGONOMETRIC FUNCTIONS
 
     public static final float FOUR_OVER_PI = 1.2732395447351627f;
