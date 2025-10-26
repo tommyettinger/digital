@@ -501,8 +501,8 @@ public final class Distributor {
      * {@link RoughMath#logRough(float)} and {@link RoughMath#expRough(float)} to avoid double-based Math methods, so
      * there is some quality loss as a result (but the result should be platform-independent, which Math can't promise).
      * <br>
-     * The range this can produce includes -7.132757663726807 to 6.896588325500488, but this wasn't an exhaustive test;
-     * only 100 billion quasi-random inputs were tested out of over 18 quintillion possible inputs.
+     * The range this can produce includes -7.138506412506104 to 7.182311534881592, but this wasn't an exhaustive test;
+     * only 1 trillion quasi-random inputs were tested out of over 18 quintillion possible inputs.
      * <br>
      * From <a href="https://github.com/camel-cdr/cauldron/blob/7d5328441b1a1bc8143f627aebafe58b29531cb9/cauldron/random.h#L2013-L2265">Cauldron</a>,
      * MIT-licensed. This in turn is based on Doornik's form of the Ziggurat method:

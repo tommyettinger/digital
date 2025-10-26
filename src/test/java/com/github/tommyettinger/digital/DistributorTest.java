@@ -150,21 +150,25 @@ public class DistributorTest {
     }
 
     /**
-     * Tested 100 billion inputs to {@link Distributor#normalF(long)}.
+     * Tested 1 trillion inputs to {@link Distributor#normalF(long)}.
+     * <br>
+     * min -7.138506412506104 max 7.182311534881592
+     * <br>
+     * EARLIER: Tested 100 billion inputs to {@link Distributor#normalF(long)}.
      * <br>
      * min -7.132757663726807 max 6.896588325500488
      * @param args ignored
      */
     public static void main(String[] args) {
         float min = 1E10f, max = -1E10f;
-        long c = 1L;
-        for (int i = 0; i < 100; i++) {
+        long c = 0L;
+        for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000000000; j++) {
                 float r = Distributor.normalF(c += 0x9E3779B97F4A7C15L);
                 min = Math.min(min, r);
                 max = Math.max(max, r);
             }
-            System.out.printf("Iteration %3d/100: min %3.15f max %3.15f\n", i, min, max);
+            System.out.printf("Iteration %3d/1000: min %3.15f max %3.15f\n", i, min, max);
         }
     }
 }
