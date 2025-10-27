@@ -248,7 +248,9 @@ public final class RoughMath {
      * Returns a Gaussian ("normally") distributed {@code float} value
      * with mean {@code 0.0} and standard deviation {@code 1.0} based
      * on the input {@code x}, which should be a uniformly-distributed
-     * {@code long} value.
+     * {@code long} value. This is a medium-quality approximation. It
+     * is not likely to be distinguished from a correct Gaussian
+     * distribution by a human, but could be distinguishable to a machine.
      * <p>
      * This uses an imperfect approximation, but one that is much faster than
      * the Box-Muller transform, Marsaglia Polar method, or a transform using the
@@ -263,7 +265,7 @@ public final class RoughMath {
      * <p>
      * <a href="https://marc-b-reynolds.github.io/distribution/2021/03/18/CheapGaussianApprox.html">Credit
      * to Marc B. Reynolds</a> for coming up with this clever fusion of the
-     * already-bell-curved bit count and a triangular distribution to smooth
+     * already-bell-curved bit count and two triangular distributions to smooth
      * it out. Using one random long split into four parts instead of two
      * random longs being needed is the contribution here.
      * Using x * x + x is another contribution; it's slightly faster.
@@ -273,7 +275,7 @@ public final class RoughMath {
      */
     public static float normalRough (final long x) {
         final long c = Long.bitCount(x) - 32L << 16;
-        final long u = x * x + x;
+        final long u = x * x + x; /* Note, this is always even, but it is unlikely to matter. */
         return 0x1.fb760cp-19f * (c + (short)(u) - (u >> 48) - (short)(u >> 32) - (short)(u >> 16));
     }
 
@@ -281,7 +283,9 @@ public final class RoughMath {
      * Returns a Gaussian ("normally") distributed {@code float} value
      * with mean {@code 0.0} and standard deviation {@code 1.0} based
      * on the input {@code x}, which should be a uniformly-distributed
-     * {@code long} value.
+     * {@code long} value. This is a low-quality approximation. It can
+     * be visually distinguished from a correct Gaussian distributed
+     * variable once enough samples are shown.
      * <p>
      * This uses an imperfect approximation, but one that is much faster than
      * the Box-Muller transform, Marsaglia Polar method, or a transform using the
@@ -306,7 +310,7 @@ public final class RoughMath {
      */
     public static float normalRougher (final long x) {
         final long c = Long.bitCount(x) - 32L << 32;
-        final long u = x * x + x;
+        final long u = x * x + x; /* Note, this is always even, but it is unlikely to matter. */
         return 0x1.fb760cp-35f * (c + (u & 0xFFFFFFFFL) - (u >>> 32));
     }
 

@@ -127,6 +127,7 @@ public final class Distributor {
      * The function maps the lowest inputs to the most negative outputs, the highest inputs to the most
      * positive outputs, and inputs near 0.5 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
+     *
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param p should be between 0 and 1, inclusive.
      * @return an approximately-Gaussian-distributed float between -13.003068 and 13.003068
@@ -150,6 +151,7 @@ public final class Distributor {
      * The function maps the lowest inputs to the most negative outputs, the highest inputs to the most
      * positive outputs, and inputs near 0.5 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
+     *
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param p should be between 0 and 1, inclusive.
      * @return an approximately-Gaussian-distributed double between -38.467454509186325 and 38.467454509186325
@@ -175,6 +177,12 @@ public final class Distributor {
      * The function maps the most negative inputs to the most negative outputs, the most positive inputs to the most
      * positive outputs, and inputs near 0 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
+     * <br>
+     * If you don't need the property where high int inputs map to high float results, and vice versa for low ones, and
+     * you can get a sufficiently-random long input instead of an int, then {@link #normalF(long)} is faster and may
+     * have higher quality. {@link RoughMath#normalRough(long)} is definitely faster and probably has lower quality,
+     * while {@link RoughMath#normalRougher(long)} is even faster but has significantly-low quality.
+     *
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param i may be any int, though very close ints will not produce different results
      * @return an approximately-Gaussian-distributed float between -13.003068 and 13.003068
@@ -200,6 +208,10 @@ public final class Distributor {
      * The function maps the most negative inputs to the most negative outputs, the most positive inputs to the most
      * positive outputs, and inputs near 0 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
+     * <br>
+     * If you don't need the property where high long inputs map to high double results, and vice versa for low ones,
+     * then {@link #normal(long)} is faster and higher-quality on most platforms.
+     *
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param l may be any long, though very close longs will not produce different results
      * @return an approximately-Gaussian-distributed double between -38.467454509186325 and 38.467454509186325
@@ -333,6 +345,11 @@ public final class Distributor {
      * Patterns between different {@code state} values provided to this will generally not be preserved in the
      * output, but this may not be true all the time for patterns on all bits.
      * <br>
+     * If you need a double produced, this is the fastest method in this library to produce a normal-distributed double.
+     * If you need a float instead, casting a double to a float isn't incredibly fast, and you might want to prefer
+     * {@link #normalF(long)} instead if you have a long to pass it already. On GWT, performance recommendations are
+     * confusing in general, and {@link #probitD(double)} will likely outperform anything that uses a {@code long}.
+     * <br>
      * The range this can produce is at least from -7.6719775673883905 to 7.183851151080583, and is almost certainly larger
      * (only 4 billion distinct inputs were tested, and there are over 18 quintillion inputs possible).
      * <br>
@@ -418,6 +435,12 @@ public final class Distributor {
      * Patterns between different {@code state} values provided to this will generally not be preserved in the
      * output, but this may not be true all the time for patterns on all bits.
      * <br>
+     * This method is, for unclear reasons, slower than either {@link #normal(long)} or {@link #normalF(long)} by a
+     * factor of about 4x. The options in RoughMath, {@link RoughMath#normalRough(long)} and
+     * {@link RoughMath#normalRougher(long)}, are even faster, though probably less accurate and definitely inaccurate,
+     * respectively. Surprisingly, while {@link #normal(long)} is faster than any probit-based method in this class,
+     * this overload is slower than any probit-based method here, except for maybe {@link #probitHighPrecision(double)}.
+     * <br>
      * The range this can produce is from -6.127281f to 6.158781f, both inclusive. This was tested exhaustively.
      * <br>
      * From <a href="https://github.com/camel-cdr/cauldron/blob/7d5328441b1a1bc8143f627aebafe58b29531cb9/cauldron/random.h#L2013-L2265">Cauldron</a>,
@@ -500,6 +523,18 @@ public final class Distributor {
      * output, but this may not be true all the time for patterns on all bits. This uses
      * {@link RoughMath#logRough(float)} and {@link RoughMath#expRough(float)} to avoid double-based Math methods, so
      * there is some quality loss as a result (but the result should be platform-independent, which Math can't promise).
+     * <br>
+     * If you have 64-bit random values you can provide this method, it should be faster than {@link #normalF(int)},
+     * according to JMH benchmarks, for reasons that aren't clear. While that won't be the case on GWT, because anything
+     * involving a {@code long} is drastically slower there, it should be faster on desktop OSes by about a factor of
+     * over 4 times, and on other platforms, well, it isn't clear. If you don't need a perfectly normal distribution,
+     * consider {@link RoughMath#normalRough(long)} for a good approximation that is a little faster than this, or even
+     * {@link RoughMath#normalRougher(long)} for a mediocre approximation that's over twice as fast as this. Even though
+     * the relative difference between {@link RoughMath#normalRougher(long)} and {@link #normalF(int)} is about 10x, the
+     * actual difference in time taken is only about 10 nanoseconds per call, so it may not matter for your application.
+     * All Ziggurat-based methods use an array lookup, while no RoughMath or probit-based methods need array accesses,
+     * which may change the performance significantly if the processor's cache can't fit an array of 129 floats or 257
+     * doubles.
      * <br>
      * The range this can produce includes -7.138506412506104 to 7.182311534881592, but this wasn't an exhaustive test;
      * only 1 trillion quasi-random inputs were tested out of over 18 quintillion possible inputs.
