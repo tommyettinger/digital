@@ -225,12 +225,21 @@ public class PrecisionTest {
      * True result   :      -2.4223012127
      * Worst position:      -1.5848886967,   -1.3880693913
      * Took 124.34390200000001 s
+     *
+     * PrecisionTest.atan2imuliJolt :
+     * Absolute error:       0.0000000681
+     * Relative error:       0.0000000338
+     * Maximum error :       0.0000002804
+     * Worst result  :      -2.0006237030
+     * True result   :      -2.0006234226
+     * Worst position:      -0.8330984116,   -1.8173582554
+     * Took 105.7082881 s
      */
     @Test
 //    @Ignore("This takes a really long time to run.")
     public void testAtan2() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
-        functions.put("TrigTools.atan2", TrigTools::atan2);
+//        functions.put("TrigTools.atan2", TrigTools::atan2);
 //        functions.put("TrigTools.atan2Precise", TrigTools::atan2Precise);
 //        functions.put("Math.atan2", (y, x) -> (float) Math.atan2(y, x));
 //        functions.put("GtMathUtils.atan2imuli", GtMathUtils::atan2imuli);
@@ -239,9 +248,10 @@ public class PrecisionTest {
 //        functions.put("PrecisionTest.atan2Jolt (double)", (y1, x1) -> (float)atan2Jolt((double) y1, (double) x1));
 //        functions.put("PrecisionTest.atan2Jolt (float)", PrecisionTest::atan2Jolt);
 
-        functions.put("PrecisionTest.atan2imuliOriginal", PrecisionTest::atan2imuliOriginal);
-        functions.put("PrecisionTest.atan2imuliSheet8", PrecisionTest::atan2imuliSheet8);
-        functions.put("PrecisionTest.atan2imuliSheet11", PrecisionTest::atan2imuliSheet11);
+//        functions.put("PrecisionTest.atan2imuliOriginal", PrecisionTest::atan2imuliOriginal);
+//        functions.put("PrecisionTest.atan2imuliSheet8", PrecisionTest::atan2imuliSheet8);
+//        functions.put("PrecisionTest.atan2imuliSheet11", PrecisionTest::atan2imuliSheet11);
+        functions.put("PrecisionTest.atan2imuliJolt", PrecisionTest::atan2imuliJolt);
 //        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
 //        functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
 //        functions.put("PrecisionTest.atan2Gilcher3", PrecisionTest::atan2Gilcher3);
@@ -325,6 +335,8 @@ public class PrecisionTest {
     /**
      * Credit to imuli and Nic Taylor; imuli commented on
      * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * Uses the "Sheet 11" algorithm from "Approximations for Digital Computers," by RAND Corporation (1955)
+     * for its atan() approximation.
      * @param y
      * @param x
      * @return
@@ -340,6 +352,31 @@ public class PrecisionTest {
         if(invert) z = HALF_PI - z;
         if(x < 0) z = PI - z;
         return Math.copySign(z, y);
+    }
+
+    public static float atan2imuliJolt(float y, float x)
+    {
+        if (y == 0f && x >= 0f) return 0f;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float m = invert ? ax/ay : ay/ax;
+        float a, b;
+        if (m > 2.414213562373095f) {
+            a = -1f / m;
+            b = HALF_PI;
+        } else if (m > 0.4142135623730950f) {
+            a = (m - 1f) / (m + 1f);
+            b = QUARTER_PI;
+        } else {
+            a = m;
+            b = 0f;
+        }
+        float s = a * a;
+        b += (((8.05374449538e-2f * s - 1.38776856032e-1f) * s + 1.99777106478e-1f)
+                * s - 3.33329491539e-1f) * s * a + a;
+        if(invert) b = HALF_PI - b;
+        if(x < 0) b = PI - b;
+        return Math.copySign(b, y);
     }
 
     public static double acosTT(double a) {
