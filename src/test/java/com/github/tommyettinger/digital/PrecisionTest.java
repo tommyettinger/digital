@@ -198,20 +198,50 @@ public class PrecisionTest {
      * True result   :      -2.2432141198
      * Worst position:      -1.2176265717,   -1.5293029547
      * Took 124.7766737 s
+     *
+     * PrecisionTest.atan2imuliOriginal :
+     * Absolute error:       0.0000598630
+     * Relative error:       0.0001010147
+     * Maximum error :       0.0002429693
+     * Worst result  :      -2.3564329147
+     * True result   :      -2.3561899454
+     * Worst position:      -1.6786983013,   -1.6787135601
+     * Took 108.97241670000001 s
+     *
+     * PrecisionTest.atan2imuliSheet8 :
+     * Absolute error:       0.0003858907
+     * Relative error:       0.0002950896
+     * Maximum error :       0.0006095396
+     * Worst result  :       2.9398293495
+     * True result   :       2.9392198099
+     * Worst position:      -1.5211402178,    0.3121099472
+     * Took 123.69115670000001 s
+     *
+     * PrecisionTest.atan2imuliSheet11 :
+     * Absolute error:       0.0000010610
+     * Relative error:       0.0000008397
+     * Maximum error :       0.0000019871
+     * Worst result  :      -2.4223031998
+     * True result   :      -2.4223012127
+     * Worst position:      -1.5848886967,   -1.3880693913
+     * Took 124.34390200000001 s
      */
     @Test
 //    @Ignore("This takes a really long time to run.")
     public void testAtan2() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2", TrigTools::atan2);
-        functions.put("TrigTools.atan2Precise", TrigTools::atan2Precise);
-        functions.put("Math.atan2", (y, x) -> (float) Math.atan2(y, x));
-        functions.put("GtMathUtils.atan2imuli", GtMathUtils::atan2imuli);
-        functions.put("MathUtils.atan2", MathUtils::atan2);
+//        functions.put("TrigTools.atan2Precise", TrigTools::atan2Precise);
+//        functions.put("Math.atan2", (y, x) -> (float) Math.atan2(y, x));
+//        functions.put("GtMathUtils.atan2imuli", GtMathUtils::atan2imuli);
+//        functions.put("MathUtils.atan2", MathUtils::atan2);
 //        functions.put("GtMathUtils.atan2Gt", GtMathUtils::atan2Gt);
 //        functions.put("PrecisionTest.atan2Jolt (double)", (y1, x1) -> (float)atan2Jolt((double) y1, (double) x1));
 //        functions.put("PrecisionTest.atan2Jolt (float)", PrecisionTest::atan2Jolt);
 
+        functions.put("PrecisionTest.atan2imuliOriginal", PrecisionTest::atan2imuliOriginal);
+        functions.put("PrecisionTest.atan2imuliSheet8", PrecisionTest::atan2imuliSheet8);
+        functions.put("PrecisionTest.atan2imuliSheet11", PrecisionTest::atan2imuliSheet11);
 //        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
 //        functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
 //        functions.put("PrecisionTest.atan2Gilcher3", PrecisionTest::atan2Gilcher3);
@@ -254,6 +284,64 @@ public class PrecisionTest {
             System.out.println("Took " + (System.nanoTime() - time) * 1E-9 + " s");
         }
     }
+
+    /**
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * @param y
+     * @param x
+     * @return
+     */
+    public static float atan2imuliOriginal(float y, float x)
+    {
+        if (y == 0f && x >= 0f) return 0f;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax/ay : ay/ax;
+        z = ((((0.141499f * z) - 0.343315f) * z - 0.016224f) * z + 1.003839f) * z - 0.000158f;
+        if(invert) z = 1.5707963267948966f - z;
+        if(x < 0) z = 3.141592653589793f - z;
+        return Math.copySign(z, y);
+    }
+    /**
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * @param y
+     * @param x
+     * @return
+     */
+    public static float atan2imuliSheet8(float y, float x)
+    {
+        if (y == 0f && x >= 0f) return 0f;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax/ay : ay/ax;
+        float s = z * z;
+        z = ((0.079331f * s - 0.288679f) * s + 0.995354f) * z;
+        if(invert) z = HALF_PI - z;
+        if(x < 0) z = PI - z;
+        return Math.copySign(z, y);
+    }
+    /**
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * @param y
+     * @param x
+     * @return
+     */
+    public static float atan2imuliSheet11(float y, float x)
+    {
+        if (y == 0f && x >= 0f) return 0f;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax/ay : ay/ax;
+        float s = z * z;
+        z = (((((-0.0117212f * s + 0.05265332f) * s - 0.11643287f) * s + 0.19354346f) * s - 0.33262347f) * s + 0.99997726f) * z;
+        if(invert) z = HALF_PI - z;
+        if(x < 0) z = PI - z;
+        return Math.copySign(z, y);
+    }
+
     public static double acosTT(double a) {
         double a2 = a * a; // a squared
         double a3 = a * a2; // a cubed
