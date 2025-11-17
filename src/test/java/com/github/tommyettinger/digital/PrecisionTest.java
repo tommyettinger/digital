@@ -180,6 +180,24 @@ public class PrecisionTest {
      * True result   :      -3.1359714688
      * Worst position:      -1.5863202810,   -0.0089170933
      * Took 123.44766720000001 s
+     *
+     * GtMathUtils.atan2imuli :
+     * Absolute error:       0.0000598630
+     * Relative error:       0.0001010147
+     * Maximum error :       0.0002429693
+     * Worst result  :      -2.3564329147
+     * True result   :      -2.3561899454
+     * Worst position:      -1.6786983013,   -1.6787135601
+     * Took 137.41918900000002 s
+     *
+     * MathUtils.atan2 :
+     * Absolute error:       0.0000010355
+     * Relative error:       0.0000014085
+     * Maximum error :       0.0000019180
+     * Worst result  :      -2.2432160378
+     * True result   :      -2.2432141198
+     * Worst position:      -1.2176265717,   -1.5293029547
+     * Took 124.7766737 s
      */
     @Test
 //    @Ignore("This takes a really long time to run.")
@@ -188,7 +206,9 @@ public class PrecisionTest {
         functions.put("TrigTools.atan2", TrigTools::atan2);
         functions.put("TrigTools.atan2Precise", TrigTools::atan2Precise);
         functions.put("Math.atan2", (y, x) -> (float) Math.atan2(y, x));
-        functions.put("GtMathUtils.atan2Gt", GtMathUtils::atan2Gt);
+        functions.put("GtMathUtils.atan2imuli", GtMathUtils::atan2imuli);
+        functions.put("MathUtils.atan2", MathUtils::atan2);
+//        functions.put("GtMathUtils.atan2Gt", GtMathUtils::atan2Gt);
 //        functions.put("PrecisionTest.atan2Jolt (double)", (y1, x1) -> (float)atan2Jolt((double) y1, (double) x1));
 //        functions.put("PrecisionTest.atan2Jolt (float)", PrecisionTest::atan2Jolt);
 

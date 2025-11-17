@@ -85,4 +85,26 @@ public final class GtMathUtils {
             }
         }
     }
+
+    /**
+     * Fast approximate atan2. Significantly more accurate than {@link com.badlogic.gdx.math.MathUtils#atan2(float, float)}..
+     * <p>
+     * Credit to user imuli on dsprelated.com for the algorithm.
+     * <br>
+     * <a href="https://github.com/CypherCove/gdx-tween/blob/master/gdxtween/src/main/java/com/cyphercove/gdxtween/math/GtMath.java">From here.</a>
+     * Used in the current version of gdx-tween, but references a much older version of GDX MathUtils.
+     *
+     * @param y arctan numerator
+     * @param x arctan denominator
+     * @return A fast approximate atan2 angle in radians.
+     */
+    public static float atan2imuli(float y, float x) {
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax / ay : ay / ax;
+        z = ((((0.141499f * z) - 0.343315f) * z - 0.016224f) * z + 1.003839f) * z - 0.000158f;
+        if (invert) z = 1.5707963267948966f - z;
+        if (x < 0) z = 3.141592653589793f - z;
+        return Math.copySign(z, y);
+    }
 }
