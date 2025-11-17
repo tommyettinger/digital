@@ -234,6 +234,15 @@ public class PrecisionTest {
      * True result   :      -2.0006234226
      * Worst position:      -0.8330984116,   -1.8173582554
      * Took 105.7082881 s
+     *
+     * PrecisionTest.atan2imuliSheet13 :
+     * Absolute error:       0.0000000734
+     * Relative error:       0.0000000418
+     * Maximum error :       0.0000003256
+     * Worst result  :      -2.3971495628
+     * True result   :      -2.3971492373
+     * Worst position:      -1.6544386148,   -1.5241860151
+     * Took 106.74353350000001 s
      */
     @Test
 //    @Ignore("This takes a really long time to run.")
@@ -251,7 +260,8 @@ public class PrecisionTest {
 //        functions.put("PrecisionTest.atan2imuliOriginal", PrecisionTest::atan2imuliOriginal);
 //        functions.put("PrecisionTest.atan2imuliSheet8", PrecisionTest::atan2imuliSheet8);
 //        functions.put("PrecisionTest.atan2imuliSheet11", PrecisionTest::atan2imuliSheet11);
-        functions.put("PrecisionTest.atan2imuliJolt", PrecisionTest::atan2imuliJolt);
+        functions.put("PrecisionTest.atan2imuliSheet13", PrecisionTest::atan2imuliSheet13);
+//        functions.put("PrecisionTest.atan2imuliJolt", PrecisionTest::atan2imuliJolt);
 //        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
 //        functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
 //        functions.put("PrecisionTest.atan2Gilcher3", PrecisionTest::atan2Gilcher3);
@@ -349,6 +359,27 @@ public class PrecisionTest {
         float z = invert ? ax/ay : ay/ax;
         float s = z * z;
         z = (((((-0.0117212f * s + 0.05265332f) * s - 0.11643287f) * s + 0.19354346f) * s - 0.33262347f) * s + 0.99997726f) * z;
+        if(invert) z = HALF_PI - z;
+        if(x < 0) z = PI - z;
+        return Math.copySign(z, y);
+    }
+    /**
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * Uses the "Sheet 13" algorithm from "Approximations for Digital Computers," by RAND Corporation (1955)
+     * for its atan() approximation.
+     * @param y
+     * @param x
+     * @return
+     */
+    public static float atan2imuliSheet13(float y, float x)
+    {
+        if (y == 0f && x >= 0f) return 0f;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax/ay : ay/ax;
+        float s = z * z;
+        z = (((((((-0.004054058f * s + 0.0218612288f) * s - 0.0559098861f) * s + 0.0964200441f) * s - 0.1390853351f) * s + 0.1994653599f) * s - 0.3332985605f) * s + 0.9999993329f) * z;
         if(invert) z = HALF_PI - z;
         if(x < 0) z = PI - z;
         return Math.copySign(z, y);
