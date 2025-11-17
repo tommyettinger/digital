@@ -141,15 +141,57 @@ public class PrecisionTest {
      * True result   :   -2.14119977
      * Worst position:   -0.43988597,-0.68567419
      * Took 60.416935 s
+     *
+     * <br>
+     * LATER AGAIN...
+     * <br>
+     * TrigTools.atan2 :
+     * Absolute error:       0.0000010344
+     * Relative error:       0.0000014079
+     * Maximum error :       0.0000018045
+     * Worst result  :      -2.0299842358
+     * True result   :      -2.0299860402
+     * Worst position:      -0.7739490271,   -1.5653042793
+     * Took 79.8170839 s
+     *
+     * TrigTools.atan2Precise :
+     * Absolute error:       0.0000000704
+     * Relative error:       0.0000000354
+     * Maximum error :       0.0000002969
+     * Worst result  :      -2.1412000656
+     * True result   :      -2.1411997687
+     * Worst position:      -1.1800413132,   -1.8393945694
+     * Took 65.82416500000001 s
+     *
+     * Math.atan2 :
+     * Absolute error:       0.0000000466
+     * Relative error:       0.0000000227
+     * Maximum error :       0.0000001192
+     * Worst result  :      -3.1027069092
+     * True result   :      -3.1027070284
+     * Worst position:      -1.8262672424,   -0.0710513592
+     * Took 126.84901880000001 s
+     *
+     * GtMathUtils.atan2Gt :
+     * Absolute error:       0.0000361130
+     * Relative error:       0.0000486695
+     * Maximum error :       0.0000971137
+     * Worst result  :      -3.1360685825
+     * True result   :      -3.1359714688
+     * Worst position:      -1.5863202810,   -0.0089170933
+     * Took 123.44766720000001 s
      */
     @Test
-    @Ignore("This takes a really long time to run.")
+//    @Ignore("This takes a really long time to run.")
     public void testAtan2() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2", TrigTools::atan2);
+        functions.put("TrigTools.atan2Precise", TrigTools::atan2Precise);
         functions.put("Math.atan2", (y, x) -> (float) Math.atan2(y, x));
-        functions.put("PrecisionTest.atan2Jolt (double)", (y1, x1) -> (float)atan2Jolt((double) y1, (double) x1));
-        functions.put("PrecisionTest.atan2Jolt (float)", PrecisionTest::atan2Jolt);
+        functions.put("GtMathUtils.atan2Gt", GtMathUtils::atan2Gt);
+//        functions.put("PrecisionTest.atan2Jolt (double)", (y1, x1) -> (float)atan2Jolt((double) y1, (double) x1));
+//        functions.put("PrecisionTest.atan2Jolt (float)", PrecisionTest::atan2Jolt);
+
 //        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
 //        functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
 //        functions.put("PrecisionTest.atan2Gilcher3", PrecisionTest::atan2Gilcher3);
