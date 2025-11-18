@@ -2523,6 +2523,43 @@ public final class TrigTools {
         return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 //</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Finite atan2">
+    /**
+     * A faster approximation of {@link #atan2(float, float)} that is almost as precise as
+     * {@link #atan2Precise(float, float)} but is only defined for finite input arguments.
+     * The atan2() function takes y first, then x, and returns the angle in radians from
+     * the origin to the given point. If y is non-negative, this returns a float from 0.0
+     * to {@link #PI}, otherwise it returns a float from -0.0 to -PI.
+     * <br>
+     * This is both faster and more precise than {@link #atan2(float, float)}, but can't be
+     * used as an all-purpose replacement for Math.atan2() because it returns NaN when given
+     * infinite arguments (or NaN). In the undefined case where {@code y == 0f && x == 0f},
+     * this returns y (which may be -0.0); this differs from Math.atan2(), which returns
+     * {@link Math#PI} when y is 0.0 and x is -0.0.
+     * <br>
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * Uses the "Sheet 13" algorithm from "Approximations for Digital Computers," by RAND Corporation (1955)
+     * for its atan() approximation over the {@code (0,1]} domain.
+     *
+     * @param y any finite float; note the unusual argument order (y is first here!)
+     * @param x any finite float; note the unusual argument order (x is second here!)
+     * @return the angle in radians from the origin to the given point
+     */
+    public static float atan2Finite(final float y, final float x)
+    {
+        if (y == 0f && x >= 0f) return y;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax/ay : ay/ax;
+        float s = z * z;
+        z *= (((((((-0.004054058f * s + 0.0218612288f) * s - 0.0559098861f) * s + 0.0964200441f) * s - 0.1390853351f)
+                * s + 0.1994653599f) * s - 0.3332985605f) * s + 0.9999993329f);
+        if(invert) z = HALF_PI - z;
+        if(x < 0) z = PI - z;
+        return Math.copySign(z, y);
+    }
+//</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Precise Arctangent and atan2">
     /**
      * Close approximation of the frequently-used trigonometric method atan2, using radians. Non-tabular.

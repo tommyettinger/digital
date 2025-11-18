@@ -13,13 +13,14 @@ import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
 
 import static com.github.tommyettinger.digital.TrigTools.*;
+import static com.github.tommyettinger.digital.TrigTools.PI;
 import static java.lang.Math.abs;
 
 // REMOVE the @Ignore if you want to run any tests! They take a while to run as a whole, though.
 //@Ignore
 public class PrecisionTest {
 
-    public static final int PI_BITS = Float.floatToIntBits(TrigTools.PI);
+    public static final int PI_BITS = Float.floatToIntBits(PI);
     public static final int PI2BITS = Float.floatToIntBits(TrigTools.PI2);
 
     /**
@@ -367,14 +368,14 @@ public class PrecisionTest {
      * Credit to imuli and Nic Taylor; imuli commented on
      * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
      * Uses the "Sheet 13" algorithm from "Approximations for Digital Computers," by RAND Corporation (1955)
-     * for its atan() approximation.
-     * @param y
-     * @param x
-     * @return
+     * for its atan() approximation over the {@code (0,1]} domain.
+     * @param y any finite float; note the unusual argument order (y is first here!)
+     * @param x any finite float; note the unusual argument order (x is second here!)
+     * @return the angle in radians from the origin to the given point
      */
     public static float atan2imuliSheet13(float y, float x)
     {
-        if (y == 0f && x >= 0f) return 0f;
+        if (y == 0f && x >= 0f) return y;
         float ay = Math.abs(y), ax = Math.abs(x);
         boolean invert = ay > ax;
         float z = invert ? ax/ay : ay/ax;
@@ -383,6 +384,16 @@ public class PrecisionTest {
         if(invert) z = HALF_PI - z;
         if(x < 0) z = PI - z;
         return Math.copySign(z, y);
+    }
+
+    @Test
+    public void testAtan2Sheet13() {
+        float[] parameters = {0f, PI, -PI, HALF_PI, -HALF_PI, PI2, -PI2, QUARTER_PI, -QUARTER_PI, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 1e10f, -1e10f, Float.MIN_NORMAL, -Float.MIN_NORMAL};
+        for (float y : parameters) {
+            for(float x : parameters){
+                Assert.assertEquals("y="+y+",x="+x+" has too much error!", Math.atan2(y,x), atan2imuliSheet13(y, x), 0.000001f);
+            }
+        }
     }
 
     public static float atan2imuliJolt(float y, float x)
@@ -3383,7 +3394,7 @@ Worst input (abs):       4.205234527587891000000000
      * @return sine from -1 to 1, inclusive
      */
     public static float sinLeibovici(float x) {
-        x = ((x + TrigTools.PI) % TrigTools.PI2 + TrigTools.PI2) % TrigTools.PI2 - TrigTools.PI;
+        x = ((x + PI) % TrigTools.PI2 + TrigTools.PI2) % TrigTools.PI2 - PI;
         final float a = -0.13299564481202533f;
         final float b = 0.0032172781382236062f;
         final float c = 0.033670915730403934f;
@@ -4711,8 +4722,8 @@ CONST f32x2 sincos(s16 int_angle) {
         if (x > 0)
             return atanJolt(n);
         else if (x < 0) {
-            if (y >= 0) return atanJolt(n) + TrigTools.PI;
-            return atanJolt(n) - TrigTools.PI;
+            if (y >= 0) return atanJolt(n) + PI;
+            return atanJolt(n) - PI;
         } else if (y > 0)
             return x + HALF_PI;
         else if (y < 0) return x - HALF_PI;
