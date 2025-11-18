@@ -2556,7 +2556,7 @@ public final class TrigTools {
         z *= (((((((-0.004054058f * s + 0.0218612288f) * s - 0.0559098861f) * s + 0.0964200441f) * s - 0.1390853351f)
                 * s + 0.1994653599f) * s - 0.3332985605f) * s + 0.9999993329f);
         if(invert) z = HALF_PI - z;
-        if(x < 0) z = PI - z;
+        if(x < 0f) z = PI - z;
         return Math.copySign(z, y);
     }
 
@@ -2592,8 +2592,44 @@ public final class TrigTools {
         z *= ((((((-0.2322804062831325f * s + 1.2525561619334924f) * s - 3.2034005556446465f) * s + 5.52446147949459f) * s - 7.969002832028255f)
                 * s + 11.428523528717331f) * s - 19.09660103251952f) * s + 57.29574194704188f;
         if(invert) z = 90f - z;
-        if(x < 0) z = 180f - z;
+        if(x < 0f) z = 180f - z;
         return Math.copySign(z, y);
+    }
+
+    /**
+     * A faster approximation of {@link #atan2Deg360(float, float)} that is almost as precise as
+     * {@link #atan2Deg360Precise(float, float)} but is only defined for finite input arguments.
+     * The atan2Deg360() function takes y first, then x, and returns the angle in degrees from
+     * the origin to the given point. This returns a float from 0.0 to 360.0, counterclockwise
+     * when y points up.
+     * <br>
+     * This is both faster and more precise than {@link #atan2Deg(float, float)}, but can't be
+     * used as an all-purpose replacement for Math.atan2() because it returns NaN when given
+     * infinite arguments (or NaN). In the undefined case where {@code y == 0f && x == 0f},
+     * this returns 0.0; this differs from Math.atan2(), which returns
+     * {@link Math#PI} (in radians) when y is 0.0 and x is -0.0.
+     * <br>
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * Uses the "Sheet 13" algorithm from "Approximations for Digital Computers," by RAND Corporation (1955)
+     * for its atan() approximation over the {@code (0,1]} domain.
+     *
+     * @param y any finite float; note the unusual argument order (y is first here!)
+     * @param x any finite float; note the unusual argument order (x is second here!)
+     * @return the angle in degrees from the origin to the given point, from 0 to 360
+     */
+    public static float atan2Deg360Finite(final float y, final float x)
+    {
+        if (y == 0f && x >= 0f) return 0f;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax/ay : ay/ax;
+        float s = z * z;
+        z *= ((((((-0.2322804062831325f * s + 1.2525561619334924f) * s - 3.2034005556446465f) * s + 5.52446147949459f) * s - 7.969002832028255f)
+                * s + 11.428523528717331f) * s - 19.09660103251952f) * s + 57.29574194704188f;
+        if(invert) z = 90f - z;
+        if(x < 0f) z = 180f - z;
+        return y <= 0f ? z : 360f - z;
     }
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Precise Arctangent and atan2">
