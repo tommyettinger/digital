@@ -2631,6 +2631,42 @@ public final class TrigTools {
         if(x < 0f) z = 180f - z;
         return y <= 0f ? z : 360f - z;
     }
+
+    /**
+     * A faster approximation of {@link #atan2Deg360(float, float)} that is almost as precise as
+     * {@link #atan2Deg360Precise(float, float)} but is only defined for finite input arguments.
+     * The atan2Deg360() function takes y first, then x, and returns the angle in degrees from
+     * the origin to the given point. This returns a float from 0.0 to 360.0, counterclockwise
+     * when y points up.
+     * <br>
+     * This is both faster and more precise than {@link #atan2Deg(float, float)}, but can't be
+     * used as an all-purpose replacement for Math.atan2() because it returns NaN when given
+     * infinite arguments (or NaN). In the undefined case where {@code y == 0f && x == 0f},
+     * this returns 0.0; this differs from Math.atan2(), which returns
+     * {@link Math#PI} (in radians) when y is 0.0 and x is -0.0.
+     * <br>
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * Uses the "Sheet 13" algorithm from "Approximations for Digital Computers," by RAND Corporation (1955)
+     * for its atan() approximation over the {@code (0,1]} domain.
+     *
+     * @param y any finite float; note the unusual argument order (y is first here!)
+     * @param x any finite float; note the unusual argument order (x is second here!)
+     * @return the angle in degrees from the origin to the given point, from 0 to 360
+     */
+    public static float atan2TurnsFinite(final float y, final float x)
+    {
+        if (y == 0f && x >= 0f) return 0f;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax/ay : ay/ax;
+        float s = z * z;
+        z *= (((((((-6.452233507864792E-4f * s + 0.003479322672037479f) * s - 0.008898334876790684f) * s + 0.015345726331929417f) * s - 0.022136118977856264f)
+                * s + 0.03174589869088148f) * s - 0.05304611397922089f) * s + 0.15915483874178302f);
+        if(invert) z = 0.25f - z;
+        if(x < 0f) z = 0.5f - z;
+        return y >= 0f ? z : 1f - z;
+    }
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Precise Arctangent and atan2">
     /**
