@@ -541,7 +541,16 @@ public class PrecisionTest {
      * Worst result  :    -128.4799652100
      * True result   :    -128.4798612406
      * Worst position:    -120.9208374023, -152.1280517578
-     * Took 12.885955000000001 s
+     * Took 8.3295837 s
+     *
+     * TrigTools.atan2DegFinite :
+     * Absolute error:       0.0000037723
+     * Relative error:       0.0000000302
+     * Maximum error :       0.0000157910
+     * Worst result  :    -135.0109863281
+     * True result   :    -135.0109705371
+     * Worst position:    -179.7797546387, -179.7109222412
+     * Took 14.991338 s
      *
      * Math.atan2 :
      * Absolute error:       0.0000032917
@@ -550,34 +559,35 @@ public class PrecisionTest {
      * Worst result  :    -146.8993225098
      * True result   :    -146.8993148804
      * Worst position:    -180.1916961670, -117.4685592651
-     * Took 9.168319700000001 s
+     * Took 19.8099883 s
      *
-     * PrecisionTest.atan2DegJolt (double) :
+     * TrigTools.atan2DegPrecise (double) :
      * Absolute error:       0.0000032940
      * Relative error:       0.0000000251
      * Maximum error :       0.0000080839
      * Worst result  :    -157.4992980957
      * True result   :    -157.4992900118
      * Worst position:    -174.9750061035,  -72.4795608521
-     * Took 18.8149783 s
+     * Took 25.926047200000003 s
      *
-     * PrecisionTest.atan2DegJolt (float) :
+     * TrigTools.atan2DegPrecise (float) :
      * Absolute error:       0.0000035482
      * Relative error:       0.0000000273
      * Maximum error :       0.0000126279
      * Worst result  :     152.8146362305
      * True result   :     152.8146236026
      * Worst position:    -172.0606842041,   88.3716735840
-     * Took 13.630663 s
+     * Took 16.646928300000003 s
      */
     @Test
-    @Ignore("This takes a really long time to run.")
+//    @Ignore("This takes a really long time to run.")
     public void testAtan2Deg() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2Deg", TrigTools::atan2Deg);
+        functions.put("TrigTools.atan2DegFinite", TrigTools::atan2DegFinite);
         functions.put("Math.atan2", (y, x) -> (float) Math.toDegrees(Math.atan2(y, x)));
-        functions.put("PrecisionTest.atan2DegJolt (double)", (y1, x1) -> (float)atan2DegJolt((double) y1, (double) x1));
-        functions.put("PrecisionTest.atan2DegJolt (float)", PrecisionTest::atan2DegJolt);
+        functions.put("TrigTools.atan2DegPrecise (double)", (y1, x1) -> (float)TrigTools.atan2DegPrecise((double) y1, (double) x1));
+        functions.put("TrigTools.atan2DegPrecise (float)", TrigTools::atan2DegPrecise);
 //        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
 //        functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
 //        functions.put("PrecisionTest.atan2Gilcher3", PrecisionTest::atan2Gilcher3);
