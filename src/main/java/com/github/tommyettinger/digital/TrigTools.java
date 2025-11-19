@@ -2667,6 +2667,149 @@ public final class TrigTools {
         if(x < 0f) z = 0.5f - z;
         return y >= 0f ? z : 1f - z;
     }
+    /**
+     * A faster approximation of {@link #atan2(double, double)} that is almost as precise as
+     * {@link #atan2Precise(double, double)} but is only defined for finite input arguments.
+     * The atan2() function takes y first, then x, and returns the angle in radians from
+     * the origin to the given point. If y is non-negative, this returns a double from 0.0
+     * to {@link #PI}, otherwise it returns a double from -0.0 to -PI.
+     * <br>
+     * This is both faster and more precise than {@link #atan2(double, double)}, but can't be
+     * used as an all-purpose replacement for Math.atan2() because it returns NaN when given
+     * infinite arguments (or NaN). In the undefined case where {@code y == 0.0 && x == 0.0},
+     * this returns y (which may be -0.0); this differs from Math.atan2(), which returns
+     * {@link Math#PI} when y is 0.0 and x is -0.0.
+     * <br>
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * Uses the "Sheet 13" algorithm from "Approximations for Digital Computers," by RAND Corporation (1955)
+     * for its atan() approximation over the {@code (0,1]} domain.
+     *
+     * @param y any finite double; note the unusual argument order (y is first here!)
+     * @param x any finite double; note the unusual argument order (x is second here!)
+     * @return the angle in radians from the origin to the given point
+     */
+    public static double atan2Finite(final double y, final double x)
+    {
+        if (y == 0.0 && x >= 0.0) return y;
+        double ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        double z = invert ? ax/ay : ay/ax;
+        double s = z * z;
+        z *= (((((((-0.004054058 * s + 0.0218612288) * s - 0.0559098861) * s + 0.0964200441) * s - 0.1390853351)
+                * s + 0.1994653599) * s - 0.3332985605) * s + 0.9999993329);
+        if(invert) z = HALF_PI_D - z;
+        if(x < 0.0) z = PI_D - z;
+        return Math.copySign(z, y);
+    }
+
+    /**
+     * A faster approximation of {@link #atan2Deg(double, double)} that is almost as precise as
+     * {@link #atan2DegPrecise(double, double)} but is only defined for finite input arguments.
+     * The atan2Deg() function takes y first, then x, and returns the angle in degrees from
+     * the origin to the given point. If y is non-negative, this returns a double from 0.0
+     * to 180.0 , otherwise it returns a double from -0.0 to -180.0 .
+     * <br>
+     * This is both faster and more precise than {@link #atan2Deg(double, double)}, but can't be
+     * used as an all-purpose replacement for Math.atan2() because it returns NaN when given
+     * infinite arguments (or NaN). In the undefined case where {@code y == 0.0 && x == 0.0},
+     * this returns y (which may be -0.0); this differs from Math.atan2(), which returns
+     * {@link Math#PI} (in radians) when y is 0.0 and x is -0.0.
+     * <br>
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * Uses the "Sheet 13" algorithm from "Approximations for Digital Computers," by RAND Corporation (1955)
+     * for its atan() approximation over the {@code (0,1]} domain.
+     *
+     * @param y any finite double; note the unusual argument order (y is first here!)
+     * @param x any finite double; note the unusual argument order (x is second here!)
+     * @return the angle in degrees from the origin to the given point
+     */
+    public static double atan2DegFinite(final double y, final double x)
+    {
+        if (y == 0.0 && x >= 0.0) return y;
+        double ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        double z = invert ? ax/ay : ay/ax;
+        double s = z * z;
+        z *= ((((((-0.2322804062831325 * s + 1.2525561619334924) * s - 3.2034005556446465) * s + 5.52446147949459) * s - 7.969002832028255)
+                * s + 11.428523528717331) * s - 19.09660103251952) * s + 57.29574194704188;
+        if(invert) z = 90.0 - z;
+        if(x < 0.0) z = 180.0 - z;
+        return Math.copySign(z, y);
+    }
+
+    /**
+     * A faster approximation of {@link #atan2Deg360(double, double)} that is almost as precise as
+     * {@link #atan2Deg360Precise(double, double)} but is only defined for finite input arguments.
+     * The atan2Deg360() function takes y first, then x, and returns the angle in degrees from
+     * the origin to the given point. This returns a double from 0.0 to 360.0, counterclockwise
+     * when y points up.
+     * <br>
+     * This is both faster and more precise than {@link #atan2Deg(double, double)}, but can't be
+     * used as an all-purpose replacement for Math.atan2() because it returns NaN when given
+     * infinite arguments (or NaN). In the undefined case where {@code y == 0.0 && x == 0.0},
+     * this returns 0.0; this differs from Math.atan2(), which returns
+     * {@link Math#PI} (in radians) when y is 0.0 and x is -0.0.
+     * <br>
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * Uses the "Sheet 13" algorithm from "Approximations for Digital Computers," by RAND Corporation (1955)
+     * for its atan() approximation over the {@code (0,1]} domain.
+     *
+     * @param y any finite double; note the unusual argument order (y is first here!)
+     * @param x any finite double; note the unusual argument order (x is second here!)
+     * @return the angle in degrees from the origin to the given point, from 0 to 360
+     */
+    public static double atan2Deg360Finite(final double y, final double x)
+    {
+        if (y == 0.0 && x >= 0.0) return 0.0;
+        double ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        double z = invert ? ax/ay : ay/ax;
+        double s = z * z;
+        z *= ((((((-0.2322804062831325 * s + 1.2525561619334924) * s - 3.2034005556446465) * s + 5.52446147949459) * s - 7.969002832028255)
+                * s + 11.428523528717331) * s - 19.09660103251952) * s + 57.29574194704188;
+        if(invert) z = 90.0 - z;
+        if(x < 0.0) z = 180.0 - z;
+        return y <= 0.0 ? z : 360.0 - z;
+    }
+
+    /**
+     * A faster approximation of {@link #atan2Deg360(double, double)} that is almost as precise as
+     * {@link #atan2Deg360Precise(double, double)} but is only defined for finite input arguments.
+     * The atan2Deg360() function takes y first, then x, and returns the angle in degrees from
+     * the origin to the given point. This returns a double from 0.0 to 360.0, counterclockwise
+     * when y points up.
+     * <br>
+     * This is both faster and more precise than {@link #atan2Deg(double, double)}, but can't be
+     * used as an all-purpose replacement for Math.atan2() because it returns NaN when given
+     * infinite arguments (or NaN). In the undefined case where {@code y == 0.0 && x == 0.0},
+     * this returns 0.0; this differs from Math.atan2(), which returns
+     * {@link Math#PI} (in radians) when y is 0.0 and x is -0.0.
+     * <br>
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * Uses the "Sheet 13" algorithm from "Approximations for Digital Computers," by RAND Corporation (1955)
+     * for its atan() approximation over the {@code (0,1]} domain.
+     *
+     * @param y any finite double; note the unusual argument order (y is first here!)
+     * @param x any finite double; note the unusual argument order (x is second here!)
+     * @return the angle in degrees from the origin to the given point, from 0 to 360
+     */
+    public static double atan2TurnsFinite(final double y, final double x)
+    {
+        if (y == 0.0 && x >= 0.0) return 0.0;
+        double ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        double z = invert ? ax/ay : ay/ax;
+        double s = z * z;
+        z *= (((((((-6.452233507864792E-4 * s + 0.003479322672037479) * s - 0.008898334876790684) * s + 0.015345726331929417) * s - 0.022136118977856264)
+                * s + 0.03174589869088148) * s - 0.05304611397922089) * s + 0.15915483874178302);
+        if(invert) z = 0.25 - z;
+        if(x < 0.0) z = 0.5 - z;
+        return y >= 0.0 ? z : 1.0 - z;
+    }
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Precise Arctangent and atan2">
     /**
