@@ -35,7 +35,7 @@ package com.github.tommyettinger.digital;
  * in-cache lookup table. Also available now are "precise" versions of all methods here, from {@link #sinPrecise(float)}
  * to {@link #atan2Deg360Precise(double, double)}. The "precise" versions all avoid a lookup table entirely and tend to
  * be the most precise approximations here, while still outperforming {@link Math} versions of their function. In a few
- * cases, the "precise" versions are also the fastest; this occurs most often for tan or atan2 variants, or situations
+ * cases, the "precise" versions are also the fastest; this occurs most often for tan variants, or situations
  * where a large lookup table is not possible for the processor to cache.
  * <br>
  * Relative to MathUtils in libGDX, the main new functionalities are the variants that take or
@@ -51,7 +51,7 @@ package com.github.tommyettinger.digital;
  * addition to the "xyzSmooth()" methods, there are also "smoother" variants: {@link #sinSmoother(float)},
  * {@link #cosSmoother(float)}, {@link #tanSmoother(float)}, degree/turn variants on those, and double variants on all
  * of these. {@link #sinSmoother(float)} and {@link #cosSmoother(float)} get the table indices for rounding up from the
- * given angle and for rounding down, and interpolate between the two in {@link #COS_TABLE} (or {@link #COS_TABLE_D}).
+ * given angle and for rounding down, and interpolate between the two in {@link #SIN_TABLE} (or {@link #COS_TABLE}).
  * Unlike {@link #sinSmoother(float)} and friends, {@link #tanSmoother(float)} uses both {@link #SIN_TABLE} and
  * {@link #COS_TABLE}, does interpolation like what {@link #sinSmoother(float)} does for both sine and cosine, and
  * divides to get the tangent. The "smoother" methods are all quite precise compared to the others here, and aren't
@@ -70,7 +70,10 @@ package com.github.tommyettinger.digital;
  * BumbleBench benchmarks showed sinSmoother() as always being faster. In both cases, the speed difference was small.
  * Like the "smooth" sin and cos, {@link #sinPrecise(float)} and {@link #cosPrecise(float)} are non-tabular, but are
  * more precise instead of less precise than {@link #sinSmoother(float)} and {@link #cosSmoother(float)}. They are
- * likely to perform slightly worse than the "smooth" variants but still better than Math's versions.
+ * likely to perform slightly worse than the "smooth" variants but still better than Math's versions. Because the
+ * "precise" methods don't use any platform-dependent methods to make their calculations, they are used to calculate the
+ * sin and cosine tables, ensuring that the tables are identical on all platforms, except potentially browsers
+ * translating Java to JavaScript (because floats may be implemented with doubles there).
  * <br>
  * For calculating tangent, {@link #tan(float)} is somewhat faster on Java 8 (using HotSpot) and some OpenJ9 versions,
  * but {@link #tanSmoother(float)} is faster on Java 11 and up, significantly so on Java 16 and up. However, tan() does
@@ -83,23 +86,31 @@ package com.github.tommyettinger.digital;
  * radians, and are accompanied by {@link #asinDeg(float)} for results in degrees, {@link #asinTurns(float)} for results
  * in turns, and acos versions of those as well. Like everything else here, there are "precise" variants on these, but
  * {@link #acosPrecise(float)} isn't quite as accurate as the other "precise" methods. All the "precise" asin and acos
- * methods still have substantially better absolute and relative error than the non-precise versions. We can't forget
- * about {@link #atan(float)}, of course, nor {@link #atan2(float, float)}! There are some more options for these
- * arctangent-related methods. {@link #atanUnchecked(double)} is used primarily by {@link #atan2(float, float)} and can
- * also be used when you are certain your inputs will be defined for the arctangent function (that is, not an odd
- * multiple of {@code 0.5 * Math.PI} for radians, or 90 degrees, or 0.25 turns). It is similar to
- * {@link #atanPrecise(float)} in that both don't return something meaningful when given an input that is out of the
- * domain for arctangent, but {@link #atan(float)} at least tries to give a better output, with dubious results.
+ * methods still have substantially better absolute and relative error than the non-precise versions.
+ * <br>
+ * We can't forget about {@link #atan(float)}, of course, nor {@link #atan2(float, float)}! There are some more options
+ * for these arctangent-related methods. {@link #atanUnchecked(double)} is used primarily by
+ * {@link #atan2(float, float)} and can also be used when you are certain your inputs will be defined for the arctangent
+ * function (that is, not an odd multiple of {@code 0.5 * Math.PI} for radians, or 90 degrees, or 0.25 turns). It is
+ * similar to {@link #atanPrecise(float)} in that both don't return something meaningful when given an input that is out
+ * of the domain for arctangent, but {@link #atan(float)} at least tries to give a better output, with dubious results.
  * {@link #atan2Deg360(float, float)} and its "precise" counterpart act like atan2 with results in degrees, but return
  * outputs in the range {@code [0, 360)} rather than the range of  {@link #atan2Deg(float, float)}, which is
  * {@code (-180,180]}. {@link #atan2Turns(float, float)} and its "precise" variant return results in the {@code [0, 1)}
  * range of turns, which can be often useful for angular values like the hue of a color when they must be in the 0-1
- * range, such as for passing to shaders. In this case, {@link #atan2Precise(float, float)} can be faster than the
- * "non-precise" variant, but this depends quite a bit on your circumstances. All atan2() code here avoids lookup
- * tables, but the "precise" versions also avoid casting between float and double. This speed advantage is countered by
- * the branching the "precise" version does; if branch prediction succeeds for a long span of calls and then suddenly
- * starts mispredicting often, then HotSpot may deoptimize parts of atan2Precise(), making it much slower. This is also
- * possible for atan2(), but is harder to cause there.
+ * range, such as for passing to shaders. There are also {@link #atan2Finite(float, float)} and other "Finite"
+ * variations on the existing methods; these approximations are faster and more accurate than the
+ * {@link #atan2(float, float)} family but less accurate than the {@link #atan2Precise(float, float)} family, and are
+ * only well-defined for finite y and x arguments (no infinite arguments and no NaN). If you know you won't be using any
+ * infinite point coordinates, atan2Finite() is the best option here unless you need the extreme precision (at some cost
+ * to speed) from atan2Precise().
+ * <br>
+ * In some cases, {@link #atan2Precise(float, float)} can be faster than the "non-precise, non-finite" variant, but this
+ * depends quite a bit on your circumstances. All atan2() code here avoids lookup tables, but the "precise" and "finite"
+ * versions also avoid casting between float and double. This speed advantage is countered by the branching the
+ * "precise" version does; if branch prediction succeeds for a long span of calls and then suddenly starts mispredicting
+ * often, then HotSpot may deoptimize parts of atan2Precise(), making it much slower. This is also possible for atan2()
+ * and atan2Finite(), but is harder to cause there.
  * <br>
  * In the common case where you have an angle and want to get both the sin() and cos() of that angle, you can use the
  * {@link #radiansToTableIndex(float)}, {@link #degreesToTableIndex(float)}, and/or {@link #turnsToTableIndex(float)}
@@ -123,7 +134,10 @@ package com.github.tommyettinger.digital;
  * "Smoother" and the standard approximations is that the "Smoother" ones use both the floor and the ceiling of a float
  * to get indices, while the standard approximations essentially round to the nearest index. The current technique of
  * looking up in a cosine table so that we can use the absolute value of an angle (since cos(x) is the same as cos(-x))
- * is something I hadn't seen before, but I'm sure is not novel. The "precise" methods are all drawn from
+ * is something I hadn't seen before, but I'm sure is not novel. The atan2Finite() family of methods is based on the
+ * very fast structure given by commenter "imuli" on
+ * <a href="https://www.dsprelated.com/showarticle/1052.php">Nic Taylor's DSP article</a>, but uses the last atan()
+ * Taylor series approximation from the aforementioned 1955 research study. The "precise" methods are all drawn from
  * <a href="https://github.com/jrouwe/JoltPhysics">Jolt Physics</a> and its Vector4 implementation, which is where that
  * library's trigonometry code ends up calling. Jolt uses SIMD optimization for its trigonometry and other math code,
  * which unfortunately has no cross-platform counterpart in Java at the time of writing (June 2025); the "precise"

@@ -145,7 +145,10 @@ using radians or degrees would not. There's also a few extra
 methods, such as `atan2Deg360()`, which acts like the degree
 version of atan2, but always returns an angle between 0
 (inclusive) and 360 (exclusive), since negative angles are
-less intuitive and sometimes not supported. For users
+less intuitive and sometimes not supported. An extra choice is
+available for approximations of atan2(): `atan2Finite()` is
+faster than atan2() and more precise, but only when its inputs
+are known to be finite (not infinite and not NaN). For users
 concerned about non-deterministic behavior of floating-point
 "special functions," TrigTools avoids calling `Math.sin()` and
 `Math.cos()` entirely, and any lookup tables it builds use the
