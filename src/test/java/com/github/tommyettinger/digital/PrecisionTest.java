@@ -244,9 +244,18 @@ public class PrecisionTest {
      * True result   :      -2.3971492373
      * Worst position:      -1.6544386148,   -1.5241860151
      * Took 106.74353350000001 s
+     *
+     * PrecisionTest.atan2imuliPade_5_5 :
+     * Absolute error:       0.0000000843
+     * Relative error:       0.0000002230
+     * Maximum error :       0.0000005893
+     * Worst result  :      -3.1415793896
+     * True result   :      -3.1415788003
+     * Worst position:      -1.6866022348,   -0.0000233650
+     * Took 119.18967850000001 s
      */
     @Test
-    @Ignore("This takes a really long time to run.")
+//    @Ignore("This takes a really long time to run.")
     public void testAtan2() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
 //        functions.put("TrigTools.atan2", TrigTools::atan2);
@@ -262,6 +271,7 @@ public class PrecisionTest {
 //        functions.put("PrecisionTest.atan2imuliSheet8", PrecisionTest::atan2imuliSheet8);
 //        functions.put("PrecisionTest.atan2imuliSheet11", PrecisionTest::atan2imuliSheet11);
         functions.put("PrecisionTest.atan2imuliSheet13", PrecisionTest::atan2imuliSheet13);
+        functions.put("PrecisionTest.atan2imuliPade_5_5", PrecisionTest::atan2imuliPade_5_5);
 //        functions.put("PrecisionTest.atan2imuliJolt", PrecisionTest::atan2imuliJolt);
 //        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
 //        functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
@@ -392,6 +402,27 @@ public class PrecisionTest {
         for (float y : parameters) {
             for(float x : parameters){
                 Assert.assertEquals("y="+y+",x="+x+" has too much error!", Math.atan2(y,x), atan2imuliSheet13(y, x), 0.000001f);
+            }
+        }
+    }
+    public static float atan2imuliPade_5_5(float y, float x)
+    {
+        if (y == 0f && x >= 0f) return y;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax/ay : ay/ax;
+        z = (-1.7111673530210537e-6f + z * (4.47002272968022f + z * (5.857208442190134f + z * (6.986140751913611f + z * (4.330825579653759f + 1.586346293963619f * z))))) / (4.469982847339875f + z * (5.857632933103833f + z * (8.473413379072138f + z * (6.2950257289874525f + z * (3.481989708404523f + z)))));
+        if(invert) z = HALF_PI - z;
+        if(x < 0) z = PI - z;
+        return Math.copySign(z, y);
+    }
+
+    @Test
+    public void testAtan2Pade_5_5() {
+        float[] parameters = {0f, PI, -PI, HALF_PI, -HALF_PI, PI2, -PI2, QUARTER_PI, -QUARTER_PI, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 1e10f, -1e10f, Float.MIN_NORMAL, -Float.MIN_NORMAL};
+        for (float y : parameters) {
+            for(float x : parameters){
+                Assert.assertEquals("y="+y+",x="+x+" has too much error!", Math.atan2(y,x), atan2imuliPade_5_5(y, x), 0.000001f);
             }
         }
     }
