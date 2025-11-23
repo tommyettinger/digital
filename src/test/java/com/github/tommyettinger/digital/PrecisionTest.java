@@ -216,7 +216,16 @@ public class PrecisionTest {
      * Worst result  :       2.9398293495
      * True result   :       2.9392198099
      * Worst position:      -1.5211402178,    0.3121099472
-     * Took 123.69115670000001 s
+     * Took 127.6526395 s
+     *
+     * PrecisionTest.atan2imuliSheet9 :
+     * Absolute error:       0.0000522947
+     * Relative error:       0.0000404193
+     * Maximum error :       0.0000817542
+     * Worst result  :      -2.3216633797
+     * True result   :      -2.3215816255
+     * Worst position:      -1.6751651764,   -1.7953372002
+     * Took 123.144854101 s
      *
      * PrecisionTest.atan2imuliSheet11 :
      * Absolute error:       0.0000010610
@@ -253,13 +262,22 @@ public class PrecisionTest {
      * True result   :      -3.1415788003
      * Worst position:      -1.6866022348,   -0.0000233650
      * Took 119.18967850000001 s
+     *
+     * PrecisionTest.atan2imuliSheet13Alt :
+     * Absolute error:       0.0000000734
+     * Relative error:       0.0000000418
+     * Maximum error :       0.0000003256
+     * Worst result  :      -2.3971495628
+     * True result   :      -2.3971492373
+     * Worst position:      -1.6544386148,   -1.5241860151
+     * Took 123.951977799 s
      */
     @Test
 //    @Ignore("This takes a really long time to run.")
     public void testAtan2() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
-//        functions.put("TrigTools.atan2", TrigTools::atan2);
-//        functions.put("TrigTools.atan2Precise", TrigTools::atan2Precise);
+        functions.put("TrigTools.atan2", TrigTools::atan2);
+        functions.put("TrigTools.atan2Precise", TrigTools::atan2Precise);
 //        functions.put("Math.atan2", (y, x) -> (float) Math.atan2(y, x));
 //        functions.put("GtMathUtils.atan2imuli", GtMathUtils::atan2imuli);
 //        functions.put("MathUtils.atan2", MathUtils::atan2);
@@ -267,11 +285,13 @@ public class PrecisionTest {
 //        functions.put("PrecisionTest.atan2Jolt (double)", (y1, x1) -> (float)atan2Jolt((double) y1, (double) x1));
 //        functions.put("PrecisionTest.atan2Jolt (float)", PrecisionTest::atan2Jolt);
 
-//        functions.put("PrecisionTest.atan2imuliOriginal", PrecisionTest::atan2imuliOriginal);
-//        functions.put("PrecisionTest.atan2imuliSheet8", PrecisionTest::atan2imuliSheet8);
-//        functions.put("PrecisionTest.atan2imuliSheet11", PrecisionTest::atan2imuliSheet11);
+        functions.put("PrecisionTest.atan2imuliOriginal", PrecisionTest::atan2imuliOriginal);
+        functions.put("PrecisionTest.atan2imuliSheet8", PrecisionTest::atan2imuliSheet8);
+        functions.put("PrecisionTest.atan2imuliSheet9", PrecisionTest::atan2imuliSheet9);
+        functions.put("PrecisionTest.atan2imuliSheet11", PrecisionTest::atan2imuliSheet11);
         functions.put("PrecisionTest.atan2imuliSheet13", PrecisionTest::atan2imuliSheet13);
-        functions.put("PrecisionTest.atan2imuliPade_5_5", PrecisionTest::atan2imuliPade_5_5);
+        functions.put("PrecisionTest.atan2imuliSheet13Alt", PrecisionTest::atan2imuliSheet13Alt);
+//        functions.put("PrecisionTest.atan2imuliPade_5_5", PrecisionTest::atan2imuliPade_5_5);
 //        functions.put("PrecisionTest.atan2imuliJolt", PrecisionTest::atan2imuliJolt);
 //        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
 //        functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
@@ -375,6 +395,33 @@ public class PrecisionTest {
         }
     }
 
+    public static float atan2imuliSheet9(float y, float x) {
+        float r;
+        if (y == 0f && x >= 0f) {
+            r = y;
+        } else {
+            float ay = Math.abs(y), ax = Math.abs(x);
+            boolean invert = ay > ax;
+            float z = invert ? ax / ay : ay / ax;
+            float s = z * z;
+            z *= (((-0.0389929f * s + 0.1462766f) * s - 0.3211819f) * s + 0.9992150f);
+            if (invert) z = HALF_PI - z;
+            if (x < 0) z = PI - z;
+            r = y < 0.0 ? -z : z;
+        }
+        return r;
+    }
+
+    @Test
+    public void testAtan2Sheet9() {
+        float[] parameters = {0f, PI, -PI, HALF_PI, -HALF_PI, PI2, -PI2, QUARTER_PI, -QUARTER_PI, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 1e10f, -1e10f, Float.MIN_NORMAL, -Float.MIN_NORMAL};
+        for (float y : parameters) {
+            for(float x : parameters){
+                Assert.assertEquals("y="+y+",x="+x+" has too much error!", Math.atan2(y,x), atan2imuliSheet9(y, x), 0.000082f);
+            }
+        }
+    }
+
     /**
      * Credit to imuli and Nic Taylor; imuli commented on
      * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
@@ -407,33 +454,6 @@ public class PrecisionTest {
         }
     }
 
-    public static float atan2imuliSheet9(float y, float x) {
-        float r;
-        if (y == 0f && x >= 0f) {
-            r = y;
-        } else {
-            float ay = Math.abs(y), ax = Math.abs(x);
-            boolean invert = ay > ax;
-            float z = invert ? ax / ay : ay / ax;
-            float s = z * z;
-            z *= (((-0.0389929f * s + 0.1462766f) * s - 0.3211819f) * s + 0.9992150f);
-            if (invert) z = HALF_PI - z;
-            if (x < 0) z = PI - z;
-            r = y < 0.0 ? -z : z;
-        }
-        return r;
-    }
-
-    @Test
-    public void testAtan2Sheet9() {
-        float[] parameters = {0f, PI, -PI, HALF_PI, -HALF_PI, PI2, -PI2, QUARTER_PI, -QUARTER_PI, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 1e10f, -1e10f, Float.MIN_NORMAL, -Float.MIN_NORMAL};
-        for (float y : parameters) {
-            for(float x : parameters){
-                Assert.assertEquals("y="+y+",x="+x+" has too much error!", Math.atan2(y,x), atan2imuliSheet9(y, x), 0.000082f);
-            }
-        }
-    }
-
     /**
      * Credit to imuli and Nic Taylor; imuli commented on
      * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
@@ -456,6 +476,36 @@ public class PrecisionTest {
         return Math.copySign(z, y);
     }
 
+    /**
+     * Credit to imuli and Nic Taylor; imuli commented on
+     * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
+     * Uses the "Sheet 13" algorithm from "Approximations for Digital Computers," by RAND Corporation (1955)
+     * for its atan() approximation over the {@code (0,1]} domain.
+     * Restructured to use a single return statement and avoid Math.copySign().
+     *
+     * @param y any finite float; note the unusual argument order (y is first here!)
+     * @param x any finite float; note the unusual argument order (x is second here!)
+     * @return the angle in radians from the origin to the given point
+     */
+
+    public static float atan2imuliSheet13Alt(float y, float x)
+    {
+        float r;
+        if (y == 0f && x >= 0f) {
+            r = y;
+        } else {
+            float ay = Math.abs(y), ax = Math.abs(x);
+            boolean invert = ay > ax;
+            float z = invert ? ax / ay : ay / ax;
+            float s = z * z;
+            z *= (((((((-0.004054058f * s + 0.0218612288f) * s - 0.0559098861f) * s + 0.0964200441f) * s - 0.1390853351f) * s + 0.1994653599f) * s - 0.3332985605f) * s + 0.9999993329f);
+            if (invert) z = HALF_PI - z;
+            if (x < 0) z = PI - z;
+            r = y < 0.0 ? -z : z;
+        }
+        return r;
+    }
+
     @Test
     public void testAtan2Sheet13() {
         float[] parameters = {0f, PI, -PI, HALF_PI, -HALF_PI, PI2, -PI2, QUARTER_PI, -QUARTER_PI, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 1e10f, -1e10f, Float.MIN_NORMAL, -Float.MIN_NORMAL};
@@ -465,6 +515,17 @@ public class PrecisionTest {
             }
         }
     }
+
+    @Test
+    public void testAtan2Sheet13Alt() {
+        float[] parameters = {0f, PI, -PI, HALF_PI, -HALF_PI, PI2, -PI2, QUARTER_PI, -QUARTER_PI, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 1e10f, -1e10f, Float.MIN_NORMAL, -Float.MIN_NORMAL};
+        for (float y : parameters) {
+            for(float x : parameters){
+                Assert.assertEquals("y="+y+",x="+x+" has too much error!", Math.atan2(y,x), atan2imuliSheet13Alt(y, x), 0.000001f);
+            }
+        }
+    }
+
     public static float atan2imuliPade_5_5(float y, float x)
     {
         if (y == 0f && x >= 0f) return y;
