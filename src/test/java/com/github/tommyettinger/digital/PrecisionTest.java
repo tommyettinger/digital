@@ -407,6 +407,33 @@ public class PrecisionTest {
         }
     }
 
+    public static float atan2imuliSheet9(float y, float x) {
+        float r;
+        if (y == 0f && x >= 0f) {
+            r = y;
+        } else {
+            float ay = Math.abs(y), ax = Math.abs(x);
+            boolean invert = ay > ax;
+            float z = invert ? ax / ay : ay / ax;
+            float s = z * z;
+            z *= (((-0.0389929f * s + 0.1462766f) * s - 0.3211819f) * s + 0.9992150f);
+            if (invert) z = HALF_PI - z;
+            if (x < 0) z = PI - z;
+            r = y < 0.0 ? -z : z;
+        }
+        return r;
+    }
+
+    @Test
+    public void testAtan2Sheet9() {
+        float[] parameters = {0f, PI, -PI, HALF_PI, -HALF_PI, PI2, -PI2, QUARTER_PI, -QUARTER_PI, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 1e10f, -1e10f, Float.MIN_NORMAL, -Float.MIN_NORMAL};
+        for (float y : parameters) {
+            for(float x : parameters){
+                Assert.assertEquals("y="+y+",x="+x+" has too much error!", Math.atan2(y,x), atan2imuliSheet9(y, x), 0.000082f);
+            }
+        }
+    }
+
     /**
      * Credit to imuli and Nic Taylor; imuli commented on
      * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
