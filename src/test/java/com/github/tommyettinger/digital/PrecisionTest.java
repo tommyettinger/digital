@@ -334,6 +334,17 @@ public class PrecisionTest {
         if(x < 0) z = 3.141592653589793f - z;
         return Math.copySign(z, y);
     }
+
+    @Test
+    public void testAtan2imuliOriginal() {
+        float[] parameters = {0f, PI, -PI, HALF_PI, -HALF_PI, PI2, -PI2, QUARTER_PI, -QUARTER_PI, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 1e10f, -1e10f, Float.MIN_NORMAL, -Float.MIN_NORMAL};
+        for (float y : parameters) {
+            for(float x : parameters){
+                Assert.assertEquals("y="+y+",x="+x+" has too much error!", Math.atan2(y,x), atan2imuliOriginal(y, x), 0.000243f);
+            }
+        }
+    }
+
     /**
      * Credit to imuli and Nic Taylor; imuli commented on
      * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
@@ -348,11 +359,22 @@ public class PrecisionTest {
         boolean invert = ay > ax;
         float z = invert ? ax/ay : ay/ax;
         float s = z * z;
-        z = ((0.079331f * s - 0.288679f) * s + 0.995354f) * z;
+        z *= ((0.079331f * s - 0.288679f) * s + 0.995354f);
         if(invert) z = HALF_PI - z;
         if(x < 0) z = PI - z;
         return Math.copySign(z, y);
     }
+
+    @Test
+    public void testAtan2Sheet8() {
+        float[] parameters = {0f, PI, -PI, HALF_PI, -HALF_PI, PI2, -PI2, QUARTER_PI, -QUARTER_PI, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 1e10f, -1e10f, Float.MIN_NORMAL, -Float.MIN_NORMAL};
+        for (float y : parameters) {
+            for(float x : parameters){
+                Assert.assertEquals("y="+y+",x="+x+" has too much error!", Math.atan2(y,x), atan2imuliSheet8(y, x), 0.000610f);
+            }
+        }
+    }
+
     /**
      * Credit to imuli and Nic Taylor; imuli commented on
      * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
@@ -369,11 +391,22 @@ public class PrecisionTest {
         boolean invert = ay > ax;
         float z = invert ? ax/ay : ay/ax;
         float s = z * z;
-        z = (((((-0.0117212f * s + 0.05265332f) * s - 0.11643287f) * s + 0.19354346f) * s - 0.33262347f) * s + 0.99997726f) * z;
+        z *= (((((-0.0117212f * s + 0.05265332f) * s - 0.11643287f) * s + 0.19354346f) * s - 0.33262347f) * s + 0.99997726f);
         if(invert) z = HALF_PI - z;
         if(x < 0) z = PI - z;
         return Math.copySign(z, y);
     }
+
+    @Test
+    public void testAtan2Sheet11() {
+        float[] parameters = {0f, PI, -PI, HALF_PI, -HALF_PI, PI2, -PI2, QUARTER_PI, -QUARTER_PI, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7, 8, -8, 1e10f, -1e10f, Float.MIN_NORMAL, -Float.MIN_NORMAL};
+        for (float y : parameters) {
+            for(float x : parameters){
+                Assert.assertEquals("y="+y+",x="+x+" has too much error!", Math.atan2(y,x), atan2imuliSheet11(y, x), 0.000002f);
+            }
+        }
+    }
+
     /**
      * Credit to imuli and Nic Taylor; imuli commented on
      * <a href="https://www.dsprelated.com/showarticle/1052.php">Taylor's article</a> with very useful info.
@@ -390,7 +423,7 @@ public class PrecisionTest {
         boolean invert = ay > ax;
         float z = invert ? ax/ay : ay/ax;
         float s = z * z;
-        z = (((((((-0.004054058f * s + 0.0218612288f) * s - 0.0559098861f) * s + 0.0964200441f) * s - 0.1390853351f) * s + 0.1994653599f) * s - 0.3332985605f) * s + 0.9999993329f) * z;
+        z *= (((((((-0.004054058f * s + 0.0218612288f) * s - 0.0559098861f) * s + 0.0964200441f) * s - 0.1390853351f) * s + 0.1994653599f) * s - 0.3332985605f) * s + 0.9999993329f);
         if(invert) z = HALF_PI - z;
         if(x < 0) z = PI - z;
         return Math.copySign(z, y);
