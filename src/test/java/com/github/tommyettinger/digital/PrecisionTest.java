@@ -273,7 +273,7 @@ public class PrecisionTest {
      * Took 123.951977799 s
      */
     @Test
-//    @Ignore("This takes a really long time to run.")
+    @Ignore("This takes a really long time to run.")
     public void testAtan2() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2", TrigTools::atan2);
@@ -732,7 +732,7 @@ public class PrecisionTest {
      * Took 16.646928300000003 s
      */
     @Test
-//    @Ignore("This takes a really long time to run.")
+    @Ignore("This takes a really long time to run.")
     public void testAtan2Deg() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2Deg", TrigTools::atan2Deg);
@@ -830,7 +830,7 @@ public class PrecisionTest {
      * Took 4.7469737 s
      */
     @Test
-//    @Ignore("This takes a really long time to run.")
+    @Ignore("This takes a really long time to run.")
     public void testAtan2Turns() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2Turns", TrigTools::atan2Turns);
@@ -917,7 +917,7 @@ public class PrecisionTest {
      * Took 4.4662043 s
      */
     @Test
-//    @Ignore
+    @Ignore("This takes a really long time to run.")
     public void testAtan2Deg360(){
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2Deg360", TrigTools::atan2Deg360);
