@@ -732,13 +732,13 @@ public class PrecisionTest {
      * Took 16.646928300000003 s
      */
     @Test
-    @Ignore("This takes a really long time to run.")
+//    @Ignore("This takes a really long time to run.")
     public void testAtan2Deg() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2Deg", TrigTools::atan2Deg);
         functions.put("TrigTools.atan2DegFinite", TrigTools::atan2DegFinite);
         functions.put("Math.atan2", (y, x) -> (float) Math.toDegrees(Math.atan2(y, x)));
-        functions.put("TrigTools.atan2DegPrecise (double)", (y1, x1) -> (float)TrigTools.atan2DegPrecise((double) y1, (double) x1));
+//        functions.put("TrigTools.atan2DegPrecise (double)", (y1, x1) -> (float)TrigTools.atan2DegPrecise((double) y1, (double) x1));
         functions.put("TrigTools.atan2DegPrecise (float)", TrigTools::atan2DegPrecise);
 //        functions.put("PrecisionTest.atan2Gilcher", PrecisionTest::atan2Gilcher);
 //        functions.put("PrecisionTest.atan2Gilcher2", PrecisionTest::atan2Gilcher2);
@@ -830,7 +830,7 @@ public class PrecisionTest {
      * Took 4.7469737 s
      */
     @Test
-    @Ignore("This takes a really long time to run.")
+//    @Ignore("This takes a really long time to run.")
     public void testAtan2Turns() {
         LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
         functions.put("TrigTools.atan2Turns", TrigTools::atan2Turns);
@@ -840,7 +840,7 @@ public class PrecisionTest {
             if(tru < 0.0) return (float) (tru + 1.0);
             else return (float) tru;
         });
-        functions.put("TrigTools.atan2TurnsPrecise (double)", (y1, x1) -> (float)TrigTools.atan2TurnsPrecise((double) y1, (double) x1));
+//        functions.put("TrigTools.atan2TurnsPrecise (double)", (y1, x1) -> (float)TrigTools.atan2TurnsPrecise((double) y1, (double) x1));
         functions.put("TrigTools.atan2TurnsPrecise (float)", TrigTools::atan2TurnsPrecise);
         for (Map.Entry<String, FloatBinaryOperator> entry : functions.entrySet()) {
             FloatBinaryOperator func = entry.getValue();

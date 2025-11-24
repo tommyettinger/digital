@@ -2560,22 +2560,17 @@ public final class TrigTools {
      * @param x any finite float; note the unusual argument order (x is second here!)
      * @return the angle in radians from the origin to the given point
      */
-    public static float atan2Finite(final float y, final float x)
-    {
-        float r;
-        if (y == 0f && x >= 0f) {
-            r = y;
-        } else {
-            float ay = Math.abs(y), ax = Math.abs(x);
-            boolean invert = ay > ax;
-            float z = invert ? ax / ay : ay / ax;
-            float s = z * z;
-            z *= (((((((-0.004054058f * s + 0.0218612288f) * s - 0.0559098861f) * s + 0.0964200441f) * s - 0.1390853351f) * s + 0.1994653599f) * s - 0.3332985605f) * s + 0.9999993329f);
-            if (invert) z = HALF_PI - z;
-            if (x < 0f) z = PI - z;
-            r = y < 0f ? -z : z;
-        }
-        return r;
+    public static float atan2Finite(final float y, final float x) {
+        if (y == 0f && x >= 0f) return y;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax / ay : ay / ax;
+        float s = z * z;
+        z *= (((((((-0.004054058f * s + 0.0218612288f) * s - 0.0559098861f) * s + 0.0964200441f)
+                * s - 0.1390853351f) * s + 0.1994653599f) * s - 0.3332985605f) * s + 0.9999993329f);
+        if (invert) z = HALF_PI - z;
+        if (x < 0f) z = PI - z;
+        return y < 0f ? -z : z;
     }
 
     /**
@@ -2600,23 +2595,17 @@ public final class TrigTools {
      * @param x any finite float; note the unusual argument order (x is second here!)
      * @return the angle in degrees from the origin to the given point
      */
-    public static float atan2DegFinite(final float y, final float x)
-    {
-        float r;
-        if (y == 0f && x >= 0f) {
-            r = y;
-        } else {
-            float ay = Math.abs(y), ax = Math.abs(x);
-            boolean invert = ay > ax;
-            float z = invert ? ax / ay : ay / ax;
-            float s = z * z;
-            z *= ((((((-0.2322804062831325f * s + 1.2525561619334924f) * s - 3.2034005556446465f) * s + 5.52446147949459f) * s - 7.969002832028255f)
-                    * s + 11.428523528717331f) * s - 19.09660103251952f) * s + 57.29574194704188f;
-            if(invert) z = 90f - z;
-            if(x < 0f) z = 180f - z;
-            r = y < 0f ? -z : z;
-        }
-        return r;
+    public static float atan2DegFinite(final float y, final float x) {
+        if (y == 0f && x >= 0f) return y;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax / ay : ay / ax;
+        float s = z * z;
+        z *= ((((((-0.2322804062831325f * s + 1.2525561619334924f) * s - 3.2034005556446465f) * s + 5.52446147949459f)
+                * s - 7.969002832028255f) * s + 11.428523528717331f) * s - 19.09660103251952f) * s + 57.29574194704188f;
+        if (invert) z = 90f - z;
+        if (x < 0f) z = 180f - z;
+        return y < 0f ? -z : z;
     }
 
     /**
@@ -2641,23 +2630,17 @@ public final class TrigTools {
      * @param x any finite float; note the unusual argument order (x is second here!)
      * @return the angle in degrees from the origin to the given point, from 0 to 360
      */
-    public static float atan2Deg360Finite(final float y, final float x)
-    {
-        float r;
-        if (y == 0f && x >= 0f) {
-            r = y;
-        } else {
-            float ay = Math.abs(y), ax = Math.abs(x);
-            boolean invert = ay > ax;
-            float z = invert ? ax / ay : ay / ax;
-            float s = z * z;
-            z *= ((((((-0.2322804062831325f * s + 1.2525561619334924f) * s - 3.2034005556446465f) * s + 5.52446147949459f) * s - 7.969002832028255f)
-                    * s + 11.428523528717331f) * s - 19.09660103251952f) * s + 57.29574194704188f;
-            if(invert) z = 90f - z;
-            if(x < 0f) z = 180f - z;
-            r = y < 0f ? 360f - z : z;
-        }
-        return r;
+    public static float atan2Deg360Finite(final float y, final float x) {
+        if (y == 0f && x >= 0f) return 0f;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax / ay : ay / ax;
+        float s = z * z;
+        z *= ((((((-0.2322804062831325f * s + 1.2525561619334924f) * s - 3.2034005556446465f) * s + 5.52446147949459f) * s - 7.969002832028255f)
+                * s + 11.428523528717331f) * s - 19.09660103251952f) * s + 57.29574194704188f;
+        if (invert) z = 90f - z;
+        if (x < 0f) z = 180f - z;
+        return y < 0f ? 360f - z : z;
     }
 
     /**
@@ -2682,23 +2665,17 @@ public final class TrigTools {
      * @param x any finite float; note the unusual argument order (x is second here!)
      * @return the angle in degrees from the origin to the given point, from 0 to 360
      */
-    public static float atan2TurnsFinite(final float y, final float x)
-    {
-        float r;
-        if (y == 0f && x >= 0f) {
-            r = y;
-        } else {
-            float ay = Math.abs(y), ax = Math.abs(x);
-            boolean invert = ay > ax;
-            float z = invert ? ax / ay : ay / ax;
-            float s = z * z;
-            z *= (((((((-6.452233507864792E-4f * s + 0.003479322672037479f) * s - 0.008898334876790684f) * s + 0.015345726331929417f) * s - 0.022136118977856264f)
-                    * s + 0.03174589869088148f) * s - 0.05304611397922089f) * s + 0.15915483874178302f);
-            if(invert) z = 0.25f - z;
-            if(x < 0f) z = 0.5f - z;
-            r = y < 0f ? 1f - z : z;
-        }
-        return r;
+    public static float atan2TurnsFinite(final float y, final float x) {
+        if (y == 0f && x >= 0f) return 0f;
+        float ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        float z = invert ? ax / ay : ay / ax;
+        float s = z * z;
+        z *= (((((((-6.452233507864792E-4f * s + 0.003479322672037479f) * s - 0.008898334876790684f) * s + 0.015345726331929417f) * s - 0.022136118977856264f)
+                * s + 0.03174589869088148f) * s - 0.05304611397922089f) * s + 0.15915483874178302f);
+        if (invert) z = 0.25f - z;
+        if (x < 0f) z = 0.5f - z;
+        return y < 0f ? 1f - z : z;
     }
 
     /**
