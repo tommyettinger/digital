@@ -2702,20 +2702,16 @@ public final class TrigTools {
      */
     public static double atan2Finite(final double y, final double x)
     {
-        double r;
-        if (y == 0d && x >= 0d) {
-            r = y;
-        } else {
-            double ay = Math.abs(y), ax = Math.abs(x);
-            boolean invert = ay > ax;
-            double z = invert ? ax / ay : ay / ax;
-            double s = z * z;
-            z *= (((((((-0.004054058d * s + 0.0218612288d) * s - 0.0559098861d) * s + 0.0964200441d) * s - 0.1390853351d) * s + 0.1994653599d) * s - 0.3332985605d) * s + 0.9999993329d);
-            if (invert) z = HALF_PI - z;
-            if (x < 0d) z = PI - z;
-            r = y < 0d ? -z : z;
-        }
-        return r;
+        if (y == 0d && x >= 0d) return y;
+        double ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        double z = invert ? ax / ay : ay / ax;
+        double s = z * z;
+        z *= (((((((-0.004054058d * s + 0.0218612288d) * s - 0.0559098861d) * s + 0.0964200441d)
+                * s - 0.1390853351d) * s + 0.1994653599d) * s - 0.3332985605d) * s + 0.9999993329d);
+        if (invert) z = HALF_PI - z;
+        if (x < 0d) z = PI - z;
+        return y < 0d ? -z : z;
     }
 
     /**
@@ -2742,21 +2738,16 @@ public final class TrigTools {
      */
     public static double atan2DegFinite(final double y, final double x)
     {
-        double r;
-        if (y == 0d && x >= 0d) {
-            r = y;
-        } else {
-            double ay = Math.abs(y), ax = Math.abs(x);
-            boolean invert = ay > ax;
-            double z = invert ? ax / ay : ay / ax;
-            double s = z * z;
-            z *= ((((((-0.2322804062831325d * s + 1.2525561619334924d) * s - 3.2034005556446465d) * s + 5.52446147949459d) * s - 7.969002832028255d)
-                    * s + 11.428523528717331d) * s - 19.09660103251952d) * s + 57.29574194704188d;
-            if(invert) z = 90d - z;
-            if(x < 0d) z = 180d - z;
-            r = y < 0d ? -z : z;
-        }
-        return r;
+        if (y == 0d && x >= 0d) return y;
+        double ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        double z = invert ? ax / ay : ay / ax;
+        double s = z * z;
+        z *= ((((((-0.2322804062831325d * s + 1.2525561619334924d) * s - 3.2034005556446465d) * s + 5.52446147949459d)
+                * s - 7.969002832028255d) * s + 11.428523528717331d) * s - 19.09660103251952d) * s + 57.29574194704188d;
+        if (invert) z = 90d - z;
+        if (x < 0d) z = 180d - z;
+        return y < 0d ? -z : z;
     }
 
     /**
@@ -2783,21 +2774,16 @@ public final class TrigTools {
      */
     public static double atan2Deg360Finite(final double y, final double x)
     {
-        double r;
-        if (y == 0d && x >= 0d) {
-            r = y;
-        } else {
-            double ay = Math.abs(y), ax = Math.abs(x);
-            boolean invert = ay > ax;
-            double z = invert ? ax / ay : ay / ax;
-            double s = z * z;
-            z *= ((((((-0.2322804062831325d * s + 1.2525561619334924d) * s - 3.2034005556446465d) * s + 5.52446147949459d) * s - 7.969002832028255d)
-                    * s + 11.428523528717331d) * s - 19.09660103251952d) * s + 57.29574194704188d;
-            if(invert) z = 90d - z;
-            if(x < 0d) z = 180d - z;
-            r = y < 0d ? 360d - z : z;
-        }
-        return r;
+        if (y == 0d && x >= 0d) return 0d;
+        double ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        double z = invert ? ax / ay : ay / ax;
+        double s = z * z;
+        z *= ((((((-0.2322804062831325d * s + 1.2525561619334924d) * s - 3.2034005556446465d) * s + 5.52446147949459d) * s - 7.969002832028255d)
+                * s + 11.428523528717331d) * s - 19.09660103251952d) * s + 57.29574194704188d;
+        if (invert) z = 90d - z;
+        if (x < 0d) z = 180d - z;
+        return y < 0d ? 360d - z : z;
     }
 
     /**
@@ -2824,21 +2810,16 @@ public final class TrigTools {
      */
     public static double atan2TurnsFinite(final double y, final double x)
     {
-        double r;
-        if (y == 0d && x >= 0d) {
-            r = y;
-        } else {
-            double ay = Math.abs(y), ax = Math.abs(x);
-            boolean invert = ay > ax;
-            double z = invert ? ax / ay : ay / ax;
-            double s = z * z;
-            z *= (((((((-6.452233507864792E-4d * s + 0.003479322672037479d) * s - 0.008898334876790684d) * s + 0.015345726331929417d) * s - 0.022136118977856264d)
-                    * s + 0.03174589869088148d) * s - 0.05304611397922089d) * s + 0.15915483874178302d);
-            if(invert) z = 0.25d - z;
-            if(x < 0d) z = 0.5d - z;
-            r = y < 0d ? 1d - z : z;
-        }
-        return r;
+        if (y == 0d && x >= 0d) return 0d;
+        double ay = Math.abs(y), ax = Math.abs(x);
+        boolean invert = ay > ax;
+        double z = invert ? ax / ay : ay / ax;
+        double s = z * z;
+        z *= (((((((-6.452233507864792E-4d * s + 0.003479322672037479d) * s - 0.008898334876790684d) * s + 0.015345726331929417d) * s - 0.022136118977856264d)
+                * s + 0.03174589869088148d) * s - 0.05304611397922089d) * s + 0.15915483874178302d);
+        if (invert) z = 0.25d - z;
+        if (x < 0d) z = 0.5d - z;
+        return y < 0d ? 1d - z : z;
     }
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Precise Arctangent and atan2">
