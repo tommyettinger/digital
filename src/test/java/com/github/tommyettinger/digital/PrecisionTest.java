@@ -879,34 +879,91 @@ public class PrecisionTest {
         }
     }
 
+    /**
+     * TrigTools.atan2Deg360 :
+     * Absolute error:       0.0000604463
+     * Relative error:       0.0000016167
+     * Maximum error :       0.0001117769
+     * Worst result  :     296.2554626465
+     * True result   :     296.2555744233
+     * Worst position:       0.1586232185,   -0.3215771914
+     * Took 5.7292854 s
+     *
+     * TrigTools.atan2Deg360Finite :
+     * Absolute error:       0.0000045060
+     * Relative error:       0.0000000371
+     * Maximum error :       0.0000235074
+     * Worst result  :     293.7528076172
+     * True result   :     293.7528311246
+     * Worst position:       0.0751683712,   -0.1708102226
+     * Took 5.295152600000001 s
+     *
+     * Math.atan2 :
+     * Absolute error:       0.0000039951
+     * Relative error:       0.0000000219
+     * Maximum error :       0.0000152588
+     * Worst result  :     315.9330139160
+     * True result   :     315.9330291748
+     * Worst position:       0.1595369577,   -0.1544238329
+     * Took 5.587539700000001 s
+     *
+     * TrigTools.atan2Deg360Precise (float) :
+     * Absolute error:       0.0000042526
+     * Relative error:       0.0000000249
+     * Maximum error :       0.0000230836
+     * Worst result  :     295.8872680664
+     * True result   :     295.8872911500
+     * Worst position:       0.1398611069,   -0.2881952524
+     * Took 4.4662043 s
+     */
     @Test
-    @Ignore
+//    @Ignore
     public void testAtan2Deg360(){
-        double absError = 0.0, relError = 0.0, maxError = 0.0;
-        float worstY = 0, worstX = 0;
-        long counter = 0L;
-        for (int i = Float.floatToIntBits(1f), n = Float.floatToIntBits(2f); i < n; i+=511) {
-            float x = Float.intBitsToFloat(i) - 1.5f;
-            for (int j = Float.floatToIntBits(1f); j < n; j+=511) {
-                float y = Float.intBitsToFloat(j) - 1.5f;
-                double tru = Math.toDegrees(Math.atan2(y, x));
-                if(tru < 0.0) tru += 360.0;
-                double err = TrigTools.atan2Deg360(y, x) - tru,
-                        ae = abs(err);
-            relError += Math.abs(ae / Math.nextAfter(tru, Math.copySign(Float.POSITIVE_INFINITY, tru)));
-
-                absError += ae;
-                if(maxError != (maxError = Math.max(maxError, ae))){
-                    worstX = x;
-                    worstY = y;
+        LinkedHashMap<String, FloatBinaryOperator> functions = new LinkedHashMap<>(8);
+        functions.put("TrigTools.atan2Deg360", TrigTools::atan2Deg360);
+        functions.put("TrigTools.atan2Deg360Finite", TrigTools::atan2Deg360Finite);
+        functions.put("Math.atan2", (y, x) -> {
+            double tru = Math.toDegrees(Math.atan2(y, x));
+            if(tru < 0.0) return (float) (tru + 360.0);
+            else return (float) tru;
+        });
+//        functions.put("TrigTools.atan2TurnsPrecise (double)", (y1, x1) -> (float)TrigTools.atan2TurnsPrecise((double) y1, (double) x1));
+        functions.put("TrigTools.atan2Deg360Precise (float)", TrigTools::atan2Deg360Precise);
+        for (Map.Entry<String, FloatBinaryOperator> entry : functions.entrySet()) {
+            FloatBinaryOperator func = entry.getValue();
+            double absError = 0.0, relError = 0.0, maxError = 0.0, shouldBe = 0.0, worstResult = 0.0;
+            float worstY = 0, worstX = 0;
+            long counter = 0L;
+            long time = System.nanoTime();
+            for (int i = Float.floatToIntBits(1f), n = Float.floatToIntBits(2f); i < n; i+=511) {
+                float x = Float.intBitsToFloat(i) - 1.5f;
+                for (int j = Float.floatToIntBits(1f); j < n; j+=511) {
+                    float y = Float.intBitsToFloat(j) - 1.5f;
+                    double tru = Math.toDegrees(Math.atan2(y, x));
+                    if(tru < 0.0) tru += 360.0;
+                    double result = func.applyAsFloat(y, x),
+                            err = result - tru,
+                            ae = abs(err);
+                    relError += Math.abs(ae / Math.nextAfter(tru, Math.copySign(Float.POSITIVE_INFINITY, tru)));
+                    absError += ae;
+                    if (maxError != (maxError = Math.max(maxError, ae))) {
+                        worstX = x;
+                        worstY = y;
+                        worstResult = result;
+                        shouldBe = tru;
+                    }
+                    counter++;
                 }
-                counter++;
             }
+            System.out.printf("\n%s :\n" +
+                    "Absolute error:   %16.10f\n" +
+                    "Relative error:   %16.10f\n" +
+                    "Maximum error :   %16.10f\n" +
+                    "Worst result  :   %16.10f\n" +
+                    "True result   :   %16.10f\n" +
+                    "Worst position:   %16.10f,%16.10f\n", entry.getKey(), absError / counter, relError / counter, maxError, worstResult, shouldBe, worstX, worstY);
+            System.out.println("Took " + (System.nanoTime() - time) * 1E-9 + " s");
         }
-        System.out.printf("Absolute error:   %3.8f\n" +
-                          "Relative error:   %3.8f\n" +
-                          "Maximum error:    %3.8f\n" +
-                          "Worst position:   %3.8f,%3.8f\n", absError / counter, relError / counter, maxError, worstX, worstY);
     }
 
     @Test
