@@ -65,12 +65,12 @@ package com.github.tommyettinger.digital;
  * in-cache) by using {@link #sinSmooth(float)} and {@link #cosSmooth(float)}; these should perform the same regardless
  * of whether the table is in cache, so they may even have an edge over sin() and cos() if the table isn't.
  * Accuracy improves even further if you use {@link #sinSmoother(float)} and {@link #cosSmoother(float)}, but these are
- * definitely slower than sin() and cos(), since they do more work. Benchmarks gave conflicting information regarding
+ * definitely slower than TrigTools' sin() and cos(), since they do more work. Benchmarks conflicted regarding
  * whether sinSmooth() or sinSmoother() is faster; JMH benchmarks showed sinSmooth() as always being faster, while
  * BumbleBench benchmarks showed sinSmoother() as always being faster. In both cases, the speed difference was small.
  * Like the "smooth" sin and cos, {@link #sinPrecise(float)} and {@link #cosPrecise(float)} are non-tabular, but are
  * more precise instead of less precise than {@link #sinSmoother(float)} and {@link #cosSmoother(float)}. They are
- * likely to perform slightly worse than the "smooth" variants but still better than Math's versions. Because the
+ * likely to perform slightly worse than the other variants but still better than Math's versions. Because the
  * "precise" methods don't use any platform-dependent methods to make their calculations, they are used to calculate the
  * sin and cosine tables, ensuring that the tables are identical on all platforms, except potentially browsers
  * translating Java to JavaScript (because floats may be implemented with doubles there).
@@ -119,6 +119,21 @@ package com.github.tommyettinger.digital;
  * of sin(). That index can be used both to look up the sine, with {@code SIN_TABLE[radiansToTableIndex(angle)]}, and
  * the cosine, with {@code COS_TABLE[radiansToTableIndex(angle)]}. Unlike in the example snippets, you should usually
  * just call radiansToTableIndex() once and use its result in both places.
+ * <br>
+ * Because tracking which methods to use when isn't exactly straightforward, here's a table for which versions are the
+ * best at which things. Highest Speed has the fastest function, regardless of quality. Highest Quality is always a
+ * "Precise" method, which are faster than {@link Math} functions but not 100% perfect quality. Compromise is a guess
+ * at which method offers the best mix of both quality and speed, when both are needed.
+ * <table>
+ *     <tr><th>Trigonometry Function</th><th>Highest Speed</th><th>Highest Quality</th><th>Compromise</th></tr>
+ *     <tr><td>sin()</td><td>{@link #sin(float)}</td><td>{@link #sinPrecise(float)}</td><td>{@link #sinSmoother(float)}</td></tr>
+ *     <tr><td>cos()</td><td>{@link #cos(float)}</td><td>{@link #cosPrecise(float)}</td><td>{@link #cosSmoother(float)}</td></tr>
+ *     <tr><td>tan()</td><td>{@link #tanSmoother(float)}</td><td>{@link #tanPrecise(float)}</td><td>{@link #tanSmoother(float)}</td></tr>
+ *     <tr><td>asin()</td><td>{@link #asin(float)}</td><td>{@link #asinPrecise(float)}</td><td>{@link #asin(float)}</td></tr>
+ *     <tr><td>acos()</td><td>{@link #acos(float)}</td><td>{@link #acosPrecise(float)}</td><td>{@link #acos(float)}</td></tr>
+ *     <tr><td>atan()</td><td>{@link #atan(float)}</td><td>{@link #atanPrecise(float)}</td><td>{@link #atan(float)}</td></tr>
+ *     <tr><td>atan2()</td><td>{@link #atan2Finite(float, float)}</td><td>{@link #atan2Precise(float, float)}</td><td>{@link #atan2Finite(float, float)}</td></tr>
+ * </table>
  * <br>
  * MathUtils had its sin and cos methods created by Riven on JavaGaming.org . The versions of sin and cos here,
  * including the way the lookup table is calculated, have been updated several times by Tommy Ettinger. The asin(),
