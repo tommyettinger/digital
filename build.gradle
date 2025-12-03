@@ -2,7 +2,7 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
         gradlePluginPortal()
     }
     dependencies {
@@ -14,8 +14,8 @@ apply plugin: 'java-library'
 apply plugin: 'com.vanniktech.maven.publish'
 
 def projectName = 'digital'
-group 'com.github.tommyettinger'
-version "$VERSION_NAME"
+group = 'com.github.tommyettinger'
+version = "$VERSION_NAME"
 
 import com.vanniktech.maven.publish.JavaLibrary
 import com.vanniktech.maven.publish.JavadocJar
@@ -76,24 +76,21 @@ repositories {
     // You can uncomment mavenLocal() if you need self-built versions, but it can be a problem with GWT or other sources dependencies.
     mavenLocal()
     mavenCentral()
-//    maven { url 'https://s01.oss.sonatype.org' }
     google()
-//    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-//    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     // JitPack is a good repo to have if you depend on commit versions.
     // Having the below repo might cause problems if uploading to Maven Central.
-    //maven { url 'https://jitpack.io' }
+    //maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
     //noinspection GDXOutdatedVersionGradleGroovy
-    testImplementation "com.badlogicgames.gdx:gdx:1.13.1"
+    testImplementation "com.badlogicgames.gdx:gdx:1.14.0"
     testImplementation "junit:junit:4.13.2"
     // don't require audio if a test doesn't need it; we don't use audio here.
-    testImplementation ("com.badlogicgames.gdx:gdx-backend-lwjgl3:1.13.1"){
+    testImplementation ("com.badlogicgames.gdx:gdx-backend-lwjgl3:1.14.0"){
         exclude group: "org.jcraft", module: "jorbis"
         exclude group: "org.lwjgl", module: "lwjgl-openal"
     }
-    testImplementation "com.badlogicgames.gdx:gdx-platform:1.13.1:natives-desktop"
+    testImplementation "com.badlogicgames.gdx:gdx-platform:1.14.0:natives-desktop"
 
 }
