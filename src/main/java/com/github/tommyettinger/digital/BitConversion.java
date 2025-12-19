@@ -265,7 +265,7 @@ public final class BitConversion {
 
     /**
      * 32-bit signed integer multiplication that is correct on all platforms, including GWT. Unlike desktop, Android,
-     * and iOS targets, GWT uses the equivalent of a {@code double} to represent an {@code int}, which means any
+     * and iOS targets, GWT uses the equivalent of a {@code double} to represent an {@code int}. This means any
      * multiplication where the product is large enough (over 2 to the 53) can start to lose precision instead of being
      * wrapped, like it would on overflow in a normal JDK. Using this will prevent the possibility of precision loss.
      * <br>
@@ -328,7 +328,8 @@ public final class BitConversion {
      * This simply calls {@link Integer#numberOfTrailingZeros(int)} on most platforms, but on GWT, it uses the
      * JS built-in function {@code Math.clz32(n)} with some extra steps to get the trailing, rather than leading,
      * zeros. This probably performs better than the Integer method on GWT, though not as well as
-     * {@link #countLeadingZeros(int)}
+     * {@link #countLeadingZeros(int)}. On GWT, this uses an algorithm from Hacker's Delight (2012), section 5-4,
+     * "Counting Trailing 0's".
      * @param n any int
      * @return the number of '0' bits starting at the least-significant bit and going until just before a '1' bit is encountered
      */

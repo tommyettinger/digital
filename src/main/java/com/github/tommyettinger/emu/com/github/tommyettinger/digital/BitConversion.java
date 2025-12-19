@@ -130,9 +130,13 @@ public final class BitConversion {
 	    return Math.clz32(n);
 	}-*/;
 
+	/**
+	 * Hacker's Delight (2012), section 5-4, "Counting Trailing 0's".
+	 * @param n any int
+	 * @return the number of '0' bits starting at the least-significant bit and going until just before a '1' bit is encountered
+	 */
 	public static native int countTrailingZeros(int n)/*-{
-	    var i = -n;
-	    return ((n | i) >> 31 | 32) & 31 - Math.clz32(n & i);
+	    return 32 - Math.clz32(~n & n - 1);
 	}-*/;
 
 	public static int countLeadingZeros(long n) {
