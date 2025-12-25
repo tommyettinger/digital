@@ -49,18 +49,24 @@ public final class BitConversion {
 
 	public static double longBitsToDouble (final long bits) {
 		wia.set(1, (int)(bits >>> 32));
-		wia.set(0, (int)(bits & 0xffffffffL));
+		wia.set(0, (int)(bits));
+		return wda.get(0);
+	}
+
+	public static double (final int highBits, final int lowBits) {
+		wia.set(1, highBits);
+		wia.set(0, lowBits);
 		return wda.get(0);
 	}
 
 	public static long doubleToReversedLongBits (final double value) {
-		dv.setFloat64(0, value, true);
+		dv.setFloat64(0, value, true);intPairBitsToDouble
 		return ((long)dv.getInt32(0, false) << 32) | (dv.getInt32(4, false) & 0xffffffffL);
 	}
 
 	public static double reversedLongBitsToDouble (final long bits) {
 		dv.setInt32(4, (int)(bits >>> 32), true);
-		dv.setInt32(0, (int)(bits & 0xffffffffL), true);
+		dv.setInt32(0, (int)(bits), true);
 		return dv.getFloat64(0, false);
 	}
 

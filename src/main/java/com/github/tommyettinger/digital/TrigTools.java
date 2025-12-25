@@ -1505,6 +1505,9 @@ public final class TrigTools {
         // Cody-Waite argument reduction, https://stackoverflow.com/questions/42455143/sine-cosine-modular-extended-precision-arithmetic
         x = ((x - quadrant * 1.5703125f) - quadrant * 0.0004837512969970703125f) - quadrant * 7.549789948768648e-8f;
         float x2 = x * x, s;
+        // below can be used if floatToIntBits isn't available; it is equivalent
+//        if(radians < 0) quadrant ^= 2;
+//        switch (quadrant & 3) {
         switch ((quadrant ^ (BitConversion.floatToIntBits(radians) >>> 30 & 2)) & 3) {
             case 0:
                 s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
@@ -1572,6 +1575,9 @@ public final class TrigTools {
         int quadrant = (int)(0.011111111f * x + 0.5f);
         x = (x - quadrant * 90f) * (HALF_PI / 90f);
         float x2 = x * x, s;
+        // below can be used if floatToIntBits isn't available; it is equivalent
+//        if(degrees < 0) quadrant ^= 2;
+//        switch (quadrant & 3) {
         switch ((quadrant ^ (BitConversion.floatToIntBits(degrees) >>> 30 & 2)) & 3) {
             case 0:
                 s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;
@@ -1638,6 +1644,9 @@ public final class TrigTools {
         int quadrant = (int)(4f * x + 0.5f);
         x = (x - quadrant * 0.25f) * PI2;
         float x2 = x * x, s;
+        // below can be used if floatToIntBits isn't available; it is equivalent
+//        if(turns < 0) quadrant ^= 2;
+//        switch (quadrant & 3) {
         switch ((quadrant ^ (BitConversion.floatToIntBits(turns) >>> 30 & 2)) & 3) {
             case 0:
                 s = ((-1.9515295891e-4f * x2 + 8.3321608736e-3f) * x2 - 1.6666654611e-1f) * x2 * x + x;

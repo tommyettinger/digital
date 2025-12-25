@@ -28,6 +28,13 @@ package com.github.tommyettinger.digital;
  * arrays to accomplish its conversions; these are widespread even on mobile browsers, and are very
  * convenient for this sort of code (in some ways, they're a better fit for this sort of bit-level
  * operation in JavaScript than anything Java provides).
+ * <br>
+ * There are some other methods that are important for JavaScript math code here. Using
+ * {@link #imul(int, int)} instead of normal int multiplication in GWT prevents large multipliers
+ * from losing precision. Using {@link #countLeadingZeros(int)} is much faster than GWT's
+ * {@link Integer#numberOfLeadingZeros(int)} implementation, and also has a fix for some buggy JDK
+ * versions on desktop JVMs (early releases of Java 19 through 24). Those two methods call JS-native
+ * methods in its Math class, {@code Math.imul()} and {@code Math.clz32()}.
  *
  * @author Tommy Ettinger
  */
@@ -111,6 +118,21 @@ public final class BitConversion {
      */
     public static double longBitsToDouble(final long bits) {
         return Double.longBitsToDouble(bits);
+    }
+
+    /**
+     * Creates a double from two int values; optimized on GWT. Uses JS typed arrays on GWT,
+     * which are well-supported now across all recent browsers and have fallbacks in GWT in the unlikely event of a
+     * browser not supporting them. JS typed arrays support double, but not long, so using two ints is faster on GWT.
+     * Relative to {@link #longBitsToDouble(long)}, this is likely slower on TeaVM when targeting WASM, unless you have
+     * two ints already.
+     *
+     * @param highBits an int that will be used for the 32 most-significant (sign, exponent, and mantissa) bits
+     * @param lowBits an int that will be used for the 32 least-significant (mantissa) bits
+     * @return the {@code double} floating-point value with the same bit pattern.
+     */
+    public static double intPairBitsToDouble(final int highBits, final int lowBits) {
+        return Double.longBitsToDouble((long)highBits << 32 | (lowBits & 0xFFFFFFFFL));
     }
 
     /**
