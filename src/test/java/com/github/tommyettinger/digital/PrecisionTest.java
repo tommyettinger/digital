@@ -2001,6 +2001,39 @@ public class PrecisionTest {
      * Worst input (abs):       6.282993559037344000000000
      * Worst output (abs):     -0.0003834952 (0xBF3921FB49EE7334)
      * Correct output (abs):   -0.0001917481 (0xBF2921FFFD6AAA3F)
+     * ...
+     * Running sinExistingTable
+     * Mean absolute error:     0.0000610352
+     * Mean relative error:     0.0006482089
+     * Maximum abs. error:      0.0001917473
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -4.712388988341196000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        6.283185128365652000000000
+     * Highest output rel:      1.0000000000
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):    -0.0000001788 (0xBE880000008D310E)
+     * Worst input (abs):      -0.001342233027322947700000
+     * Worst output (abs):     -0.0011504853 (0xBF52D97C396F8613)
+     * Correct output (abs):   -0.0013422326 (0xBF55FDBB4E661AE7)
+     * Running sinSingleCallTable
+     * Mean absolute error:     0.0000610352
+     * Mean relative error:     0.0006482089
+     * Maximum abs. error:      0.0001917473
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):        -4.712388988341196000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        6.283185128365652000000000
+     * Highest output rel:      1.0000000000
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):    -0.0000001788 (0xBE880000008D310E)
+     * Worst input (abs):      -0.001342233027322947700000
+     * Worst output (abs):     -0.0011504853 (0xBF52D97C396F8613)
+     * Correct output (abs):   -0.0013422326 (0xBF55FDBB4E661AE7)
      * </pre>
      */
     @Test
@@ -2018,11 +2051,11 @@ public class PrecisionTest {
         LinkedHashMap<String, DoubleUnaryOperator> functions = new LinkedHashMap<>(8);
 //        functions.put("sinOldTable", OldTrigTools::sin);
 //        functions.put("sin037Table", TrigTools037::sin);
-//        functions.put("sinNewTable", TrigTools::sin);
+        functions.put("sinSingleCallTable", TrigTools::sin);
 //        functions.put("sinSmooth", TrigTools::sinSmooth);
 //        functions.put("sinSmoother", TrigTools::sinSmoother);
 //        functions.put("sinSmoothly", PrecisionTest::sinSmoothly);
-        functions.put("sinSmoothesque", PrecisionTest::sinSmoothesque);
+//        functions.put("sinSmoothesque", PrecisionTest::sinSmoothesque);
 //        functions.put("sin00Prior", (f) -> sin(prior00, f));
 //        functions.put("sin05Prior", (f) -> sin(prior05, f));
 //        functions.put("sin05", (f) -> sin(table05, f));
@@ -2238,6 +2271,39 @@ public class PrecisionTest {
      * Worst input (abs):       1.574823025857107000000000
      * Worst output (abs):     -0.0038349426 (0xBF6F6A751D67D785)
      * Correct output (abs):   -0.0040266882 (0xBF707E49E0BEC15C)
+     * ...
+     * Running cosExistingTable
+     * Mean absolute error:     0.0000610352
+     * Mean relative error:     0.0006482048
+     * Maximum abs. error:      0.0001917456
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185307179586000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        4.712580684815542000000000
+     * Highest output rel:      1.0000000000
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):     0.0001917044 (0x3F292088830DE041)
+     * Worst input (abs):       1.574823025857107000000000
+     * Worst output (abs):     -0.0038349426 (0xBF6F6A751D68154E)
+     * Correct output (abs):   -0.0040266882 (0xBF707E49E0BEC15C)
+     * Running cosSingleCallTable
+     * Mean absolute error:     0.0000610352
+     * Mean relative error:     0.0006482048
+     * Maximum abs. error:      0.0001917456
+     * Maximum rel. error:      1.0000000000
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185307179586000000000
+     * Best output (lo):        1.0000000000 (0x3FF0000000000000)
+     * Correct output (lo):     1.0000000000 (0x3FF0000000000000)
+     * Worst input (hi):        4.712580684815542000000000
+     * Highest output rel:      1.0000000000
+     * Worst output (hi):       0.0000000000 (0x0000000000000000)
+     * Correct output (hi):     0.0001917044 (0x3F292088830DE041)
+     * Worst input (abs):       1.574823025857107000000000
+     * Worst output (abs):     -0.0038349426 (0xBF6F6A751D68154E)
+     * Correct output (abs):   -0.0040266882 (0xBF707E49E0BEC15C)
      * </pre>
      */
     @Test
@@ -2247,11 +2313,11 @@ public class PrecisionTest {
         LinkedHashMap<String, DoubleUnaryOperator> functions = new LinkedHashMap<>(8);
 //        functions.put("cosOldTable", OldTrigTools::cos);
 //        functions.put("cos037Table", TrigTools037::cos);
-//        functions.put("cosNewTable", TrigTools::cos);
+        functions.put("cosSingleCallTable", TrigTools::cos);
 //        functions.put("cosSmooth", TrigTools::cosSmooth);
 //        functions.put("cosSmoother", TrigTools::cosSmoother);
-        functions.put("cosSmoothly", PrecisionTest::cosSmoothly);
-        functions.put("cosSmoothesque", PrecisionTest::cosSmoothesque);
+//        functions.put("cosSmoothly", PrecisionTest::cosSmoothly);
+//        functions.put("cosSmoothesque", PrecisionTest::cosSmoothesque);
 //        functions.put("cos00Prior", (f) -> cos(prior00, f));
 //        functions.put("cos05Prior", (f) -> cos(prior05, f));
 //        functions.put("cos05", (f) -> cos(table05, f));

@@ -2874,6 +2874,7 @@ public static long mmi(final long a) {
      * of a long. This uses {@link BitConversion#intBitsToFloat(int)} and
      * {@link BitConversion#countLeadingZeros(long)}, both of which typically use optimized intrinsics on HotSpot,
      * and this is branchless and loopless, unlike the original algorithm by Allen Downey.
+     *
      * @param bits a {@code long} that will determine what this returns, but with little correlation between numeric values
      * @return a float between 2.7105054E-20 and 0.99999994, exclusive (effectively 0 and 1, exclusive)
      */
@@ -2900,6 +2901,7 @@ public static long mmi(final long a) {
      * of a long. This uses {@link BitConversion#longBitsToDouble(long)} and
      * {@link BitConversion#countLeadingZeros(long)}, both of which typically use optimized intrinsics on HotSpot,
      * and this is branchless and loopless, unlike the original algorithm by Allen Downey.
+     *
      * @param bits a {@code long} that will determine what this returns, but with little correlation between numeric values
      * @return a double between 2.710505431213761E-20 and 0.9999999999999999, exclusive (effectively 0 and 1, exclusive)
      */
@@ -2917,9 +2919,8 @@ public static long mmi(final long a) {
      * <br>
      * The implementation may have different performance characteristics than {@link Random#nextDouble()},
      * because this doesn't perform any floating-point multiplication or division, and instead assembles bits
-     * of a long. This uses {@link BitConversion#longBitsToDouble(long)} and
-     * {@link BitConversion#countLeadingZeros(long)}, both of which typically use optimized intrinsics on HotSpot,
-     * and this is branchless and loopless.
+     * of a double. This uses {@link BitConversion#intPairBitsToDouble(int, int)}, which typically uses optimized
+     * intrinsics on HotSpot or special code on GWT, and this is branchless and loopless.
      * <br>
      * This is meant specifically for the case where some process (such as a random number generator) can produce int
      * results more efficiently than long ones. In particular, this is relevant to anything targeting GWT, which handles

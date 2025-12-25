@@ -359,8 +359,8 @@ public final class TrigTools {
     static {
         for (int i = 0; i <= TABLE_SIZE; i++) {
             double theta = ((double)i) / TABLE_SIZE * PI2_D;
-            SIN_TABLE[i] = (float) (SIN_TABLE_D[i] = sinPrecise(theta));
-            COS_TABLE[i] = (float) (COS_TABLE_D[i] = cosPrecise(theta));
+            SIN_TABLE[i + QUARTER_CIRCLE_INDEX & TABLE_MASK] = COS_TABLE[i] =
+                    (float) (SIN_TABLE_D[i + QUARTER_CIRCLE_INDEX & TABLE_MASK] = COS_TABLE_D[i] = cosPrecise(theta));
         }
 
 /*
