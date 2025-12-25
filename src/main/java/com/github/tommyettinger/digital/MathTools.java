@@ -2884,7 +2884,7 @@ public static long mmi(final long a) {
     /**
      * Produces a double between 0 (exclusive) and 1 (exclusive), given a {@code long} to choose the value.
      * This method is also more uniform than dividing a {@code long} by a power of two (which is roughly
-     * what {@link Random#nextDouble()} does), if you use the bit-patterns of the returned floats.
+     * what {@link Random#nextDouble()} does), if you use the bit-patterns of the returned doubles.
      * This is a simplified version of
      * <a href="https://allendowney.com/research/rand/">this algorithm by Allen Downey</a>. This version can
      * return double values between 2.710505431213761E-20 and 0.9999999999999999, or 0x1.0p-65 and 0x1.fffffffffffffp-1
@@ -2901,10 +2901,43 @@ public static long mmi(final long a) {
      * {@link BitConversion#countLeadingZeros(long)}, both of which typically use optimized intrinsics on HotSpot,
      * and this is branchless and loopless, unlike the original algorithm by Allen Downey.
      * @param bits a {@code long} that will determine what this returns, but with little correlation between numeric values
-     * @return a float between 2.710505431213761E-20 and 0.9999999999999999, exclusive (effectively 0 and 1, exclusive)
+     * @return a double between 2.710505431213761E-20 and 0.9999999999999999, exclusive (effectively 0 and 1, exclusive)
      */
     public static double exclusiveDouble(final long bits) {
         return BitConversion.longBitsToDouble(1022L - BitConversion.countLeadingZeros(bits) << 52 | bits & 0xFFFFFFFFFFFFFL);
+    }
+
+    /**
+     * Produces a double between 0 (exclusive) and 1 (exclusive), given two {@code int}s to choose the value.
+     * This method is also more uniform than dividing a {@code long} by a power of two (which is roughly
+     * what {@link Random#nextDouble()} does), if you use the bit-patterns of the returned doubles.
+     * This is a simplified version of
+     * <a href="https://allendowney.com/research/rand/">this algorithm by Allen Downey</a>. This version can
+     * return double values between 1.1641532182693481E-10 and 0.9999999999999999, or 0x1.0p-33 and 0x1.fffffffffffffp-1
+     * in hex notation. It cannot return 0 or 1. To compare, {@link Random#nextDouble()} is less likely to produce a "1"
+     * bit for its lowest 5 bits of mantissa/significand (the least significant bits numerically, but potentially
+     * important for some uses), with the least significant bit produced half as often as the most significant bit in
+     * the mantissa. As for this method, it has approximately the same likelihood of producing a "1" bit for any
+     * position in the mantissa. This method cannot return doubles that are as close to 0 as {@link Random#nextDouble()}
+     * rarely can, and that also means it can't get as close to 0 as {@link #exclusiveDouble(long)}. This matters on
+     * fewer than one in 4 billion calls.
+     * <br>
+     * The implementation may have different performance characteristics than {@link Random#nextDouble()},
+     * because this doesn't perform any floating-point multiplication or division, and instead assembles bits
+     * of a long. This uses {@link BitConversion#longBitsToDouble(long)} and
+     * {@link BitConversion#countLeadingZeros(long)}, both of which typically use optimized intrinsics on HotSpot,
+     * and this is branchless and loopless, unlike the original algorithm by Allen Downey.
+     * <br>
+     * This is meant specifically for the case where some process (such as a random number generator) can produce int
+     * results more efficiently than long ones. In particular, this is relevant to anything targeting GWT, which handles
+     * long values very, very slowly.
+     *
+     * @param highBits an {@code int} that will determine the exponent and most significant bits
+     * @param lowBits an {@code int} that will determine the least significant bits
+     * @return a double between 1.1641532182693481E-10 and 0.9999999999999999, exclusive (effectively 0 and 1, exclusive)
+     */
+    public static double exclusiveDouble(final int highBits, final int lowBits) {
+        return BitConversion.intPairBitsToDouble(1022 - BitConversion.countLeadingZeros(highBits) << 20 | (highBits & 0xFFFFF), lowBits);
     }
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Distribution">
