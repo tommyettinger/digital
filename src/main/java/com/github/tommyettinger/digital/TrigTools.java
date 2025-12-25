@@ -357,10 +357,11 @@ public final class TrigTools {
     public static final double[] COS_TABLE_D = new double[TABLE_SIZE+1];
 
     static {
-        for (int i = 0; i <= TABLE_SIZE; i++) {
+        // we don't need to cover the duplicate position where i == TABLE_SIZE because it is handled later.
+        for (int i = 0; i < TABLE_SIZE; i++) {
             double theta = ((double)i) / TABLE_SIZE * PI2_D;
-            SIN_TABLE[i + QUARTER_CIRCLE_INDEX & TABLE_MASK] = COS_TABLE[i] =
-                    (float) (SIN_TABLE_D[i + QUARTER_CIRCLE_INDEX & TABLE_MASK] = COS_TABLE_D[i] = cosPrecise(theta));
+            int j = i + QUARTER_CIRCLE_INDEX & TABLE_MASK;
+            SIN_TABLE[j] = COS_TABLE[i] = (float) (SIN_TABLE_D[j] = COS_TABLE_D[i] = cosPrecise(theta));
         }
 
 /*
