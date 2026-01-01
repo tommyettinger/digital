@@ -53,14 +53,14 @@ public final class BitConversion {
 		return wda.get(0);
 	}
 
-	public static double (final int highBits, final int lowBits) {
+	public static double intPairBitsToDouble(final int highBits, final int lowBits) {
 		wia.set(1, highBits);
 		wia.set(0, lowBits);
 		return wda.get(0);
 	}
 
 	public static long doubleToReversedLongBits (final double value) {
-		dv.setFloat64(0, value, true);intPairBitsToDouble
+		dv.setFloat64(0, value, true);
 		return ((long)dv.getInt32(0, false) << 32) | (dv.getInt32(4, false) & 0xffffffffL);
 	}
 
