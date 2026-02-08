@@ -1207,16 +1207,18 @@ public final class Interpolations {
      * Alias for {@link #circleOutIn}.
      */
     public static final Interpolator circOutIn = new Interpolator("circOutIn", circleOutIn.fn);
-    
 
     /**
      * Goes extra low, then extra-high, using {@link #swingFunction(float)} and scale of 1.2974547.
      * This matches the default Penner easing function easeInOutBack exactly.
      */
+    public static final Interpolator back = new Interpolator("back", swingFunction(1.2974547f));
     /**
      * Alias for {@link #back}.
      */
+    public static final Interpolator backInOut = new Interpolator("backInOut", back.fn);
     /**
+     * Goes extra-high, using {@link #swingOutFunction(float)} and scale of 1.70158.
      * This matches the default Penner easing function easeOutBack exactly.
      */
     public static final Interpolator backOut = new Interpolator("backOut", swingOutFunction(1.70158f));
