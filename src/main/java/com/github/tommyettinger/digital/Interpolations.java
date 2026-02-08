@@ -1208,21 +1208,27 @@ public final class Interpolations {
      */
     public static final Interpolator circOutIn = new Interpolator("circOutIn", circleOutIn.fn);
     
-    /**
-     * Alias for {@link #swing}. Probably not an exact duplicate of the similarly-named Penner easing function.
-     */
-    public static final Interpolator backInOut = new Interpolator("backInOut", swing.fn);
-    /**
-     * Alias for {@link #swingIn}. Probably not an exact duplicate of the similarly-named Penner easing function.
-     */
-    public static final Interpolator backIn = new Interpolator("backIn", swingIn.fn);
-    /**
-     * Alias for {@link #swingOut}. Probably not an exact duplicate of the similarly-named Penner easing function.
-     */
-    public static final Interpolator backOut = new Interpolator("backOut", swingOut.fn);
-    /**
-     * Alias for {@link #swingOutIn}. Probably not an exact duplicate of the similarly-named Penner easing function.
-     */
-    public static final Interpolator backOutIn = new Interpolator("backOutIn", swingOutIn.fn);
 
+    /**
+     * Goes extra low, then extra-high, using {@link #swingFunction(float)} and scale of 1.2974547.
+     * This matches the default Penner easing function easeInOutBack exactly.
+     */
+    /**
+     * Alias for {@link #back}.
+     */
+    /**
+     * This matches the default Penner easing function easeOutBack exactly.
+     */
+    public static final Interpolator backOut = new Interpolator("backOut", swingOutFunction(1.70158f));
+    /**
+     * Goes extra-high, using {@link #swingInFunction(float)} and scale of 1.70158.
+     * This matches the default Penner easing function easeOutBack exactly.
+     */
+    public static final Interpolator backIn = new Interpolator("backIn", swingInFunction(1.70158f));
+    /**
+     * Should stay in-range, using {@link #swingFunction(float)} and scale of 1.2974547, but flipped.
+     * This matches the exact parameter of the default Penner easing function easeInOutBack, but with the start and
+     * end halves swapped and offset.
+     */
+    public static final Interpolator backOutIn = new Interpolator("backOutIn", back.fn.flip());
 }

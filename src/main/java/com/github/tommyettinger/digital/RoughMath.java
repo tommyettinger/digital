@@ -276,7 +276,8 @@ public final class RoughMath {
     public static float normalRough (final long x) {
         final long c = Long.bitCount(x) - 32L << 16;
         final long u = x * x + x; /* Note, this is always even, but it is unlikely to matter. */
-        return 0x1.fb760cp-19f * (c + (short)(u) - (u >> 48) - (short)(u >> 32) - (short)(u >> 16));
+        // 3.78088E-6f is 0x1.fb760cp-19f
+        return 3.78088E-6f * (c + (short)(u) - (u >> 48) - (short)(u >> 32) - (short)(u >> 16));
     }
 
     /**
@@ -311,7 +312,8 @@ public final class RoughMath {
     public static float normalRougher (final long x) {
         final long c = Long.bitCount(x) - 32L << 32;
         final long u = x * x + x; /* Note, this is always even, but it is unlikely to matter. */
-        return 0x1.fb760cp-35f * (c + (u & 0xFFFFFFFFL) - (u >>> 32));
+        // 5.769165E-11f is 0x1.fb760cp-35f
+        return 5.769165E-11f * (c + (u & 0xFFFFFFFFL) - (u >>> 32));
     }
 
 
