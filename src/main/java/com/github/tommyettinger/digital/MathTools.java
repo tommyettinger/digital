@@ -1342,7 +1342,7 @@ public static long mmi(final long a) {
      * or greater, while turning must be between 0 and 1, inclusive. This effectively combines two different
      * curving functions so that they continue into each other when x equals turning. The shape parameter will
      * cause this to imitate "smoothstep-like" splines when greater than 1 (where the values ease into their
-     * starting and ending levels), or to be the inverse when less than 1 (where values start like square
+     * starting and ending levels). It does the inverse when less than 1 (where values start like square
      * root does, taking off very quickly, but also end like square does, landing abruptly at the ending
      * level). You should only give x values between 0 and 1, inclusive.
      *
@@ -1366,7 +1366,7 @@ public static long mmi(final long a) {
      * or greater, while turning must be between 0 and 1, inclusive. This effectively combines two different
      * curving functions so that they continue into each other when x equals turning. The shape parameter will
      * cause this to imitate "smoothstep-like" splines when greater than 1 (where the values ease into their
-     * starting and ending levels), or to be the inverse when less than 1 (where values start like square
+     * starting and ending levels). It does the inverse when less than 1 (where values start like square
      * root does, taking off very quickly, but also end like square does, landing abruptly at the ending
      * level). You should only give x values between 0 and 1, inclusive.
      *

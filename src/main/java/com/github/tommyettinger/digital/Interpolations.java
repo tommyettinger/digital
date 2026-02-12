@@ -1021,92 +1021,275 @@ public final class Interpolations {
      * This drops below 0.0 near the middle of the range, accelerates near-instantly, exceeds 1.0 just after that,
      * and ends returning 1.0. Negative parameters are not supported.
      * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
      * The functions this method produces are not well-behaved when their {@code a} parameter is less than 0 or greater
      * than 1.
+     * This acts like {@code com.badlogic.gdx.math.Interpolation.elastic} rather than a Penner easing function.
+     *
      * @return an InterpolationFunction that will use the given configuration
      */
-    public static InterpolationFunction elasticFunction(final float value, final float power, final int bounces,
-                                                        final float scale) {
+    public static InterpolationFunction springFunction(final float value, final float power, final int bounces,
+                                                       final float scale) {
         final float bounce = bounces * (0.5f - (bounces & 1));
         return a -> (a <= 0.5f)
-                ? (float)Math.pow(value, power * ((a += a) - 1f)) * TrigTools.sinTurns(a * bounce) * scale * 0.5f
-                : 1f - (float)Math.pow(value, power * ((a = 2f - a - a) - 1f)) * TrigTools.sinTurns(a * bounce) * scale * 0.5f;
+                ? (float) Math.pow(value, power * ((a += a) - 1f)) * TrigTools.sinTurns(a * bounce) * scale * 0.5f
+                : 1f - (float) Math.pow(value, power * ((a = 2f - a - a) - 1f)) * TrigTools.sinTurns(a * bounce) * scale * 0.5f;
     }
+
     /**
-     * Goes extra low, then extra-high, using {@link #elasticFunction(float, float, int, float)}. Value is 2, power is
-     * 10, bounces are 7, and scale is 1.
+     * Goes extra low, then extra-high, using {@link #springFunction(float, float, int, float)}.
+     * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
+     * Value is 2, power is 10, bounces are 7, and scale is 1.
      */
-    public static final Interpolator elastic = new Interpolator("elastic", elasticFunction(2f, 10f, 7, 1f));
+    public static final Interpolator spring = new Interpolator("spring", springFunction(2f, 10f, 7, 1f));
 
     /**
      * Produces an InterpolationFunction that uses the given value, power, bounces, and scale variables.
      * This exceeds 1.0 just after the start of the range,
      * and ends returning 1.0. Negative parameters are not supported.
      * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
      * The functions this method produces are not well-behaved when their {@code a} parameter is less than 0 or greater
      * than 1.
+     * This acts like {@code com.badlogic.gdx.math.Interpolation.elasticOut} rather than a Penner easing function.
+     *
      * @return an InterpolationFunction that will use the given configuration
      */
-    public static Interpolations.InterpolationFunction elasticOutFunction(final float value, final float power, final int bounces,
-                                                                          final float scale) {
+    public static InterpolationFunction springOutFunction(final float value, final float power, final int bounces,
+                                                          final float scale) {
         final float bounce = bounces * (0.5f - (bounces & 1));
         return a -> {
-            float f = (1f - (float) Math.pow(value, power * -a) * TrigTools.sinTurns(bounce - a * bounce) * scale);
+            float f = (1f - (float) Math.pow(value, power * -a) * TrigTools.sinTurns((bounce - a * bounce)) * scale);
             return a <= 0.02f ? MathTools.lerp(0f, f, a * 50f) : f;
         };
     }
 
     /**
-     * Goes extra-high near the start, using {@link #elasticOutFunction(float, float, int, float)}. Value is 2, power is
-     * 10, bounces are 7, and scale is 1.
+     * Goes extra-high near the start, using {@link #springOutFunction(float, float, int, float)}.
+     * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
+     * Value is 2, power is 10, bounces are 7, and scale is 1.
      */
-    public static final Interpolator elasticOut = new Interpolator("elasticOut", elasticOutFunction(2f, 10f, 7, 1f));
+    public static final Interpolator springOut = new Interpolator("springOut", springOutFunction(2f, 10f, 7, 1f));
 
     /**
      * Produces an InterpolationFunction that uses the given value, power, bounces, and scale variables.
      * This drops below 0.0 just before the end of the range,
      * but jumps up so that it ends returning 1.0. Negative parameters are not supported.
      * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
      * The functions this method produces are not well-behaved when their {@code a} parameter is less than 0 or greater
      * than 1.
+     * This acts like {@code com.badlogic.gdx.math.Interpolation.elasticIn} rather than a Penner easing function.
+     *
      * @return an InterpolationFunction that will use the given configuration
      */
-    public static Interpolations.InterpolationFunction elasticInFunction(final float value, final float power, final int bounces,
-                                                                         final float scale) {
+    public static InterpolationFunction springInFunction(final float value, final float power, final int bounces,
+                                                         final float scale) {
         final float bounce = bounces * (0.5f - (bounces & 1));
         return a -> {
             float f = (float) Math.pow(value, power * (a - 1)) * TrigTools.sinTurns(a * bounce) * scale;
             return a >= 0.98f ? MathTools.lerp(f, 1f, 50f * (a - 0.98f)) : f;
         };
     }
+
     /**
-     * Goes extra-low near the end, using {@link #elasticInFunction(float, float, int, float)}. Value is 2, power is
-     * 10, bounces are 6, and scale is 1.
+     * Goes extra-low near the end, using {@link #springInFunction(float, float, int, float)}.
+     * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
+     * Value is 2, power is 10, bounces are 6, and scale is 1.
      */
-    public static final Interpolator elasticIn = new Interpolator("elasticIn", elasticInFunction(2f, 10f, 6, 1f));
+    public static final Interpolator springIn = new Interpolator("springIn", springInFunction(2f, 10f, 6, 1f));
 
     /**
      * Produces an InterpolationFunction that uses the given value, power, bounces, and scale variables.
      * This accelerates near-instantly, wiggles in to settle near the middle of the range, accelerates again near the
      * end, and finishes returning 1.0. Negative parameters are not supported.
      * <br>
+     * This will typically stay inside the 0-1 range for output, unless value is much less than 2, power is much less
+     * than 10, or scale is much larger than 1.
+     * <br>
      * The functions this method produces are not well-behaved when their {@code a} parameter is less than 0 or greater
      * than 1.
+     *
      * @return an InterpolationFunction that will use the given configuration
      */
-    public static Interpolations.InterpolationFunction elasticOutInFunction(final float value, final float power, final int bounces,
-                                                                            final float scale) {
-        final float bounce = bounces * (0.5f - (bounces & 1)) - 0.25f;
+    public static InterpolationFunction springOutInFunction(final float value, final float power, final int bounces,
+                                                            final float scale) {
+        final float bounce = (bounces * (0.5f - (bounces & 1)) - 0.25f);
         return a -> (a > 0.5f)
-                ? (float)Math.pow(value, power * ((a += a - 1) - 1f)) * TrigTools.sinTurns(a * bounce) * scale * 0.5f + 0.5f
-                : 0.5f - (float)Math.pow(value, power * ((a = 1f - a - a) - 1f)) * TrigTools.sinTurns(a * bounce) * scale * 0.5f;
+                ? (float) Math.pow(value, power * ((a += a - 1) - 1f)) * TrigTools.sinTurns(a * bounce) * scale * 0.5f + 0.5f
+                : 0.5f - (float) Math.pow(value, power * ((a = 1f - a - a) - 1f)) * TrigTools.sinTurns(a * bounce) * scale * 0.5f;
     }
-    /**
-     * Stays within the mid-range, using {@link #elasticOutInFunction(float, float, int, float)}. Value is 2, power
-     * is 10, bounces are 7, and scale is 1.
-     */
-    public static final Interpolator elasticOutIn = new Interpolator("elasticOutIn", elasticOutInFunction(2f, 10f, 7, 1f));
 
+    /**
+     * Stays within the mid-range, using {@link #springOutInFunction(float, float, int, float)}.
+     * <br>
+     * This will stay inside the 0-1 range for output,
+     * <br>
+     * Value is 2, power is 10, bounces are 7, and scale is 1.
+     */
+    public static final Interpolator springOutIn = new Interpolator("springOutIn", springOutInFunction(2f, 10f, 7, 1f));
+
+    /**
+     * Produces an InterpolationFunction that uses the given base, exponent, intensity, and scale variables.
+     * When base and exponent are 2 and 10, this should act like {@code Elastic.INOUT} in Universal Tween Engine,
+     * with a and p called scale and intensity.
+     * This does not act like {@code Interpolation.elastic} in libGDX; use
+     * {@link #springFunction(float, float, int, float)} for that.
+     * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
+     * The functions this method produces are not well-behaved when their {@code alpha} parameter is less than 0.
+     *
+     * @return an InterpolationFunction that will use the given configuration
+     */
+    public static InterpolationFunction elasticFunction(final float base, final float exponent, final float intensity, final float scale) {
+        final float a, s;
+        if (scale < 1f) {
+            a = 1f;
+            s = intensity * 0.25f;
+        } else {
+            a = scale;
+            s = intensity * TrigTools.asinTurns(1f / scale);
+        }
+        return alpha -> {
+            if (alpha >= 1f) return 1f;
+            float t = alpha * 2f;
+            if (t < 1f)
+                return -0.5f * (a * (float) Math.pow(base, exponent * (t -= 1f)) * TrigTools.sinTurns((t - s) / intensity));
+            return a * (float) Math.pow(base, -exponent * (t -= 1f)) * TrigTools.sinTurns((t - s) / intensity) * 0.5f + 1f;
+        };
+    }
+
+    /**
+     * Goes extra low, then extra-high, using {@link #elasticFunction(float, float, float, float)}.
+     * This should act like {@code Elastic.INOUT} in Universal Tween Engine.
+     * This does not act like {@code Interpolation.elastic} in libGDX; use {@link #spring} for that.
+     * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
+     * Base is 2, exponent is 10, scale is 1.0, intensity is 0.45.
+     */
+    public static final Interpolator elastic = new Interpolator("elastic", elasticFunction(2, 10, 0.45f, 1f));
+
+    /**
+     * Produces an InterpolationFunction that uses the given base, exponent, intensity, and scale variables.
+     * When base and exponent are 2 and 10, this should act like {@code Elastic.OUT} in Universal Tween Engine,
+     * with a and p called scale and intensity.
+     * This does not act like {@code Interpolation.elasticOut} in libGDX; use
+     * {@link #springOutFunction(float, float, int, float)} for that.
+     * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
+     * The functions this method produces are not well-behaved when their {@code alpha} parameter is less than 0.
+     *
+     * @return an InterpolationFunction that will use the given configuration
+     */
+    public static InterpolationFunction elasticOutFunction(final float base, final float exponent, final float intensity, final float scale) {
+        final float a, s;
+        if (scale < 1f) {
+            a = 1f;
+            s = intensity * 0.25f;
+        } else {
+            a = scale;
+            s = intensity * TrigTools.asinTurns(1f / scale);
+        }
+        return alpha -> {
+            if (alpha >= 1f) return 1f;
+            return a * (float) Math.pow(base, -exponent * alpha) * TrigTools.sinTurns((alpha - s) / intensity) + 1f;
+        };
+    }
+
+    /**
+     * Goes extra-high near the start, using {@link #elasticOutFunction(float, float, float, float)}.
+     * This should act like {@code Elastic.OUT} in Universal Tween Engine.
+     * This does not act like {@code Interpolation.elasticOut} in libGDX; use {@link #springOut} for that.
+     * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
+     * Base is 2, exponent is 10, scale is 1, intensity is 0.3.
+     */
+    public static final Interpolator elasticOut = new Interpolator("elasticOut", elasticOutFunction(2f, 10f, 0.3f, 1f));
+
+    /**
+     * Produces an InterpolationFunction that uses the given base, exponent, intensity, and scale variables.
+     * When base and exponent are 2 and 10, this should act like {@code Elastic.IN} in Universal Tween Engine,
+     * with a and p called scale and intensity.
+     * This does not act like {@code Interpolation.elasticIn} in libGDX; use
+     * {@link #springInFunction(float, float, int, float)} for that.
+     * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
+     * The functions this method produces are not well-behaved when their {@code alpha} parameter is less than 0.
+     *
+     * @return an InterpolationFunction that will use the given configuration
+     */
+    public static InterpolationFunction elasticInFunction(final float base, final float exponent, final float intensity, final float scale) {
+        final float a, s;
+        if (scale < 1f) {
+            a = 1f;
+            s = intensity * 0.25f;
+        } else {
+            a = scale;
+            s = intensity * TrigTools.asinTurns(1f / scale);
+        }
+        return alpha -> {
+            if (alpha >= 1f) return 1f;
+            return -(a * (float) Math.pow(base, exponent * (alpha -= 1f)) * TrigTools.sinTurns((alpha - s) / intensity));
+        };
+    }
+
+    /**
+     * Goes extra-low near the end, using {@link #elasticInFunction(float, float, float, float)}.
+     * This should act like {@code Elastic.IN} in Universal Tween Engine.
+     * This does not act like {@code Interpolation.elasticIn} in libGDX; use {@link #springIn} for that.
+     * <br>
+     * This will typically go outside the 0-1 range for output.
+     * <br>
+     * This should act like {@code Elastic.IN} in Universal Tween Engine.
+     * Base is 2, exponent is 10, scale is 1, intensity is 0.3.
+     */
+    public static final Interpolator elasticIn = new Interpolator("elasticIn", elasticInFunction(2f, 10f, 0.3f, 1f));
+
+    /**
+     * Produces an InterpolationFunction that uses the given base, exponent, intensity, and scale variables.
+     * When base and exponent are 2 and 10, this should act like {@code Elastic.INOUT} in Universal Tween Engine,
+     * but with the IN and OUT halves swapped and with a and p called scale and intensity.
+     * This does not act like {@code Interpolation.elastic} in libGDX; use
+     * {@link #springOutInFunction(float, float, int, float)} for that.
+     * <br>
+     * This will typically stay inside the 0-1 range for output, unless base, exponent, or scale is changed
+     * significantly. If base or exponent is much less than base=2 or exponent=10, the result may rarely go outside the
+     * range; the same can happen if scale is much larger than 1.
+     * <br>
+     * The functions this method produces are not well-behaved when their {@code a} parameter is less than 0 or greater
+     * than 1.
+     *
+     * @return an InterpolationFunction that will use the given configuration
+     */
+    public static InterpolationFunction elasticOutInFunction(final float base, final float exponent, final float intensity, final float scale) {
+        return elasticFunction(base, exponent, scale, intensity).flip();
+    }
+
+    /**
+     * Stays within the mid-range, using {@link #elastic} with {@link InterpolationFunction#flip()} called on it.
+     * This should act like {@code Elastic.INOUT} in Universal Tween Engine, but with the start and end
+     * halves swapped and offset.
+     * This does not act like {@code Interpolation.elastic} in libGDX; use {@link #springOutIn} for that.
+     * <br>
+     * This will stay inside the 0-1 range for output.
+     * <br>
+     * Base is 2, exponent is 10, scale is 1, intensity is 0.45.
+     */
+    public static final Interpolator elasticOutIn = new Interpolator("elasticOutIn", elastic.fn.flip());
 
     // Aliases
     /**
