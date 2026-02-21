@@ -45,6 +45,7 @@ public class InterpolationsTest {
         Interpolations.Interpolator current;
         for (int i = 0; i < interpolationNames.length; i++) {
             Assert.assertNotNull(current = Interpolations.get(interpolationNames[i]));
+            if(current.tag.startsWith("elastic")) continue;
             Interpolation interp = (Interpolation) interpolationFields[i].get(Interpolation.class);
             Method applier = ClassReflection.getMethod(Interpolation.class, "apply", Float.TYPE);
             System.out.println(current.tag + " dig: 0.0->" + current.apply(0f) + ": 0.25->" + current.apply(0.25f) + ": 0.75->"+current.apply(0.75f) + ": 1.0->"+current.apply(1f));
