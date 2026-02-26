@@ -132,7 +132,7 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
  * @author Tommy Ettinger
  */
 @SuppressWarnings("ShiftOutOfRange")
-public class Hasher {
+public final class Hasher {
 
     /**
      * A functional interface type for 32-bit hash() functions that take one item, typically of an array type.
