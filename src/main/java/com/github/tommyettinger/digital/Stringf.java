@@ -17,6 +17,8 @@
 
 package com.github.tommyettinger.digital;
 
+import java.io.IOException;
+
 /**
  * A limited polyfill for {@code String.format()} where the platform doesn't provide it, such as on GWT or TeaVM.
  * This supports {@link #format(String, Object...)} with only some of the formatting options in the actual, much-larger
@@ -24,9 +26,10 @@ package com.github.tommyettinger.digital;
  * notation is supported, but not with specified precision, yet. Some features will probably never be added here, like
  * time and date formatting, because this is GWT-compatible and GWT is missing lots of time-related code.
  * <br>
- * Some useful features here are that {@link #appendf(StringBuilder, String, Object...)} allows reusing a StringBuilder,
- * {@link #printf(String, Object...)} acts like a method on OutputStream (which is typically not provided if
- * String.format() isn't), and {@link #printfn(String, Object...)} acts like printf() with a newline like println().
+ * Some useful features here are that {@link #appendf(CharSequence, String, Object...)} allows reusing a StringBuilder
+ * or other Appendable CharSequence, {@link #printf(String, Object...)} acts like a method on OutputStream (which is
+ * typically not provided if String.format() isn't), and {@link #printfn(String, Object...)} acts like printf() with a
+ * newline like println().
  */
 public final class Stringf {
     private Stringf(){}
@@ -50,89 +53,73 @@ public final class Stringf {
      * @param args the parameters to {@code fmt}, as an array or varargs
      * @return {@code sb}, after modifications
      */
-    public static StringBuilder appendf(StringBuilder sb, String fmt, Object... args) {
+    public static <T extends CharSequence & Appendable> T appendf(T sb, String fmt, Object... args) {
         final int len = fmt.length();
         int arg = 0;
-        for (int i = 0; i < len; i++) {
-            char curr = fmt.charAt(i);
-            if(curr == '%') {
-                curr = fmt.charAt(++i);
+        try {
+            for (int i = 0; i < len; i++) {
+                char curr = fmt.charAt(i);
                 if (curr == '%') {
-                    // literal percent sign
-                    sb.append('%');
-                } else if (curr == 's') {
-                    // string
-                    sb.append(args[arg++].toString());
-                } else if (curr == 'd') {
-                    // digit, decimal
-                    sb.append(((Number) args[arg++]).longValue());
-                } else if (curr == 'f') {
-                    // float
-                    double d = ((Number) args[arg++]).doubleValue();
-                    Base.BASE10.appendDecimal(sb, d, -10000, 6);
-                } else if (curr == 'e') {
-                    // general, lower case
-                    double d = ((Number) args[arg++]).doubleValue();
-                    Base.BASE10.appendScientific(sb, d, false);
-                } else if (curr == 'E') {
-                    // general, lower case
-                    double d = ((Number) args[arg++]).doubleValue();
-                    Base.BASE10.appendScientific(sb, d, true);
-                } else if (curr == 'g') {
-                    // general, lower case
-                    double d = ((Number) args[arg++]).doubleValue();
-                    Base.BASE10.appendGeneral(sb, d, false);
-                } else if (curr == 'G') {
-                    // general, lower case
-                    double d = ((Number) args[arg++]).doubleValue();
-                    Base.BASE10.appendGeneral(sb, d, true);
-                } else if (curr == 'x') {
-                    // digit, hex (uncapitalized)
-                    sb.append(Base.BASE16.signed(((Number) args[arg++]).longValue()).toLowerCase());
-                } else if (curr == 'X') {
-                    // digit, hex (capitalized)
-                    Base.BASE16.appendSigned(sb, ((Number) args[arg++]).longValue());
-                } else if (curr == '0') {
-                    // zero-padding
                     curr = fmt.charAt(++i);
-                    if(curr == 'x'){
-                        sb.append(Base.BASE16.unsigned(((Number) args[arg++]).longValue()).toLowerCase());
-                    } else if(curr == 'X'){
-                        Base.BASE16.appendUnsigned(sb, ((Number) args[arg++]).longValue());
-                    }
-                    else {
-                        int length = Base.BASE10.readInt(fmt, i, len);
-                        while ((curr = fmt.charAt(++i)) >= '0' && curr <= '9'){
+                    if (curr == '%') {
+                        // literal percent sign
+                        sb.append('%');
+                    } else if (curr == 's') {
+                        // string
+                        sb.append(args[arg++].toString());
+                    } else if (curr == 'd') {
+                        // digit, decimal
+                        Base.BASE10.appendSigned(sb, ((Number) args[arg++]).longValue());
+                    } else if (curr == 'f') {
+                        // float
+                        double d = ((Number) args[arg++]).doubleValue();
+                        Base.BASE10.appendDecimal(sb, d, -10000, 6);
+                    } else if (curr == 'e') {
+                        // general, lower case
+                        double d = ((Number) args[arg++]).doubleValue();
+                        Base.BASE10.appendScientific(sb, d, false);
+                    } else if (curr == 'E') {
+                        // general, lower case
+                        double d = ((Number) args[arg++]).doubleValue();
+                        Base.BASE10.appendScientific(sb, d, true);
+                    } else if (curr == 'g') {
+                        // general, lower case
+                        double d = ((Number) args[arg++]).doubleValue();
+                        Base.BASE10.appendGeneral(sb, d, false);
+                    } else if (curr == 'G') {
+                        // general, lower case
+                        double d = ((Number) args[arg++]).doubleValue();
+                        Base.BASE10.appendGeneral(sb, d, true);
+                    } else if (curr == 'x') {
+                        // digit, hex (uncapitalized)
+                        sb.append(Base.BASE16.signed(((Number) args[arg++]).longValue()).toLowerCase());
+                    } else if (curr == 'X') {
+                        // digit, hex (capitalized)
+                        Base.BASE16.appendSigned(sb, ((Number) args[arg++]).longValue());
+                    } else if (curr == '0') {
+                        // zero-padding
+                        curr = fmt.charAt(++i);
+                        if (curr == 'x') {
+                            sb.append(Base.BASE16.unsigned(((Number) args[arg++]).longValue()).toLowerCase());
+                        } else if (curr == 'X') {
+                            Base.BASE16.appendUnsigned(sb, ((Number) args[arg++]).longValue());
+                        } else {
+                            int length = Base.BASE10.readInt(fmt, i, len);
+                            while ((curr = fmt.charAt(++i)) >= '0' && curr <= '9') {
+                            }
+                            if (curr == 'x')
+                                sb.append(TextTools.safeSubstring(Base.BASE16.unsigned(((Number) args[arg++]).longValue()), 16 - length, 16).toLowerCase());
+                            else if (curr == 'X')
+                                sb.append(TextTools.safeSubstring(Base.BASE16.unsigned(((Number) args[arg++]).longValue()), 16 - length, 16));
+                            else if (curr == 'd') {
+                                String num = Base.BASE10.unsigned(((Number) args[arg++]).longValue());
+                                sb.append(TextTools.safeSubstring(num, num.length() - length, num.length()));
+                            }
                         }
-                        if(curr == 'x')
-                            sb.append(TextTools.safeSubstring(Base.BASE16.unsigned(((Number) args[arg++]).longValue()), 16 - length, 16).toLowerCase());
-                        else if(curr == 'X')
-                            sb.append(TextTools.safeSubstring(Base.BASE16.unsigned(((Number) args[arg++]).longValue()), 16 - length, 16));
-                        else if(curr == 'd')
-                        {
-                            String num = Base.BASE10.unsigned(((Number) args[arg++]).longValue());
-                            sb.append(TextTools.safeSubstring(num, num.length() - length, num.length()));
-                        }
-                    }
-                } else if (curr == '.') {
-                    curr = fmt.charAt(++i);
-                    if(curr == 'f'){
-                        Base.BASE10.appendDecimal(sb, ((Number) args[arg++]).doubleValue());
-                    } else if(curr == 'e'){
-                        Base.BASE10.appendScientific(sb, ((Number) args[arg++]).doubleValue(), false);
-                    } else if(curr == 'E'){
-                        Base.BASE10.appendScientific(sb, ((Number) args[arg++]).doubleValue(), true);
-                    } else if(curr == 'g'){
-                        Base.BASE10.appendGeneral(sb, ((Number) args[arg++]).doubleValue(), false);
-                    } else if(curr == 'G'){
-                        Base.BASE10.appendGeneral(sb, ((Number) args[arg++]).doubleValue(), true);
-                    }
-                    else {
-                        int precision = Base.BASE10.readInt(fmt, i, len);
-                        while ((curr = fmt.charAt(++i)) >= '0' && curr <= '9') {
-                        }
+                    } else if (curr == '.') {
+                        curr = fmt.charAt(++i);
                         if (curr == 'f') {
-                            Base.BASE10.appendDecimal(sb, ((Number) args[arg++]).doubleValue(), -10000, precision);
+                            Base.BASE10.appendDecimal(sb, ((Number) args[arg++]).doubleValue());
                         } else if (curr == 'e') {
                             Base.BASE10.appendScientific(sb, ((Number) args[arg++]).doubleValue(), false);
                         } else if (curr == 'E') {
@@ -141,30 +128,42 @@ public final class Stringf {
                             Base.BASE10.appendGeneral(sb, ((Number) args[arg++]).doubleValue(), false);
                         } else if (curr == 'G') {
                             Base.BASE10.appendGeneral(sb, ((Number) args[arg++]).doubleValue(), true);
+                        } else {
+                            int precision = Base.BASE10.readInt(fmt, i, len);
+                            while ((curr = fmt.charAt(++i)) >= '0' && curr <= '9') {
+                            }
+                            if (curr == 'f') {
+                                Base.BASE10.appendDecimal(sb, ((Number) args[arg++]).doubleValue(), -10000, precision);
+                            } else if (curr == 'e') {
+                                Base.BASE10.appendScientific(sb, ((Number) args[arg++]).doubleValue(), false);
+                            } else if (curr == 'E') {
+                                Base.BASE10.appendScientific(sb, ((Number) args[arg++]).doubleValue(), true);
+                            } else if (curr == 'g') {
+                                Base.BASE10.appendGeneral(sb, ((Number) args[arg++]).doubleValue(), false);
+                            } else if (curr == 'G') {
+                                Base.BASE10.appendGeneral(sb, ((Number) args[arg++]).doubleValue(), true);
+                            }
+                        }
+                    } else if (curr >= '1' && curr <= '9') {
+                        int length = Base.BASE10.readInt(fmt, i, len);
+                        while ((curr = fmt.charAt(++i)) >= '0' && curr <= '9') {
+                        }
+                        if (curr == 'x') {
+                            String num = Base.BASE16.signed(((Number) args[arg++]).longValue());
+                            sb.append(TextTools.safeSubstring(num, num.length() - length, num.length()).toLowerCase());
+                        } else if (curr == 'X') {
+                            String num = Base.BASE16.signed(((Number) args[arg++]).longValue());
+                            sb.append(TextTools.safeSubstring(num, num.length() - length, num.length()));
+                        } else if (curr == 'd') {
+                            String num = Base.BASE10.signed(((Number) args[arg++]).longValue());
+                            sb.append(TextTools.safeSubstring(num, num.length() - length, num.length()));
                         }
                     }
-                } else if (curr >= '1' && curr <= '9') {
-                    int length = Base.BASE10.readInt(fmt, i, len);
-                    while ((curr = fmt.charAt(++i)) >= '0' && curr <= '9'){
-                    }
-                    if(curr == 'x')
-                    {
-                        String num = Base.BASE16.signed(((Number) args[arg++]).longValue());
-                        sb.append(TextTools.safeSubstring(num, num.length() - length, num.length()).toLowerCase());
-                    } else if(curr == 'X')
-                    {
-                        String num = Base.BASE16.signed(((Number) args[arg++]).longValue());
-                        sb.append(TextTools.safeSubstring(num, num.length() - length, num.length()));
-                    } else if(curr == 'd')
-                    {
-                        String num = Base.BASE10.signed(((Number) args[arg++]).longValue());
-                        sb.append(TextTools.safeSubstring(num, num.length() - length, num.length()));
-                    }
+                } else {
+                    sb.append(curr);
                 }
             }
-            else {
-                sb.append(curr);
-            }
+        } catch (IOException ignored) {
         }
         return sb;
     }
