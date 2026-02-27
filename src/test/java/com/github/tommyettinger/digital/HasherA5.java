@@ -1,12 +1,14 @@
 package com.github.tommyettinger.digital;
 
+import java.util.Objects;
+
 /**
  * A variant on Hasher that uses the a5hash32 algorithm, which is meant for small key sizes.
  * Uses the same functional interfaces as Hasher.
  */
 public final class HasherA5 {
     /**
-     * The seed used by all non-static hash() and hash64() methods in this class (the methods that don't take a seed).
+     * The seed used by all non-static hashA5() methods in this class (the methods that don't take a seed).
      * You can create many different HasherA5 objects, all with different seeds, and get very different hashes as a result
      * of any calls on them. Because making this field hidden in some way doesn't meaningfully contribute to security,
      * and only makes it harder to use this class, {@code seed} is public (and final, so it can't be accidentally
@@ -27,7 +29,7 @@ public final class HasherA5 {
      * instances, and they are given the same inputs, they will produce the same results. If the seed is even slightly
      * different, the results of the two HasherA5s given the same input should be significantly different.
      *
-     * @param seed a long that will be used to change the output of hash() and hash64() methods on the new HasherA5
+     * @param seed a long that will be used to change the output of hashA5() methods on the new HasherA5
      */
     public HasherA5(long seed) {
         this.seed = seed;
@@ -48,9 +50,9 @@ public final class HasherA5 {
      * @param data input array
      * @return the 32-bit hash of data
      */
-    public int hash(final int[] data) {
+    public int hashA5(final int[] data) {
         if (data == null) return 0;
-        return hash(data, 0, data.length);
+        return hashA5(data, 0, data.length);
     }
 
     /**
@@ -61,7 +63,7 @@ public final class HasherA5 {
      * @param length how many items to use from data
      * @return the 32-bit hash of data
      */
-    public int hash(final int[] data, int start, int length) {
+    public int hashA5(final int[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         int len = Math.min(length, data.length - start);
@@ -156,9 +158,9 @@ public final class HasherA5 {
      * @param data input array
      * @return the 32-bit hash of data
      */
-    public int hash(final long[] data) {
+    public int hashA5(final long[] data) {
         if (data == null) return 0;
-        return hash(data, 0, data.length);
+        return hashA5(data, 0, data.length);
     }
 
     /**
@@ -169,7 +171,7 @@ public final class HasherA5 {
      * @param length how many items to use from data
      * @return the 32-bit hash of data
      */
-    public int hash(final long[] data, int start, int length) {
+    public int hashA5(final long[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         int len = Math.min(length, data.length - start);
@@ -222,7 +224,7 @@ public final class HasherA5 {
                     p = (seed1 + (p & 0xFFFFFFFFL)) * (seed2 + (p >>> 32));
                     seed1 = (int) p;
                     seed2 = (int) (p >>> 32);
-                    p = data[i+1];
+                    p = data[i + 1];
                     p = (seed3 + (p & 0xFFFFFFFFL)) * (seed4 + (p >>> 32));
                     seed3 = (int) p;
                     seed4 = (int) (p >>> 32);
@@ -271,9 +273,9 @@ public final class HasherA5 {
      * @param data input array
      * @return the 32-bit hash of data
      */
-    public int hash(final byte[] data) {
+    public int hashA5(final byte[] data) {
         if (data == null) return 0;
-        return hash(data, 0, data.length);
+        return hashA5(data, 0, data.length);
     }
 
     /**
@@ -284,7 +286,7 @@ public final class HasherA5 {
      * @param length how many items to use from data
      * @return the 32-bit hash of data
      */
-    public int hash(final byte[] data, int start, int length) {
+    public int hashA5(final byte[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         int len = Math.min(length, data.length - start);
@@ -379,9 +381,9 @@ public final class HasherA5 {
      * @param data input array
      * @return the 32-bit hash of data
      */
-    public int hash(final short[] data) {
+    public int hashA5(final short[] data) {
         if (data == null) return 0;
-        return hash(data, 0, data.length);
+        return hashA5(data, 0, data.length);
     }
 
     /**
@@ -392,7 +394,7 @@ public final class HasherA5 {
      * @param length how many items to use from data
      * @return the 32-bit hash of data
      */
-    public int hash(final short[] data, int start, int length) {
+    public int hashA5(final short[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         int len = Math.min(length, data.length - start);
@@ -487,9 +489,9 @@ public final class HasherA5 {
      * @param data input array
      * @return the 32-bit hash of data
      */
-    public int hash(final char[] data) {
+    public int hashA5(final char[] data) {
         if (data == null) return 0;
-        return hash(data, 0, data.length);
+        return hashA5(data, 0, data.length);
     }
 
     /**
@@ -500,7 +502,7 @@ public final class HasherA5 {
      * @param length how many items to use from data
      * @return the 32-bit hash of data
      */
-    public int hash(final char[] data, int start, int length) {
+    public int hashA5(final char[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         int len = Math.min(length, data.length - start);
@@ -595,9 +597,9 @@ public final class HasherA5 {
      * @param data input array
      * @return the 32-bit hash of data
      */
-    public int hash(final float[] data) {
+    public int hashA5(final float[] data) {
         if (data == null) return 0;
-        return hash(data, 0, data.length);
+        return hashA5(data, 0, data.length);
     }
 
     /**
@@ -608,7 +610,7 @@ public final class HasherA5 {
      * @param length how many items to use from data
      * @return the 32-bit hash of data
      */
-    public int hash(final float[] data, int start, int length) {
+    public int hashA5(final float[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         int len = Math.min(length, data.length - start);
@@ -703,9 +705,9 @@ public final class HasherA5 {
      * @param data input array
      * @return the 32-bit hash of data
      */
-    public int hash(final double[] data) {
+    public int hashA5(final double[] data) {
         if (data == null) return 0;
-        return hash(data, 0, data.length);
+        return hashA5(data, 0, data.length);
     }
 
     /**
@@ -716,7 +718,7 @@ public final class HasherA5 {
      * @param length how many items to use from data
      * @return the 32-bit hash of data
      */
-    public int hash(final double[] data, int start, int length) {
+    public int hashA5(final double[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         int len = Math.min(length, data.length - start);
@@ -811,9 +813,9 @@ public final class HasherA5 {
      * @param data input CharSequence
      * @return the 32-bit hash of data
      */
-    public int hash(final CharSequence data) {
+    public int hashA5(final CharSequence data) {
         if (data == null) return 0;
-        return hash(data, 0, data.length());
+        return hashA5(data, 0, data.length());
     }
 
     /**
@@ -824,7 +826,7 @@ public final class HasherA5 {
      * @param length how many items to use from data
      * @return the 32-bit hash of data
      */
-    public int hash(final CharSequence data, int start, int length) {
+    public int hashA5(final CharSequence data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length())
             return 0;
         int len = Math.min(length, data.length() - start);
@@ -919,9 +921,9 @@ public final class HasherA5 {
      * @param data input String
      * @return the 32-bit hash of data
      */
-    public int hash(final String data) {
+    public int hashA5(final String data) {
         if (data == null) return 0;
-        return hash(data, 0, data.length());
+        return hashA5(data, 0, data.length());
     }
 
     /**
@@ -932,7 +934,7 @@ public final class HasherA5 {
      * @param length how many items to use from data
      * @return the 32-bit hash of data
      */
-    public int hash(final String data, int start, int length) {
+    public int hashA5(final String data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length())
             return 0;
         int len = Math.min(length, data.length() - start);
@@ -1001,6 +1003,114 @@ public final class HasherA5 {
             if (len > 2) {
                 c = data.charAt(i + len - 4);
                 d = data.charAt(i + len - 3);
+
+                p = ((long) seed3 + c) * ((long) seed4 + d);
+                seed3 = (int) p;
+                seed4 = (int) (p >>> 32);
+            }
+        }
+        seed1 ^= seed3;
+        seed2 ^= seed4;
+
+        p = ((long) seed1 + a) * ((long) seed2 + b);
+        seed1 = (int) p;
+        seed2 = (int) (p >>> 32);
+
+        p = ((long) seed1 ^ val01) * ((long) seed2);
+        a = (int) p;
+        b = (int) (p >>> 32);
+
+        return a ^ b;
+    }
+
+    /**
+     * A hashing function that is meant for smaller input arrays.
+     *
+     * @param data input array
+     * @return the 32-bit hash of data
+     */
+    public int hashA5(final Object[] data) {
+        if (data == null) return 0;
+        return hashA5(data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is meant for smaller input arrays.
+     *
+     * @param data   input array
+     * @param start  starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public int hashA5(final Object[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        int val01 = VAL01;
+        int val10 = VAL10;
+
+        int seed1 = 0x243F6A88 ^ len;
+        int seed2 = 0x85A308D3 ^ len;
+        int seed3 = 0xFB0BD3EA;
+        int seed4 = 0x0F58FD47;
+        int a, b, c, d;
+        long p;
+
+        p = (seed2 ^ (seed & 0xFFFFFFFFL)) * (seed1 ^ (seed >>> 32));
+        seed1 = (int) p;
+        seed2 = (int) (p >>> 32);
+        p = (seed3 ^ (seed & 0xFFFFFFFFL)) * (seed4 ^ (seed >>> 32));
+        seed3 = (int) p;
+        seed4 = (int) (p >>> 32);
+
+        int i = start;
+        if (len <= 4) {
+            if (len == 0) {
+                a = 0;
+                b = 0;
+            } else {
+                int last = i + len - 1;
+                a = Objects.hashCode(data[i]);
+                b = Objects.hashCode(data[last]);
+                if (len > 2) {
+                    int mo = len >>> 1;
+                    c = Objects.hashCode(data[i + mo]);
+                    d = Objects.hashCode(data[last - mo]);
+                    p = ((long) seed3 + c) * ((long) seed4 + d);
+                    seed3 = (int) p;
+                    seed4 = (int) (p >>> 32);
+                }
+            }
+        } else {
+            val01 ^= seed1;
+            val10 ^= seed2;
+
+            do {
+                final int s1 = seed1;
+                final int s4 = seed4;
+
+                p = ((long) seed1 + Objects.hashCode(data[i])) * ((long) seed2 + Objects.hashCode(data[i + 1]));
+                seed1 = (int) p;
+                seed2 = (int) (p >>> 32);
+                p = ((long) seed3 + Objects.hashCode(data[i + 2])) * ((long) seed4 + Objects.hashCode(data[i + 3]));
+                seed3 = (int) p;
+                seed4 = (int) (p >>> 32);
+
+                len -= 4;
+                i += 4;
+
+                seed1 += val01;
+                seed2 += s4;
+                seed3 += s1;
+                seed4 += val10;
+            } while (len > 4);
+
+            a = Objects.hashCode(data[i + len - 2]);
+            b = Objects.hashCode(data[i + len - 1]);
+
+            if (len > 2) {
+                c = Objects.hashCode(data[i + len - 4]);
+                d = Objects.hashCode(data[i + len - 3]);
 
                 p = ((long) seed3 + c) * ((long) seed4 + d);
                 seed3 = (int) p;
