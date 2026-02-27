@@ -1,5 +1,6 @@
 package com.github.tommyettinger.digital;
 
+import java.nio.ByteBuffer;
 import java.util.Objects;
 
 /**
@@ -1111,6 +1112,124 @@ public final class HasherA5 {
             if (len > 2) {
                 c = Objects.hashCode(data[i + len - 4]);
                 d = Objects.hashCode(data[i + len - 3]);
+
+                p = ((long) seed3 + c) * ((long) seed4 + d);
+                seed3 = (int) p;
+                seed4 = (int) (p >>> 32);
+            }
+        }
+        seed1 ^= seed3;
+        seed2 ^= seed4;
+
+        p = ((long) seed1 + a) * ((long) seed2 + b);
+        seed1 = (int) p;
+        seed2 = (int) (p >>> 32);
+
+        p = ((long) seed1 ^ val01) * ((long) seed2);
+        a = (int) p;
+        b = (int) (p >>> 32);
+
+        return a ^ b;
+    }
+
+    /**
+     * A hashing function that is meant for smaller input ByteBuffers.
+     *
+     * @param data input ByteBuffer
+     * @return the 32-bit hash of data
+     */
+    public int hashA5(final ByteBuffer data) {
+        if (data == null) return 0;
+        return hashA5(data, 0, data.limit());
+    }
+
+    /**
+     * A hashing function that is meant for smaller input ByteBuffers.
+     *
+     * @param data   input ByteBuffer
+     * @param start  starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public int hashA5(final ByteBuffer data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.limit())
+            return 0;
+        int len = Math.min(length, data.limit() - start);
+        int val01 = VAL01;
+        int val10 = VAL10;
+
+        int seed1 = 0x243F6A88 ^ len;
+        int seed2 = 0x85A308D3 ^ len;
+        int seed3 = 0xFB0BD3EA;
+        int seed4 = 0x0F58FD47;
+        int a, b, c, d;
+        long p;
+
+        p = (seed2 ^ (seed & 0xFFFFFFFFL)) * (seed1 ^ (seed >>> 32));
+        seed1 = (int) p;
+        seed2 = (int) (p >>> 32);
+        p = (seed3 ^ (seed & 0xFFFFFFFFL)) * (seed4 ^ (seed >>> 32));
+        seed3 = (int) p;
+        seed4 = (int) (p >>> 32);
+
+        int i = start;
+        if (len <= 16) {
+            if(len > 3) {
+                int last = i + len - 4;
+                a = data.getInt(i);
+                b = data.getInt(last);
+                if (len > 8) {
+                    int mo = (len >>> 3) << 2;
+                    c = data.getInt(i + mo);
+                    d = data.getInt(last - mo);
+                    p = ((long) seed3 + c) * ((long) seed4 + d);
+                    seed3 = (int) p;
+                    seed4 = (int) (p >>> 32);
+                }
+            } else {
+                a = 0;
+                b = 0;
+                if (len != 0) {
+                    a = data.get(i);
+                    if (len != 1) {
+                        a ^= data.get(i + 1) << 8;
+                        if (len != 2) {
+                            a ^= data.get(i+2) << 16;
+                        }
+                    }
+                }
+
+            }
+        } else {
+            val01 ^= seed1;
+            val10 ^= seed2;
+
+            do {
+                final int s1 = seed1;
+                final int s4 = seed4;
+
+                p = ((long) seed1 + data.getInt(i)) * ((long) seed2 + data.getInt(i + 4));
+                seed1 = (int) p;
+                seed2 = (int) (p >>> 32);
+                p = ((long) seed3 + data.getInt(i + 8)) * ((long) seed4 + data.getInt(i + 12));
+                seed3 = (int) p;
+                seed4 = (int) (p >>> 32);
+
+                len -= 16;
+                i += 16;
+
+                seed1 += val01;
+                seed2 += s4;
+                seed3 += s1;
+                seed4 += val10;
+            } while (len > 16);
+
+            a = data.getInt(i + len - 8);
+            b = data.getInt(i + len - 4);
+
+            if (len > 8) {
+                c = data.getInt(i + len - 16);
+                d = data.getInt(i + len - 12);
 
                 p = ((long) seed3 + c) * ((long) seed4 + d);
                 seed3 = (int) p;
