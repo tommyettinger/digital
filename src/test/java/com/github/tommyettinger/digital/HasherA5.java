@@ -401,6 +401,114 @@ public final class HasherA5 {
      * @param data input array
      * @return the 32-bit hash of data
      */
+    public int hashA5(final boolean[] data) {
+        if (data == null) return 0;
+        return hashA5(data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is meant for smaller input arrays.
+     *
+     * @param data   input array
+     * @param start  starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public int hashA5(final boolean[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        int val01 = VAL01;
+        int val10 = VAL10;
+
+        int seed1 = 0x243F6A88 ^ len;
+        int seed2 = 0x85A308D3 ^ len;
+        int seed3 = 0xFB0BD3EA;
+        int seed4 = 0x0F58FD47;
+        int a, b, c, d;
+        long p;
+
+        p = (seed2 ^ (seed & 0xFFFFFFFFL)) * (seed1 ^ (seed >>> 32));
+        seed1 = (int) p;
+        seed2 = (int) (p >>> 32);
+        p = (seed3 ^ (seed & 0xFFFFFFFFL)) * (seed4 ^ (seed >>> 32));
+        seed3 = (int) p;
+        seed4 = (int) (p >>> 32);
+
+        int i = start;
+        if (len <= 4) {
+            if (len == 0) {
+                a = 0;
+                b = 0;
+            } else {
+                int last = i + len - 1;
+                a = data[i] ? -1 : 0;
+                b = data[last] ? -1 : 0;
+                if (len > 2) {
+                    int mo = len >>> 1;
+                    c = data[i + mo] ? -1 : 0;
+                    d = data[last - mo] ? -1 : 0;
+                    p = ((long) seed3 + c) * ((long) seed4 + d);
+                    seed3 = (int) p;
+                    seed4 = (int) (p >>> 32);
+                }
+            }
+        } else {
+            val01 ^= seed1;
+            val10 ^= seed2;
+
+            do {
+                final int s1 = seed1;
+                final int s4 = seed4;
+
+                p = ((long) seed1 + (data[i] ? -1 : 0)) * ((long) seed2 + (data[i + 1] ? -1 : 0));
+                seed1 = (int) p;
+                seed2 = (int) (p >>> 32);
+                p = ((long) seed3 + (data[i + 2] ? -1 : 0)) * ((long) seed4 + (data[i + 3] ? -1 : 0));
+                seed3 = (int) p;
+                seed4 = (int) (p >>> 32);
+
+                len -= 4;
+                i += 4;
+
+                seed1 += val01;
+                seed2 += s4;
+                seed3 += s1;
+                seed4 += val10;
+            } while (len > 4);
+
+            a = data[i + len - 2] ? -1 : 0;
+            b = data[i + len - 1] ? -1 : 0;
+
+            if (len > 2) {
+                c = data[i + len - 4] ? -1 : 0;
+                d = data[i + len - 3] ? -1 : 0;
+
+                p = ((long) seed3 + c) * ((long) seed4 + d);
+                seed3 = (int) p;
+                seed4 = (int) (p >>> 32);
+            }
+        }
+        seed1 ^= seed3;
+        seed2 ^= seed4;
+
+        p = ((long) seed1 + a) * ((long) seed2 + b);
+        seed1 = (int) p;
+        seed2 = (int) (p >>> 32);
+
+        p = ((long) seed1 ^ val01) * ((long) seed2);
+        a = (int) p;
+        b = (int) (p >>> 32);
+
+        return a ^ b;
+    }
+
+    /**
+     * A hashing function that is meant for smaller input arrays.
+     *
+     * @param data input array
+     * @return the 32-bit hash of data
+     */
     public int hashA5(final byte[] data) {
         if (data == null) return 0;
         return hashA5(data, 0, data.length);
@@ -1499,6 +1607,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -1510,6 +1619,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data   input array
      * @param start  starting index in data
      * @param length how many items to use from data
@@ -1607,6 +1717,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -1618,6 +1729,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data   input array
      * @param start  starting index in data
      * @param length how many items to use from data
@@ -1717,6 +1829,115 @@ public final class HasherA5 {
         b = (p >>> 32);
 
         return (int) (a ^ b);
+    }
+    /**
+     * A hashing function that is meant for smaller input arrays.
+     *
+     * @param seed any long seed
+     * @param data input array
+     * @return the 32-bit hash of data
+     */
+    public static int hashA5(final long seed, final boolean[] data) {
+        if (data == null) return 0;
+        return hashA5(seed, data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is meant for smaller input arrays.
+     *
+     * @param seed any long seed
+     * @param data   input array
+     * @param start  starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public static int hashA5(final long seed, final boolean[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        int val01 = VAL01;
+        int val10 = VAL10;
+
+        int seed1 = 0x243F6A88 ^ len;
+        int seed2 = 0x85A308D3 ^ len;
+        int seed3 = 0xFB0BD3EA;
+        int seed4 = 0x0F58FD47;
+        int a, b, c, d;
+        long p;
+
+        p = (seed2 ^ (seed & 0xFFFFFFFFL)) * (seed1 ^ (seed >>> 32));
+        seed1 = (int) p;
+        seed2 = (int) (p >>> 32);
+        p = (seed3 ^ (seed & 0xFFFFFFFFL)) * (seed4 ^ (seed >>> 32));
+        seed3 = (int) p;
+        seed4 = (int) (p >>> 32);
+
+        int i = start;
+        if (len <= 4) {
+            if (len == 0) {
+                a = 0;
+                b = 0;
+            } else {
+                int last = i + len - 1;
+                a = data[i] ? -1 : 0;
+                b = data[last] ? -1 : 0;
+                if (len > 2) {
+                    int mo = len >>> 1;
+                    c = data[i + mo] ? -1 : 0;
+                    d = data[last - mo] ? -1 : 0;
+                    p = ((long) seed3 + c) * ((long) seed4 + d);
+                    seed3 = (int) p;
+                    seed4 = (int) (p >>> 32);
+                }
+            }
+        } else {
+            val01 ^= seed1;
+            val10 ^= seed2;
+
+            do {
+                final int s1 = seed1;
+                final int s4 = seed4;
+
+                p = ((long) seed1 + (data[i] ? -1 : 0)) * ((long) seed2 + (data[i + 1] ? -1 : 0));
+                seed1 = (int) p;
+                seed2 = (int) (p >>> 32);
+                p = ((long) seed3 + (data[i + 2] ? -1 : 0)) * ((long) seed4 + (data[i + 3] ? -1 : 0));
+                seed3 = (int) p;
+                seed4 = (int) (p >>> 32);
+
+                len -= 4;
+                i += 4;
+
+                seed1 += val01;
+                seed2 += s4;
+                seed3 += s1;
+                seed4 += val10;
+            } while (len > 4);
+
+            a = data[i + len - 2] ? -1 : 0;
+            b = data[i + len - 1] ? -1 : 0;
+
+            if (len > 2) {
+                c = data[i + len - 4] ? -1 : 0;
+                d = data[i + len - 3] ? -1 : 0;
+
+                p = ((long) seed3 + c) * ((long) seed4 + d);
+                seed3 = (int) p;
+                seed4 = (int) (p >>> 32);
+            }
+        }
+        seed1 ^= seed3;
+        seed2 ^= seed4;
+
+        p = ((long) seed1 + a) * ((long) seed2 + b);
+        seed1 = (int) p;
+        seed2 = (int) (p >>> 32);
+
+        p = ((long) seed1 ^ val01) * ((long) seed2);
+        a = (int) p;
+        b = (int) (p >>> 32);
+
+        return a ^ b;
     }
 
     /**
@@ -1830,6 +2051,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -1841,6 +2063,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data   input array
      * @param start  starting index in data
      * @param length how many items to use from data
@@ -1938,6 +2161,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -1949,6 +2173,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data   input array
      * @param start  starting index in data
      * @param length how many items to use from data
@@ -2046,6 +2271,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -2057,6 +2283,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data   input array
      * @param start  starting index in data
      * @param length how many items to use from data
@@ -2154,6 +2381,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -2165,6 +2393,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data   input array
      * @param start  starting index in data
      * @param length how many items to use from data
@@ -2262,6 +2491,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input CharSequences.
      *
+     * @param seed any long seed
      * @param data input CharSequence
      * @return the 32-bit hash of data
      */
@@ -2273,6 +2503,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input CharSequences.
      *
+     * @param seed any long seed
      * @param data   input CharSequence
      * @param start  starting index in data
      * @param length how many items to use from data
@@ -2370,6 +2601,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input Strings.
      *
+     * @param seed any long seed
      * @param data input String
      * @return the 32-bit hash of data
      */
@@ -2381,6 +2613,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input Strings.
      *
+     * @param seed any long seed
      * @param data   input String
      * @param start  starting index in data
      * @param length how many items to use from data
@@ -2478,6 +2711,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input arrays.
      *
+     * @param seed any long seed
      * @param data input array
      * @return the 32-bit hash of data
      */
@@ -2490,6 +2724,7 @@ public final class HasherA5 {
      * A hashing function that is meant for smaller input arrays.
      *
      * @param data   input array
+     * @param seed any long seed
      * @param start  starting index in data
      * @param length how many items to use from data
      * @return the 32-bit hash of data
@@ -2586,6 +2821,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input ByteBuffers.
      *
+     * @param seed any long seed
      * @param data input ByteBuffer
      * @return the 32-bit hash of data
      */
@@ -2597,6 +2833,7 @@ public final class HasherA5 {
     /**
      * A hashing function that is meant for smaller input ByteBuffers.
      *
+     * @param seed any long seed
      * @param data   input ByteBuffer
      * @param start  starting index in data
      * @param length how many items to use from data
@@ -2706,6 +2943,7 @@ public final class HasherA5 {
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hashA5} method here.
      *
+     * @param seed any long seed
      * @param function typically a method reference to a {@link #hashA5} method here
      * @param data     input array
      * @param <T>      typically an array type, often of primitive items; may be more than one-dimensional
@@ -2721,6 +2959,7 @@ public final class HasherA5 {
      * the first parameter, and then this uses that function to get a hash for each T item in data. T is usually an
      * array type, and function is usually a method reference to a {@link #hashA5} method here.
      *
+     * @param seed any long seed
      * @param function typically a method reference to a {@link #hashA5} method here
      * @param data     input array
      * @param start    starting index in data
