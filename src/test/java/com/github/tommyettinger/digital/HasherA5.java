@@ -149,4 +149,117 @@ public final class HasherA5 {
 
         return a ^ b;
     }
+
+    /**
+     * A hashing function that is meant for smaller input arrays.
+     *
+     * @param data input array
+     * @return the 32-bit hash of data
+     */
+    public int hash(final long[] data) {
+        if (data == null) return 0;
+        return hash(data, 0, data.length);
+    }
+
+    /**
+     * A hashing function that is meant for smaller input arrays.
+     *
+     * @param data   input array
+     * @param start  starting index in data
+     * @param length how many items to use from data
+     * @return the 32-bit hash of data
+     */
+    public int hash(final long[] data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.length)
+            return 0;
+        int len = Math.min(length, data.length - start);
+        int val01 = VAL01;
+        int val10 = VAL10;
+
+        int Seed1 = 0x243F6A88 ^ len;
+        int Seed2 = 0x85A308D3 ^ len;
+        int Seed3 = 0xFB0BD3EA;
+        int Seed4 = 0x0F58FD47;
+        int a, b, c, d;
+        long p;
+
+        p = (Seed2 ^ (seed & 0xFFFFFFFFL)) * (Seed1 ^ (seed >>> 32));
+        Seed1 = (int) p;
+        Seed2 = (int) (p >>> 32);
+        p = (Seed3 ^ (seed & 0xFFFFFFFFL)) * (Seed4 ^ (seed >>> 32));
+        Seed3 = (int) p;
+        Seed4 = (int) (p >>> 32);
+
+        int i = start;
+        switch (len) {
+            case 0:
+                a = 0;
+                b = 0;
+                break;
+            case 2:
+                p = data[i + 1];
+                c = (int) p;
+                d = (int) (p >>> 32);
+
+                p = ((long) Seed3 + c) * ((long) Seed4 + d);
+                Seed3 = (int) p;
+                Seed4 = (int) (p >>> 32);
+                // intentional fallthrough
+            case 1:
+                p = data[i];
+                a = (int) p;
+                b = (int) (p >>> 32);
+                break;
+            default:
+                val01 ^= Seed1;
+                val10 ^= Seed2;
+
+                do {
+                    final int s1 = Seed1;
+                    final int s4 = Seed4;
+
+                    p = ((long) Seed1 + data[i]) * ((long) Seed2 + data[i + 1]);
+                    Seed1 = (int) p;
+                    Seed2 = (int) (p >>> 32);
+                    p = ((long) Seed3 + data[i + 2]) * ((long) Seed4 + data[i + 3]);
+                    Seed3 = (int) p;
+                    Seed4 = (int) (p >>> 32);
+
+                    len -= 4;
+                    i += 4;
+
+                    Seed1 += val01;
+                    Seed2 += s4;
+                    Seed3 += s1;
+                    Seed4 += val10;
+                } while (len > 4);
+
+                p = data[i + len - 1];
+                a = (int) p;
+                b = (int) (p >>> 32);
+
+                if (len > 2) {
+                    p = data[i + len - 2];
+                    c = (int) p;
+                    d = (int) (p >>> 32);
+
+                    p = ((long) Seed3 + c) * ((long) Seed4 + d);
+                    Seed3 = (int) p;
+                    Seed4 = (int) (p >>> 32);
+                }
+                break;
+        }
+        Seed1 ^= Seed3;
+        Seed2 ^= Seed4;
+
+        p = ((long) Seed1 + a) * ((long) Seed2 + b);
+        Seed1 = (int) p;
+        Seed2 = (int) (p >>> 32);
+
+        p = ((long) Seed1 ^ val01) * ((long) Seed2);
+        a = (int) p;
+        b = (int) (p >>> 32);
+
+        return a ^ b;
+    }
 }
