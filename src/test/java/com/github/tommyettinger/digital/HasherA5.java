@@ -2816,5 +2816,88 @@ public final class HasherA5 {
 
         return a ^ b;
     }
+
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Boilerplate">
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HasherA5 hasher = (HasherA5) o;
+
+        return seed == hasher.seed;
+    }
+
+    /**
+     * Produces a String that holds the entire seed of this HasherA5. A HasherA5 is immutable, so to load the serialized
+     * state you must create a new HasherA5 with {@link #deserializeFromString(CharSequence)}.
+     *
+     * @return a String holding the seed of this HasherA5, to be loaded by {@link #deserializeFromString(CharSequence)}
+     */
+    public String serializeToString() {
+        return appendSerialized(new StringBuilder(11)).toString();
+    }
+
+    /**
+     * Appends the textual form of this HasherA5 to the given StringBuilder, StringBuffer, CharBuffer, or similar.
+     * You can recover this state from such a textual form by calling {@link #deserializeFromString(CharSequence)} to
+     * create a new HasherA5.
+     *
+     * @param sb  an Appendable CharSequence that will be modified
+     * @param <T> any type that is both a CharSequence and an Appendable, such as StringBuilder, StringBuffer, or CharBuffer
+     * @return {@code sb}, for chaining
+     */
+    public <T extends CharSequence & Appendable> T appendSerialized(T sb) {
+        Base.SIMPLE64.appendUnsigned(sb, seed);
+        return sb;
+    }
+
+    /**
+     * Given a String or other CharSequence produced by {@link #serializeToString()}, this creates a new HasherA5 with the
+     * seed stored in the start of that CharSequence.
+     *
+     * @param data a String or other CharSequence produced by {@link #serializeToString()}
+     * @return a new HasherA5 with a seed loaded from the given String or other CharSequence
+     */
+    public static HasherA5 deserializeFromString(CharSequence data) {
+        return deserializeFromString(data, 0);
+    }
+
+    /**
+     * Given a String or other CharSequence produced by {@link #serializeToString()} or
+     * {@link #appendSerialized(CharSequence)} and an offset to indicate where to
+     * read 11 chars from that CharSequence, this creates a new HasherA5 with the seed stored in that CharSequence.
+     *
+     * @param data   a String or other CharSequence produced by {@link #serializeToString()}
+     * @param offset where to start reading the 11 chars of a serialized state from data
+     * @return a new HasherA5 with a seed loaded from the given String or other CharSequence
+     */
+    public static HasherA5 deserializeFromString(CharSequence data, int offset) {
+        if (data == null || offset < 0 || data.length() - offset < 11) return HasherA5.hydrogen;
+        return new HasherA5(Base.SIMPLE64.readLong(data, offset, offset + 11));
+    }
+
+    /**
+     * This shouldn't ever be necessary, because a HasherA5 is entirely immutable, but if for some reason you need a
+     * duplicate of an existing HasherA5, this exists. Normally you can just reference an existing HasherA5, though!
+     *
+     * @return a new HasherA5 with the same seed as this one
+     */
+    public HasherA5 copy() {
+        return new HasherA5(seed);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (seed ^ (seed >>> 32));
+    }
+
+    @Override
+    public String toString() {
+        return "HasherA5{" +
+                "seed=" + seed +
+                '}';
+    }
 //</editor-fold>
 }
