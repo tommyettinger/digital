@@ -180,7 +180,7 @@ public final class HasherA5 {
         int Seed2 = 0x85A308D3 ^ len;
         int Seed3 = 0xFB0BD3EA;
         int Seed4 = 0x0F58FD47;
-        int a, b, c, d;
+        long a, b, c, d;
         long p;
 
         p = (Seed2 ^ (seed & 0xFFFFFFFFL)) * (Seed1 ^ (seed >>> 32));
@@ -193,22 +193,22 @@ public final class HasherA5 {
         int i = start;
         switch (len) {
             case 0:
-                a = 0;
-                b = 0;
+                a = 0L;
+                b = 0L;
                 break;
             case 2:
                 p = data[i + 1];
-                c = (int) p;
-                d = (int) (p >>> 32);
+                c = p & 0xFFFFFFFFL;
+                d = (p >>> 32);
 
-                p = ((long) Seed3 + c) * ((long) Seed4 + d);
+                p = (Seed3 + c) * (Seed4 + d);
                 Seed3 = (int) p;
                 Seed4 = (int) (p >>> 32);
                 // intentional fallthrough
             case 1:
                 p = data[i];
-                a = (int) p;
-                b = (int) (p >>> 32);
+                a = (p & 0xFFFFFFFFL);
+                b = (p >>> 32);
                 break;
             default:
                 val01 ^= Seed1;
@@ -218,32 +218,34 @@ public final class HasherA5 {
                     final int s1 = Seed1;
                     final int s4 = Seed4;
 
-                    p = ((long) Seed1 + data[i]) * ((long) Seed2 + data[i + 1]);
+                    p = data[i];
+                    p = (Seed1 + (p & 0xFFFFFFFFL)) * (Seed2 + (p >>> 32));
                     Seed1 = (int) p;
                     Seed2 = (int) (p >>> 32);
-                    p = ((long) Seed3 + data[i + 2]) * ((long) Seed4 + data[i + 3]);
+                    p = data[i+1];
+                    p = (Seed3 + (p & 0xFFFFFFFFL)) * (Seed4 + (p >>> 32));
                     Seed3 = (int) p;
                     Seed4 = (int) (p >>> 32);
 
-                    len -= 4;
-                    i += 4;
+                    len -= 2;
+                    i += 2;
 
                     Seed1 += val01;
                     Seed2 += s4;
                     Seed3 += s1;
                     Seed4 += val10;
-                } while (len > 4);
+                } while (len > 2);
 
                 p = data[i + len - 1];
-                a = (int) p;
-                b = (int) (p >>> 32);
+                a = (p & 0xFFFFFFFFL);
+                b = (p >>> 32);
 
-                if (len > 2) {
+                if (len > 1) {
                     p = data[i + len - 2];
-                    c = (int) p;
-                    d = (int) (p >>> 32);
+                    c = (p & 0xFFFFFFFFL);
+                    d = (p >>> 32);
 
-                    p = ((long) Seed3 + c) * ((long) Seed4 + d);
+                    p = (Seed3 + c) * (Seed4 + d);
                     Seed3 = (int) p;
                     Seed4 = (int) (p >>> 32);
                 }
@@ -252,14 +254,14 @@ public final class HasherA5 {
         Seed1 ^= Seed3;
         Seed2 ^= Seed4;
 
-        p = ((long) Seed1 + a) * ((long) Seed2 + b);
+        p = (Seed1 + a) * (Seed2 + b);
         Seed1 = (int) p;
         Seed2 = (int) (p >>> 32);
 
         p = ((long) Seed1 ^ val01) * ((long) Seed2);
-        a = (int) p;
-        b = (int) (p >>> 32);
+        a = (p & 0xFFFFFFFFL);
+        b = (p >>> 32);
 
-        return a ^ b;
+        return (int) (a ^ b);
     }
 }
