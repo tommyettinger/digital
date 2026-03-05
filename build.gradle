@@ -69,7 +69,7 @@ javadoc.destinationDir = file('docs/apidocs')
 jar {
     archiveBaseName.set(projectName)
     manifest {
-        attributes 'Implementation-Title': projectName, 'Implementation-Version': archiveVersion
+        attributes 'Implementation-Title': projectName, 'Implementation-Version': archiveVersion, 'Multi-Release': 'true'
     }
 }
 
@@ -85,13 +85,100 @@ repositories {
 
 dependencies {
     //noinspection GDXOutdatedVersionGradleGroovy
-    testImplementation "com.badlogicgames.gdx:gdx:1.14.0"
+    testImplementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     testImplementation "junit:junit:4.13.2"
     // don't require audio if a test doesn't need it; we don't use audio here.
-    testImplementation ("com.badlogicgames.gdx:gdx-backend-lwjgl3:1.14.0"){
-        exclude group: "org.jcraft", module: "jorbis"
+    testImplementation ("com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"){
         exclude group: "org.lwjgl", module: "lwjgl-openal"
+        exclude group: 'org.lwjgl', module: 'lwjgl-glfw'
+        exclude group: 'org.lwjgl', module: 'lwjgl-opengl'
+        exclude group: 'org.lwjgl', module: 'lwjgl-stb'
+        exclude group: 'org.lwjgl', module: 'lwjgl'
+        exclude group: 'org.lwjgl', module: 'lwjgl-jemalloc'
     }
-    testImplementation "com.badlogicgames.gdx:gdx-platform:1.14.0:natives-desktop"
 
+    testImplementation "org.lwjgl:lwjgl-jemalloc:$lwjgl3Version"
+    testImplementation "org.lwjgl:lwjgl-glfw:$lwjgl3Version"
+//    testImplementation "org.lwjgl:lwjgl-openal:$lwjgl3Version"
+    testImplementation "org.lwjgl:lwjgl-opengl:$lwjgl3Version"
+    testImplementation "org.lwjgl:lwjgl-stb:$lwjgl3Version"
+    testImplementation "org.lwjgl:lwjgl:$lwjgl3Version"
+// Linux //
+    testImplementation "org.lwjgl:lwjgl-jemalloc:$lwjgl3Version:natives-linux"
+    testImplementation "org.lwjgl:lwjgl-jemalloc:$lwjgl3Version:natives-linux-arm32"
+    testImplementation "org.lwjgl:lwjgl-jemalloc:$lwjgl3Version:natives-linux-arm64"
+    testImplementation "org.lwjgl:lwjgl-glfw:$lwjgl3Version:natives-linux"
+    testImplementation "org.lwjgl:lwjgl-glfw:$lwjgl3Version:natives-linux-arm32"
+    testImplementation "org.lwjgl:lwjgl-glfw:$lwjgl3Version:natives-linux-arm64"
+//    testImplementation "org.lwjgl:lwjgl-openal:$lwjgl3Version:natives-linux"
+//    testImplementation "org.lwjgl:lwjgl-openal:$lwjgl3Version:natives-linux-arm32"
+//    testImplementation "org.lwjgl:lwjgl-openal:$lwjgl3Version:natives-linux-arm64"
+    testImplementation "org.lwjgl:lwjgl-opengl:$lwjgl3Version:natives-linux"
+    testImplementation "org.lwjgl:lwjgl-opengl:$lwjgl3Version:natives-linux-arm32"
+    testImplementation "org.lwjgl:lwjgl-opengl:$lwjgl3Version:natives-linux-arm64"
+    testImplementation "org.lwjgl:lwjgl-stb:$lwjgl3Version:natives-linux"
+    testImplementation "org.lwjgl:lwjgl-stb:$lwjgl3Version:natives-linux-arm32"
+    testImplementation "org.lwjgl:lwjgl-stb:$lwjgl3Version:natives-linux-arm64"
+    testImplementation "org.lwjgl:lwjgl:$lwjgl3Version:natives-linux"
+    testImplementation "org.lwjgl:lwjgl:$lwjgl3Version:natives-linux-arm32"
+    testImplementation "org.lwjgl:lwjgl:$lwjgl3Version:natives-linux-arm64"
+
+    // MacOS //
+
+    testImplementation "org.lwjgl:lwjgl-jemalloc:$lwjgl3Version:natives-macos"
+    testImplementation "org.lwjgl:lwjgl-jemalloc:$lwjgl3Version:natives-macos-arm64"
+    testImplementation "org.lwjgl:lwjgl-glfw:$lwjgl3Version:natives-macos"
+    testImplementation "org.lwjgl:lwjgl-glfw:$lwjgl3Version:natives-macos-arm64"
+//    testImplementation "org.lwjgl:lwjgl-openal:$lwjgl3Version:natives-macos"
+//    testImplementation "org.lwjgl:lwjgl-openal:$lwjgl3Version:natives-macos-arm64"
+    testImplementation "org.lwjgl:lwjgl-opengl:$lwjgl3Version:natives-macos"
+    testImplementation "org.lwjgl:lwjgl-opengl:$lwjgl3Version:natives-macos-arm64"
+    testImplementation "org.lwjgl:lwjgl-stb:$lwjgl3Version:natives-macos"
+    testImplementation "org.lwjgl:lwjgl-stb:$lwjgl3Version:natives-macos-arm64"
+    testImplementation "org.lwjgl:lwjgl:$lwjgl3Version:natives-macos"
+    testImplementation "org.lwjgl:lwjgl:$lwjgl3Version:natives-macos-arm64"
+
+
+    // Windows //
+
+    testImplementation "org.lwjgl:lwjgl-jemalloc:$lwjgl3Version:natives-windows"
+    testImplementation "org.lwjgl:lwjgl-glfw:$lwjgl3Version:natives-windows"
+//    testImplementation "org.lwjgl:lwjgl-openal:$lwjgl3Version:natives-windows"
+    testImplementation "org.lwjgl:lwjgl-opengl:$lwjgl3Version:natives-windows"
+    testImplementation "org.lwjgl:lwjgl-stb:$lwjgl3Version:natives-windows"
+    testImplementation "org.lwjgl:lwjgl:$lwjgl3Version:natives-windows"
+    testImplementation "org.lwjgl:lwjgl-jemalloc:$lwjgl3Version:natives-windows-x86"
+    testImplementation "org.lwjgl:lwjgl-glfw:$lwjgl3Version:natives-windows-x86"
+//    testImplementation "org.lwjgl:lwjgl-openal:$lwjgl3Version:natives-windows-x86"
+    testImplementation "org.lwjgl:lwjgl-opengl:$lwjgl3Version:natives-windows-x86"
+    testImplementation "org.lwjgl:lwjgl-stb:$lwjgl3Version:natives-windows-x86"
+    testImplementation "org.lwjgl:lwjgl:$lwjgl3Version:natives-windows-x86"
+
+    testImplementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
+}
+
+// ---- Java 25 LWJGL warning suppression / compatibility JVM args ----
+// Thanks to https://github.com/tehnewb/Valthorne/blob/2d5bd29e5950f30be5d25b581b954802e6529be2/build.gradle#L79-L101 !
+def lwjglJvmArgs = [
+        // Required for Java 21+ restricted native access warnings
+        "--enable-native-access=ALL-UNNAMED",
+
+        // Opens commonly needed by LWJGL / Unsafe / internal buffers
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED",
+        "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
+
+        // Silences many "illegal access" warning prints on newer JDKs (best-effort)
+        "-Djdk.module.illegalAccess.silent=true"
+]
+
+// Apply to any JavaExec tasks (e.g., application plugin's run task, custom runners)
+tasks.withType(JavaExec).configureEach {
+    jvmArgs += lwjglJvmArgs
+}
+
+// Apply to all tests
+tasks.withType(Test).configureEach {
+    jvmArgs += lwjglJvmArgs
 }
