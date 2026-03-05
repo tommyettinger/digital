@@ -6,6 +6,10 @@ import java.util.Objects;
 /**
  * A variant on Hasher that uses the a5hash32 algorithm, which is meant for small key sizes.
  * Uses the same functional interfaces as Hasher.
+ * In benchmarks, this is almost always significantly slower than the existing hash() methods in Hasher, and often the
+ * hashBulk() methods as well, even for small keys. It also is limited to producing 32-bit output. The optimizations
+ * that make this so quick for small keys in C/C++ aren't available in Java. It's always slower on large keys than
+ * either existing algorithm in Hasher.
  */
 public final class HasherA5 {
 
@@ -3056,8 +3060,8 @@ public final class HasherA5 {
         return a ^ b;
     }
 
-    //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="Boilerplate">
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="Boilerplate">
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
