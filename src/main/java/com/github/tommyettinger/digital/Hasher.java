@@ -758,6 +758,21 @@ public final class Hasher {
      */
     public static final long T = 0xFCF8B405D3D0783BL;
 
+    /** A 64-bit probable prime close to a "harmonious number" (See {@link MathTools#GOLDEN_LONGS}). */
+    public static final long AQ = 0x9E3779B97F4A7C55L;
+    /** A 64-bit probable prime close to a "harmonious number" (See {@link MathTools#GOLDEN_LONGS}). */
+    public static final long AR = 0xC13FA9A902A63293L;
+    /** A 64-bit probable prime close to a "harmonious number" (See {@link MathTools#GOLDEN_LONGS}). */
+    public static final long AS = 0xD1B54A32D192ED2DL;
+    /** A 64-bit probable prime close to a "harmonious number" (See {@link MathTools#GOLDEN_LONGS}). */
+    public static final long AT = 0xDB4F0B9175AE2169L;
+    /** A 64-bit probable prime close to a "harmonious number" (See {@link MathTools#GOLDEN_LONGS}). */
+    public static final long AU = 0xE19B01AA9D42C66DL;
+    /** A 64-bit probable prime close to a "harmonious number" (See {@link MathTools#GOLDEN_LONGS}). */
+    public static final long AV = 0xE60E2B722B53AEF3L;
+    /** A 64-bit probable prime close to a "harmonious number" (See {@link MathTools#GOLDEN_LONGS}). */
+    public static final long AW = 0xE95E1DD17D35802BL;
+
     /**
      * Takes two arguments that are technically longs, and should be very different, and uses them to get a result
      * that is technically a long and mixes the bits of the inputs. The arguments and result are only technically
@@ -808,6 +823,147 @@ public final class Hasher {
         x *= C;
         return x ^ (x << 11 | x >>> 53) ^ (x << 50 | x >>> 14);
     }
+
+    /**
+     * Performs part of the hashing step applied to two 64-bit inputs at once, and typically added to a running
+     * hash value directly.
+     * Used by {@link #hashAdze64(long, ByteBuffer)} and {@link #hashAdze(long, ByteBuffer)}.
+     * <br>
+     * This is not reversible unless you know one of the parameters in full.
+     * @param a any long, typically an item being hashed; mixed with b
+     * @param b any long, typically an item being hashed; mixed with a
+     * @return any long
+     */
+    public static long mixMultiple(long a, long b) {
+        return ((a << 28 | a >>> 36) + b) * AQ
+                + ((b << 29 | b >>> 35) + a) * AR;
+    }
+
+    /**
+     * Performs part of the hashing step applied to three 64-bit inputs at once, and typically added to a running
+     * hash value directly.
+     * Used by {@link #hashAdze64(long, ByteBuffer)} and {@link #hashAdze(long, ByteBuffer)}.
+     * <br>
+     * This is not reversible under normal circumstances. It may be possible to recover one parameter if the others
+     * are known in full. This uses three 64-bit primes as multipliers; the exact numbers don't matter as long as
+     * they are odd and have sufficiently well-distributed bits (close to 32 '1' bits, and so on). If this is only
+     * added to a running total, the result won't have very random low-order bits, so performing bitwise rotations
+     * after at least some calls to this (or xorshifting right) is critical to keeping the hash high-quality.
+     * @param a any long, typically an item being hashed; mixed with b and c
+     * @param b any long, typically an item being hashed; mixed with c and a
+     * @param c any long, typically an item being hashed; mixed with a and b
+     * @return any long
+     */
+    public static long mixMultiple(long a, long b, long c) {
+        return ((a << 28 | a >>> 36) + b) * AQ
+                + ((b << 29 | b >>> 35) + c) * AR
+                + ((c << 27 | c >>> 37) + a) * AT;
+    }
+
+    /**
+     * Performs part of the hashing step applied to four 64-bit inputs at once, and typically added to a running
+     * hash value directly.
+     * Used by {@link #hashAdze64(long, ByteBuffer)} and {@link #hashAdze(long, ByteBuffer)}.
+     * <br>
+     * This is not reversible under normal circumstances. It may be possible to recover one parameter if the others
+     * are known in full. This uses four 64-bit primes as multipliers; the exact numbers don't matter as long as
+     * they are odd and have sufficiently well-distributed bits (close to 32 '1' bits, and so on). If this is only
+     * added to a running total, the result won't have very random low-order bits, so performing bitwise rotations
+     * after at least some calls to this (or xorshifting right) is critical to keeping the hash high-quality.
+     * @param a any long, typically an item being hashed; mixed with b and d
+     * @param b any long, typically an item being hashed; mixed with c and a
+     * @param c any long, typically an item being hashed; mixed with d and b
+     * @param d any long, typically an item being hashed; mixed with a and c
+     * @return any long
+     */
+    public static long mixMultiple(long a, long b, long c, long d) {
+        return ((a << 28 | a >>> 36) + b) * AQ
+                + ((b << 29 | b >>> 35) + c) * AR
+                + ((c << 27 | c >>> 37) + d) * AS
+                + ((d << 25 | d >>> 39) + a) * AT;
+    }
+
+    /**
+     * Performs part of the hashing step applied to five 64-bit inputs at once, and typically added to a running
+     * hash value directly.
+     * Used by {@link #hashAdze64(long, ByteBuffer)} and {@link #hashAdze(long, ByteBuffer)}.
+     * <br>
+     * This is not reversible under normal circumstances. It may be possible to recover one parameter if the others
+     * are known in full. This uses five 64-bit primes as multipliers; the exact numbers don't matter as long as
+     * they are odd and have sufficiently well-distributed bits (close to 32 '1' bits, and so on). If this is only
+     * added to a running total, the result won't have very random low-order bits, so performing bitwise rotations
+     * after at least some calls to this (or xorshifting right) is critical to keeping the hash high-quality.
+     * @param a any long, typically an item being hashed; mixed with b and e
+     * @param b any long, typically an item being hashed; mixed with c and a
+     * @param c any long, typically an item being hashed; mixed with d and b
+     * @param d any long, typically an item being hashed; mixed with e and c
+     * @param e any long, typically an item being hashed; mixed with a and d
+     * @return any long
+     */
+    public static long mixMultiple(long a, long b, long c, long d, long e) {
+        return ((a << 28 | a >>> 36) + b) * AQ
+                + ((b << 29 | b >>> 35) + c) * AR
+                + ((c << 27 | c >>> 37) + d) * AS
+                + ((d << 25 | d >>> 39) + e) * AT
+                + ((e << 26 | e >>> 38) + a) * AU;
+    }
+
+    /**
+     * Performs part of the hashing step applied to six 64-bit inputs at once, and typically added to a running
+     * hash value directly.
+     * Used by {@link #hashAdze64(long, ByteBuffer)} and {@link #hashAdze(long, ByteBuffer)}.
+     * <br>
+     * This is not reversible under normal circumstances. It may be possible to recover one parameter if the others
+     * are known in full. This uses six 64-bit primes as multipliers; the exact numbers don't matter as long as
+     * they are odd and have sufficiently well-distributed bits (close to 32 '1' bits, and so on). If this is only
+     * added to a running total, the result won't have very random low-order bits, so performing bitwise rotations
+     * after at least some calls to this (or xorshifting right) is critical to keeping the hash high-quality.
+     * @param a any long, typically an item being hashed; mixed with b and f
+     * @param b any long, typically an item being hashed; mixed with c and a
+     * @param c any long, typically an item being hashed; mixed with d and b
+     * @param d any long, typically an item being hashed; mixed with e and c
+     * @param e any long, typically an item being hashed; mixed with f and d
+     * @param f any long, typically an item being hashed; mixed with a and e
+     * @return any long
+     */
+    public static long mixMultiple(long a, long b, long c, long d, long e, long f) {
+        return ((a << 28 | a >>> 36) + b) * AQ
+                + ((b << 29 | b >>> 35) + c) * AR
+                + ((c << 27 | c >>> 37) + d) * AS
+                + ((d << 25 | d >>> 39) + e) * AT
+                + ((e << 26 | e >>> 38) + f) * AU
+                + ((f << 30 | f >>> 34) + a) * AV;
+    }
+
+    /**
+     * Performs part of the hashing step applied to seven 64-bit inputs at once, and typically added to a running
+     * hash value directly.
+     * Used by {@link #hashAdze64(long, ByteBuffer)} and {@link #hashAdze(long, ByteBuffer)}.
+     * <br>
+     * This is not reversible under normal circumstances. It may be possible to recover one parameter if the others
+     * are known in full. This uses seven 64-bit primes as multipliers; the exact numbers don't matter as long as
+     * they are odd and have sufficiently well-distributed bits (close to 32 '1' bits, and so on). If this is only
+     * added to a running total, the result won't have very random low-order bits, so performing bitwise rotations
+     * after at least some calls to this (or xorshifting right) is critical to keeping the hash high-quality.
+     * @param a any long, typically an item being hashed; mixed with b and g
+     * @param b any long, typically an item being hashed; mixed with c and a
+     * @param c any long, typically an item being hashed; mixed with d and b
+     * @param d any long, typically an item being hashed; mixed with e and c
+     * @param e any long, typically an item being hashed; mixed with f and d
+     * @param f any long, typically an item being hashed; mixed with g and e
+     * @param g any long, typically an item being hashed; mixed with a and f
+     * @return any long
+     */
+    public static long mixMultiple(long a, long b, long c, long d, long e, long f, long g) {
+        return ((a << 28 | a >>> 36) + b) * AQ
+                + ((b << 29 | b >>> 35) + c) * AR
+                + ((c << 27 | c >>> 37) + d) * AS
+                + ((d << 25 | d >>> 39) + e) * AT
+                + ((e << 26 | e >>> 38) + f) * AU
+                + ((f << 30 | f >>> 34) + g) * AV
+                + ((g << 23 | g >>> 41) + a) * AW;
+    }
+
 
     /**
      * A low-to-medium-quality and fast way to combine two 64-bit inputs to get one 64-bit result.
@@ -869,6 +1025,29 @@ public final class Hasher {
         x ^= x ^ (x << 52 | x >>> 12) ^ (x << 60 | x >>>  4);
         x ^= x ^ (x << 40 | x >>> 24) ^ (x << 56 | x >>>  8);
         x ^= x ^ (x << 16 | x >>> 48) ^ (x << 48 | x >>> 16);
+        return x;
+    }
+
+    /**
+     * A very minimalist way to scramble inputs to be used as seeds; can be inverted using {@link #reverseAdze(long)}.
+     * This simply performs the XOR-rotate-XOR-rotate operation on x, using left rotations of 23 and 56.
+     * @param x any long
+     * @return a slightly scrambled version of x
+     */
+    public static long forwardAdze(long x) {
+        return x ^ (x << 23 | x >>> 43) ^ (x << 56 | x >>> 8);
+    }
+
+    /**
+     * Unscrambles the result of {@link #forwardAdze(long)} to get its original argument back.
+     * @param x a long produced by {@link #forwardAdze(long)} or obtained from {@link #seed}
+     * @return the original long that was provided to {@link #forwardAdze(long)}, before scrambling
+     */
+    public static long reverseAdze(long x) {
+        x = x ^ (x << 23 | x >>> 43) ^ (x << 56 | x >>>  8);
+        x = x ^ (x << 46 | x >>> 18) ^ (x << 48 | x >>> 16);
+        x = x ^ (x << 28 | x >>> 36) ^ (x << 32 | x >>> 32);
+        x = (x << 8 | x >>> 56);
         return x;
     }
 
@@ -6688,6 +6867,330 @@ public final class Hasher {
         }
         return (int)mix(h);
     }
+
+    // Adze hashes for ByteBuffer
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
+     * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * @param data an input ByteBuffer
+     * @return the 64-bit hash of data
+     */
+    public long hashAdze64(final ByteBuffer data) {
+        return hashAdze64(data, 0, data.limit());
+    }
+
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, using the given {@code start} index (measured in bytes)
+     * and {@code length} (also in bytes). The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * @param data an input ByteBuffer
+     * @param start the starting index, measured in bytes
+     * @param length the number of bytes to hash
+     * @return the 64-bit hash of data
+     */
+    public long hashAdze64(final ByteBuffer data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.limit())
+            return 0;
+        int len = Math.min(length, data.limit() - start);
+        long h = len ^ forwardAdze(seed);
+        while(len >= 112){
+            len -= 112;
+            h *= C;
+            h += mixMultiple(data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 24), data.getLong(start + 32), data.getLong(start + 40), data.getLong(start + 48));
+            h = (h << 39 | h >>> 25);
+            h += mixMultiple(data.getLong(start + 56), data.getLong(start + 64), data.getLong(start + 72), data.getLong(start + 80), data.getLong(start + 88), data.getLong(start + 96), data.getLong(start + 104));
+            start += 112;
+        }
+        while(len >= 32){
+            len -= 32;
+            h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 24));
+            start += 32;
+        }
+        switch (len) {
+            case 1 :  h = mixMultiple(h, data.get(start)); break;
+            case 2 :  h = mixMultiple(h, data.getShort(start)); break;
+            case 3 :  h = mixMultiple(h, data.getShort(start), data.get(start + 2)); break;
+            case 4 :  h = mixMultiple(h, data.getInt(start)); break;
+            case 5 :  h = mixMultiple(h, data.getInt(start), data.get(start + 4)); break;
+            case 6 :  h = mixMultiple(h, data.getInt(start), data.getShort(start + 4)); break;
+            case 7 :  h = mixMultiple(h, data.getInt(start), data.getInt(start + 3)); break;
+            case 8 :  h = mixMultiple(h, data.getLong(start)); break;
+            case 9 :  h = mixMultiple(h, data.getLong(start), data.get(start + 8)); break;
+            case 10:  h = mixMultiple(h, data.getLong(start), data.getShort(start + 8)); break;
+            case 11:  h = mixMultiple(h, data.getLong(start), data.getInt(start + 7)); break;
+            case 12:  h = mixMultiple(h, data.getLong(start), data.getInt(start + 8)); break;
+            case 13:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 5)); break;
+            case 14:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 6)); break;
+            case 15:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 7)); break;
+            case 16:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8)); break;
+            case 17:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.get(start + 16)); break;
+            case 18:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getShort(start + 16)); break;
+            case 19:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getInt(start + 15)); break;
+            case 20:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getInt(start + 16)); break;
+            case 21:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 13)); break;
+            case 22:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 14)); break;
+            case 23:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 15)); break;
+            case 24:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16)); break;
+            case 25:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.get(start + 24)); break;
+            case 26:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getShort(start + 24)); break;
+            case 27:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getInt(start + 23)); break;
+            case 28:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getInt(start + 24)); break;
+            case 29:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 21)); break;
+            case 30:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 22)); break;
+            case 31:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 23)); break;
+        }
+        return mix(h);
+    }
+
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
+     * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit. This uses a slightly different algorithm from {@link #hashBulk(ByteBuffer)};
+     * it tends to be faster on large inputs and about the same on small inputs, but has different output.
+     * <br>
+     * This is likely to significantly outperform {@link #hash(byte[])} on all but
+     * the smallest sequences of bytes (under 5 bytes).
+     * @param data an input ByteBuffer
+     * @return the 32-bit hash of data
+     */
+    public int hashAdze(final ByteBuffer data) {
+        return hashAdze(data, 0, data.limit());
+    }
+
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, using the given {@code start} index (measured in bytes)
+     * and {@code length} (also in bytes). The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit. This uses a slightly different algorithm from {@link #hashBulk(ByteBuffer, int, int);
+     * it tends to be faster on large inputs and about the same on small inputs, but has different output.
+     * <br>
+     * This is likely to significantly outperform {@link #hash(byte[], int, int)}
+     * on all but the smallest sequences of bytes (under 5 bytes).
+     * @param data an input ByteBuffer
+     * @param start the starting index, measured in bytes
+     * @param length the number of bytes to hash
+     * @return the 32-bit hash of data
+     */
+    public int hashAdze(final ByteBuffer data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.limit())
+            return 0;
+        int len = Math.min(length, data.limit() - start);
+        long h = len ^ forwardAdze(seed);
+        while(len >= 112){
+            len -= 112;
+            h *= C;
+            h += mixMultiple(data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 24), data.getLong(start + 32), data.getLong(start + 40), data.getLong(start + 48));
+            h = (h << 39 | h >>> 25);
+            h += mixMultiple(data.getLong(start + 56), data.getLong(start + 64), data.getLong(start + 72), data.getLong(start + 80), data.getLong(start + 88), data.getLong(start + 96), data.getLong(start + 104));
+            start += 112;
+        }
+        while(len >= 32){
+            len -= 32;
+            h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 24));
+            start += 32;
+        }
+        switch (len) {
+            case 1 :  h = mixMultiple(h, data.get(start)); break;
+            case 2 :  h = mixMultiple(h, data.getShort(start)); break;
+            case 3 :  h = mixMultiple(h, data.getShort(start), data.get(start + 2)); break;
+            case 4 :  h = mixMultiple(h, data.getInt(start)); break;
+            case 5 :  h = mixMultiple(h, data.getInt(start), data.get(start + 4)); break;
+            case 6 :  h = mixMultiple(h, data.getInt(start), data.getShort(start + 4)); break;
+            case 7 :  h = mixMultiple(h, data.getInt(start), data.getInt(start + 3)); break;
+            case 8 :  h = mixMultiple(h, data.getLong(start)); break;
+            case 9 :  h = mixMultiple(h, data.getLong(start), data.get(start + 8)); break;
+            case 10:  h = mixMultiple(h, data.getLong(start), data.getShort(start + 8)); break;
+            case 11:  h = mixMultiple(h, data.getLong(start), data.getInt(start + 7)); break;
+            case 12:  h = mixMultiple(h, data.getLong(start), data.getInt(start + 8)); break;
+            case 13:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 5)); break;
+            case 14:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 6)); break;
+            case 15:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 7)); break;
+            case 16:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8)); break;
+            case 17:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.get(start + 16)); break;
+            case 18:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getShort(start + 16)); break;
+            case 19:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getInt(start + 15)); break;
+            case 20:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getInt(start + 16)); break;
+            case 21:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 13)); break;
+            case 22:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 14)); break;
+            case 23:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 15)); break;
+            case 24:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16)); break;
+            case 25:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.get(start + 24)); break;
+            case 26:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getShort(start + 24)); break;
+            case 27:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getInt(start + 23)); break;
+            case 28:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getInt(start + 24)); break;
+            case 29:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 21)); break;
+            case 30:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 22)); break;
+            case 31:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 23)); break;
+        }
+        return (int) mix(h);
+    }
+
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
+     * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit. This uses a slightly different algorithm from {@link #hashBulk(long, ByteBuffer)};
+     * it tends to be faster on large inputs and about the same on small inputs, but has different output.
+     * <br>
+     * This is likely to significantly outperform {@link #hash64(byte[])} on all but
+     * the smallest sequences of bytes (under 5 bytes).
+     * @param seed any long seed
+     * @param data an input ByteBuffer
+     * @return the 64-bit hash of data
+     */
+    public static long hashAdze64(final long seed, final ByteBuffer data) {
+        return hashAdze64(seed, data, 0, data.limit());
+    }
+
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, using the given {@code start} index (measured in bytes)
+     * and {@code length} (also in bytes). The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit. This uses a slightly different algorithm from {@link #hashBulk(long, ByteBuffer, int, int)};
+     * it tends to be faster on large inputs and about the same on small inputs, but has different output.
+     * <br>
+     * This is likely to significantly outperform {@link #hash64(byte[], int, int)}
+     * on all but the smallest sequences of bytes (under 5 bytes).
+     * @param seed any long seed
+     * @param data an input ByteBuffer
+     * @param start the starting index, measured in bytes
+     * @param length the number of bytes to hash
+     * @return the 64-bit hash of data
+     */
+    public static long hashAdze64(final long seed, final ByteBuffer data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.limit())
+            return 0;
+        int len = Math.min(length, data.limit() - start);
+        long h = len ^ forwardAdze(seed);
+        while(len >= 112){
+            len -= 112;
+            h *= C;
+            h += mixMultiple(data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 24), data.getLong(start + 32), data.getLong(start + 40), data.getLong(start + 48));
+            h = (h << 39 | h >>> 25);
+            h += mixMultiple(data.getLong(start + 56), data.getLong(start + 64), data.getLong(start + 72), data.getLong(start + 80), data.getLong(start + 88), data.getLong(start + 96), data.getLong(start + 104));
+            start += 112;
+        }
+        while(len >= 32){
+            len -= 32;
+            h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 24));
+            start += 32;
+        }
+        switch (len) {
+            case 1 :  h = mixMultiple(h, data.get(start)); break;
+            case 2 :  h = mixMultiple(h, data.getShort(start)); break;
+            case 3 :  h = mixMultiple(h, data.getShort(start), data.get(start + 2)); break;
+            case 4 :  h = mixMultiple(h, data.getInt(start)); break;
+            case 5 :  h = mixMultiple(h, data.getInt(start), data.get(start + 4)); break;
+            case 6 :  h = mixMultiple(h, data.getInt(start), data.getShort(start + 4)); break;
+            case 7 :  h = mixMultiple(h, data.getInt(start), data.getInt(start + 3)); break;
+            case 8 :  h = mixMultiple(h, data.getLong(start)); break;
+            case 9 :  h = mixMultiple(h, data.getLong(start), data.get(start + 8)); break;
+            case 10:  h = mixMultiple(h, data.getLong(start), data.getShort(start + 8)); break;
+            case 11:  h = mixMultiple(h, data.getLong(start), data.getInt(start + 7)); break;
+            case 12:  h = mixMultiple(h, data.getLong(start), data.getInt(start + 8)); break;
+            case 13:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 5)); break;
+            case 14:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 6)); break;
+            case 15:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 7)); break;
+            case 16:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8)); break;
+            case 17:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.get(start + 16)); break;
+            case 18:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getShort(start + 16)); break;
+            case 19:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getInt(start + 15)); break;
+            case 20:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getInt(start + 16)); break;
+            case 21:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 13)); break;
+            case 22:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 14)); break;
+            case 23:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 15)); break;
+            case 24:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16)); break;
+            case 25:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.get(start + 24)); break;
+            case 26:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getShort(start + 24)); break;
+            case 27:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getInt(start + 23)); break;
+            case 28:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getInt(start + 24)); break;
+            case 29:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 21)); break;
+            case 30:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 22)); break;
+            case 31:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 23)); break;
+        }
+        return mix(h);
+    }
+
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, hashing everything from index 0 to just before index
+     * {@link ByteBuffer#limit()}. The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * <br>
+     * This is likely to significantly outperform {@link #hash(byte[])} on all but
+     * the smallest sequences of bytes (under 5 bytes).
+     * @param seed any long seed
+     * @param data an input ByteBuffer
+     * @return the 32-bit hash of data
+     */
+    public static int hashAdze(final long seed, final ByteBuffer data) {
+        return hashAdze(seed, data, 0, data.limit());
+    }
+
+    /**
+     * A hashing function that operates on a {@link ByteBuffer}, using the given {@code start} index (measured in bytes)
+     * and {@code length} (also in bytes). The {@link ByteBuffer#limit() limit} must be set on data; this will not read
+     * past the limit.
+     * <br>
+     * This is likely to significantly outperform {@link #hash(byte[], int, int)}
+     * on all but the smallest sequences of bytes (under 5 bytes).
+     * @param seed any long seed
+     * @param data an input ByteBuffer
+     * @param start the starting index, measured in bytes
+     * @param length the number of bytes to hash
+     * @return the 32-bit hash of data
+     */
+    public static int hashAdze(final long seed, final ByteBuffer data, int start, int length) {
+        if (data == null || start < 0 || length < 0 || start >= data.limit())
+            return 0;
+        int len = Math.min(length, data.limit() - start);
+        long h = len ^ forwardAdze(seed);
+        while(len >= 112){
+            len -= 112;
+            h *= C;
+            h += mixMultiple(data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 24), data.getLong(start + 32), data.getLong(start + 40), data.getLong(start + 48));
+            h = (h << 39 | h >>> 25);
+            h += mixMultiple(data.getLong(start + 56), data.getLong(start + 64), data.getLong(start + 72), data.getLong(start + 80), data.getLong(start + 88), data.getLong(start + 96), data.getLong(start + 104));
+            start += 112;
+        }
+        while(len >= 32){
+            len -= 32;
+            h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 24));
+            start += 32;
+        }
+        switch (len) {
+            case 1 :  h = mixMultiple(h, data.get(start)); break;
+            case 2 :  h = mixMultiple(h, data.getShort(start)); break;
+            case 3 :  h = mixMultiple(h, data.getShort(start), data.get(start + 2)); break;
+            case 4 :  h = mixMultiple(h, data.getInt(start)); break;
+            case 5 :  h = mixMultiple(h, data.getInt(start), data.get(start + 4)); break;
+            case 6 :  h = mixMultiple(h, data.getInt(start), data.getShort(start + 4)); break;
+            case 7 :  h = mixMultiple(h, data.getInt(start), data.getInt(start + 3)); break;
+            case 8 :  h = mixMultiple(h, data.getLong(start)); break;
+            case 9 :  h = mixMultiple(h, data.getLong(start), data.get(start + 8)); break;
+            case 10:  h = mixMultiple(h, data.getLong(start), data.getShort(start + 8)); break;
+            case 11:  h = mixMultiple(h, data.getLong(start), data.getInt(start + 7)); break;
+            case 12:  h = mixMultiple(h, data.getLong(start), data.getInt(start + 8)); break;
+            case 13:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 5)); break;
+            case 14:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 6)); break;
+            case 15:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 7)); break;
+            case 16:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8)); break;
+            case 17:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.get(start + 16)); break;
+            case 18:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getShort(start + 16)); break;
+            case 19:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getInt(start + 15)); break;
+            case 20:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getInt(start + 16)); break;
+            case 21:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 13)); break;
+            case 22:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 14)); break;
+            case 23:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 15)); break;
+            case 24:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16)); break;
+            case 25:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.get(start + 24)); break;
+            case 26:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getShort(start + 24)); break;
+            case 27:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getInt(start + 23)); break;
+            case 28:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getInt(start + 24)); break;
+            case 29:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 21)); break;
+            case 30:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 22)); break;
+            case 31:  h = mixMultiple(h, data.getLong(start), data.getLong(start + 8), data.getLong(start + 16), data.getLong(start + 23)); break;
+        }
+        return (int) mix(h);
+    }
+
 
     // predefined HashFunction instances, to avoid lots of casting
 
