@@ -46,7 +46,13 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
  * <br>
  * These extra methods include {@link #hashBulk(ByteBuffer)} and its overloads, which all
  * can be used to hash a ByteBuffer more efficiently than a simple {@code byte[]} can be
- * hashed here. There are also various {@link #hashBulk(HashFunction, Object[])} instance
+ * hashed here. Variants on hashBulk for ByteBuffer are also present;
+ * {@link #hashAdze(ByteBuffer)} is a newer variant on the algorithm hashBulk uses.
+ * The "Adze" hashes tend to be about 10% to 25% faster on large ByteBuffers than "Bulk"
+ * hashes, and also pass SMHasher 3 tests. They're only really superior for ByteBuffer
+ * inputs, so only ByteBuffer overloads are provided.
+ * <br>
+ * There are also various {@link #hashBulk(HashFunction, Object[])} instance
  * methods, with overloads that take {@link HashFunction} and {@link HashFunction64}, plus
  * various {@link #hashBulk(long, SeededHashFunction, Object[])} static methods, with
  * overloads that take {@link SeededHashFunction} and {@link SeededHashFunction64}. These
@@ -71,6 +77,10 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
  * The main source for the Ax code used in testing <a href="https://github.com/tommyettinger/axhash">is in this small repo</a>.
  * That repo contains code compatible with both C and C++; for the C++ code used to test with SMHasher 3,
  * <a href="https://github.com/tommyettinger/smhasher-with-junk/blob/master/smhasher3/hashes/ax.cpp">it is here</a>.
+ * The "Adze" hashes were tested in C++
+ * <a href="https://github.com/tommyettinger/smhasher-with-junk/blob/master/smhasher3/hashes/ax.cpp">here</a>, and
+ * specifically use the "adze7d" algorithm. While in C++, "adze7e" is significantly faster for small keys, the reverse
+ * is true for the Java implementation. Both pass SMHasher 3 tests.
  * <br>
  * This provides an object-based API and a static API, where a Hasher object is
  * instantiated with a seed, and the static methods take a seed as their first argument.
@@ -93,7 +103,7 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
  * correct type, or that argument as well as two ints). You can make hashBulk with a HashFunction
  * work by casting {@code Hasher.alpha::hash} to the correct type, like so (where data is a {@code long[][]}):
  * {@code int result = Hasher.alpha.hashBulk((Hasher.HashFunction64<long[]>)Hasher.alpha::hash, data);}
- * Or, you can use the static variants:
+ * Or, better yet, you can use the static variants:
  * {@code int result = Hasher.hashBulk(seed, Hasher.longArrayHash, data);}
  * You could also use longArrayHashBulk:
  * {@code int result = Hasher.hashBulk(seed, Hasher.longArrayHashBulk, data);}
@@ -108,17 +118,22 @@ import static com.github.tommyettinger.digital.MathTools.EPSILON_D;
  * the web as it does on desktop or on a phone. Since Hasher is supposed to be stable
  * cross-platform, this is the way we need to go, despite it being slightly slower.
  * <br>
- * This class also provides static {@link #randomize1(long)}, {@link #randomize2(long)}, and
- * {@link #randomize3(long)} methods, which are unary hashes (hashes of one item, a number) with variants such as
- * {@link #randomize1Bounded(long, int)} and {@link #randomize2Float(long)}. The randomize1()
- * methods are faster but more sensitive to patterns in their input; they are meant to
- * work well on sequential inputs, like 1, 2, 3, etc. with relatively-short sequences
- * (ideally under a million, but if statistical quality isn't a concern, they can handle any
- * length). The randomize2() methods are more-involved, but should be able to handle most
- * kinds of input pattern across even rather-large sequences (billions) while returning
- * random results. The randomize3() methods are likely complete overkill for many cases, but
- * provide extremely strong randomization for any possible input pattern, using the MX3 unary
- * hash with an extra XOR at the beginning to prevent a fixed point at 0.
+ * This class also provides static {@link #randomize1(long)}, {@link #randomize2(long)},
+ * {@link #randomize3(long)}, and {@link #randomizeH(long)} methods, which are unary hashes
+ * (hashes of one item, a number) with variants such as {@link #randomize1Bounded(long, int)}
+ * and {@link #randomize2Float(long)}. The randomize1() methods are faster but more sensitive
+ * to patterns in their input; they are meant to work well on sequential inputs, like 1, 2,
+ * 3, etc. with relatively-short sequences (ideally under a million, but if statistical
+ * quality isn't a concern, they can handle any length). The randomize2() methods are
+ * not really recommended any more because randomize3() is faster and higher-quality. The
+ * randomize3() methods are likely overkill for many cases, but provide extremely strong
+ * randomization for any possible input pattern, using the MX3 unary hash with an extra
+ * XOR at the beginning to prevent a fixed point at 0. The newest randomizeH() methods use
+ * a different strategy than the more common mix of multiplication and xor-shift operations.
+ * It's meant to be Human-memorable, in cases where you don't want to copy and paste complex
+ * hexadecimal constants. All of its constants are the base-10 numbers 7, 27, or
+ * 5555555555555555555 (nineteen 5's in a row). It uses a more complex sequence of math
+ * operations, but that's a story for {@link #randomizeH(long) the randomizeH docs}.
  * <br>
  * There are also 428 predefined instances of Hasher that you can either
  * select from the array {@link #predefined} or select by hand, such as {@link #omega}.
@@ -325,14 +340,8 @@ public final class Hasher {
      * before passing the input in here, which would be very unusual to encounter in any coding situation. This is in
      * part because there is a type of basic random number generator that could use 0x6FD41CEB07C4CCCBL as a multiplier
      * (an "XLCG"), but it requires a specific number to be XORed in with it during assignment, and 7 isn't a match.
-     * <br>
-     * Random number generators like {@code xoshiro256**} can have issues because they end with a single multiplication,
-     * in that case by 9, and any cases where the modular multiplicative inverse of 9 is used to process the output of
-     * the {@code **} scrambler end up "descrambling" it to some extent. Because Xoshiro without a scrambler has
-     * low-quality low-order bits, those bits end up failing statistical tests when not just the modular multiplicative
-     * inverse of 9 is used, but any multiplier that shares its low byte (0x39).
      *
-     @param state any long; subsequent calls should change by an odd number, such as with {@code ++state}
+     * @param state any long; subsequent calls should change by an odd number, such as with {@code ++state}
      * @return any long
      */
     public static long randomizeH(long state) {
