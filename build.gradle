@@ -106,27 +106,21 @@ dependencies {
 
 }
 
-// ---- Java 25 LWJGL warning suppression / compatibility JVM args ----
+// ---- Java 25 LWJGL3 warning suppression / compatibility JVM args ----
 // Thanks to https://github.com/tehnewb/Valthorne/blob/2d5bd29e5950f30be5d25b581b954802e6529be2/build.gradle#L79-L101 !
-def lwjglJvmArgs = [
+def lwjgl3JvmArgs = [
         // Required for Java 21+ restricted native access warnings
-        "--enable-native-access=ALL-UNNAMED",
+        "--enable-native-access=ALL-UNNAMED"
 
-        // Opens commonly needed by LWJGL / Unsafe / internal buffers
-        "--add-opens=java.base/java.lang=ALL-UNNAMED",
-        "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED",
-        "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
-
-        // Silences many "illegal access" warning prints on newer JDKs (best-effort)
-        "-Djdk.module.illegalAccess.silent=true"
+        // Other args are no longer needed because LWJGL 3.4.x changed how it works on Java 25 and up.
 ]
 
 // Apply to any JavaExec tasks (e.g., application plugin's run task, custom runners)
 tasks.withType(JavaExec).configureEach {
-    jvmArgs += lwjglJvmArgs
+    jvmArgs += lwjgl3JvmArgs
 }
 
 // Apply to all tests
 tasks.withType(Test).configureEach {
-    jvmArgs += lwjglJvmArgs
+    jvmArgs += lwjgl3JvmArgs
 }

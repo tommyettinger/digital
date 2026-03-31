@@ -973,7 +973,6 @@ public final class Hasher {
                 + ((g << 23 | g >>> 41) + a) * AW;
     }
 
-
     /**
      * A low-to-medium-quality and fast way to combine two 64-bit inputs to get one 64-bit result.
      * Used by {@link #hashBulk64} and {@link #hashBulk}.
@@ -1011,7 +1010,6 @@ public final class Hasher {
              + ((c << 27 | c >>> 37) + d) * S
              + ((d << 25 | d >>> 39) + a) * T;
     }
-
 
     /**
      * A very minimalist way to scramble inputs to be used as seeds; can be inverted using {@link #reverse(long)}.
