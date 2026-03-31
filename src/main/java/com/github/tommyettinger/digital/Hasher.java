@@ -21,7 +21,6 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 import static com.github.tommyettinger.digital.BitConversion.doubleToRawLongBits;
 import static com.github.tommyettinger.digital.BitConversion.floatToRawIntBits;
@@ -751,19 +750,19 @@ public final class Hasher {
      */
     public static final long C = 0xBEA225F9EB34556DL;
     /**
-     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, Random)}.
+     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, java.util.Random)}.
      */
     public static final long Q = 0xD1B92B09B92266DDL;
     /**
-     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, Random)}.
+     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, java.util.Random)}.
      */
     public static final long R = 0x9995988B72E0D285L;
     /**
-     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, Random)}.
+     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, java.util.Random)}.
      */
     public static final long S = 0x8FADF5E286E31587L;
     /**
-     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, Random)}.
+     * A 64-bit probable prime, found with {@link java.math.BigInteger#probablePrime(int, java.util.Random)}.
      */
     public static final long T = 0xFCF8B405D3D0783BL;
 
