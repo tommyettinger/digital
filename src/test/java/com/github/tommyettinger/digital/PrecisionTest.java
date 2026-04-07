@@ -7174,12 +7174,17 @@ CONST f32x2 sincos(s16 int_angle) {
      * For p 248, 468/16777216 failed.
      * First failure at 531440.
      * 468/468 had the approximation too large.
+     * <br>
+     * Tried raising the first Newton line from 0.33333334f to 0.33333337f, got worse results:
+     * For p 254, 471/16777216 failed.
+     * First failure at 531440.
+     * 471/471 had the approximation too large.
      */
     @Test
     public void testCbrtPositiveP() {
         int fewestFailures = Integer.MAX_VALUE;
         IntArray bestPs = new IntArray(64);
-        for (int p = -256; p < 256; p++) {
+        for (int p = -160; p < 1024; p++) {
 
             int failures = 0;
             int higher = 0;
