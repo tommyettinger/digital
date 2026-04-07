@@ -1828,9 +1828,9 @@ public static long mmi(final long a) {
      * @return the cube root of {@code cube}, approximated
      */
     public static float cbrtPositive(float cube) {
-        float x = BitConversion.intBitsToFloat(BitConversion.floatToIntBits(cube) / 3 + 0x2A51379A);
-        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
-        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        float x = BitConversion.intBitsToFloat(BitConversion.floatToIntBits(cube) / 3 + 0x2A5136A2);
+        x = 0.6666660f * x + 0.33333334f * cube / (x * x);
+        x = 0.6666667f * x + 0.3333333f * cube / (x * x);
         return x;
     }
 

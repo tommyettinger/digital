@@ -7114,25 +7114,43 @@ CONST f32x2 sincos(s16 int_angle) {
     /**
      * 373/16777216 failed.
      * First failure at 343.
+     * 282/373 had the approximation too large.
+     * Cube roots for 1 and 8 are correct, 27 is not.
      */
     @Test
     public void testCbrtPositive() {
+        System.out.println(cbrtPositiveOld(1f)  + " should equal 1f...");
+        System.out.println(cbrtPositiveOld(8f)  + " should equal 2f...");
+        System.out.println(cbrtPositiveOld(27f) + " should equal 3f...");
         int failures = 0;
+        int higher = 0;
+        int firstFailure = Integer.MAX_VALUE;
         for (int i = 0; i < 0x1000000; i++) {
-            int approx = (int)(MathTools.cbrtPositive(i));
+            int approx = (int)(cbrtPositiveOld(i));
             int actual = (int)(Math.cbrt(i));
             if(approx != actual) {
+                firstFailure = Math.min(firstFailure, i);
                 failures++;
+                if(approx > actual) higher++;
                 System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
-                System.out.println("Approximation was " + MathTools.cbrtPositive(i) + " and actual was " + Math.cbrt(i));
+                System.out.println("Approximation was " + cbrtPositiveOld(i) + " and actual was " + Math.cbrt(i));
             }
         }
         System.out.println(failures + "/" + 0x1000000 + " failed.");
+        System.out.println("First failure at " + firstFailure + ".");
+        System.out.println(higher + "/" + failures + " had the approximation too large.");
+    }
+
+    public static float cbrtPositiveOld(float cube) {
+        float x = BitConversion.intBitsToFloat(BitConversion.floatToIntBits(cube) / 3 + 0x2A51379A);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        return x;
     }
 
     public static float cbrtPositive2(float cube) {
-        float x = BitConversion.intBitsToFloat(BitConversion.floatToIntBits(cube) / 3 + 0x2A51379A);
-        x = 0.6666664f * x + 0.33333334f * cube / (x * x);
+        float x = BitConversion.intBitsToFloat(BitConversion.floatToIntBits(cube) / 3 + 0x2A5136A2);
+        x = 0.6666660f * x + 0.33333334f * cube / (x * x);
         x = 0.6666667f * x + 0.3333333f * cube / (x * x);
         return x;
     }
@@ -7141,9 +7159,18 @@ CONST f32x2 sincos(s16 int_angle) {
      * 484/16777216 failed.
      * First failure at 511999.
      * 484/484 had the approximation too large.
+     * <br>
+     * With adjustments found for the multipliers and the nasty hex constant:
+     * 468/16777216 failed.
+     * First failure at 531440.
+     * 468/468 had the approximation too large.
+     * Cube roots for 1 and 8 are correct, 27 is not.
      */
     @Test
     public void testCbrtPositive2() {
+        System.out.println(cbrtPositive2(1f) + " should equal 1f...");
+        System.out.println(cbrtPositive2(8f) + " should equal 2f...");
+        System.out.println(cbrtPositive2(27f) + " should equal 3f... but doesn't quite.");
         int failures = 0;
         int higher = 0;
         int firstFailure = Integer.MAX_VALUE;
