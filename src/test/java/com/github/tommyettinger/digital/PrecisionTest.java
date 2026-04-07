@@ -7112,12 +7112,39 @@ CONST f32x2 sincos(s16 int_angle) {
 
     /**
      * 373/16777216 failed.
+     * First failure at 343.
      */
     @Test
     public void testCbrtPositive() {
         int failures = 0;
         for (int i = 0; i < 0x1000000; i++) {
             int approx = (int)(MathTools.cbrtPositive(i));
+            int actual = (int)(Math.cbrt(i));
+            if(approx != actual) {
+                failures++;
+                System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
+                System.out.println("Approximation was " + MathTools.cbrtPositive(i) + " and actual was " + Math.cbrt(i));
+            }
+        }
+        System.out.println(failures + "/" + 0x1000000 + " failed.");
+    }
+
+    public static float cbrtPositive2(float cube) {
+        float x = BitConversion.intBitsToFloat(BitConversion.floatToIntBits(cube) / 3 + 0x2A51379A);
+        x = 0.6666667f * x + 0.33333334f * cube / (x * x);
+        x = 0.6666667f * x + 0.33333334f * cube / (x * x);
+        return x;
+    }
+
+    /**
+     * 595/16777216 failed.
+     * First failure at 511999.
+     */
+    @Test
+    public void testCbrtPositive2() {
+        int failures = 0;
+        for (int i = 0; i < 0x1000000; i++) {
+            int approx = (int)(cbrtPositive2(i));
             int actual = (int)(Math.cbrt(i));
             if(approx != actual) {
                 failures++;
