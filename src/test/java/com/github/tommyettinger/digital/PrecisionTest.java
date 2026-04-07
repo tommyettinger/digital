@@ -7248,7 +7248,7 @@ CONST f32x2 sincos(s16 int_angle) {
         x = 0.66666657f * x + 0.333333334f * cube / (x * x);
         return x;
     }
-    public static float cbrt(float cube) {
+    public static float cbrtNew(float cube) {
         final int ix = BitConversion.floatToIntBits(cube);
         float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A5136A2 | (ix & 0x80000000));
         x = 0.6666660f * x + 0.33333334f * cube / (x * x);
@@ -7274,13 +7274,25 @@ CONST f32x2 sincos(s16 int_angle) {
         int failures = 0;
         int higher = 0;
         int firstFailure = Integer.MAX_VALUE;
+        double worstRelativeDifference = 0f;
+        int worst = Integer.MIN_VALUE;
         for (int i = -0x1000000; i < 0x1000000; i++) {
             int approx = (int)(cbrtOld(i));
             int actual = (int)(Math.cbrt(i));
             if(approx != actual) {
                 firstFailure = Math.min(firstFailure, Math.abs(i));
                 failures++;
-                if(abs(approx) > abs(actual)) higher++;
+                if(abs(approx) > abs(actual)) {
+                    higher++;
+                    if(worstRelativeDifference != (worstRelativeDifference = Math.max(worstRelativeDifference, (abs(cbrtOld(i)) + Double.MIN_VALUE) / (abs(Math.cbrt(i)) + Double.MIN_VALUE)))){
+                        worst = i;
+                    }
+                }
+                else {
+                    if(worstRelativeDifference != (worstRelativeDifference = Math.max(worstRelativeDifference, (abs(Math.cbrt(i)) + Double.MIN_VALUE) / (abs(cbrtOld(i)) + Double.MIN_VALUE)))){
+                        worst = i;
+                    }
+                }
                 System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
                 System.out.println("Approximation was " + cbrtOld(i) + " and actual was " + Math.cbrt(i));
             }
@@ -7288,6 +7300,7 @@ CONST f32x2 sincos(s16 int_angle) {
         System.out.println(failures + "/" + 0x2000000 + " failed.");
         System.out.println("First failure at " + firstFailure + ".");
         System.out.println(higher + "/" + failures + " had the approximation too large.");
+        System.out.println("Worst relative difference: " + worstRelativeDifference + " at " + worst);
     }
 
     /**
@@ -7297,31 +7310,44 @@ CONST f32x2 sincos(s16 int_angle) {
      * Cube roots for 1 and 8 are correct, 0 and 27 are not.
      */
     @Test
-    public void testCbrt() {
-        System.out.println(cbrt(-27f)  + " should equal -3f...");
-        System.out.println(cbrt(-8f)   + " should equal -2f...");
-        System.out.println(cbrt(-1f)   + " should equal -1f...");
-        System.out.println(cbrt(0f)    + " should equal 0f...");
-        System.out.println(cbrt(1f)    + " should equal 1f...");
-        System.out.println(cbrt(8f)    + " should equal 2f...");
-        System.out.println(cbrt(27f)   + " should equal 3f...");
+    public void testCbrtNew() {
+        System.out.println(cbrtNew(-27f)  + " should equal -3f...");
+        System.out.println(cbrtNew(-8f)   + " should equal -2f...");
+        System.out.println(cbrtNew(-1f)   + " should equal -1f...");
+        System.out.println(cbrtNew(0f)    + " should equal 0f...");
+        System.out.println(cbrtNew(1f)    + " should equal 1f...");
+        System.out.println(cbrtNew(8f)    + " should equal 2f...");
+        System.out.println(cbrtNew(27f)   + " should equal 3f...");
         int failures = 0;
         int higher = 0;
         int firstFailure = Integer.MAX_VALUE;
+        double worstRelativeDifference = 0f;
+        int worst = Integer.MIN_VALUE;
         for (int i = -0x1000000; i < 0x1000000; i++) {
-            int approx = (int)(cbrt(i));
+            int approx = (int)(cbrtNew(i));
             int actual = (int)(Math.cbrt(i));
             if(approx != actual) {
                 firstFailure = Math.min(firstFailure, Math.abs(i));
                 failures++;
-                if(abs(approx) > abs(actual)) higher++;
+                if(abs(approx) > abs(actual)) {
+                    higher++;
+                    if(worstRelativeDifference != (worstRelativeDifference = Math.max(worstRelativeDifference, (abs(cbrtNew(i)) + Double.MIN_VALUE) / (abs(Math.cbrt(i)) + Double.MIN_VALUE)))){
+                        worst = i;
+                    }
+                }
+                else {
+                    if(worstRelativeDifference != (worstRelativeDifference = Math.max(worstRelativeDifference, (abs(Math.cbrt(i)) + Double.MIN_VALUE) / (abs(cbrtNew(i)) + Double.MIN_VALUE)))){
+                        worst = i;
+                    }
+                }
                 System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
-                System.out.println("Approximation was " + cbrt(i) + " and actual was " + Math.cbrt(i));
+                System.out.println("Approximation was " + cbrtNew(i) + " and actual was " + Math.cbrt(i));
             }
         }
         System.out.println(failures + "/" + 0x2000000 + " failed.");
         System.out.println("First failure at " + firstFailure + ".");
         System.out.println(higher + "/" + failures + " had the approximation too large.");
+        System.out.println("Worst relative difference: " + worstRelativeDifference + " at " + worst);
     }
 
 }
