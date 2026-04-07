@@ -7358,6 +7358,56 @@ CONST f32x2 sincos(s16 int_angle) {
         System.out.println(higher + "/" + failures + " had the approximation too large.");
         System.out.println("Worst relative difference: " + worstRelativeDifference + " at " + worst);
     }
+
+
+    /**
+     * 432/33554432 failed.
+     * First failure at 531440.
+     * 432/432 had the approximation too large.
+     * Worst relative difference: 1.000001140379586 at 2352633
+     * Cube roots for 1 and 8 are correct, 0 and 27 are not.
+     */
+    @Test
+    public void testCbrtAdapt() {
+        System.out.println(cbrtAdapt(-27f, 25)  + " should equal -3f...");
+        System.out.println(cbrtAdapt(-8f, 25)   + " should equal -2f...");
+        System.out.println(cbrtAdapt(-1f, 25)   + " should equal -1f...");
+        System.out.println(cbrtAdapt(0f, 25)    + " should equal 0f...");
+        System.out.println(cbrtAdapt(1f, 25)    + " should equal 1f...");
+        System.out.println(cbrtAdapt(8f, 25)    + " should equal 2f...");
+        System.out.println(cbrtAdapt(27f, 25)   + " should equal 3f...");
+        int failures = 0;
+        int higher = 0;
+        int firstFailure = Integer.MAX_VALUE;
+        double worstRelativeDifference = 0f;
+        int worst = Integer.MIN_VALUE;
+        for (int i = 0; i < 0x1000000; i++) {
+            int approx = (int)(cbrtAdapt(i, 25));
+            int actual = (int)(Math.cbrt(i));
+            if(approx != actual) {
+                firstFailure = Math.min(firstFailure, Math.abs(i));
+                failures++;
+                if(abs(approx) > abs(actual)) {
+                    higher++;
+                    if(worstRelativeDifference != (worstRelativeDifference = Math.max(worstRelativeDifference, (abs(cbrtAdapt(i, 25)) + Double.MIN_VALUE) / (abs(Math.cbrt(i)) + Double.MIN_VALUE)))){
+                        worst = i;
+                    }
+                }
+                else {
+                    if(worstRelativeDifference != (worstRelativeDifference = Math.max(worstRelativeDifference, (abs(Math.cbrt(i)) + Double.MIN_VALUE) / (abs(cbrtAdapt(i, 25)) + Double.MIN_VALUE)))){
+                        worst = i;
+                    }
+                }
+                System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
+                System.out.println("Approximation was " + cbrtAdapt(i, 25) + " and actual was " + Math.cbrt(i));
+            }
+        }
+        System.out.println(failures + "/" + 0x2000000 + " failed.");
+        System.out.println("First failure at " + firstFailure + ".");
+        System.out.println(higher + "/" + failures + " had the approximation too large.");
+        System.out.println("Worst relative difference: " + worstRelativeDifference + " at " + worst);
+    }
+
     /**
      * For p 25, 432/16777216 failed.
      * First failure at 531440.
@@ -7365,7 +7415,7 @@ CONST f32x2 sincos(s16 int_angle) {
      * Cube roots for 1 and 8 are correct, 0 and 27 are not.
      */
     @Test
-    public void testCbrtAdapt() {
+    public void testCbrtAdaptP() {
         int fewestFailures = Integer.MAX_VALUE;
         IntArray bestPs = new IntArray(64);
         for (int p = -160; p < 1024; p++) {
