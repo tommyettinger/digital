@@ -7118,7 +7118,7 @@ CONST f32x2 sincos(s16 int_angle) {
      * Cube roots for 1 and 8 are correct, 27 is not.
      */
     @Test
-    public void testCbrtPositive() {
+    public void testCbrtPositiveOld() {
         System.out.println(cbrtPositiveOld(1f)  + " should equal 1f...");
         System.out.println(cbrtPositiveOld(8f)  + " should equal 2f...");
         System.out.println(cbrtPositiveOld(27f) + " should equal 3f...");
@@ -7240,4 +7240,88 @@ CONST f32x2 sincos(s16 int_angle) {
         }
         System.out.println("\n\nBest parameters: " + bestPs);
     }
+
+    public static float cbrtOld(float cube) {
+        final int ix = BitConversion.floatToIntBits(cube);
+        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A51379A | (ix & 0x80000000));
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        return x;
+    }
+    public static float cbrt(float cube) {
+        final int ix = BitConversion.floatToIntBits(cube);
+        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A5136A2 | (ix & 0x80000000));
+        x = 0.6666660f * x + 0.33333334f * cube / (x * x);
+        x = 0.6666667f * x + 0.3333333f * cube / (x * x);
+        return x;
+    }
+
+    /**
+     * 746/33554432 failed.
+     * First failure at 343.
+     * 564/746 had the approximation too large.
+     * Cube roots for 1 and 8 are correct, 0 and 27 are not.
+     */
+    @Test
+    public void testCbrtOld() {
+        System.out.println(cbrtOld(-27f)  + " should equal -3f...");
+        System.out.println(cbrtOld(-8f)   + " should equal -2f...");
+        System.out.println(cbrtOld(-1f)   + " should equal -1f...");
+        System.out.println(cbrtOld(0f)    + " should equal 0f...");
+        System.out.println(cbrtOld(1f)    + " should equal 1f...");
+        System.out.println(cbrtOld(8f)    + " should equal 2f...");
+        System.out.println(cbrtOld(27f)   + " should equal 3f...");
+        int failures = 0;
+        int higher = 0;
+        int firstFailure = Integer.MAX_VALUE;
+        for (int i = -0x1000000; i < 0x1000000; i++) {
+            int approx = (int)(cbrtOld(i));
+            int actual = (int)(Math.cbrt(i));
+            if(approx != actual) {
+                firstFailure = Math.min(firstFailure, Math.abs(i));
+                failures++;
+                if(abs(approx) > abs(actual)) higher++;
+                System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
+                System.out.println("Approximation was " + cbrtOld(i) + " and actual was " + Math.cbrt(i));
+            }
+        }
+        System.out.println(failures + "/" + 0x2000000 + " failed.");
+        System.out.println("First failure at " + firstFailure + ".");
+        System.out.println(higher + "/" + failures + " had the approximation too large.");
+    }
+
+    /**
+     * 936/33554432 failed.
+     * First failure at 531440.
+     * 936/936 had the approximation too large.
+     * Cube roots for 1 and 8 are correct, 0 and 27 are not.
+     */
+    @Test
+    public void testCbrt() {
+        System.out.println(cbrt(-27f)  + " should equal -3f...");
+        System.out.println(cbrt(-8f)   + " should equal -2f...");
+        System.out.println(cbrt(-1f)   + " should equal -1f...");
+        System.out.println(cbrt(0f)    + " should equal 0f...");
+        System.out.println(cbrt(1f)    + " should equal 1f...");
+        System.out.println(cbrt(8f)    + " should equal 2f...");
+        System.out.println(cbrt(27f)   + " should equal 3f...");
+        int failures = 0;
+        int higher = 0;
+        int firstFailure = Integer.MAX_VALUE;
+        for (int i = -0x1000000; i < 0x1000000; i++) {
+            int approx = (int)(cbrt(i));
+            int actual = (int)(Math.cbrt(i));
+            if(approx != actual) {
+                firstFailure = Math.min(firstFailure, Math.abs(i));
+                failures++;
+                if(abs(approx) > abs(actual)) higher++;
+                System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
+                System.out.println("Approximation was " + cbrt(i) + " and actual was " + Math.cbrt(i));
+            }
+        }
+        System.out.println(failures + "/" + 0x2000000 + " failed.");
+        System.out.println("First failure at " + firstFailure + ".");
+        System.out.println(higher + "/" + failures + " had the approximation too large.");
+    }
+
 }
