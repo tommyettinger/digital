@@ -7165,15 +7165,15 @@ CONST f32x2 sincos(s16 int_angle) {
 
     public static float cbrtPositiveP(float cube, int p) {
         float x = BitConversion.intBitsToFloat(BitConversion.floatToIntBits(cube) / 3 + 0x2A51379A - p);
-        x = 0.6666664f * x + 0.33333334f * cube / (x * x);
+        x = 0.6666660f * x + 0.33333334f * cube / (x * x);
         x = 0.6666667f * x + 0.3333333f * cube / (x * x);
         return x;
     }
 
     /**
-     * For p -52, 475/16777216 failed.
-     * First failure at 511999.
-     * 475/475 had the approximation too large.
+     * For p 248, 468/16777216 failed.
+     * First failure at 531440.
+     * 468/468 had the approximation too large.
      */
     @Test
     public void testCbrtPositiveP() {
