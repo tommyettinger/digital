@@ -7255,11 +7255,19 @@ CONST f32x2 sincos(s16 int_angle) {
         x = 0.6666667f * x + 0.3333333f * cube / (x * x);
         return x;
     }
+    public static float cbrtAdapt(float cube, int p) {
+        final int ix = BitConversion.floatToIntBits(cube);
+        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + (0x2A5136A2 - p - (ix >>> 16 & 0x7FFF) )| (ix & 0x80000000));
+        x = 0.6666660f * x + 0.33333334f * cube / (x * x);
+        x = 0.6666667f * x + 0.3333333f * cube / (x * x);
+        return x;
+    }
 
     /**
-     * 746/33554432 failed.
+     * 373/33554432 failed.
      * First failure at 343.
-     * 564/746 had the approximation too large.
+     * 282/373 had the approximation too large.
+     * Worst relative difference: 1.000000908410199 at 4173272: approx 161.00003 vs. actual 160.9998842636412
      * Cube roots for 1 and 8 are correct, 0 and 27 are not.
      */
     @Test
@@ -7276,7 +7284,7 @@ CONST f32x2 sincos(s16 int_angle) {
         int firstFailure = Integer.MAX_VALUE;
         double worstRelativeDifference = 0f;
         int worst = Integer.MIN_VALUE;
-        for (int i = -0x1000000; i < 0x1000000; i++) {
+        for (int i = 0; i < 0x1000000; i++) {
             int approx = (int)(cbrtOld(i));
             int actual = (int)(Math.cbrt(i));
             if(approx != actual) {
@@ -7300,13 +7308,14 @@ CONST f32x2 sincos(s16 int_angle) {
         System.out.println(failures + "/" + 0x2000000 + " failed.");
         System.out.println("First failure at " + firstFailure + ".");
         System.out.println(higher + "/" + failures + " had the approximation too large.");
-        System.out.println("Worst relative difference: " + worstRelativeDifference + " at " + worst);
+        System.out.println("Worst relative difference: " + worstRelativeDifference + " at " + worst + ": approx " + cbrtOld(worst) + " vs. actual " + Math.cbrt(worst));
     }
 
     /**
-     * 936/33554432 failed.
+     * 468/33554432 failed.
      * First failure at 531440.
-     * 936/936 had the approximation too large.
+     * 468/468 had the approximation too large.
+     * Worst relative difference: 1.0000010039867213 at 531440
      * Cube roots for 1 and 8 are correct, 0 and 27 are not.
      */
     @Test
@@ -7323,7 +7332,7 @@ CONST f32x2 sincos(s16 int_angle) {
         int firstFailure = Integer.MAX_VALUE;
         double worstRelativeDifference = 0f;
         int worst = Integer.MIN_VALUE;
-        for (int i = -0x1000000; i < 0x1000000; i++) {
+        for (int i = 0; i < 0x1000000; i++) {
             int approx = (int)(cbrtNew(i));
             int actual = (int)(Math.cbrt(i));
             if(approx != actual) {
@@ -7349,5 +7358,43 @@ CONST f32x2 sincos(s16 int_angle) {
         System.out.println(higher + "/" + failures + " had the approximation too large.");
         System.out.println("Worst relative difference: " + worstRelativeDifference + " at " + worst);
     }
+    /**
+     * For p 25, 432/16777216 failed.
+     * First failure at 531440.
+     * 432/432 had the approximation too large.
+     * Cube roots for 1 and 8 are correct, 0 and 27 are not.
+     */
+    @Test
+    public void testCbrtAdapt() {
+        int fewestFailures = Integer.MAX_VALUE;
+        IntArray bestPs = new IntArray(64);
+        for (int p = -160; p < 1024; p++) {
 
+            int failures = 0;
+            int higher = 0;
+            int firstFailure = Integer.MAX_VALUE;
+            for (int i = 0; i < 0x1000000; i++) {
+                int approx = (int) (cbrtAdapt(i, p));
+                int actual = (int) (Math.cbrt(i));
+                if (approx != actual) {
+                    firstFailure = Math.min(firstFailure, i);
+                    failures++;
+                    if (approx > actual) higher++;
+//                    System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
+//                    System.out.println("Approximation was " + cbrtAdapt(i, p) + " and actual was " + Math.cbrt(i));
+                }
+            }
+            System.out.println("For p " + p + ", " + failures + "/" + 0x1000000 + " failed.");
+            System.out.println("First failure at " + firstFailure + ".");
+            System.out.println(higher + "/" + failures + " had the approximation too large.");
+            if(failures < fewestFailures){
+                bestPs.clear();
+                bestPs.add(p);
+                fewestFailures = failures;
+            } else if(failures == fewestFailures){
+                bestPs.add(p);
+            }
+        }
+        System.out.println("\n\nBest parameters: " + bestPs);
+    }
 }
