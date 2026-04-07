@@ -1,6 +1,7 @@
 package com.github.tommyettinger.digital;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.github.tommyettinger.digital.v037.TrigTools037;
 import org.junit.Assert;
@@ -7160,5 +7161,51 @@ CONST f32x2 sincos(s16 int_angle) {
         System.out.println(failures + "/" + 0x1000000 + " failed.");
         System.out.println("First failure at " + firstFailure + ".");
         System.out.println(higher + "/" + failures + " had the approximation too large.");
+    }
+
+    public static float cbrtPositiveP(float cube, int p) {
+        float x = BitConversion.intBitsToFloat(BitConversion.floatToIntBits(cube) / 3 + 0x2A51379A - p);
+        x = 0.6666664f * x + 0.33333334f * cube / (x * x);
+        x = 0.6666667f * x + 0.3333333f * cube / (x * x);
+        return x;
+    }
+
+    /**
+     * For p -52, 475/16777216 failed.
+     * First failure at 511999.
+     * 475/475 had the approximation too large.
+     */
+    @Test
+    public void testCbrtPositiveP() {
+        int fewestFailures = Integer.MAX_VALUE;
+        IntArray bestPs = new IntArray(64);
+        for (int p = -256; p < 256; p++) {
+
+            int failures = 0;
+            int higher = 0;
+            int firstFailure = Integer.MAX_VALUE;
+            for (int i = 0; i < 0x1000000; i++) {
+                int approx = (int) (cbrtPositiveP(i, p));
+                int actual = (int) (Math.cbrt(i));
+                if (approx != actual) {
+                    firstFailure = Math.min(firstFailure, i);
+                    failures++;
+                    if (approx > actual) higher++;
+//                    System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
+//                    System.out.println("Approximation was " + cbrtPositiveP(i, p) + " and actual was " + Math.cbrt(i));
+                }
+            }
+            System.out.println("For p " + p + ", " + failures + "/" + 0x1000000 + " failed.");
+            System.out.println("First failure at " + firstFailure + ".");
+            System.out.println(higher + "/" + failures + " had the approximation too large.");
+            if(failures < fewestFailures){
+                bestPs.clear();
+                bestPs.add(p);
+                fewestFailures = failures;
+            } else if(failures == fewestFailures){
+                bestPs.add(p);
+            }
+        }
+        System.out.println("\n\nBest parameters: " + bestPs);
     }
 }
