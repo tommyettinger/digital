@@ -7109,4 +7109,22 @@ CONST f32x2 sincos(s16 int_angle) {
         System.out.printf("-------\n" +
                 "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
+
+    /**
+     * 373/16777216 failed.
+     */
+    @Test
+    public void testCbrtPositive() {
+        int failures = 0;
+        for (int i = 0; i < 0x1000000; i++) {
+            int approx = (int)(MathTools.cbrtPositive(i));
+            int actual = (int)(Math.cbrt(i));
+            if(approx != actual) {
+                failures++;
+                System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
+                System.out.println("Approximation was " + MathTools.cbrtPositive(i) + " and actual was " + Math.cbrt(i));
+            }
+        }
+        System.out.println(failures + "/" + 0x1000000 + " failed.");
+    }
 }
