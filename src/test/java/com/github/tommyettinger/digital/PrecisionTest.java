@@ -7262,6 +7262,14 @@ CONST f32x2 sincos(s16 int_angle) {
         x = 0.6666667f * x + 0.3333333f * cube / (x * x);
         return x;
     }
+    public static float cbrtPrecise(float cube, int p) {
+        final int ix = BitConversion.floatToIntBits(cube);
+        float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A51379A - p | (ix & 0x80000000));
+        x = 0.6666667f * x + 0.33333334f * cube / (x * x);
+        x = 0.6666667f * x + 0.33333334f * cube / (x * x);
+        x = 0.6666667f * x + 0.33333334f * cube / (x * x);
+        return x;
+    }
 
     /**
      * 373/33554432 failed.
@@ -7432,6 +7440,49 @@ CONST f32x2 sincos(s16 int_angle) {
                     if (approx > actual) higher++;
 //                    System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
 //                    System.out.println("Approximation was " + cbrtAdapt(i, p) + " and actual was " + Math.cbrt(i));
+                }
+            }
+            System.out.println("For p " + p + ", " + failures + "/" + 0x1000000 + " failed.");
+            System.out.println("First failure at " + firstFailure + ".");
+            System.out.println(higher + "/" + failures + " had the approximation too large.");
+            if(failures < fewestFailures){
+                bestPs.clear();
+                bestPs.add(p);
+                fewestFailures = failures;
+            } else if(failures == fewestFailures){
+                bestPs.add(p);
+            }
+        }
+        System.out.println("\n\nBest parameters: " + bestPs);
+    }
+
+    /**
+     * For p 470, 473, 480, and 484, 179/16777216 failed.
+     * First failure at 3869892.
+     * 179/179 had the approximation too large.
+     * <br>
+     * For p 779, 179/16777216 failed.
+     * First failure at 3652263.
+     * 179/179 had the approximation too large.
+     */
+    @Test
+    public void testCbrtPreciseP() {
+        int fewestFailures = Integer.MAX_VALUE;
+        IntArray bestPs = new IntArray(64);
+        for (int p = -160; p < 1024; p++) {
+
+            int failures = 0;
+            int higher = 0;
+            int firstFailure = Integer.MAX_VALUE;
+            for (int i = 0; i < 0x1000000; i++) {
+                int approx = (int) (cbrtPrecise(i, p));
+                int actual = (int) (Math.cbrt(i));
+                if (approx != actual) {
+                    firstFailure = Math.min(firstFailure, i);
+                    failures++;
+                    if (approx > actual) higher++;
+//                    System.out.print("Failure at " + i + ": approximation " + approx + " should be " + actual + ". ");
+//                    System.out.println("Approximation was " + cbrtPrecise(i, p) + " and actual was " + Math.cbrt(i));
                 }
             }
             System.out.println("For p " + p + ", " + failures + "/" + 0x1000000 + " failed.");
