@@ -7267,7 +7267,7 @@ CONST f32x2 sincos(s16 int_angle) {
         float x = BitConversion.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A51379A - p | (ix & 0x80000000));
         x = 0.6666660f * x + 0.33333334f * cube / (x * x);
         x = 0.6666667f * x + 0.3333333f * cube / (x * x);
-        x = 0.6666667f * x + 0.33333334f * cube / (x * x);
+        x = 0.6666667f * x + 0.3333333f * cube / (x * x);
         return x;
     }
 
@@ -7482,6 +7482,17 @@ CONST f32x2 sincos(s16 int_angle) {
      * For p 326, 173/16777216 failed.
      * First failure at 3307948.
      * 173/173 had the approximation too large.
+     * <br>
+     * With multipliers at the end:
+     * <pre>
+     *         x = 0.6666660f * x + 0.33333334f * cube / (x * x);
+     *         x = 0.6666667f * x + 0.3333333f * cube / (x * x);
+     *         x = 0.6666667f * x + 0.3333333f * cube / (x * x);
+     * </pre>
+     * <br>
+     * For p -98, -92, and -80, 94/16777216 failed.
+     * First failure at 4912999.
+     * 94/94 had the approximation too large.
      */
     @Test
     public void testCbrtPreciseP() {
