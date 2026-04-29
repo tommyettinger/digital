@@ -251,18 +251,18 @@ public final class RoughMath {
      * {@code long} value. This is a medium-quality approximation. It
      * is not likely to be distinguished from a correct Gaussian
      * distribution by a human, but could be distinguishable to a machine.
-     * <p>
+     * <br>
      * This uses an imperfect approximation, but one that is much faster than
      * the Box-Muller transform, Marsaglia Polar method, or a transform using the
      * probit function. Like {@link Distributor#normalF(int)}, this does not
      * preserve any relationship between input {@code x} and the results it returns.
      * This is different from {@link Distributor#probitI(int)} in that way.
-     * <p>
+     * <br>
      * This can't produce as extreme results in extremely-rare cases as methods
      * like Box-Muller and Marsaglia Polar can. All possible results are between
      * {@code -7.92908} and {@code 7.92908}, inclusive. This method is fairly
 	 * accurate to the normal distribution; the center has a rounded top.
-     * <p>
+     * <br>
      * <a href="https://marc-b-reynolds.github.io/distribution/2021/03/18/CheapGaussianApprox.html">Credit
      * to Marc B. Reynolds</a> for coming up with this clever fusion of the
      * already-bell-curved bit count and two triangular distributions to smooth
