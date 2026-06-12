@@ -1179,8 +1179,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum((data[i - 3] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b1, (data[i - 2] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b2) - seed,
                     mum((data[i - 1] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b3, (data[i] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b4));
@@ -1211,8 +1211,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -1243,8 +1243,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -1284,8 +1284,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
