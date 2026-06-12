@@ -6967,7 +6967,7 @@ public final class Hasher {
     /**
      * A hashing function that operates on a {@link ByteBuffer}, using the given {@code start} index (measured in bytes)
      * and {@code length} (also in bytes). The {@link ByteBuffer#limit() limit} must be set on data; this will not read
-     * past the limit. This uses a slightly different algorithm from {@link #hashBulk(ByteBuffer, int, int);
+     * past the limit. This uses a slightly different algorithm from {@link #hashBulk(ByteBuffer, int, int)};
      * it tends to be faster on large inputs and about the same on small inputs, but has different output.
      * <br>
      * This is likely to significantly outperform {@link #hash(byte[], int, int)}

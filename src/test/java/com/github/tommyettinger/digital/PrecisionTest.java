@@ -18,7 +18,7 @@ import static com.github.tommyettinger.digital.TrigTools.PI;
 import static java.lang.Math.abs;
 
 // REMOVE the @Ignore if you want to run any tests! They take a while to run as a whole, though.
-//@Ignore
+@Ignore
 public class PrecisionTest {
 
     public static final int PI_BITS = Float.floatToIntBits(PI);

@@ -84,7 +84,6 @@ repositories {
 }
 
 dependencies {
-    //noinspection GDXOutdatedVersionGradleGroovy
     testImplementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     testImplementation "junit:junit:4.13.2"
     // don't require audio if a test doesn't need it; we don't use audio here.
