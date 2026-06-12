@@ -1947,8 +1947,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum((data[i - 3] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b1, (data[i - 2] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b2) - seed,
                     mum((data[i - 1] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b3, (data[i] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b4));
@@ -1979,8 +1979,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -2011,8 +2011,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -2051,8 +2051,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -2092,8 +2092,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length());
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length() - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data.charAt(i - 3) ^ b1, data.charAt(i - 2) ^ b2) - seed,
                     mum(data.charAt(i - 1) ^ b3, data.charAt(i) ^ b4));
@@ -2124,8 +2124,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -2160,9 +2160,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= data[i - 3] * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= data[i - 2] * b2;
@@ -2200,9 +2200,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
+        final int len = Math.min(length, data.length - start), end = start + len;
         int n;
-        for (int i = start + 3; i < len; i += 4) {
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(floatToRawIntBits(data[i - 3]) ^ b1, floatToRawIntBits(data[i - 2]) ^ b2) - seed,
                     mum(floatToRawIntBits(data[i - 1]) ^ b3, floatToRawIntBits(data[i]) ^ b4));
@@ -2235,9 +2235,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= doubleToRawLongBits(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= doubleToRawLongBits(data[i - 2]) * b2;
@@ -2275,9 +2275,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(data[i - 2]) * b2;
@@ -2315,9 +2315,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(data[i - 2]) * b2;
@@ -2355,9 +2355,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(data[i - 2]) * b2;
@@ -2395,9 +2395,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(data[i - 2]) * b2;
@@ -2435,9 +2435,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(data[i - 2]) * b2;
@@ -2475,9 +2475,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(data[i - 2]) * b2;
@@ -2515,9 +2515,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(data[i - 2]) * b2;
@@ -2555,9 +2555,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(data[i - 2]) * b2;
@@ -2628,9 +2628,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.size())
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.size() - start);
+        final int len = Math.min(length, data.size() - start), end = start + len;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(data.get(i - 3)) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(data.get(i - 2)) * b2;
@@ -2668,9 +2668,9 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long seed = this.seed;
-        final int len = Math.min(length, data.length - start);
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(data[i - 2]) * b2;
@@ -2713,8 +2713,8 @@ public final class Hasher {
     public static long hash64(long seed, final boolean[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum((data[i - 3] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b1, (data[i - 2] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b2) - seed,
                     mum((data[i - 1] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b3, (data[i] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b4));
@@ -2744,8 +2744,8 @@ public final class Hasher {
     public static long hash64(long seed, final byte[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -2775,8 +2775,8 @@ public final class Hasher {
     public static long hash64(long seed, final short[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -2816,8 +2816,8 @@ public final class Hasher {
     public static long hash64(long seed, final char[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -2857,8 +2857,8 @@ public final class Hasher {
     public static long hash64(long seed, final CharSequence data, final int start, final int length) {
         if (data == null || start < 0 || length < 0 || start >= length)
             return 0;
-        final int len = Math.min(length, data.length());
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length() - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data.charAt(i - 3) ^ b1, data.charAt(i - 2) ^ b2) - seed,
                     mum(data.charAt(i - 1) ^ b3, data.charAt(i) ^ b4));
@@ -2888,8 +2888,8 @@ public final class Hasher {
     public static long hash64(long seed, final int[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -2924,8 +2924,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= data[i - 3] * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= data[i - 2] * b2;
@@ -2962,9 +2962,9 @@ public final class Hasher {
     public static long hash64(long seed, final float[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
+        final int len = Math.min(length, data.length - start), end = start + len;
         int n;
-        for (int i = start + 3; i < len; i += 4) {
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(floatToRawIntBits(data[i - 3]) ^ b1, floatToRawIntBits(data[i - 2]) ^ b2) - seed,
                     mum(floatToRawIntBits(data[i - 1]) ^ b3, floatToRawIntBits(data[i]) ^ b4));
@@ -2997,8 +2997,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= doubleToRawLongBits(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= doubleToRawLongBits(data[i - 2]) * b2;
@@ -3036,8 +3036,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3075,8 +3075,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3114,8 +3114,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3153,8 +3153,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3193,8 +3193,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3232,8 +3232,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3271,8 +3271,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3310,8 +3310,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3380,9 +3380,9 @@ public final class Hasher {
     public static long hash64(long seed, final List<? extends CharSequence> data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.size())
             return 0;
-        final int len = Math.min(length, data.size() - start);
+        final int len = Math.min(length, data.size() - start), end = start + len;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data.get(i - 3)) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data.get(i - 2)) * b2;
@@ -3420,8 +3420,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3464,8 +3464,8 @@ public final class Hasher {
     public static int hash(long seed, final boolean[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum((data[i - 3] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b1, (data[i - 2] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b2) - seed,
                     mum((data[i - 1] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b3, (data[i] ? 0x9E3779B9L : 0x7F4A7C15L) ^ b4));
@@ -3495,8 +3495,8 @@ public final class Hasher {
     public static int hash(long seed, final byte[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -3526,8 +3526,8 @@ public final class Hasher {
     public static int hash(long seed, final short[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -3557,8 +3557,8 @@ public final class Hasher {
     public static int hash(long seed, final char[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -3597,8 +3597,8 @@ public final class Hasher {
     public static int hash(long seed, final CharSequence data, final int start, final int length) {
         if (data == null || start < 0 || length < 0 || start >= length)
             return 0;
-        final int len = Math.min(length, data.length());
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length() - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data.charAt(i - 3) ^ b1, data.charAt(i - 2) ^ b2) - seed,
                     mum(data.charAt(i - 1) ^ b3, data.charAt(i) ^ b4));
@@ -3629,8 +3629,8 @@ public final class Hasher {
     public static int hash(long seed, final int[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(data[i - 3] ^ b1, data[i - 2] ^ b2) - seed,
                     mum(data[i - 1] ^ b3, data[i] ^ b4));
@@ -3665,8 +3665,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= data[i - 3] * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= data[i - 2] * b2;
@@ -3703,9 +3703,9 @@ public final class Hasher {
     public static int hash(long seed, final float[] data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
-        final int len = Math.min(length, data.length - start);
+        final int len = Math.min(length, data.length - start), end = start + len;
         int n;
-        for (int i = start + 3; i < len; i += 4) {
+        for (int i = start + 3; i < end; i += 4) {
             seed = mum(
                     mum(floatToRawIntBits(data[i - 3]) ^ b1, floatToRawIntBits(data[i - 2]) ^ b2) - seed,
                     mum(floatToRawIntBits(data[i - 1]) ^ b3, floatToRawIntBits(data[i]) ^ b4));
@@ -3738,8 +3738,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= doubleToRawLongBits(data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= doubleToRawLongBits(data[i - 2]) * b2;
@@ -3778,8 +3778,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3817,8 +3817,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3856,8 +3856,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3895,8 +3895,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3934,8 +3934,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -3973,8 +3973,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -4012,8 +4012,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -4051,8 +4051,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
@@ -4121,9 +4121,9 @@ public final class Hasher {
     public static int hash(long seed, final List<? extends CharSequence> data, int start, int length) {
         if (data == null || start < 0 || length < 0 || start >= data.size())
             return 0;
-        final int len = Math.min(length, data.size() - start);
+        final int len = Math.min(length, data.size() - start), end = start + len;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        for (int i = start + 3; i < len; i += 4) {
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data.get(i - 3)) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data.get(i - 2)) * b2;
@@ -4161,8 +4161,8 @@ public final class Hasher {
         if (data == null || start < 0 || length < 0 || start >= data.length)
             return 0;
         long a = seed + b4, b = a ^ b3, c = b - b2, d = c ^ b1;
-        final int len = Math.min(length, data.length - start);
-        for (int i = start + 3; i < len; i += 4) {
+        final int len = Math.min(length, data.length - start), end = start + len;
+        for (int i = start + 3; i < end; i += 4) {
             a ^= hash64(seed, data[i - 3]) * b1;
             a = (a << 23 | a >>> 41) * b3;
             b ^= hash64(seed, data[i - 2]) * b2;
