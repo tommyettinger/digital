@@ -174,6 +174,60 @@ public class HasherTest {
     }
 
     @Test
+    public void testZeros() {
+        final int targetLength = 300;
+        long[] data = new long[targetLength];
+        {
+            LinkedHashSet<Integer> hashes32 = new LinkedHashSet<>(targetLength);
+            for (int i = 0; i < targetLength; i++) {
+                hashes32.add(Hasher.hash(0L, data, 0, i));
+            }
+            Assert.assertEquals(targetLength, hashes32.size());
+            LinkedHashSet<Long> hashes64 = new LinkedHashSet<>(targetLength);
+            for (int i = 0; i < targetLength; i++) {
+                hashes64.add(Hasher.hash64(0L, data, 0, i));
+            }
+            Assert.assertEquals(targetLength, hashes64.size());
+        }
+        {
+            LinkedHashSet<Integer> hashes32 = new LinkedHashSet<>(targetLength);
+            for (int i = 0; i < targetLength; i++) {
+                hashes32.add(Hasher.hash(0L, data, i, targetLength - i));
+            }
+            Assert.assertEquals(targetLength, hashes32.size());
+            LinkedHashSet<Long> hashes64 = new LinkedHashSet<>(targetLength);
+            for (int i = 0; i < targetLength; i++) {
+                hashes64.add(Hasher.hash64(0L, data, i, targetLength - i));
+            }
+            Assert.assertEquals(targetLength, hashes64.size());
+        }
+        {
+            LinkedHashSet<Integer> hashes32 = new LinkedHashSet<>(targetLength);
+            for (int i = 0; i < targetLength; i++) {
+                hashes32.add(Hasher.hashBulk(0L, data, 0, i));
+            }
+            Assert.assertEquals(targetLength, hashes32.size());
+            LinkedHashSet<Long> hashes64 = new LinkedHashSet<>(targetLength);
+            for (int i = 0; i < targetLength; i++) {
+                hashes64.add(Hasher.hashBulk64(0L, data, 0, i));
+            }
+            Assert.assertEquals(targetLength, hashes64.size());
+        }
+        {
+            LinkedHashSet<Integer> hashes32 = new LinkedHashSet<>(targetLength);
+            for (int i = 0; i < targetLength; i++) {
+                hashes32.add(Hasher.hashBulk(0L, data, i, targetLength - i));
+            }
+            Assert.assertEquals(targetLength, hashes32.size());
+            LinkedHashSet<Long> hashes64 = new LinkedHashSet<>(targetLength);
+            for (int i = 0; i < targetLength; i++) {
+                hashes64.add(Hasher.hashBulk64(0L, data, i, targetLength - i));
+            }
+            Assert.assertEquals(targetLength, hashes64.size());
+        }
+    }
+
+    @Test
     public void testByteBuffer() {
         byte[] bytes = "Satchmo, my big cute baby cat".getBytes(StandardCharsets.UTF_8);
         byte[] bytes2 = "my big cute baby".getBytes(StandardCharsets.UTF_8); // start 9, length 16
