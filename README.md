@@ -16,13 +16,13 @@ To add to an existing project...
 In your `core/build.gradle`'s dependencies, add:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.10.1"
+api "com.github.tommyettinger:digital:0.10.2"
 ```
 
 If you have a GWT module, then in `html/build.gradle`'s dependencies, add:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.10.1:sources"
+api "com.github.tommyettinger:digital:0.10.2:sources"
 ```
 
 And also for GWT, add this line to `GdxDefinition.gwt.xml`:
@@ -34,6 +34,9 @@ And also for GWT, add this line to `GdxDefinition.gwt.xml`:
 Then, you can import classes from this library in your core module or
 any other submodules that depend on core. You might be depending on this
 for any number of reasons, but platform-independent code is a common thread.
+
+Projects made with gdx-liftoff already use JitPack.io as a repo for
+dependencies; nothing needs to change there.
 
 ## What is it?
 
@@ -365,14 +368,14 @@ To depend on digital with Gradle, add this to your dependencies (in
 your core module's `build.gradle`, for libGDX projects):
 
 ```groovy
-api "com.github.tommyettinger:digital:0.10.1"
+api "com.github.tommyettinger:digital:0.10.2"
 ```
 
 If you target GWT using libGDX, you will also need this in your
 html module's `build.gradle`:
 
 ```groovy
-api "com.github.tommyettinger:digital:0.10.1:sources"
+api "com.github.tommyettinger:digital:0.10.2:sources"
 ```
 
 If you target GWT, it needs to be told about these changes in your `GdxDefinition.gwt.xml`
@@ -382,9 +385,53 @@ file. For any remotely-recent version of digital (0.1.7 and later), use:
 <inherits name="com.github.tommyettinger.digital" />
 ```
 
-You can also use JitPack to get a recent commit; in that case,
-follow [its instructions here](https://jitpack.io/#tommyettinger/digital/).
-This also has instructions for Maven and other build tools.
+These dependencies require JitPack.io as a repository. This is already
+done for you if you use gdx-liftoff or even the ancient gdx-setup. If
+you are building your own project structure, follow the instructions
+[at Jitpack.io](https://jitpack.io/#tommyettinger/digital/). You can
+select a stable release or a specific commit.
+JitPack.io also has instructions for Maven and other build tools.
+
+## Rant
+
+This project uses JitPack as its only repository since the 0.10.2 release, due
+to the [ridiculously-strict Maven Central limits](https://central.sonatype.org/publish/maven-central-publishing-limits/)
+adopted starting in August 2026. To underscore why this is necessary, at the
+time of writing, Maven Central limits releases to 7 per namespace per month,
+if you haven't applied for their vague "community OSS exemption" through their
+bureaucratic JIRA labyrinth. Each update to digital generally encourages any
+other projects that depend on digital to update. There are 7 *other* repos in
+the same Maven Central namespace that would need updating each time digital
+updates. First off, I can't update 1 + 7 repos in one month. Moreover, that
+means if one of those updates fails, and needs re-publishing for any reason,
+I would not be able to for *a month*. If there were any kind of security
+vulnerability discovered in any library in the namespace, I would not be able
+to *secure the supply chain* until a month has elapsed. This runs *directly
+counter* to Sonatype's marketing claims of their organization goals:
+
+> Secure Software Innovation at Scale
+
+Sonatype is introducing a whole new class of security vulnerability by limiting
+releases for open source projects. Now that's innovative!
+
+> Improve Developer Productivity
+Give your developers time back to focus on building software, not fixing it.
+
+As a software developer, Sonatype wants me to build software, just not very
+much of it!
+
+> Reduce Open Source and AI Risk
+Gain visibility, block malicious open source, and fix vulnerabilities faster.
+
+Wow, I would love a month delay between fixes! That's much faster, right?
+
+I would encourage any businesses that currently rely on Sonatype to investigate
+the risks associated with their new approach to restrictions, inform Sonatype of
+any concerns they may have, and evaluate alternatives, such as JitPack.io .
+
+Maybe this can be a wake-up call, rather than funeral bells for Maven Central.
+
+## What does digital need?
 
 This library needs Java language level 8, but does not rely on any
 APIs introduced in Java 8. Targeting level 8 means this will work

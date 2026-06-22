@@ -3589,6 +3589,8 @@ public final class Hasher {
     /**
      * This method changed in 0.2.1, from taking a start index and end index, to taking a start index and length.
      * Taking the length matches the behavior of more methods in the JVM.
+     *
+     * @param seed any change to the seed should change the hashes of non-null, non-empty data
      * @param data  the String or other CharSequence to hash
      * @param start the start index
      * @param length how many items to hash (this will hash fewer if there aren't enough items in the CharSequence)
