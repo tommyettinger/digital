@@ -78,9 +78,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     google()
-    // JitPack is a good repo to have if you depend on commit versions.
-    // Having the below repo might cause problems if uploading to Maven Central.
-    //maven { url = 'https://jitpack.io' }
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
@@ -107,19 +105,21 @@ dependencies {
 
 // ---- Java 25 LWJGL3 warning suppression / compatibility JVM args ----
 // Thanks to https://github.com/tehnewb/Valthorne/blob/2d5bd29e5950f30be5d25b581b954802e6529be2/build.gradle#L79-L101 !
-def lwjgl3JvmArgs = [
+def openArgs = [
         // Required for Java 21+ restricted native access warnings
         "--enable-native-access=ALL-UNNAMED"
-
-        // Other args are no longer needed because LWJGL 3.4.x changed how it works on Java 25 and up.
+        // I have no idea why I tried adding this...???
+//        , "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED"
+        // Makes LWJGL 3.4.2 actually use FFM APIs, which avoids printing warnings.
+        , "--sun-misc-unsafe-memory-access=deny"
 ]
 
 // Apply to any JavaExec tasks (e.g., application plugin's run task, custom runners)
 tasks.withType(JavaExec).configureEach {
-    jvmArgs += lwjgl3JvmArgs
+    jvmArgs += openArgs
 }
 
 // Apply to all tests
 tasks.withType(Test).configureEach {
-    jvmArgs += lwjgl3JvmArgs
+    jvmArgs += openArgs
 }
