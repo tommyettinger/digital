@@ -105,21 +105,23 @@ dependencies {
 
 // ---- Java 25 LWJGL3 warning suppression / compatibility JVM args ----
 // Thanks to https://github.com/tehnewb/Valthorne/blob/2d5bd29e5950f30be5d25b581b954802e6529be2/build.gradle#L79-L101 !
-def openArgs = [
-        // Required for Java 21+ restricted native access warnings
-        "--enable-native-access=ALL-UNNAMED"
-        // I have no idea why I tried adding this...???
-//        , "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED"
-        // Makes LWJGL 3.4.2 actually use FFM APIs, which avoids printing warnings.
-        , "--sun-misc-unsafe-memory-access=deny"
-]
+if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_25)) {
+    def openArgs = [
+            // Required for Java 21+ restricted native access warnings
+            "--enable-native-access=ALL-UNNAMED"
+            // May be needed by Fory on newer JVMs.
+            , "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED"
+            // Makes LWJGL 3.4.2 actually use FFM APIs, which avoids printing warnings.
+            , "--sun-misc-unsafe-memory-access=deny"
+    ]
 
 // Apply to any JavaExec tasks (e.g., application plugin's run task, custom runners)
-tasks.withType(JavaExec).configureEach {
-    jvmArgs += openArgs
-}
+    tasks.withType(JavaExec).configureEach {
+        jvmArgs += openArgs
+    }
 
 // Apply to all tests
-tasks.withType(Test).configureEach {
-    jvmArgs += openArgs
+    tasks.withType(Test).configureEach {
+        jvmArgs += openArgs
+    }
 }
