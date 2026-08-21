@@ -2059,6 +2059,48 @@ public final class TrigTools {
         return Math.signum(turns) * p;
     }
 //</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="SinCos">
+
+    /**
+     * Calculates both the sin and cosine of {@code radians} using only one conversion from radians to a table index.
+     * This places the sine in {@code output[offset]} and the cosine in {@code output[offset + 1]}.
+     * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
+     * @param output the array to place the sine and cosine into
+     * @param offset the index in {@code output} to place the sine
+     */
+    public static void sinCos(final float radians, final float[] output, final int offset) {
+        int idx = (int) (radians * radToIndex + 16384.5f) & TABLE_MASK;
+        output[offset] = SIN_TABLE[idx];
+        output[offset + 1] = COS_TABLE[idx];
+    }
+
+    /**
+     * Calculates both the sin and cosine of {@code degrees} using only one conversion from degrees to a table index.
+     * This places the sine in {@code output[offset]} and the cosine in {@code output[offset + 1]}.
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
+     * @param output the array to place the sine and cosine into
+     * @param offset the index in {@code output} to place the sine
+     */
+    public static void sinCosDeg(final float degrees, final float[] output, final int offset) {
+        int idx = (int) (degrees * degToIndex + 16384.5f) & TABLE_MASK;
+        output[offset] = SIN_TABLE[idx];
+        output[offset + 1] = COS_TABLE[idx];
+    }
+
+    /**
+     * Calculates both the sin and cosine of {@code turns} using only one conversion from turns to a table index.
+     * This places the sine in {@code output[offset]} and the cosine in {@code output[offset + 1]}.
+     * @param turns an angle in turns, where 0.0 to 1.0 is one rotation
+     * @param output the array to place the sine and cosine into
+     * @param offset the index in {@code output} to place the sine
+     */
+    public static void sinCosTurns(final float turns, final float[] output, final int offset) {
+        int idx = (int) (turns * turnToIndex + 16384.5f) & TABLE_MASK;
+        output[offset] = SIN_TABLE[idx];
+        output[offset + 1] = COS_TABLE[idx];
+    }
+
+//</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Arctangent and atan2">
 
     /**
