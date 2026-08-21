@@ -2534,6 +2534,22 @@ public class PrecisionTest {
      * Worst input (abs):       5.303077220916748000000000
      * Worst output (abs):      0.5569323897 (0x3F0E931F)
      * Correct output (abs):    0.5569328070 (0x3F0E9326)
+     * Running cosSmootherAlt
+     * Mean absolute error:     0.0000000841
+     * Mean relative error:     0.0000012143
+     * Maximum abs. error:      0.0000004172
+     * Maximum rel. error:      0.6110913754
+     * Lowest output rel:       0.0000000000
+     * Best input (lo):         6.283185482025146500000000
+     * Best output (lo):        1.0000000000 (0x3F800000)
+     * Correct output (lo):     1.0000000000 (0x3F800000)
+     * Worst input (hi):        4.712388515472412000000000
+     * Highest output rel:      0.6110913157
+     * Worst output (hi):      -0.0000007490 (0xB5491000)
+     * Correct output (hi):    -0.0000004649 (0xB4F9990F)
+     * Worst input (abs):       5.303077220916748000000000
+     * Worst output (abs):      0.5569323897 (0x3F0E931F)
+     * Correct output (abs):    0.5569328070 (0x3F0E9326)
      * -------
      * Epsilon is:              0.0000000596
      * -------
@@ -2544,7 +2560,8 @@ public class PrecisionTest {
         LinkedHashMap<String, FloatUnaryOperator> functions = new LinkedHashMap<>(8);
 //        functions.put("cosNewTable", TrigTools::cos);
 //        functions.put("cosSmooth", TrigTools::cosSmooth);
-//        functions.put("cosSmoother", TrigTools::cosSmoother);
+        functions.put("cosSmoother", TrigTools::cosSmoother);
+        functions.put("cosSmootherAlt", PrecisionTest::cosSmootherAlt);
 
 //        functions.put("cosOldTable", OldTrigTools::cos);
 //        functions.put("cos037Table", TrigTools037::cos);
@@ -2557,7 +2574,7 @@ public class PrecisionTest {
 //        functions.put("cosShifty", PrecisionTest::cosShifty);
 //        functions.put("cosShifty2", PrecisionTest::cosShifty2);
 
-        functions.put("cosPade", PrecisionTest::cosPade);
+//        functions.put("cosPade", PrecisionTest::cosPade);
 
         for (Map.Entry<String, FloatUnaryOperator> ent : functions.entrySet()) {
             System.out.println("Running " + ent.getKey());
@@ -2619,6 +2636,15 @@ public class PrecisionTest {
         System.out.printf("-------\n" +
                 "Epsilon is:          %16.10f\n-------\n", 0x1p-24f);
     }
+
+    public static float cosSmootherAlt(float radians) {
+        radians *= radToIndex;
+        final int floor = (int)(radians + 16384f) - 16384;
+        final int masked = floor & TABLE_MASK;
+        final float from = COS_TABLE[masked], to = COS_TABLE[masked+1];
+        return from + (to - from) * (radians - floor);
+    }
+
 
     /**
      * Testing from -1.57f to 1.57f in increments of 0x1p-20f:
