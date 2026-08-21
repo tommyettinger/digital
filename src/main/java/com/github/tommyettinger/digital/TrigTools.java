@@ -2100,6 +2100,45 @@ public final class TrigTools {
         output[offset + 1] = COS_TABLE[idx];
     }
 
+    /**
+     * Calculates both the sin and cosine of {@code radians} using only one conversion from radians to a table index.
+     * This places the sine in {@code output[offset]} and the cosine in {@code output[offset + 1]}.
+     * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
+     * @param output the array to place the sine and cosine into
+     * @param offset the index in {@code output} to place the sine
+     */
+    public static void sinCos(final double radians, final double[] output, final int offset) {
+        int idx = (int) (radians * radToIndexD + 16384.5) & TABLE_MASK;
+        output[offset] = SIN_TABLE_D[idx];
+        output[offset + 1] = COS_TABLE_D[idx];
+    }
+
+    /**
+     * Calculates both the sin and cosine of {@code degrees} using only one conversion from degrees to a table index.
+     * This places the sine in {@code output[offset]} and the cosine in {@code output[offset + 1]}.
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
+     * @param output the array to place the sine and cosine into
+     * @param offset the index in {@code output} to place the sine
+     */
+    public static void sinCosDeg(final double degrees, final double[] output, final int offset) {
+        int idx = (int) (degrees * degToIndexD + 16384.5) & TABLE_MASK;
+        output[offset] = SIN_TABLE_D[idx];
+        output[offset + 1] = COS_TABLE_D[idx];
+    }
+
+    /**
+     * Calculates both the sin and cosine of {@code turns} using only one conversion from turns to a table index.
+     * This places the sine in {@code output[offset]} and the cosine in {@code output[offset + 1]}.
+     * @param turns an angle in turns, where 0.0 to 1.0 is one rotation
+     * @param output the array to place the sine and cosine into
+     * @param offset the index in {@code output} to place the sine
+     */
+    public static void sinCosTurns(final double turns, final double[] output, final int offset) {
+        int idx = (int) (turns * turnToIndexD + 16384.5) & TABLE_MASK;
+        output[offset] = SIN_TABLE_D[idx];
+        output[offset + 1] = COS_TABLE_D[idx];
+    }
+
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Arctangent and atan2">
 
