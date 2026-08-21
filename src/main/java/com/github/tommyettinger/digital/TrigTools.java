@@ -2139,6 +2139,66 @@ public final class TrigTools {
         output[offset + 1] = COS_TABLE_D[idx];
     }
 
+    /**
+     * Calculates both the sine and cosine of {@code radians} using only one conversion from radians to a table index.
+     * This places the sine in {@code output[offset]} and the cosine in {@code output[offset + 1]}.
+     * This uses the same algorithm as {@link #sinSmoother(float)}, and is equally precise.
+     *
+     * @param radians an angle in radians; optimally between {@code -PI2} and {@code PI2}
+     * @param output the array to place the sine and cosine into
+     * @param offset the index in {@code output} to place the sine
+     */
+    public static void sinCosSmoother(float radians, final float[] output, final int offset) {
+        radians *= radToIndex;
+        final int floor = (int)(radians + 16384f) - 16384;
+        final int masked = floor & TABLE_MASK;
+        final float fromS = SIN_TABLE[masked], toS = SIN_TABLE[masked+1];
+        final float fromC = COS_TABLE[masked], toC = COS_TABLE[masked+1];
+        radians -= floor;
+        output[offset  ] = fromS + (toS - fromS) * radians;
+        output[offset+1] = fromC + (toC - fromC) * radians;
+    }
+
+    /**
+     * Calculates both the sine and cosine of {@code degrees} using only one conversion from degrees to a table index.
+     * This places the sine in {@code output[offset]} and the cosine in {@code output[offset + 1]}.
+     * This uses the same algorithm as {@link #sinSmootherDeg(float)}, and is equally precise.
+     *
+     * @param degrees an angle in degrees; optimally between {@code -360} and {@code 360}
+     * @param output the array to place the sine and cosine into
+     * @param offset the index in {@code output} to place the sine
+     */
+    public static void sinCosSmootherDeg(float degrees, final float[] output, final int offset) {
+        degrees *= degToIndex;
+        final int floor = (int)(degrees + 16384f) - 16384;
+        final int masked = floor & TABLE_MASK;
+        final float fromS = SIN_TABLE[masked], toS = SIN_TABLE[masked+1];
+        final float fromC = COS_TABLE[masked], toC = COS_TABLE[masked+1];
+        degrees -= floor;
+        output[offset  ] = fromS + (toS - fromS) * degrees;
+        output[offset+1] = fromC + (toC - fromC) * degrees;
+    }
+
+    /**
+     * Calculates both the sine and cosine of {@code turns} using only one conversion from turns to a table index.
+     * This places the sine in {@code output[offset]} and the cosine in {@code output[offset + 1]}.
+     * This uses the same algorithm as {@link #sinSmootherDeg(float)}, and is equally precise.
+     *
+     * @param turns an angle in turns; optimally between {@code -1.0f} and {@code 1.0f}
+     * @param output the array to place the sine and cosine into
+     * @param offset the index in {@code output} to place the sine
+     */
+    public static void sinCosSmootherTurns(float turns, final float[] output, final int offset) {
+        turns *= turnToIndex;
+        final int floor = (int)(turns + 16384f) - 16384;
+        final int masked = floor & TABLE_MASK;
+        final float fromS = SIN_TABLE[masked], toS = SIN_TABLE[masked+1];
+        final float fromC = COS_TABLE[masked], toC = COS_TABLE[masked+1];
+        turns -= floor;
+        output[offset  ] = fromS + (toS - fromS) * turns;
+        output[offset+1] = fromC + (toC - fromC) * turns;
+    }
+
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Arctangent and atan2">
 
