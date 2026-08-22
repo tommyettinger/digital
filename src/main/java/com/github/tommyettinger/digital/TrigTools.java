@@ -2059,7 +2059,7 @@ public final class TrigTools {
         return Math.signum(turns) * p;
     }
 //</editor-fold>
-//<editor-fold defaultstate="collapsed" desc="SinCos">
+//<editor-fold defaultstate="collapsed" desc="SinCos and Rotate">
 
     /**
      * Calculates both the sin and cosine of {@code radians} using only one conversion from radians to a table index.
@@ -2357,6 +2357,84 @@ public final class TrigTools {
         final double c = COS_TABLE_D[idx];
         final double x = modifyInPlace[offset];
         final double y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code radians}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * This uses the same algorithm as {@link #sinSmoother(float)}, and is equally precise.
+     *
+     * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotateSmoother(float radians, final float[] modifyInPlace, final int offset) {
+        radians *= radToIndex;
+        final int floor = (int)(radians + 16384f) - 16384;
+        final int masked = floor & TABLE_MASK;
+        float s = SIN_TABLE[masked];
+        final float toS = SIN_TABLE[masked+1];
+        float c = COS_TABLE[masked];
+        final float toC = COS_TABLE[masked+1];
+        radians -= floor;
+        s += (toS - s) * radians;
+        c += (toC - c) * radians;
+        final float x = modifyInPlace[offset];
+        final float y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code degrees}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * This uses the same algorithm as {@link #sinSmootherDeg(float)}, and is equally precise.
+     *
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotateSmootherDeg(float degrees, final float[] modifyInPlace, final int offset) {
+        degrees *= degToIndex;
+        final int floor = (int)(degrees + 16384f) - 16384;
+        final int masked = floor & TABLE_MASK;
+        float s = SIN_TABLE[masked];
+        final float toS = SIN_TABLE[masked+1];
+        float c = COS_TABLE[masked];
+        final float toC = COS_TABLE[masked+1];
+        degrees -= floor;
+        s += (toS - s) * degrees;
+        c += (toC - c) * degrees;
+        final float x = modifyInPlace[offset];
+        final float y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code turns}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * This uses the same algorithm as {@link #sinSmootherDeg(float)}, and is equally precise.
+     *
+     * @param turns an angle in turns, where 0.0 to 1.0 is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotateSmootherTurns(float turns, final float[] modifyInPlace, final int offset) {
+        turns *= turnToIndex;
+        final int floor = (int)(turns + 16384f) - 16384;
+        final int masked = floor & TABLE_MASK;
+        float s = SIN_TABLE[masked];
+        final float toS = SIN_TABLE[masked+1];
+        float c = COS_TABLE[masked];
+        final float toC = COS_TABLE[masked+1];
+        turns -= floor;
+        s += (toS - s) * turns;
+        c += (toC - c) * turns;
+        final float x = modifyInPlace[offset];
+        final float y = modifyInPlace[offset + 1];
         modifyInPlace[offset]     = c * x - s * y;
         modifyInPlace[offset + 1] = s * x + c * y;
     }
