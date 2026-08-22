@@ -2439,6 +2439,84 @@ public final class TrigTools {
         modifyInPlace[offset + 1] = s * x + c * y;
     }
 
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code radians}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * This uses the same algorithm as {@link #sinSmoother(double)}, and is equally precise.
+     *
+     * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotateSmoother(double radians, final double[] modifyInPlace, final int offset) {
+        radians = radians * radToIndexD + 16384.0;
+        final int floor = (int)(radians);
+        final int masked = floor & TABLE_MASK;
+        double s = SIN_TABLE_D[masked];
+        final double toS = SIN_TABLE_D[masked+1];
+        double c = COS_TABLE_D[masked];
+        final double toC = COS_TABLE_D[masked+1];
+        radians -= floor;
+        s += (toS - s) * radians;
+        c += (toC - c) * radians;
+        final double x = modifyInPlace[offset];
+        final double y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code degrees}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * This uses the same algorithm as {@link #sinSmootherDeg(double)}, and is equally precise.
+     *
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotateSmootherDeg(double degrees, final double[] modifyInPlace, final int offset) {
+        degrees = degrees * degToIndexD + 16384.0;
+        final int floor = (int)(degrees);
+        final int masked = floor & TABLE_MASK;
+        double s = SIN_TABLE_D[masked];
+        final double toS = SIN_TABLE_D[masked+1];
+        double c = COS_TABLE_D[masked];
+        final double toC = COS_TABLE_D[masked+1];
+        degrees -= floor;
+        s += (toS - s) * degrees;
+        c += (toC - c) * degrees;
+        final double x = modifyInPlace[offset];
+        final double y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code turns}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * This uses the same algorithm as {@link #sinSmootherTurns(double)}, and is equally precise.
+     *
+     * @param turns an angle in turns, where 0.0 to 1.0 is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotateSmootherTurns(double turns, final double[] modifyInPlace, final int offset) {
+        turns = turns * turnToIndexD + 16384.0;
+        final int floor = (int)(turns);
+        final int masked = floor & TABLE_MASK;
+        double s = SIN_TABLE_D[masked];
+        final double toS = SIN_TABLE_D[masked+1];
+        double c = COS_TABLE_D[masked];
+        final double toC = COS_TABLE_D[masked+1];
+        turns -= floor;
+        s += (toS - s) * turns;
+        c += (toC - c) * turns;
+        final double x = modifyInPlace[offset];
+        final double y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Arctangent and atan2">
 
