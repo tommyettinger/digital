@@ -2259,6 +2259,57 @@ public final class TrigTools {
         output[offset+1] = fromC + (toC - fromC) * turns;
     }
 
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code radians}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotate(final float radians, final float[] modifyInPlace, final int offset) {
+        int idx = (int) (radians * radToIndex + 16384.5f) & TABLE_MASK;
+        final float s = SIN_TABLE[idx];
+        final float c = COS_TABLE[idx];
+        final float x = modifyInPlace[offset];
+        final float y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code degrees}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotateDeg(final float degrees, final float[] modifyInPlace, final int offset) {
+        int idx = (int) (degrees * degToIndex + 16384.5f) & TABLE_MASK;
+        final float s = SIN_TABLE[idx];
+        final float c = COS_TABLE[idx];
+        final float x = modifyInPlace[offset];
+        final float y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code turns}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * @param turns an angle in turns, where 0.0f to 1.0f is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotateTurns(final float turns, final float[] modifyInPlace, final int offset) {
+        int idx = (int) (turns * turnToIndex + 16384.5f) & TABLE_MASK;
+        final float s = SIN_TABLE[idx];
+        final float c = COS_TABLE[idx];
+        final float x = modifyInPlace[offset];
+        final float y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Arctangent and atan2">
 
