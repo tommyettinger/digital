@@ -2229,7 +2229,7 @@ public final class TrigTools {
      * @param offset the index in {@code output} to place the sine
      */
     public static void sinCosSmootherDeg(double degrees, final double[] output, final int offset) {
-        degrees = degrees * degToIndex + 16384.0;
+        degrees = degrees * degToIndexD + 16384.0;
         final int floor = (int)(degrees);
         final int masked = floor & TABLE_MASK;
         final double fromS = SIN_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];
@@ -2249,7 +2249,7 @@ public final class TrigTools {
      * @param offset the index in {@code output} to place the sine
      */
     public static void sinCosSmootherTurns(double turns, final double[] output, final int offset) {
-        turns = turns * turnToIndex + 16384.0;
+        turns = turns * turnToIndexD + 16384.0;
         final int floor = (int)(turns);
         final int masked = floor & TABLE_MASK;
         final double fromS = SIN_TABLE_D[masked], toS = SIN_TABLE_D[masked+1];
@@ -2416,7 +2416,7 @@ public final class TrigTools {
     /**
      * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code turns}.
      * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
-     * This uses the same algorithm as {@link #sinSmootherDeg(float)}, and is equally precise.
+     * This uses the same algorithm as {@link #sinSmootherTurns(float)}, and is equally precise.
      *
      * @param turns an angle in turns, where 0.0 to 1.0 is one rotation
      * @param modifyInPlace the array to read and write x and y
