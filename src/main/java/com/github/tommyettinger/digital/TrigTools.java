@@ -2184,7 +2184,7 @@ public final class TrigTools {
      * This places the sine in {@code output[offset]} and the cosine in {@code output[offset + 1]}.
      * This uses the same algorithm as {@link #sinSmootherDeg(float)}, and is equally precise.
      *
-     * @param turns an angle in turns; optimally between {@code -1.0f} and {@code 1.0f}
+     * @param turns an angle in turns; optimally between {@code -1.0} and {@code 1.0}
      * @param output the array to place the sine and cosine into
      * @param offset the index in {@code output} to place the sine
      */
@@ -2244,7 +2244,7 @@ public final class TrigTools {
      * This places the sine in {@code output[offset]} and the cosine in {@code output[offset + 1]}.
      * This uses the same algorithm as {@link #sinSmootherDeg(double)}, and is equally precise.
      *
-     * @param turns an angle in turns; optimally between {@code -1.0f} and {@code 1.0f}
+     * @param turns an angle in turns; optimally between {@code -1.0} and {@code 1.0}
      * @param output the array to place the sine and cosine into
      * @param offset the index in {@code output} to place the sine
      */
@@ -2296,7 +2296,7 @@ public final class TrigTools {
     /**
      * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code turns}.
      * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
-     * @param turns an angle in turns, where 0.0f to 1.0f is one rotation
+     * @param turns an angle in turns, where 0.0 to 1.0 is one rotation
      * @param modifyInPlace the array to read and write x and y
      * @param offset the index in {@code modifyInPlace} to read and write x
      */
@@ -2306,6 +2306,57 @@ public final class TrigTools {
         final float c = COS_TABLE[idx];
         final float x = modifyInPlace[offset];
         final float y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code radians}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * @param radians an angle in radians, where 0 to {@link #PI2} is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotate(final double radians, final double[] modifyInPlace, final int offset) {
+        int idx = (int) (radians * radToIndexD + 16384.5) & TABLE_MASK;
+        final double s = SIN_TABLE_D[idx];
+        final double c = COS_TABLE_D[idx];
+        final double x = modifyInPlace[offset];
+        final double y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code degrees}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * @param degrees an angle in degrees, where 0 to 360 is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotateDeg(final double degrees, final double[] modifyInPlace, final int offset) {
+        int idx = (int) (degrees * degToIndexD + 16384.5) & TABLE_MASK;
+        final double s = SIN_TABLE_D[idx];
+        final double c = COS_TABLE_D[idx];
+        final double x = modifyInPlace[offset];
+        final double y = modifyInPlace[offset + 1];
+        modifyInPlace[offset]     = c * x - s * y;
+        modifyInPlace[offset + 1] = s * x + c * y;
+    }
+
+    /**
+     * Rotates an x and y coordinate from an array counterclockwise around the origin by {@code turns}.
+     * This modifies x at {@code modifyInPlace[offset]} and y at {@code modifyInPlace[offset + 1]}.
+     * @param turns an angle in turns, where 0.0 to 1.0 is one rotation
+     * @param modifyInPlace the array to read and write x and y
+     * @param offset the index in {@code modifyInPlace} to read and write x
+     */
+    public static void rotateTurns(final double turns, final double[] modifyInPlace, final int offset) {
+        int idx = (int) (turns * turnToIndexD + 16384.5) & TABLE_MASK;
+        final double s = SIN_TABLE_D[idx];
+        final double c = COS_TABLE_D[idx];
+        final double x = modifyInPlace[offset];
+        final double y = modifyInPlace[offset + 1];
         modifyInPlace[offset]     = c * x - s * y;
         modifyInPlace[offset + 1] = s * x + c * y;
     }
