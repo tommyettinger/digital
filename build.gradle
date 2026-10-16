@@ -111,7 +111,7 @@ if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_25)) {
             "--enable-native-access=ALL-UNNAMED"
             // May be needed by Fory on newer JVMs.
             , "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED"
-            // Makes LWJGL 3.4.2 actually use FFM APIs, which avoids printing warnings.
+            // Makes LWJGL 3.4.3 actually use FFM APIs, which avoids printing warnings.
             , "--sun-misc-unsafe-memory-access=deny"
     ]
 
